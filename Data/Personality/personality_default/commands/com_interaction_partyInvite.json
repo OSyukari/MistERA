@@ -1,0 +1,252 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_interaction_partyInvite_Result_Receiver_1",
+                                "com_interaction_partyInvite_Result_Receiver_2",
+                                "com_interaction_partyInvite_Result_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_interaction_partyInvite_Begin_Receiver_1",
+                                "com_interaction_partyInvite_Begin_Receiver_2",
+                                "com_interaction_partyInvite_Begin_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_interaction_partyInvite_Refuse_1",
+                                "com_interaction_partyInvite_Refuse_2",
+                                "com_interaction_partyInvite_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_interaction_partyInvite_Interrupt_Doer_1",
+                                "com_interaction_partyInvite_Interrupt_Doer_2",
+                                "com_interaction_partyInvite_Interrupt_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_interaction_partyInvite_Interrupt_Receiver_1",
+                                "com_interaction_partyInvite_Interrupt_Receiver_2",
+                                "com_interaction_partyInvite_Interrupt_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_interaction_partyInvite_Tryjoin_1",
+                                "com_interaction_partyInvite_Tryjoin_2",
+                                "com_interaction_partyInvite_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_interaction_partyInvite_Joined_1",
+                                "com_interaction_partyInvite_Joined_2",
+                                "com_interaction_partyInvite_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_interaction_partyInvite_Join_Refused_1",
+                                "com_interaction_partyInvite_Join_Refused_2",
+                                "com_interaction_partyInvite_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_interaction_partyInvite_Join_Doer_1",
+                                "com_interaction_partyInvite_Join_Doer_2",
+                                "com_interaction_partyInvite_Join_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_interaction_partyInvite_Join_Receiver_1",
+                                "com_interaction_partyInvite_Join_Receiver_2",
+                                "com_interaction_partyInvite_Join_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_partyInvite_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_interaction_partyInvite_JoinFailed_Doer_1",
+                                "com_interaction_partyInvite_JoinFailed_Doer_2",
+                                "com_interaction_partyInvite_JoinFailed_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_interaction_partyInvite_JoinFailed_Receiver_1",
+                                "com_interaction_partyInvite_JoinFailed_Receiver_2",
+                                "com_interaction_partyInvite_JoinFailed_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_partyInvite_Result_Receiver_1": "“你走前面还是我带路？”",
+                "com_interaction_partyInvite_Result_Receiver_2": "$self$看了看前头，迈步跟上了$target$的步子。",
+                "com_interaction_partyInvite_Result_Receiver_3": "“要是半路我有事要办，先跟你说一声。”",
+                "com_interaction_partyInvite_Begin_Receiver_1": "“正好我也没别的事，走吧。”",
+                "com_interaction_partyInvite_Begin_Receiver_2": "$self$把东西理了理，往$target$那边靠了半步：“去哪边？”",
+                "com_interaction_partyInvite_Begin_Receiver_3": "“行啊，顺路的话一起走还省事。”",
+                "com_interaction_partyInvite_Refuse_1": "“抱歉，我这边还有点事要处理，你自己去吧。”",
+                "com_interaction_partyInvite_Refuse_2": "$self$摆了摆手，往后退了一步：“今天不太方便。”",
+                "com_interaction_partyInvite_Refuse_3": "“不了，我想一个人待会儿。”",
+                "com_interaction_partyInvite_Interrupt_Doer_1": "“刚好凑一块儿了，$target$要不要一起？”",
+                "com_interaction_partyInvite_Interrupt_Doer_2": "$self$看向走过来的$target$，顺手打了个招呼：“正说着要出发呢。”",
+                "com_interaction_partyInvite_Interrupt_Doer_3": "“$target$来得正好，省得待会儿再找你。”",
+                "com_interaction_partyInvite_Interrupt_Receiver_1": "“哟，$target$，我们正准备一块儿走呢。”",
+                "com_interaction_partyInvite_Interrupt_Receiver_2": "$self$朝$target$点了点头，停下脚步：“有事找我们？”",
+                "com_interaction_partyInvite_Interrupt_Receiver_3": "“刚约好一起走，$target$你也要去那边吗？”",
+                "com_interaction_partyInvite_Tryjoin_1": "“你们这是要一起走？带我一个行吗？”",
+                "com_interaction_partyInvite_Tryjoin_2": "$self$快走两步凑到$target$旁边：“正好同路，算我一个吧。”",
+                "com_interaction_partyInvite_Tryjoin_3": "“$target$，介不介意多我一个人跟着？”",
+                "com_interaction_partyInvite_Joined_1": "“那我就不客气啦，走吧。”",
+                "com_interaction_partyInvite_Joined_2": "$self$站到队里，朝$target$笑了一下：“人多点还热闹些。”",
+                "com_interaction_partyInvite_Joined_3": "“谢了$target$，我会跟上的。”",
+                "com_interaction_partyInvite_Join_Refused_1": "“行吧，那我就不凑这个热闹了。”",
+                "com_interaction_partyInvite_Join_Refused_2": "$self$停住脚，朝$target$摆了摆手：“没事，你们先走。”",
+                "com_interaction_partyInvite_Join_Refused_3": "“这样啊……那我自己逛逛好了。”",
+                "com_interaction_partyInvite_Join_Doer_1": "“来吧，$target$，一块儿走。”",
+                "com_interaction_partyInvite_Join_Doer_2": "$self$朝$target$抬了抬下巴：“别落太远就行。”",
+                "com_interaction_partyInvite_Join_Doer_3": "“正好，多个人也多份力。”",
+                "com_interaction_partyInvite_Join_Receiver_1": "“人多点也好，路上还有个照应。”",
+                "com_interaction_partyInvite_Join_Receiver_2": "$self$往旁边让出半个身位，好让$target$走得顺当些。",
+                "com_interaction_partyInvite_Join_Receiver_3": "“欢迎啊，$target$，刚正要动身呢。”",
+                "com_interaction_partyInvite_JoinFailed_Doer_1": "“这趟人够了，$target$你自己安排吧。”",
+                "com_interaction_partyInvite_JoinFailed_Doer_2": "$self$朝$target$点了下头：“改天顺路再说。”",
+                "com_interaction_partyInvite_JoinFailed_Doer_3": "“今天就不一块儿走了，回头见。”",
+                "com_interaction_partyInvite_JoinFailed_Receiver_1": "“抱歉啦$target$，这次不太方便带人，下次吧。”",
+                "com_interaction_partyInvite_JoinFailed_Receiver_2": "$self$看了$target$一眼，神色有些歉意：“回头有空再约。”",
+                "com_interaction_partyInvite_JoinFailed_Receiver_3": "“先这样吧，你忙你的去。”"
+            }
+        }
+    }
+}

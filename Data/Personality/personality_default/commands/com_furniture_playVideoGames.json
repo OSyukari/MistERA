@@ -99,6 +99,26 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_furniture_playVideoGames_Self_Success_1",
+                                        "com_furniture_playVideoGames_Self_Success_2",
+                                        "com_furniture_playVideoGames_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_playVideoGames_Self_Fail_1",
+                                "com_furniture_playVideoGames_Self_Fail_2",
+                                "com_furniture_playVideoGames_Self_Fail_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -171,7 +191,10 @@
                                 "com_furniture_playVideoGames_38",
                                 "com_furniture_playVideoGames_39",
                                 "com_furniture_playVideoGames_40"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -185,7 +208,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -300,25 +324,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_furniture_playVideoGames_Join_13",
-                                "com_furniture_playVideoGames_Join_14",
-                                "com_furniture_playVideoGames_Join_15",
-                                "com_furniture_playVideoGames_Join_16",
-                                "com_furniture_playVideoGames_Join_17",
-                                "com_furniture_playVideoGames_Join_18"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfForced": true
                             },
                             "extraSelfPortraitTags": [
@@ -339,6 +344,25 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_furniture_playVideoGames_Join_13",
+                                "com_furniture_playVideoGames_Join_14",
+                                "com_furniture_playVideoGames_Join_15",
+                                "com_furniture_playVideoGames_Join_16",
+                                "com_furniture_playVideoGames_Join_17",
+                                "com_furniture_playVideoGames_Join_18"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -351,7 +375,10 @@
                                 "com_furniture_playVideoGames_Join_28",
                                 "com_furniture_playVideoGames_Join_29",
                                 "com_furniture_playVideoGames_Join_30"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -364,7 +391,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -708,7 +736,13 @@
                 "com_furniture_playVideoGames_Interrupt_35": "$self$只是淡淡地点了点头算是打招呼，注意力很快又回到了屏幕上。",
                 "com_furniture_playVideoGames_Interrupt_36": "$self$随口问了一句：\"你也还没睡啊？\"",
                 "com_furniture_playVideoGames_Interrupt_37": "$self$往旁边挪了挪，腾出一点空间，但没有说话。",
-                "com_furniture_playVideoGames_Interrupt_38": "$self$平静地说道：\"再等我五分钟，这局马上结束。\""
+                "com_furniture_playVideoGames_Interrupt_38": "$self$平静地说道：\"再等我五分钟，这局马上结束。\"",
+                "com_furniture_playVideoGames_Self_Success_1": "$self$靠回椅背长舒一口气，刚才那段操作顺得不行，总算过关了。",
+                "com_furniture_playVideoGames_Self_Success_2": "\"今天手感真不错，连着几个难点都没掉链子。\" $self$放下手柄，揉了揉发酸的手腕。",
+                "com_furniture_playVideoGames_Self_Success_3": "屏幕上的结算画面跳出来，$self$满意地关掉设备，心里轻松了不少。",
+                "com_furniture_playVideoGames_Self_Fail_1": "$self$盯着屏幕上的失败提示叹了口气，老是在同一个地方栽跟头，越打越急。",
+                "com_furniture_playVideoGames_Self_Fail_2": "\"算了，今天手气和手感都不太对，再打也是白折腾。\" $self$把手柄搁到桌上。",
+                "com_furniture_playVideoGames_Self_Fail_3": "揉着有点发涩的眼睛，$self$干脆退出了这一局，打算先歇会儿。"
             },
             "en-us": {
                 "com_furniture_playVideoGames_Begin_1": "$self$ tosses a spare controller without hesitation, eyes full of excitement: \"Been waiting for you to say that! Log in, quick!\"",

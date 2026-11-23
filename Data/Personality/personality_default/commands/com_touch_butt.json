@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_butt_Begin_Fainted_1",
+                                "com_touch_butt_Begin_Fainted_2",
+                                "com_touch_butt_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_butt_Begin_Restrained_1",
+                                "com_touch_butt_Begin_Restrained_2",
+                                "com_touch_butt_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -99,6 +131,309 @@
                     "ID": "com_touch_butt",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_butt_fainted_1",
+                                                "com_touch_butt_fainted_2",
+                                                "com_touch_butt_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_butt_restrained_succ_1",
+                                                "com_touch_butt_restrained_succ_2",
+                                                "com_touch_butt_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_butt_woken_1",
+                                                "com_touch_butt_woken_2",
+                                                "com_touch_butt_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被抚摸屁股 口上文",
+                                            "responses": [
+                                                "com_touch_butt_1",
+                                                "com_touch_butt_2",
+                                                "com_touch_butt_3",
+                                                "com_touch_butt_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被抚摸屁股 口上文",
+                                            "responses": [
+                                                "com_touch_butt_5",
+                                                "com_touch_butt_6",
+                                                "com_touch_butt_7",
+                                                "com_touch_butt_8"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被抚摸屁股 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_butt_21",
+                                                "com_touch_butt_22",
+                                                "com_touch_butt_23",
+                                                "com_touch_butt_24"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被抚摸屁股 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_butt_25",
+                                        "com_touch_butt_26",
+                                        "com_touch_butt_27",
+                                        "com_touch_butt_28"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸屁股 口上文",
+                                    "responses": [
+                                        "com_touch_butt_1",
+                                        "com_touch_butt_2",
+                                        "com_touch_butt_3",
+                                        "com_touch_butt_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸屁股 口上文",
+                                    "responses": [
+                                        "com_touch_butt_5",
+                                        "com_touch_butt_6",
+                                        "com_touch_butt_7",
+                                        "com_touch_butt_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_butt_fainted_1",
+                                        "com_touch_butt_fainted_2",
+                                        "com_touch_butt_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_butt_restrained_fail_1",
+                                        "com_touch_butt_restrained_fail_2",
+                                        "com_touch_butt_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_butt_woken_1",
+                                        "com_touch_butt_woken_2",
+                                        "com_touch_butt_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_butt_33",
+                                "com_touch_butt_34",
+                                "com_touch_butt_35",
+                                "com_touch_butt_36"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸屁股 口上文",
+                                    "responses": [
+                                        "com_touch_butt_1",
+                                        "com_touch_butt_2",
+                                        "com_touch_butt_3",
+                                        "com_touch_butt_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸屁股 口上文",
+                                    "responses": [
+                                        "com_touch_butt_5",
+                                        "com_touch_butt_6",
+                                        "com_touch_butt_7",
+                                        "com_touch_butt_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被抚摸屁股 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_butt_21",
+                                        "com_touch_butt_22",
+                                        "com_touch_butt_23",
+                                        "com_touch_butt_24"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被抚摸屁股 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_butt_25",
+                                "com_touch_butt_26",
+                                "com_touch_butt_27",
+                                "com_touch_butt_28"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -139,52 +474,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被抚摸屁股 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_butt_21",
-                                        "com_touch_butt_22",
-                                        "com_touch_butt_23",
-                                        "com_touch_butt_24"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被抚摸屁股 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_butt_25",
-                                "com_touch_butt_26",
-                                "com_touch_butt_27",
-                                "com_touch_butt_28"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -221,7 +510,12 @@
                                 "com_touch_butt_34",
                                 "com_touch_butt_35",
                                 "com_touch_butt_36"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -233,8 +527,42 @@
                     "ID": "com_touch_butt_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_butt_Refuse_Receiver_1",
+                                "com_touch_butt_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_butt_Refuse_woken_1",
+                                        "com_touch_butt_Refuse_woken_2",
+                                        "com_touch_butt_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -301,6 +629,37 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_butt_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_butt_Ongoing_Player_1",
+                                        "com_touch_butt_Ongoing_Player_2",
+                                        "com_touch_butt_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_butt_Ongoing_NPC_1",
+                                "com_touch_butt_Ongoing_NPC_2",
+                                "com_touch_butt_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -360,7 +719,36 @@
                 "com_touch_butt_Begin_Timestop_1": "$target$的双手捧住定格的臀肉揉捏，指印陷下去又慢慢弹回来，$self$的重心没有晃动。",
                 "com_touch_butt_Begin_Timestop_2": "臀肉被揉开又松手，$self$站在原地一动不动，目光仍停在原来的落点上。",
                 "com_touch_butt_Begin_Sleep_3": "屁股被轻拍了两下，$self$呼吸依旧平缓，眼皮一直没抬。",
-                "com_touch_butt_Begin_Timestop_3": "屁股被反复按揉，$self$毫无反应，连呼吸节奏都没有半点变化。"
+                "com_touch_butt_Begin_Timestop_3": "屁股被反复按揉，$self$毫无反应，连呼吸节奏都没有半点变化。",
+                "com_touch_butt_fainted_1": "臀部被反复揉捏，$self$始终昏迷着，没有半点醒来的迹象。",
+                "com_touch_butt_fainted_2": "$self$没有恢复意识，臀肉被搓热了也依旧毫无反应。",
+                "com_touch_butt_fainted_3": "无论$target$怎么按揉，$self$都闭着眼一动不动。",
+                "com_touch_butt_restrained_succ_1": "$self$原本绷紧的腰胯慢慢松了下来，别过脸闷声道：\"……手别乱伸别处。\"",
+                "com_touch_butt_restrained_succ_2": "被绑着没法躲，$self$小声嘀咕：\"……力道倒还不重。\"",
+                "com_touch_butt_restrained_succ_3": "臀上的揉捏让人渐渐松懈，$self$垂下视线不再咬牙硬撑。",
+                "com_touch_butt_restrained_fail_1": "屁股被捏得生疼却没法躲，$self$气得眼圈发红：\"轻点！弄疼我了！\"",
+                "com_touch_butt_restrained_fail_2": "$self$咬着牙瞪向$target$，语气发哑：\"趁人被绑住占便宜，算什么本事……\"",
+                "com_touch_butt_restrained_fail_3": "$self$浑身绷紧，声音里带着火气：\"别再乱摸了，下流死了！\"",
+                "com_touch_butt_woken_1": "$self$迷迷糊糊睁开眼，察觉到$target$的手还留在自己屁股上：\"唔……你趁我睡着摸哪儿呢？\"",
+                "com_touch_butt_woken_2": "被身后的动静弄醒，$self$打了个哈欠，脸颊微热：\"醒了醒了，别捏了。\"",
+                "com_touch_butt_woken_3": "$self$刚醒过来，声音还有点沙哑：\"手放这儿干嘛呀……真是的。\"",
+                "com_touch_butt_Refuse_woken_1": "$self$刚一醒过来就沉下脸瞪着$target$：\"趁我睡着摸别人屁股，变态啊你！\"",
+                "com_touch_butt_Refuse_woken_2": "被弄醒的$self$拉下脸，语气生硬得很：\"把你的手拿开，恶心死了！\"",
+                "com_touch_butt_Refuse_woken_3": "$self$还没彻底清醒就已经拉下脸斥道：\"滚远点，别乱碰！\"",
+                "com_touch_butt_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的屁股。\"",
+                "com_touch_butt_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰屁股，请自重。\"",
+                "com_touch_butt_Begin_Fainted_1": "$self$毫无知觉地昏迷着，臀部被$target$的手掌覆上时没有任何反应。",
+                "com_touch_butt_Begin_Fainted_2": "臀肉被轻轻揉捏，$self$仍闭着眼一动不动，呼吸声轻弱而平缓。",
+                "com_touch_butt_Begin_Fainted_3": "$self$完全失去了意识，任由$target$的手在自己屁股上碰触。",
+                "com_touch_butt_Begin_Restrained_1": "$self$被绑着动弹不得，只能绷紧身体咬牙道：\"别碰那里……\"",
+                "com_touch_butt_Begin_Restrained_2": "手脚都被制住，$self$狠狠偏头瞪着$target$，呼吸一下子急了。",
+                "com_touch_butt_Begin_Restrained_3": "$self$无力挣开束缚，脸颊发烫又带着火气：\"你想干什么……\"",
+                "com_touch_butt_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，脸颊一热，不好意思地别开视线。",
+                "com_touch_butt_Ongoing_Player_2": "被摸着屁股时撞上$target$的目光，$self$耳根发烫，冲对方摆了摆手示意别看了。",
+                "com_touch_butt_Ongoing_Player_3": "$self$小声冲站在旁边的$target$抱怨：\"喂，有那么好看吗，一直盯着。\"",
+                "com_touch_butt_Ongoing_NPC_1": "$self$偏头看了$target$一眼，轻哼道：\"摸够了吧？手还真不老实。\"",
+                "com_touch_butt_Ongoing_NPC_2": "揉捏停下后，$self$脸颊微热地调侃道：\"手感就这么好啊？\"",
+                "com_touch_butt_Ongoing_NPC_3": "$self$语气带着点羞恼对$target$说道：\"行啦，别没完没了的。\""
             },
             "en-us": {
                 "com_touch_butt_Begin_1": "$self$ didn't look back, simply arching her back naturally to let $target$'s hand rest more comfortably. \"Hmm? Why so clingy all of a sudden?\"",

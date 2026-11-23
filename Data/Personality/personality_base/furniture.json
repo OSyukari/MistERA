@@ -356,7 +356,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -378,7 +379,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_takingBreak_Refuse_1",
+                                "pb_com_furniture_takingBreak_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -521,7 +525,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -543,7 +548,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_takingBreak_JoinFailed_1",
+                                "pb_com_furniture_takingBreak_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -716,7 +724,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -738,7 +747,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_watchVideo_Refuse_1",
+                                "pb_com_furniture_watchVideo_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -885,7 +897,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -907,7 +920,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_watchVideo_JoinFailed_1",
+                                "pb_com_furniture_watchVideo_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -1024,7 +1040,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1046,7 +1063,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_playVideoGames_Refuse_1",
+                                "pb_com_furniture_playVideoGames_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1193,7 +1213,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1215,7 +1236,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_playVideoGames_JoinFailed_1",
+                                "pb_com_furniture_playVideoGames_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -1294,5 +1318,24 @@
                 }
             }
         ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "pb_com_furniture_takingBreak_Refuse_1": "$self$摆了摆手。\n\"我现在正想自己待着休息会儿，先不了。\"",
+                "pb_com_furniture_takingBreak_Refuse_2": "$self$靠坐着没动，摇了摇头。\n\"累着呢，晚点再说吧。\"",
+                "pb_com_furniture_takingBreak_JoinFailed_1": "$self$抬眼看了一眼，轻轻摇头。\n\"抱歉，现在不太想有人一块儿。\"",
+                "pb_com_furniture_takingBreak_JoinFailed_2": "$self$往旁边挪了挪。\n\"我还是自己歇着吧。\"",
+                "pb_com_furniture_playVideoGames_Refuse_1": "$self$摆了摆手。\n\"现在没心情打游戏，你自己玩吧。\"",
+                "pb_com_furniture_playVideoGames_Refuse_2": "$self$摇摇头，没接手柄。\n\"先不了，我还有别的事。\"",
+                "pb_com_furniture_playVideoGames_JoinFailed_1": "$self$盯着屏幕头也不抬。\n\"这局已经开着了，加不进来。\"",
+                "pb_com_furniture_playVideoGames_JoinFailed_2": "$self$按了按手柄，歉意地摆摆手。\n\"位置不够了，下局再说吧。\"",
+                "pb_com_furniture_watchVideo_Refuse_1": "$self$摇了摇头。\n\"现在不太想看，你自己看吧。\"",
+                "pb_com_furniture_watchVideo_Refuse_2": "$self$移开视线，婉拒道。\n\"不了，我没什么兴致。\"",
+                "pb_com_furniture_watchVideo_JoinFailed_1": "$self$看了一眼屏幕，摇摇头。\n\"看到一半了，现在不太方便一起。\"",
+                "pb_com_furniture_watchVideo_JoinFailed_2": "$self$往椅背一靠，淡淡说道。\n\"我只想一个人安静看会儿。\""
+            },
+            "en-us": {}
+        }
     }
 }

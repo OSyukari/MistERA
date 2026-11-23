@@ -271,156 +271,424 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被B抚摸 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_1",
-                                "com_sex_finger_caress_B_2"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被B抚摸 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_3",
-                                "com_sex_finger_caress_B_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "targetBaseID": "PLAYER",
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment1": "玩家专用 刚睡醒时的 B抚摸口上文",
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被B抚摸 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_1",
+                                                "com_sex_finger_caress_B_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被B抚摸 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_3",
+                                                "com_sex_finger_caress_B_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment1": "玩家专用 刚睡醒时的 B抚摸口上文",
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "breasts",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被B抚摸 有允许 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_caress_B_10"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "breasts",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被B抚摸 无允许 好意 口上文",
+                                                    "responses": [
+                                                        "com_sex_finger_caress_B_11"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被B抚摸 无允许 敌意 口上文",
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "responses": [
+                                                "com_sex_finger_caress_B_12"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被B抚摸 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_13"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被B抚摸 结果正面 未允许 口上文",
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "breasts",
-                                        "sleep",
-                                        "smile",
                                         "blush",
-                                        "lazy"
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
                                     ],
-                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被B抚摸 有允许 口上文",
                                     "responses": [
-                                        "com_sex_finger_caress_B_10"
+                                        "com_sex_finger_caress_B_14"
                                     ]
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
                                     },
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "breasts",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
+                                        "sleeping",
+                                        "relaxed"
                                     ],
-                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被B抚摸 无允许 好意 口上文",
+                                    "_comment": "2.3.2 睡眠中 被B抚摸 口上文",
                                     "responses": [
-                                        "com_sex_finger_caress_B_11"
+                                        "com_sex_finger_caress_B_1",
+                                        "com_sex_finger_caress_B_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被B抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_3",
+                                        "com_sex_finger_caress_B_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 B抚摸口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 被B抚摸 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_10"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 被B抚摸 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_11"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 被B抚摸 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "breasts",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_finger_caress_B_12"
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被B抚摸 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "scared",
-                                "submissive"
-                            ],
                             "responses": [
-                                "com_sex_finger_caress_B_12"
+                                "com_sex_finger_caress_B_16"
                             ]
                         },
                         {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
+                            "requireSelfOnly": true,
                             "variants": [
+                                {
+                                    "requireSelfNotMaster": true,
+                                    "requireMaster": true,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccessGTE": "Success"
+                                            },
+                                            "_comment": "2.5.10 独自B自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_Self_M_11",
+                                                "com_sex_finger_caress_B_Self_M_12"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "_comment": "2.5.9 独自B自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                                    "responses": [
+                                                        "com_sex_finger_caress_B_Self_M_9",
+                                                        "com_sex_finger_caress_B_Self_M_10"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.11 独自B自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_Self_M_13",
+                                                "com_sex_finger_caress_B_Self_M_14"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_finger_caress_B_Self_M_15",
+                                        "com_sex_finger_caress_B_Self_M_16"
+                                    ],
+                                    "_comment": "2.5.12 独自B自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）"
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "2.5.10 独自B自慰 结果正面 无允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_Self_11",
+                                        "com_sex_finger_caress_B_Self_12"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "breasts",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.5.5 睡眠中 独自B自慰 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_Self_1",
+                                                "com_sex_finger_caress_B_Self_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "breasts",
+                                                "doll",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.5.6 时停中 独自B自慰 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_Self_3",
+                                                "com_sex_finger_caress_B_Self_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.9 独自B自慰 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_Self_9",
+                                                "com_sex_finger_caress_B_Self_10"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "breasts",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自B自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_Self_1",
+                                        "com_sex_finger_caress_B_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "breasts",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自B自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_Self_3",
+                                        "com_sex_finger_caress_B_Self_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "breasts",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被B抚摸 结果正面 有允许 口上文",
+                                    "_comment": "2.5.11 独自B自慰 尝试但结果负面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_finger_caress_B_13"
+                                        "com_sex_finger_caress_B_Self_13",
+                                        "com_sex_finger_caress_B_Self_14"
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.5 ($self$) 被B抚摸 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
                             "responses": [
-                                "com_sex_finger_caress_B_14"
-                            ]
+                                "com_sex_finger_caress_B_Self_15",
+                                "com_sex_finger_caress_B_Self_16"
+                            ],
+                            "_comment": "2.5.12 独自B自慰 尝试但结果负面 无允许 口上文"
                         },
                         {
-                            "requireSelfReceiver": true,
                             "variants": [
                                 {
                                     "requirement": {
@@ -457,141 +725,12 @@
                             ],
                             "responses": [
                                 "com_sex_finger_caress_B_16"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "breasts",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.5.5 睡眠中 独自B自慰 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_1",
-                                "com_sex_finger_caress_B_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "breasts",
-                                "doll",
-                                "idle"
-                            ],
-                            "_comment": "2.5.6 时停中 独自B自慰 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_3",
-                                "com_sex_finger_caress_B_Self_4"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success",
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.9 独自B自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_M_9",
-                                "com_sex_finger_caress_B_Self_M_10"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success",
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.9 独自B自慰 结果正面 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_9",
-                                "com_sex_finger_caress_B_Self_10"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "2.5.10 独自B自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_M_11",
-                                "com_sex_finger_caress_B_Self_M_12"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "2.5.10 独自B自慰 结果正面 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_11",
-                                "com_sex_finger_caress_B_Self_12"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.11 独自B自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_M_13",
-                                "com_sex_finger_caress_B_Self_M_14"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.11 独自B自慰 尝试但结果负面 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_13",
-                                "com_sex_finger_caress_B_Self_14"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.12 独自B自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_M_15",
-                                "com_sex_finger_caress_B_Self_M_16"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.12 独自B自慰 尝试但结果负面 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_15",
-                                "com_sex_finger_caress_B_Self_16"
-                            ]
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -710,26 +849,44 @@
                         {
                             "requireSelfOnly": true,
                             "requirement": {
-                                "requireEPSuccess": false,
-                                "requirePermission": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.7 拒绝独自B自慰的指令 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_5",
-                                "com_sex_finger_caress_B_Self_6"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
                                 "requireEPSuccess": false
                             },
                             "useActiveTags": false,
-                            "_comment": "2.5.8 拒绝独自B自慰的指令 无允许 口上文",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "useActiveTags": false,
+                                    "_comment": "2.5.7 拒绝独自B自慰的指令 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_Self_5",
+                                        "com_sex_finger_caress_B_Self_6"
+                                    ]
+                                }
+                            ],
                             "responses": [
                                 "com_sex_finger_caress_B_Self_7",
                                 "com_sex_finger_caress_B_Self_8"
+                            ],
+                            "_comment": "2.5.8 拒绝独自B自慰的指令 无允许 口上文"
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_caress_B_9"
                             ]
                         }
                     ],

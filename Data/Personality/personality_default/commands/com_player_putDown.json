@@ -1,0 +1,430 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Result_Timestop_1",
+                                        "com_player_putDown_Result_Timestop_2",
+                                        "com_player_putDown_Result_Timestop_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Result_Sleep_1",
+                                        "com_player_putDown_Result_Sleep_2",
+                                        "com_player_putDown_Result_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Result_Fainted_1",
+                                        "com_player_putDown_Result_Fainted_2",
+                                        "com_player_putDown_Result_Fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Result_Restrained_1",
+                                        "com_player_putDown_Result_Restrained_2",
+                                        "com_player_putDown_Result_Restrained_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Result_Woken_1",
+                                        "com_player_putDown_Result_Woken_2",
+                                        "com_player_putDown_Result_Woken_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_player_putDown_Result_Receiver_1",
+                                "com_player_putDown_Result_Receiver_2",
+                                "com_player_putDown_Result_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Begin_Timestop_1",
+                                        "com_player_putDown_Begin_Timestop_2",
+                                        "com_player_putDown_Begin_Timestop_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Begin_Sleep_1",
+                                        "com_player_putDown_Begin_Sleep_2",
+                                        "com_player_putDown_Begin_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Begin_Fainted_1",
+                                        "com_player_putDown_Begin_Fainted_2",
+                                        "com_player_putDown_Begin_Fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_player_putDown_Begin_Restrained_1",
+                                        "com_player_putDown_Begin_Restrained_2",
+                                        "com_player_putDown_Begin_Restrained_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_player_putDown_Begin_Receiver_1",
+                                "com_player_putDown_Begin_Receiver_2",
+                                "com_player_putDown_Begin_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_player_putDown_Refuse_Woken_1",
+                                "com_player_putDown_Refuse_Woken_2",
+                                "com_player_putDown_Refuse_Woken_3"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_player_putDown_Refuse_1",
+                                "com_player_putDown_Refuse_2",
+                                "com_player_putDown_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_player_putDown_Interrupt_Doer_1",
+                                "com_player_putDown_Interrupt_Doer_2",
+                                "com_player_putDown_Interrupt_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_player_putDown_Interrupt_Receiver_1",
+                                "com_player_putDown_Interrupt_Receiver_2",
+                                "com_player_putDown_Interrupt_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_player_putDown_Tryjoin_1",
+                                "com_player_putDown_Tryjoin_2",
+                                "com_player_putDown_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_player_putDown_Joined_1",
+                                "com_player_putDown_Joined_2",
+                                "com_player_putDown_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_player_putDown_Join_Refused_1",
+                                "com_player_putDown_Join_Refused_2",
+                                "com_player_putDown_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_player_putDown_Join_Doer_1",
+                                "com_player_putDown_Join_Doer_2",
+                                "com_player_putDown_Join_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_player_putDown_Join_Receiver_1",
+                                "com_player_putDown_Join_Receiver_2",
+                                "com_player_putDown_Join_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_player_putDown_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_player_putDown_JoinFailed_Doer_1",
+                                "com_player_putDown_JoinFailed_Doer_2",
+                                "com_player_putDown_JoinFailed_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_player_putDown_JoinFailed_Receiver_1",
+                                "com_player_putDown_JoinFailed_Receiver_2",
+                                "com_player_putDown_JoinFailed_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_player_putDown_Result_Timestop_1": "时间静止中的$self$保持着最后那一瞬的姿态，寂静无声。",
+                "com_player_putDown_Result_Timestop_2": "$self$被安放在原地，像一座没有呼吸的雕像。",
+                "com_player_putDown_Result_Timestop_3": "周围的时间仍未流动，$self$对自己的去向一无所知。",
+                "com_player_putDown_Result_Sleep_1": "被放妥后的$self$翻了个身，找了个舒服的姿势继续睡。",
+                "com_player_putDown_Result_Sleep_2": "睡熟的$self$嘴角微微动了动，似乎正做着什么梦。",
+                "com_player_putDown_Result_Sleep_3": "$self$静静地睡着，对周围的动静毫无所觉。",
+                "com_player_putDown_Result_Fainted_1": "$self$软软地歪向一旁，仍旧没有苏醒的迹象。",
+                "com_player_putDown_Result_Fainted_2": "昏厥中的$self$安静地停在原地，连指尖都没动一下。",
+                "com_player_putDown_Result_Fainted_3": "$self$的意识还沉在黑暗里，对$target$的离开或停留都无从知晓。",
+                "com_player_putDown_Result_Restrained_1": "“就把我这么绑着丢在这儿？”$self$有些不满地瞪向$target$。",
+                "com_player_putDown_Result_Restrained_2": "$self$扭了扭发酸的肩膀，勉强靠住一旁让自己好受些。",
+                "com_player_putDown_Result_Restrained_3": "“……行吧，至少不用再被你抱着晃了。”",
+                "com_player_putDown_Result_Woken_1": "“唔……已经到了吗？谢谢。”",
+                "com_player_putDown_Result_Woken_2": "$self$迷迷糊糊地眨了眨眼，过了一会儿才反应过来自己已经落了地。",
+                "com_player_putDown_Result_Woken_3": "“打了个盹的功夫就放下来了啊……”",
+                "com_player_putDown_Result_Receiver_1": "“呼，还是自己待着自在些。”",
+                "com_player_putDown_Result_Receiver_2": "$self$站定后理了理衣角，朝$target$点了下头：“谢了。”",
+                "com_player_putDown_Result_Receiver_3": "“总算落地了，刚才晃得我有点晕。”",
+                "com_player_putDown_Begin_Timestop_1": "时间静止中的$self$维持着被抱时的姿势，一动也不动。",
+                "com_player_putDown_Begin_Timestop_2": "$self$连眼神都没有偏移半分，仿佛被定格在空气里。",
+                "com_player_putDown_Begin_Timestop_3": "凝固在原地的$self$对被放下这件事没有任何察觉。",
+                "com_player_putDown_Begin_Sleep_1": "睡梦中的$self$眉头轻皱了一下，随即又舒展开来。",
+                "com_player_putDown_Begin_Sleep_2": "离开$target$臂弯时，$self$只是含糊地哼了一声，并没有醒。",
+                "com_player_putDown_Begin_Sleep_3": "$self$顺势蜷起身子，呼吸依旧绵长。",
+                "com_player_putDown_Begin_Fainted_1": "昏迷中的$self$毫无着力感，四肢软绵绵地垂落。",
+                "com_player_putDown_Begin_Fainted_2": "$self$的眼皮没有半点动静，任由$target$把自己安顿下来。",
+                "com_player_putDown_Begin_Fainted_3": "失去意识的$self$呼吸浅而稳，对体位的变化全无反应。",
+                "com_player_putDown_Begin_Restrained_1": "“手被绑着站不稳啊，你扶我一把。”",
+                "com_player_putDown_Begin_Restrained_2": "$self$动了动受缚的手腕，费力地靠着腰背稳住重心。",
+                "com_player_putDown_Begin_Restrained_3": "“放下来归放下来，这绳子什么时候给我解开？”",
+                "com_player_putDown_Begin_Receiver_1": "“慢点儿放，别一下子松手。”",
+                "com_player_putDown_Begin_Receiver_2": "$self$顺着$target$的力道挪动身子，找好落脚的地方。",
+                "com_player_putDown_Begin_Receiver_3": "“嗯，就放这儿吧。”",
+                "com_player_putDown_Refuse_Woken_1": "“干嘛把我弄醒又放这儿？再带我走一段嘛。”",
+                "com_player_putDown_Refuse_Woken_2": "$self$睡眼惺忪地拉住$target$：“别走那么快，我还没站稳呢。”",
+                "com_player_putDown_Refuse_Woken_3": "“我正睡着呢，怎么突然就要放下来了……”",
+                "com_player_putDown_Refuse_1": "“等一下，别就这么把我丢这儿啊。”",
+                "com_player_putDown_Refuse_2": "$self$拽住$target$的衣袖不肯松手：“再抱一会儿会怎样。”",
+                "com_player_putDown_Refuse_3": "“我不下去，这里看着一点也不想待。”",
+                "com_player_putDown_Interrupt_Doer_1": "“$target$，我正把人安顿好，你稍等一下。”",
+                "com_player_putDown_Interrupt_Doer_2": "$self$直起身活动了下手腕，朝$target$点点头：“找我有事？”",
+                "com_player_putDown_Interrupt_Doer_3": "“刚好忙完这头，$target$你来得正好。”",
+                "com_player_putDown_Interrupt_Receiver_1": "“哟，$target$，刚好放下来呢，不用在意。”",
+                "com_player_putDown_Interrupt_Receiver_2": "$self$见$target$看过来，顺手拍了拍衣服：“有事找我们？”",
+                "com_player_putDown_Interrupt_Receiver_3": "“别盯着看了$target$，刚才只是搭了把手。”",
+                "com_player_putDown_Tryjoin_1": "“$target$，需不需要我搭把手一起扶着？”",
+                "com_player_putDown_Tryjoin_2": "$self$走近两步看了看情况：“一个人放不稳的话我来帮忙。”",
+                "com_player_putDown_Tryjoin_3": "“我也过来帮着照看一下吧，$target$？”",
+                "com_player_putDown_Joined_1": "“行，我托住这边，你慢点松手。”",
+                "com_player_putDown_Joined_2": "$self$上前帮着稳住身形：“两个人确实顺手多了。”",
+                "com_player_putDown_Joined_3": "“交给我吧$target$，这样稳当些。”",
+                "com_player_putDown_Join_Refused_1": "“行吧，你一个人能应付就行。”",
+                "com_player_putDown_Join_Refused_2": "$self$退开半步让出地方：“那你自己小心点。”",
+                "com_player_putDown_Join_Refused_3": "“没事，我就在旁边看着。”",
+                "com_player_putDown_Join_Doer_1": "“来得正好$target$，帮我搭把手稳一下。”",
+                "com_player_putDown_Join_Doer_2": "$self$朝$target$让出半个身位：“托住另一边就行。”",
+                "com_player_putDown_Join_Doer_3": "“谢了$target$，省得我一个人手忙脚乱的。”",
+                "com_player_putDown_Join_Receiver_1": "“麻烦你了，$target$，两个人扶着确实稳当些。”",
+                "com_player_putDown_Join_Receiver_2": "$self$朝$target$点点头：“多谢帮忙。”",
+                "com_player_putDown_Join_Receiver_3": "“哎，$target$也来搭把手啊，那正好。”",
+                "com_player_putDown_JoinFailed_Doer_1": "“这边我一个人顺手就能放好，不用凑过来了，$target$。”",
+                "com_player_putDown_JoinFailed_Doer_2": "$self$摇摇头示意不必插手：“人多反而施展不开。”",
+                "com_player_putDown_JoinFailed_Doer_3": "“没事，$target$，这点分量我还应付得来。”",
+                "com_player_putDown_JoinFailed_Receiver_1": "“这边没什么要帮忙的，$target$你先去忙吧。”",
+                "com_player_putDown_JoinFailed_Receiver_2": "$self$看了$target$一眼：“已经安顿得差不多了，不用麻烦。”",
+                "com_player_putDown_JoinFailed_Receiver_3": "“心意领了，$target$，这边不用多个人。”"
+            }
+        }
+    }
+}

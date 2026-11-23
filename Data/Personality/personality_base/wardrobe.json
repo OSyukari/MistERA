@@ -119,7 +119,12 @@
                             "responses": [
                                 "pb_com_undress_outer_K_1",
                                 "pb_com_undress_outer_K_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -131,8 +136,25 @@
                     "ID": "com_undress_outer_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_undress_outer_Refuse_rec_1",
+                                "pb_com_undress_outer_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -301,7 +323,12 @@
                             "responses": [
                                 "pb_com_undress_inner_K_1",
                                 "pb_com_undress_inner_K_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -316,8 +343,25 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_undress_inner_Refuse_rec_1",
+                                "pb_com_undress_inner_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -488,7 +532,12 @@
                             "responses": [
                                 "pb_com_undress_skin_K_1",
                                 "pb_com_undress_skin_K_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -503,8 +552,25 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_undress_skin_Refuse_rec_1",
+                                "pb_com_undress_skin_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -800,7 +866,13 @@
                 "pb_com_redress_I_1": "$self$整了整衣领，满意地点点头。",
                 "pb_com_redress_I_2": "“谢了。”$self$随口道谢。",
                 "pb_com_redress_K_1": "$self$松了口气，整理了一下衣服。",
-                "pb_com_redress_K_2": "“……谢了。”$self$别扭地说了一句。"
+                "pb_com_redress_K_2": "“……谢了。”$self$别扭地说了一句。",
+                "pb_com_undress_inner_Refuse_rec_1": "$self$按住贴身衣物，警惕地退开一步。\n\"里面不行，别乱动！\"",
+                "pb_com_undress_inner_Refuse_rec_2": "$self$双臂护在身前，摇头拒绝。\n\"这件绝对不能脱。\"",
+                "pb_com_undress_outer_Refuse_rec_1": "$self$拉紧外套衣襟，往后退开。\n\"别脱我的外套，冷着呢。\"",
+                "pb_com_undress_outer_Refuse_rec_2": "$self$拍开$target$伸向衣领的手。\n\"我自己穿着就行，不用你脱。\"",
+                "pb_com_undress_skin_Refuse_rec_1": "$self$紧紧护住贴身遮蔽，眼神带着戒备。\n\"到这里为止吧，别再脱了。\"",
+                "pb_com_undress_skin_Refuse_rec_2": "$self$用力挣开$target$的手，往后缩去。\n\"不行，绝对不行！\""
             },
             "en-us": {
                 "pb_com_undress_outer_Begin_A_1": "$self$ spreads his arms easily. \"Sure, it's a bit warm anyway.\"",

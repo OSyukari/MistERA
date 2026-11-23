@@ -169,7 +169,12 @@
                                 "com_interaction_initiateSex_Success_Unexpected_4",
                                 "com_interaction_initiateSex_Success_Unexpected_5",
                                 "com_interaction_initiateSex_Success_Unexpected_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -255,6 +260,23 @@
                                 "com_interaction_initiateSex_Fail_Disallow_Hostile_5",
                                 "com_interaction_initiateSex_Fail_Disallow_Hostile_6"
                             ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_interaction_initiateSex_Refuse_fb_1",
+                                "com_interaction_initiateSex_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -317,7 +339,9 @@
                 "com_interaction_initiateSex_Success_Unexpected_3": "$self$声音因紧张而发颤，终究还是闭上眼默许了。\n\n\"如果是$target$的话……也许……并不讨厌。\"",
                 "com_interaction_initiateSex_Success_Unexpected_4": "$self$整个人愣住，瞪大了眼睛。\n\n虽因惊讶而僵硬，她却没有推开凑近的$target$，连自己都没察觉腿已经软了。",
                 "com_interaction_initiateSex_Success_Unexpected_5": "$self$脸瞬间涨红，不知所措地揪着衣角，声音细得几乎听不见。\n\n\"在这儿……？可是……\"",
-                "com_interaction_initiateSex_Success_Unexpected_6": "$self$慌乱地环顾四周，确信没人之后，半推半就地松开了紧绷的大腿。\n\n\"只、只有这次哦……\""
+                "com_interaction_initiateSex_Success_Unexpected_6": "$self$慌乱地环顾四周，确信没人之后，半推半就地松开了紧绷的大腿。\n\n\"只、只有这次哦……\"",
+                "com_interaction_initiateSex_Refuse_fb_1": "$self$冷下脸推开$target$。\n\"抱歉，我现在没这个兴致。\"",
+                "com_interaction_initiateSex_Refuse_fb_2": "$self$退开半步，明确地摇了摇头。\n\"别这样，我不想做这种事。\""
             },
             "en-us": {
                 "com_interaction_initiateSex_Doer_1": "$self$ sets aside what she was doing and turns toward $target$, lowering her voice.",

@@ -7,6 +7,26 @@
                     "ID": "com_furniture_takingBreak",
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_furniture_takingBreak_Self_Success_1",
+                                        "com_furniture_takingBreak_Self_Success_2",
+                                        "com_furniture_takingBreak_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_takingBreak_Self_Fail_1",
+                                "com_furniture_takingBreak_Self_Fail_2",
+                                "com_furniture_takingBreak_Self_Fail_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -24,7 +44,8 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": true
+                                "requireSelfAction": true,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "pouting",
@@ -48,7 +69,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -182,6 +204,17 @@
                     "ID": "com_furniture_takingBreak_Joined",
                     "variants": [
                         {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_takingBreak_Joined_Player_1",
+                                "com_furniture_takingBreak_Joined_Player_2",
+                                "com_furniture_takingBreak_Joined_Player_3"
+                            ]
+                        },
+                        {
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": []
                         }
@@ -195,6 +228,17 @@
                     "ID": "com_furniture_takingBreak_Join_Refused",
                     "variants": [
                         {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_takingBreak_Join_Refused_Player_1",
+                                "com_furniture_takingBreak_Join_Refused_Player_2",
+                                "com_furniture_takingBreak_Join_Refused_Player_3"
+                            ]
+                        },
+                        {
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": []
                         }
@@ -207,22 +251,6 @@
                 "Entry": {
                     "ID": "com_furniture_takingBreak_Join",
                     "variants": [
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_furniture_takingBreak_Join_13",
-                                "com_furniture_takingBreak_Join_14",
-                                "com_furniture_takingBreak_Join_15"
-                            ]
-                        },
                         {
                             "requirement": {
                                 "requireSelfForced": true
@@ -242,6 +270,22 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_furniture_takingBreak_Join_13",
+                                "com_furniture_takingBreak_Join_14",
+                                "com_furniture_takingBreak_Join_15"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -251,7 +295,10 @@
                                 "com_furniture_takingBreak_Join_25",
                                 "com_furniture_takingBreak_Join_26",
                                 "com_furniture_takingBreak_Join_27"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -264,7 +311,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -408,7 +456,55 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak",
-                    "RedirectID": "com_furniture_takingBreak"
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己（单人） → 自己 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_takingLongBreak_Result_Self_Success_1",
+                                        "com_furniture_takingLongBreak_Result_Self_Success_2",
+                                        "com_furniture_takingLongBreak_Result_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "自己（单人） → 自己 ｜ 接受·判定失败",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Result_Self_Fail_1",
+                                "com_furniture_takingLongBreak_Result_Self_Fail_2",
+                                "com_furniture_takingLongBreak_Result_Self_Fail_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "自己 → 玩家 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_furniture_takingLongBreak_Result_Player_Success_1",
+                                        "com_furniture_takingLongBreak_Result_Player_Success_2",
+                                        "com_furniture_takingLongBreak_Result_Player_Success_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "自己 → 玩家 ｜ 接受·判定失败",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Result_Player_Fail_1",
+                                "com_furniture_takingLongBreak_Result_Player_Fail_2",
+                                "com_furniture_takingLongBreak_Result_Player_Fail_3"
+                            ]
+                        }
+                    ]
                 }
             },
             {
@@ -421,43 +517,158 @@
             {
                 "ID": "personality_default",
                 "Entry": {
+                    "ID": "com_furniture_takingLongBreak_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己 → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Refuse_1",
+                                "com_furniture_takingLongBreak_Refuse_2",
+                                "com_furniture_takingLongBreak_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
                     "ID": "com_furniture_takingLongBreak_Tryjoin",
-                    "RedirectID": "com_furniture_takingBreak_Tryjoin"
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Tryjoin_1",
+                                "com_furniture_takingLongBreak_Tryjoin_2",
+                                "com_furniture_takingLongBreak_Tryjoin_3"
+                            ]
+                        }
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak_Joined",
-                    "RedirectID": "com_furniture_takingBreak_Joined"
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Joined_1",
+                                "com_furniture_takingLongBreak_Joined_2",
+                                "com_furniture_takingLongBreak_Joined_3"
+                            ]
+                        }
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak_Join_Refused",
-                    "RedirectID": "com_furniture_takingBreak_Join_Refused"
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Join_Refused_1",
+                                "com_furniture_takingLongBreak_Join_Refused_2",
+                                "com_furniture_takingLongBreak_Join_Refused_3"
+                            ]
+                        }
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak_Join",
-                    "RedirectID": "com_furniture_takingBreak_Join"
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Join_1",
+                                "com_furniture_takingLongBreak_Join_2",
+                                "com_furniture_takingLongBreak_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingLongBreak_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_takingLongBreak_JoinFailed_1",
+                                "com_furniture_takingLongBreak_JoinFailed_2",
+                                "com_furniture_takingLongBreak_JoinFailed_3"
+                            ]
+                        }
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak_Ongoing",
-                    "RedirectID": "com_furniture_takingBreak_Ongoing"
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己 → 玩家 ｜ 进行中",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Ongoing_1",
+                                "com_furniture_takingLongBreak_Ongoing_2",
+                                "com_furniture_takingLongBreak_Ongoing_3"
+                            ]
+                        }
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak_Interrupt",
-                    "RedirectID": "com_furniture_takingBreak_Interrupt"
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "自己 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takingLongBreak_Interrupt_1",
+                                "com_furniture_takingLongBreak_Interrupt_2",
+                                "com_furniture_takingLongBreak_Interrupt_3"
+                            ]
+                        }
+                    ]
                 }
             }
         ]
@@ -596,7 +807,55 @@
                 "com_furniture_takingBreak_Interrupt_27": "$self$稍微往旁边让了一点位置，算是打过招呼。",
                 "com_furniture_takingBreak_Interrupt_28": "$self$稍微往旁边让了一点位置，算是打过招呼。",
                 "com_furniture_takingBreak_Interrupt_29": "$self$打了个哈欠，眼神依旧有些迷离。",
-                "com_furniture_takingBreak_Interrupt_30": "$self$并没有太大的反应，继续维持着原本的姿势。"
+                "com_furniture_takingBreak_Interrupt_30": "$self$并没有太大的反应，继续维持着原本的姿势。",
+                "com_furniture_takingBreak_Self_Success_1": "“嗯……歇这一小会儿，腿总算没那么酸了。”",
+                "com_furniture_takingBreak_Self_Success_2": "$self$伸了个懒腰，呼出一口长气：“差不多该接着忙了。”",
+                "com_furniture_takingBreak_Self_Success_3": "“稍微喘口气果然管用，精神回来点了。”",
+                "com_furniture_takingBreak_Self_Fail_1": "“啧……坐着也是越坐越僵，完全没歇过来。”",
+                "com_furniture_takingBreak_Self_Fail_2": "$self$揉了揉发沉的太阳穴，有点烦躁地站起身。",
+                "com_furniture_takingBreak_Self_Fail_3": "“时间太短了吗……总觉得还是困。”",
+                "com_furniture_takingBreak_Joined_Player_1": "“谢啦$target$，我就在旁边坐一小会儿。”",
+                "com_furniture_takingBreak_Joined_Player_2": "$self$走过去找了个空位靠下：“呼……总算能歇一口气了。”",
+                "com_furniture_takingBreak_Joined_Player_3": "“有个人作伴歇着还挺不错。”",
+                "com_furniture_takingBreak_Join_Refused_Player_1": "“行吧，那我不打扰你歇着了。”",
+                "com_furniture_takingBreak_Join_Refused_Player_2": "$self$点点头转身走开：“我去别的地方坐会儿。”",
+                "com_furniture_takingBreak_Join_Refused_Player_3": "“没事，你慢慢休息。”",
+                "com_furniture_takingLongBreak_Result_Self_Success_1": "“嗯……好好歇了这一阵，浑身轻松多了。”",
+                "com_furniture_takingLongBreak_Result_Self_Success_2": "$self$伸了个懒腰，缓缓呼出一口气：“总算缓过劲来了。”",
+                "com_furniture_takingLongBreak_Result_Self_Success_3": "“精神恢复得差不多了，接下来继续吧。”",
+                "com_furniture_takingLongBreak_Result_Self_Fail_1": "“啧……躺了半天反而更困了，一点没歇过来。”",
+                "com_furniture_takingLongBreak_Result_Self_Fail_2": "$self$揉了揉发沉的太阳穴，有点郁闷地坐起身。",
+                "com_furniture_takingLongBreak_Result_Self_Fail_3": "“怎么越歇越累啊……真是白躺了。”",
+                "com_furniture_takingLongBreak_Result_Player_Success_1": "“歇得真舒服，$target$你恢复得怎么样？”",
+                "com_furniture_takingLongBreak_Result_Player_Success_2": "$self$坐起身活动了下肩颈，朝$target$偏了偏头：“有精神继续了吗？”",
+                "com_furniture_takingLongBreak_Result_Player_Success_3": "“这一觉补得不错，感觉又能忙一阵了。”",
+                "com_furniture_takingLongBreak_Result_Player_Fail_1": "“总觉得越躺越没劲儿……$target$你歇好了吗？”",
+                "com_furniture_takingLongBreak_Result_Player_Fail_2": "$self$叹了口气坐起来，神情有些倦怠：“好像还是有点犯困。”",
+                "com_furniture_takingLongBreak_Result_Player_Fail_3": "“歇了半天还是浑身发沉，大概没躺对姿势吧。”",
+                "com_furniture_takingLongBreak_Refuse_1": "“我现在不想躺下来歇那么久，你自己去吧。”",
+                "com_furniture_takingLongBreak_Refuse_2": "$self$摇摇头站着没动：“这会儿精力还够用，没必要长休。”",
+                "com_furniture_takingLongBreak_Refuse_3": "“我还有别的事要办，就不耽误时间歇着了。”",
+                "com_furniture_takingLongBreak_Tryjoin_1": "“$target$，我也有点累了，能一块儿长休吗？”",
+                "com_furniture_takingLongBreak_Tryjoin_2": "$self$走近几步看了看空位：“介意旁边多个人歇着吗？”",
+                "com_furniture_takingLongBreak_Tryjoin_3": "“正好想找地方歇一阵，算我一个呗，$target$？”",
+                "com_furniture_takingLongBreak_Joined_1": "“谢啦$target$，那我就在旁边躺一会儿。”",
+                "com_furniture_takingLongBreak_Joined_2": "$self$找好位置靠下来，长舒一口气：“可算能好好歇歇了。”",
+                "com_furniture_takingLongBreak_Joined_3": "“我不出声吵你，咱们各歇各的。”",
+                "com_furniture_takingLongBreak_Join_Refused_1": "“行吧，那我不打扰你休息了。”",
+                "com_furniture_takingLongBreak_Join_Refused_2": "$self$点点头退开两步：“我去别处找个空地歇着。”",
+                "com_furniture_takingLongBreak_Join_Refused_3": "“没事，你慢慢歇吧。”",
+                "com_furniture_takingLongBreak_Join_1": "“来吧$target$，这边还空着一块，你也歇会儿。”",
+                "com_furniture_takingLongBreak_Join_2": "$self$往旁边让了让位置：“一起歇着吧，别吵着就行。”",
+                "com_furniture_takingLongBreak_Join_3": "“正好一个人歇着也挺闷，$target$过来吧。”",
+                "com_furniture_takingLongBreak_JoinFailed_1": "“抱歉啊$target$，这地方躺不下两个人，你去别处歇吧。”",
+                "com_furniture_takingLongBreak_JoinFailed_2": "$self$抬眼看了下$target$：“现在不太方便多个人待着，见谅。”",
+                "com_furniture_takingLongBreak_JoinFailed_3": "“地方有限，$target$再找找别的空位吧。”",
+                "com_furniture_takingLongBreak_Ongoing_1": "$self$睁开一只眼看了下$target$：“我再多歇一会儿，你有事先去忙吧。”",
+                "com_furniture_takingLongBreak_Ongoing_2": "“$target$站旁边不累吗？我这儿还得躺一阵呢。”",
+                "com_furniture_takingLongBreak_Ongoing_3": "$self$拉了拉衣角换了个姿势，闭目养神，没再出声。",
+                "com_furniture_takingLongBreak_Interrupt_1": "“哟，$target$，我正长休呢，有事找我？”",
+                "com_furniture_takingLongBreak_Interrupt_2": "$self$略微支起身子朝$target$点头：“动作轻点啊，我难得歇一回。”",
+                "com_furniture_takingLongBreak_Interrupt_3": "“刚好歇到一半，$target$怎么过来了？”"
             },
             "en-us": {
                 "com_furniture_takingBreak_1": "$self$ waves a hand apologetically. \"Umm... I just want to be alone for a bit, maybe another time?\"",

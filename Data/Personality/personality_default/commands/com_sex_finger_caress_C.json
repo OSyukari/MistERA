@@ -270,6 +270,319 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requireSelfNotMaster": true,
+                                    "requireMaster": true,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccessGTE": "Success"
+                                            },
+                                            "_comment": "2.5.10 独自C自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_Self_M_11",
+                                                "com_sex_finger_caress_C_Self_M_12"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "_comment": "2.5.9 独自C自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                                    "responses": [
+                                                        "com_sex_finger_caress_C_Self_M_9",
+                                                        "com_sex_finger_caress_C_Self_M_10"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.11 独自C自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_Self_M_13",
+                                                "com_sex_finger_caress_C_Self_M_14"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_M_15",
+                                        "com_sex_finger_caress_C_Self_M_16"
+                                    ],
+                                    "_comment": "2.5.12 独自C自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）"
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "2.5.10 独自C自慰 结果正面 无允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_11",
+                                        "com_sex_finger_caress_C_Self_12"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "spread_pussy",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.5.5 睡眠中 独自C自慰 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_Self_1",
+                                                "com_sex_finger_caress_C_Self_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "spread_pussy",
+                                                "doll",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.5.6 时停中 独自C自慰 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_Self_3",
+                                                "com_sex_finger_caress_C_Self_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.9 独自C自慰 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_Self_9",
+                                                "com_sex_finger_caress_C_Self_10"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自C自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_1",
+                                        "com_sex_finger_caress_C_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "spread_pussy",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自C自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_3",
+                                        "com_sex_finger_caress_C_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "2.5.11 独自C自慰 尝试但结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_13",
+                                        "com_sex_finger_caress_C_Self_14"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_finger_caress_C_Self_15",
+                                "com_sex_finger_caress_C_Self_16"
+                            ],
+                            "_comment": "2.5.12 独自C自慰 尝试但结果负面 无允许 口上文"
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被C抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_1",
+                                        "com_sex_finger_caress_C_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被C抚摸 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_3",
+                                        "com_sex_finger_caress_C_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 C抚摸口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "spread_pussy",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 被C抚摸 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_11"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "spread_pussy",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 被C抚摸 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_C_12"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 被C抚摸 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_finger_caress_C_13"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "spread_pussy",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被C抚摸 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_14",
+                                        "com_sex_finger_caress_C_15"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被C抚摸 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "spread_pussy",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_finger_caress_C_16",
+                                "com_sex_finger_caress_C_17"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -370,54 +683,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "spread_pussy",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被C抚摸 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_C_14",
-                                        "com_sex_finger_caress_C_15"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被C抚摸 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "spread_pussy",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_finger_caress_C_16",
-                                "com_sex_finger_caress_C_17"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -456,141 +721,12 @@
                             "responses": [
                                 "com_sex_finger_caress_C_20",
                                 "com_sex_finger_caress_C_21"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "spread_pussy",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.5.5 睡眠中 独自C自慰 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_1",
-                                "com_sex_finger_caress_C_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "spread_pussy",
-                                "doll",
-                                "idle"
-                            ],
-                            "_comment": "2.5.6 时停中 独自C自慰 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_3",
-                                "com_sex_finger_caress_C_Self_4"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success",
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.9 独自C自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_M_9",
-                                "com_sex_finger_caress_C_Self_M_10"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success",
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.9 独自C自慰 结果正面 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_9",
-                                "com_sex_finger_caress_C_Self_10"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "2.5.10 独自C自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_M_11",
-                                "com_sex_finger_caress_C_Self_M_12"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "2.5.10 独自C自慰 结果正面 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_11",
-                                "com_sex_finger_caress_C_Self_12"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.11 独自C自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_M_13",
-                                "com_sex_finger_caress_C_Self_M_14"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.11 独自C自慰 尝试但结果负面 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_13",
-                                "com_sex_finger_caress_C_Self_14"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.12 独自C自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_M_15",
-                                "com_sex_finger_caress_C_Self_M_16"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.12 独自C自慰 尝试但结果负面 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_15",
-                                "com_sex_finger_caress_C_Self_16"
-                            ]
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -605,8 +741,52 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_caress_C_Refuse_Receiver_1",
+                                "com_sex_finger_caress_C_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "useActiveTags": false,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "useActiveTags": false,
+                                    "_comment": "2.5.7 拒绝独自C自慰的指令 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_5",
+                                        "com_sex_finger_caress_C_Self_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_finger_caress_C_Self_7",
+                                "com_sex_finger_caress_C_Self_8"
+                            ],
+                            "_comment": "2.5.8 拒绝独自C自慰的指令 无允许 口上文"
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -705,31 +885,6 @@
                             "responses": [
                                 "com_sex_finger_caress_C_10"
                             ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requirePermission": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.7 拒绝独自C自慰的指令 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_5",
-                                "com_sex_finger_caress_C_Self_6"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.8 拒绝独自C自慰的指令 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_7",
-                                "com_sex_finger_caress_C_Self_8"
-                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -817,7 +972,9 @@
                 "com_sex_finger_caress_C_Begin_Self_Sleep_1": "$self$在睡梦中翻了个身，手无意识地埋进腿间，指尖抵着阴蒂轻轻蹭动起来，呼吸也跟着变沉。",
                 "com_sex_finger_caress_C_Begin_Self_Sleep_2": "梦里不知想到了什么，$self$的指尖在腿根间缓缓画圈，腿缝渐渐湿了，她始终没醒。",
                 "com_sex_finger_caress_C_Begin_Timestop_1": "$target$的手指按上她定格腿间的阴蒂碾转，穴口不受控地渗出水润开指腹，$self$张着的腿没有并拢也没有抖。",
-                "com_sex_finger_caress_C_Begin_Timestop_2": "被揉亮的阴蒂在指腹下发硬，$self$的津水顺着腿根淌出亮痕，静止的房间里只有湿黏的碾磨声。"
+                "com_sex_finger_caress_C_Begin_Timestop_2": "被揉亮的阴蒂在指腹下发硬，$self$的津水顺着腿根淌出亮痕，静止的房间里只有湿黏的碾磨声。",
+                "com_sex_finger_caress_C_Refuse_Receiver_1": "$self$冷着脸推开$target$的手。\n\"别碰这里，我现在没心情。\"",
+                "com_sex_finger_caress_C_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作。\n\"不要……别这样碰我。\""
             }
         }
     }

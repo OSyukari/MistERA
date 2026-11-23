@@ -137,22 +137,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_job_cleaning_Join_5",
-                                "com_job_cleaning_Join_6",
-                                "com_job_cleaning_Join_15"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfForced": true
                             },
                             "extraSelfPortraitTags": [
@@ -170,6 +154,22 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_job_cleaning_Join_5",
+                                "com_job_cleaning_Join_6",
+                                "com_job_cleaning_Join_15"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -179,7 +179,10 @@
                                 "com_job_cleaning_Join_9",
                                 "com_job_cleaning_Join_10",
                                 "com_job_cleaning_Join_13"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -192,7 +195,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -339,6 +343,26 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_job_cleaning_Self_Success_1",
+                                        "com_job_cleaning_Self_Success_2",
+                                        "com_job_cleaning_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_cleaning_Self_Fail_1",
+                                "com_job_cleaning_Self_Fail_2",
+                                "com_job_cleaning_Self_Fail_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -417,7 +441,10 @@
                                 "com_job_cleaning_11",
                                 "com_job_cleaning_12",
                                 "com_job_cleaning_14"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -431,7 +458,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -551,7 +579,13 @@
                 "com_job_cleaning_Join_13": "$self$指了指另一侧的架子：\"那你擦那边吧，互不耽误。\"",
                 "com_job_cleaning_Join_14": "$self$看都没看$target$一眼：\"滚一边去，别踩脏我刚拖的地方。\"",
                 "com_job_cleaning_Begin_12": "$self$眨了眨眼，随即接过话头：\"好吧，那我从这边开始扫起。\"",
-                "com_job_cleaning_Join_15": "$self$往旁边让出半步：\"来得正好，角落里的灰我正够不着呢。\""
+                "com_job_cleaning_Join_15": "$self$往旁边让出半步：\"来得正好，角落里的灰我正够不着呢。\"",
+                "com_job_cleaning_Self_Success_1": "$self$环顾了一圈干净整洁的房间，心里舒坦了不少，总算没白累这一趟。",
+                "com_job_cleaning_Self_Success_2": "\"角落里积的灰也都清干净了，这下看着顺眼多了。\" $self$拍拍手上的浮尘。",
+                "com_job_cleaning_Self_Success_3": "把抹布洗净晾好，$self$长出一口气，收工的满足感油然而生。",
+                "com_job_cleaning_Self_Fail_1": "$self$盯着地上越擦越花的水渍叹了口气，干了半天好像跟没干差不多。",
+                "com_job_cleaning_Self_Fail_2": "\"工具也不太顺手，灰尘全扬起来了……\" $self$揉了揉有点发痒的鼻子。",
+                "com_job_cleaning_Self_Fail_3": "越急越容易把东西弄乱，$self$干脆停下手，等会儿再重新收拾一遍。"
             },
             "en-us": {
                 "kojo_default_com_job_cleaning_accept_failure_1": "$self$ accidentally sucked up some important documents with the vacuum cleaner!",

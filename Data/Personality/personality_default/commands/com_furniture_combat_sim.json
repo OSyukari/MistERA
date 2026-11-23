@@ -1,0 +1,239 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "独自（对象是玩家）",
+                                    "responses": [
+                                        "com_furniture_combat_sim_Result_Player_1",
+                                        "com_furniture_combat_sim_Result_Player_2",
+                                        "com_furniture_combat_sim_Result_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_combat_sim_Result_Self_1",
+                                "com_furniture_combat_sim_Result_Self_2",
+                                "com_furniture_combat_sim_Result_Self_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "对象是玩家",
+                            "responses": [
+                                "com_furniture_combat_sim_Result_Player_1",
+                                "com_furniture_combat_sim_Result_Player_2",
+                                "com_furniture_combat_sim_Result_Player_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "通用开始",
+                            "responses": [
+                                "com_furniture_combat_sim_Begin_1",
+                                "com_furniture_combat_sim_Begin_2",
+                                "com_furniture_combat_sim_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己 → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_combat_sim_Refuse_1",
+                                "com_furniture_combat_sim_Refuse_2",
+                                "com_furniture_combat_sim_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "自己 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_combat_sim_Interrupt_1",
+                                "com_furniture_combat_sim_Interrupt_2",
+                                "com_furniture_combat_sim_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_combat_sim_Tryjoin_1",
+                                "com_furniture_combat_sim_Tryjoin_2",
+                                "com_furniture_combat_sim_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_combat_sim_Joined_1",
+                                "com_furniture_combat_sim_Joined_2",
+                                "com_furniture_combat_sim_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_combat_sim_Join_Refused_1",
+                                "com_furniture_combat_sim_Join_Refused_2",
+                                "com_furniture_combat_sim_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_combat_sim_Join_1",
+                                "com_furniture_combat_sim_Join_2",
+                                "com_furniture_combat_sim_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_combat_sim_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_combat_sim_JoinFailed_1",
+                                "com_furniture_combat_sim_JoinFailed_2",
+                                "com_furniture_combat_sim_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_combat_sim_Result_Self_1": "“嗯……刚才那几下收得还是慢了点。”$self$甩了甩有些发酸的手腕。",
+                "com_furniture_combat_sim_Result_Self_2": "$self$长舒一口气，站直身子平复呼吸：“手感还算过得去。”",
+                "com_furniture_combat_sim_Result_Self_3": "“练这一轮够出汗的了，先歇会儿。”",
+                "com_furniture_combat_sim_Result_Player_1": "“呼……$target$你那边练得怎么样？”",
+                "com_furniture_combat_sim_Result_Player_2": "$self$擦了擦额角的汗，朝$target$看过去：“节奏比我刚才稳多了嘛。”",
+                "com_furniture_combat_sim_Result_Player_3": "“各自练完这一轮感觉还不错，下次再约着一起。”",
+                "com_furniture_combat_sim_Begin_1": "“刚好活动活动筋骨，$target$你也一起来？”",
+                "com_furniture_combat_sim_Begin_2": "$self$活动了一下手腕，朝$target$点点头：“别一上来就太拼啊。”",
+                "com_furniture_combat_sim_Begin_3": "“我先热个身，你挑好对手了跟我说。”",
+                "com_furniture_combat_sim_Refuse_1": "“今天状态不太对，模拟战就先免了吧。”",
+                "com_furniture_combat_sim_Refuse_2": "$self$摆摆手：“身上还有点乏，改天再练。”",
+                "com_furniture_combat_sim_Refuse_3": "“我现在不太想动手，$target$你自己练吧。”",
+                "com_furniture_combat_sim_Interrupt_1": "“哟，$target$，我正练着呢，找我有事？”",
+                "com_furniture_combat_sim_Interrupt_2": "$self$收住动作转过身来，喘了口气：“别站太近，小心误伤。”",
+                "com_furniture_combat_sim_Interrupt_3": "“刚好停下来换口气，$target$你也要来练两手？”",
+                "com_furniture_combat_sim_Tryjoin_1": "“$target$，我看你练得挺起劲的，算我一个呗？”",
+                "com_furniture_combat_sim_Tryjoin_2": "$self$走到场边活动了两下肩膀：“正好手痒，一起练练？”",
+                "com_furniture_combat_sim_Tryjoin_3": "“介意多个人一块儿模拟战吗，$target$？”",
+                "com_furniture_combat_sim_Joined_1": "“谢啦，那我站这边，咱们各练各的别撞一块儿就行。”",
+                "com_furniture_combat_sim_Joined_2": "$self$走入场地拉开架势：“有个人陪着练确实更有干劲。”",
+                "com_furniture_combat_sim_Joined_3": "“行，我也开始了啊，$target$。”",
+                "com_furniture_combat_sim_Join_Refused_1": "“行吧，那我就不上去添乱了，你练你的。”",
+                "com_furniture_combat_sim_Join_Refused_2": "$self$停在场外抱起胳膊：“我在旁边看看总行吧。”",
+                "com_furniture_combat_sim_Join_Refused_3": "“没事，等你练完有空了再说。”",
+                "com_furniture_combat_sim_Join_1": "“来吧$target$，地方够大，正好一起练。”",
+                "com_furniture_combat_sim_Join_2": "$self$往旁边让出几步空位：“注意一下节奏别撞到了。”",
+                "com_furniture_combat_sim_Join_3": "“一个人练也挺闷的，$target$来了正好。”",
+                "com_furniture_combat_sim_JoinFailed_1": "“抱歉啊$target$，这会儿场地不太方便多加人，下轮吧。”",
+                "com_furniture_combat_sim_JoinFailed_2": "$self$停下动作朝$target$点点头：“等结束了再叫你。”",
+                "com_furniture_combat_sim_JoinFailed_3": "“今天先这样吧，$target$你去忙别的或者旁边等会儿也行。”"
+            }
+        }
+    }
+}

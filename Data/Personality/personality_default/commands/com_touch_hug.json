@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_hug_Begin_Fainted_1",
+                                "com_touch_hug_Begin_Fainted_2",
+                                "com_touch_hug_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_hug_Begin_Restrained_1",
+                                "com_touch_hug_Begin_Restrained_2",
+                                "com_touch_hug_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -99,6 +131,309 @@
                     "ID": "com_touch_hug",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_hug_fainted_1",
+                                                "com_touch_hug_fainted_2",
+                                                "com_touch_hug_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_hug_restrained_succ_1",
+                                                "com_touch_hug_restrained_succ_2",
+                                                "com_touch_hug_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_hug_woken_1",
+                                                "com_touch_hug_woken_2",
+                                                "com_touch_hug_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被拥抱 口上文",
+                                            "responses": [
+                                                "com_touch_hug_1",
+                                                "com_touch_hug_2",
+                                                "com_touch_hug_3",
+                                                "com_touch_hug_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被拥抱 口上文",
+                                            "responses": [
+                                                "com_touch_hug_7",
+                                                "com_touch_hug_8",
+                                                "com_touch_hug_9",
+                                                "com_touch_hug_10"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被拥抱 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_hug_31",
+                                                "com_touch_hug_32",
+                                                "com_touch_hug_33",
+                                                "com_touch_hug_34"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被拥抱 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_hug_37",
+                                        "com_touch_hug_38",
+                                        "com_touch_hug_39",
+                                        "com_touch_hug_40"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被拥抱 口上文",
+                                    "responses": [
+                                        "com_touch_hug_1",
+                                        "com_touch_hug_2",
+                                        "com_touch_hug_3",
+                                        "com_touch_hug_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被拥抱 口上文",
+                                    "responses": [
+                                        "com_touch_hug_7",
+                                        "com_touch_hug_8",
+                                        "com_touch_hug_9",
+                                        "com_touch_hug_10"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_hug_fainted_1",
+                                        "com_touch_hug_fainted_2",
+                                        "com_touch_hug_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_hug_restrained_fail_1",
+                                        "com_touch_hug_restrained_fail_2",
+                                        "com_touch_hug_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_hug_woken_1",
+                                        "com_touch_hug_woken_2",
+                                        "com_touch_hug_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_hug_49",
+                                "com_touch_hug_50",
+                                "com_touch_hug_51",
+                                "com_touch_hug_52"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被拥抱 口上文",
+                                    "responses": [
+                                        "com_touch_hug_1",
+                                        "com_touch_hug_2",
+                                        "com_touch_hug_3",
+                                        "com_touch_hug_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被拥抱 口上文",
+                                    "responses": [
+                                        "com_touch_hug_7",
+                                        "com_touch_hug_8",
+                                        "com_touch_hug_9",
+                                        "com_touch_hug_10"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被拥抱 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hug_31",
+                                        "com_touch_hug_32",
+                                        "com_touch_hug_33",
+                                        "com_touch_hug_34"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被拥抱 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_hug_37",
+                                "com_touch_hug_38",
+                                "com_touch_hug_39",
+                                "com_touch_hug_40"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -139,52 +474,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被拥抱 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_hug_31",
-                                        "com_touch_hug_32",
-                                        "com_touch_hug_33",
-                                        "com_touch_hug_34"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被拥抱 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_hug_37",
-                                "com_touch_hug_38",
-                                "com_touch_hug_39",
-                                "com_touch_hug_40"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -221,7 +510,12 @@
                                 "com_touch_hug_50",
                                 "com_touch_hug_51",
                                 "com_touch_hug_52"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -233,8 +527,42 @@
                     "ID": "com_touch_hug_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_hug_Refuse_Receiver_1",
+                                "com_touch_hug_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_hug_Refuse_woken_1",
+                                        "com_touch_hug_Refuse_woken_2",
+                                        "com_touch_hug_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -300,6 +628,37 @@
                         }
                     ],
                     "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_hug_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_hug_Ongoing_Player_1",
+                                        "com_touch_hug_Ongoing_Player_2",
+                                        "com_touch_hug_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_hug_Ongoing_NPC_1",
+                                "com_touch_hug_Ongoing_NPC_2",
+                                "com_touch_hug_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
                 }
             }
         ]
@@ -384,7 +743,36 @@
                 "com_touch_hug_Begin_Timestop_1": "$self$被拥进怀里，脸颊贴上$target$肩窝，定格的身子顺着收紧的手臂靠过去，手臂却一直垂在身侧。",
                 "com_touch_hug_Begin_Timestop_2": "$target$从背后环住她定住的腰，$self$的重心被带得前倾半分，随后停在原地，没有任何回应。",
                 "com_touch_hug_Begin_Sleep_3": "$self$被抱住时无意识地动了动肩膀，随后顺着力道贴紧了些，眼皮一直没抬。",
-                "com_touch_hug_Begin_Timestop_3": "双臂被拉起搭到$target$背上又被抱紧，$self$目光停在原处，连呼吸节奏都没有变化。"
+                "com_touch_hug_Begin_Timestop_3": "双臂被拉起搭到$target$背上又被抱紧，$self$目光停在原处，连呼吸节奏都没有变化。",
+                "com_touch_hug_fainted_1": "$self$始终没有恢复意识，全身重量压在$target$手臂上，一动不动。",
+                "com_touch_hug_fainted_2": "任凭$target$抱了许久，$self$仍闭着眼昏着，没有醒来的迹象。",
+                "com_touch_hug_fainted_3": "松手后$self$差点滑倒，被重新扶住时也只是软软地垂着头。",
+                "com_touch_hug_restrained_succ_1": "$self$原本一直往后躲的肩膀慢慢松了下来，靠在$target$胸口没再挣扎。",
+                "com_touch_hug_restrained_succ_2": "手被绑着没法回抱，$self$别过脸小声嘀咕：\"……抱够了没有，勒得慌。\"",
+                "com_touch_hug_restrained_succ_3": "察觉到$target$并没打算做什么出格的事，$self$紧绷的身子放软了些，默许了这个拥抱。",
+                "com_touch_hug_restrained_fail_1": "被勒得喘不过气却没法推开，$self$气得眼圈发红：\"松手！压到我胳膊了！\"",
+                "com_touch_hug_restrained_fail_2": "$self$使劲晃着肩膀想挣脱，束缚勒得生疼也不肯停下。",
+                "com_touch_hug_restrained_fail_3": "$self$抬起头瞪向$target$，声音发哑：\"趁着我被绑住占便宜，算什么本事……\"",
+                "com_touch_hug_woken_1": "$self$迷迷糊糊睁开眼，发现自己正被$target$抱在怀里，愣了两秒：\"唔……抱这么紧干嘛呀？\"",
+                "com_touch_hug_woken_2": "被拥抱弄醒后，$self$打了个哈欠，懒洋洋地靠着没动：\"要抱也等我睡醒了再抱嘛。\"",
+                "com_touch_hug_woken_3": "$self$眨了眨刚醒的眼睛，拍了拍$target$的背：\"醒了醒了，别晃了。\"",
+                "com_touch_hug_Refuse_woken_1": "$self$一睁眼发现有人正往自己身上凑，顿时沉下脸：\"你干什么！离我远点！\"",
+                "com_touch_hug_Refuse_woken_2": "被弄醒的$self$拉下脸，警惕地盯着$target$：\"趁我睡着的时候动手动脚，想干嘛？\"",
+                "com_touch_hug_Refuse_woken_3": "$self$还没彻底清醒就已经拉下脸斥道：\"别烦我睡觉，滚开。\"",
+                "com_touch_hug_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的拥抱。\"",
+                "com_touch_hug_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰拥抱，请自重。\"",
+                "com_touch_hug_Begin_Fainted_1": "$self$毫无知觉地瘫在原地，被$target$揽进怀里时脑袋软绵绵地垂向一侧。",
+                "com_touch_hug_Begin_Fainted_2": "双臂顺着重力滑落，$self$整个人靠在$target$身上，始终没有半点反应。",
+                "com_touch_hug_Begin_Fainted_3": "被抱住腰身时，$self$仍闭着眼昏迷不醒，呼吸声轻得几乎听不见。",
+                "com_touch_hug_Begin_Restrained_1": "$self$被绑着没法抬手推人，只能使劲往后缩着身子避开$target$的怀抱。",
+                "com_touch_hug_Begin_Restrained_2": "挣不开束缚，$self$被揽住时咬紧嘴唇偏过头：\"别碰我……\"",
+                "com_touch_hug_Begin_Restrained_3": "$self$动弹不得，只能别开脸盯着地面，呼吸随着对方靠近一下子急了。",
+                "com_touch_hug_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，不好意思地把脸往另一人肩窝里埋了埋。",
+                "com_touch_hug_Ongoing_Player_2": "被人抱着的时候撞上$target$的视线，$self$耳根一热，冲对方摆了摆手示意别看了。",
+                "com_touch_hug_Ongoing_Player_3": "$self$靠在另一人怀里，朝站在一旁的$target$小声抱怨：\"喂，你在旁边看够了没有？\"",
+                "com_touch_hug_Ongoing_NPC_1": "$self$冲$target$笑了笑，语气轻松：\"抱也抱够了，该干正事了吧？\"",
+                "com_touch_hug_Ongoing_NPC_2": "拥抱结束后，$self$顺手理了理衣领，调侃道：\"你刚才抱得还挺暖和的。\"",
+                "com_touch_hug_Ongoing_NPC_3": "$self$看着$target$笑道：\"行啦，再抱下去天都要黑了。\""
             },
             "en-us": {
                 "com_touch_hug_Begin_1": "$self$ naturally opened her arms and buried her face deep in the crook of $target$'s neck, letting out a comfortable sigh.",

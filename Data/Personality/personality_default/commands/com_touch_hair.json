@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_hair_Begin_Fainted_1",
+                                "com_touch_hair_Begin_Fainted_2",
+                                "com_touch_hair_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_hair_Begin_Restrained_1",
+                                "com_touch_hair_Begin_Restrained_2",
+                                "com_touch_hair_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -99,6 +131,309 @@
                     "ID": "com_touch_hair",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_hair_fainted_1",
+                                                "com_touch_hair_fainted_2",
+                                                "com_touch_hair_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_hair_restrained_succ_1",
+                                                "com_touch_hair_restrained_succ_2",
+                                                "com_touch_hair_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_hair_woken_1",
+                                                "com_touch_hair_woken_2",
+                                                "com_touch_hair_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被抚摸头发 口上文",
+                                            "responses": [
+                                                "com_touch_hair_sleep_1",
+                                                "com_touch_hair_sleep_2",
+                                                "com_touch_hair_sleep_3",
+                                                "com_touch_hair_sleep_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被抚摸头发 口上文",
+                                            "responses": [
+                                                "com_touch_hair_timestop_1",
+                                                "com_touch_hair_timestop_2",
+                                                "com_touch_hair_timestop_3",
+                                                "com_touch_hair_timestop_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被抚摸头发 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_hair_succ_allow_1",
+                                                "com_touch_hair_succ_allow_2",
+                                                "com_touch_hair_succ_allow_3",
+                                                "com_touch_hair_succ_allow_4"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被抚摸头发 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_hair_succ_noallow_1",
+                                        "com_touch_hair_succ_noallow_2",
+                                        "com_touch_hair_succ_noallow_3",
+                                        "com_touch_hair_succ_noallow_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸头发 口上文",
+                                    "responses": [
+                                        "com_touch_hair_sleep_1",
+                                        "com_touch_hair_sleep_2",
+                                        "com_touch_hair_sleep_3",
+                                        "com_touch_hair_sleep_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸头发 口上文",
+                                    "responses": [
+                                        "com_touch_hair_timestop_1",
+                                        "com_touch_hair_timestop_2",
+                                        "com_touch_hair_timestop_3",
+                                        "com_touch_hair_timestop_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_hair_fainted_1",
+                                        "com_touch_hair_fainted_2",
+                                        "com_touch_hair_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_hair_restrained_fail_1",
+                                        "com_touch_hair_restrained_fail_2",
+                                        "com_touch_hair_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_hair_woken_1",
+                                        "com_touch_hair_woken_2",
+                                        "com_touch_hair_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_hair_succ_neg_noallow_1",
+                                "com_touch_hair_succ_neg_noallow_2",
+                                "com_touch_hair_succ_neg_noallow_3",
+                                "com_touch_hair_succ_neg_noallow_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸头发 口上文",
+                                    "responses": [
+                                        "com_touch_hair_sleep_1",
+                                        "com_touch_hair_sleep_2",
+                                        "com_touch_hair_sleep_3",
+                                        "com_touch_hair_sleep_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸头发 口上文",
+                                    "responses": [
+                                        "com_touch_hair_timestop_1",
+                                        "com_touch_hair_timestop_2",
+                                        "com_touch_hair_timestop_3",
+                                        "com_touch_hair_timestop_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被抚摸头发 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hair_succ_allow_1",
+                                        "com_touch_hair_succ_allow_2",
+                                        "com_touch_hair_succ_allow_3",
+                                        "com_touch_hair_succ_allow_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被抚摸头发 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_hair_succ_noallow_1",
+                                "com_touch_hair_succ_noallow_2",
+                                "com_touch_hair_succ_noallow_3",
+                                "com_touch_hair_succ_noallow_4"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -139,52 +474,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被抚摸头发 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_hair_succ_allow_1",
-                                        "com_touch_hair_succ_allow_2",
-                                        "com_touch_hair_succ_allow_3",
-                                        "com_touch_hair_succ_allow_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被抚摸头发 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_hair_succ_noallow_1",
-                                "com_touch_hair_succ_noallow_2",
-                                "com_touch_hair_succ_noallow_3",
-                                "com_touch_hair_succ_noallow_4"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -221,7 +510,12 @@
                                 "com_touch_hair_succ_neg_noallow_2",
                                 "com_touch_hair_succ_neg_noallow_3",
                                 "com_touch_hair_succ_neg_noallow_4"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -233,8 +527,42 @@
                     "ID": "com_touch_hair_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_hair_Refuse_Receiver_1",
+                                "com_touch_hair_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_hair_Refuse_woken_1",
+                                        "com_touch_hair_Refuse_woken_2",
+                                        "com_touch_hair_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -301,6 +629,37 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_hair_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_hair_Ongoing_Player_1",
+                                        "com_touch_hair_Ongoing_Player_2",
+                                        "com_touch_hair_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_hair_Ongoing_NPC_1",
+                                "com_touch_hair_Ongoing_NPC_2",
+                                "com_touch_hair_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -361,7 +720,36 @@
                 "com_touch_hair_Begin_Timestop_1": "$target$把头发拢进掌心顺着捋过，松手时$self$的头发贴回原位，纹丝没乱。",
                 "com_touch_hair_Begin_Timestop_2": "$self$维持着原本的姿势定住，任由$target$捻起一缕头发绕在指尖把玩。",
                 "com_touch_hair_Begin_Sleep_3": "头顶传来轻柔的抚摸，$self$只是动了动脑袋，眼皮一直没抬。",
-                "com_touch_hair_Begin_Timestop_3": "头顶被反复轻抚，$self$站在原地一动不动，目光仍停在原来的落点上。"
+                "com_touch_hair_Begin_Timestop_3": "头顶被反复轻抚，$self$站在原地一动不动，目光仍停在原来的落点上。",
+                "com_touch_hair_fainted_1": "头发被反复抚摸，$self$始终昏迷着，没有半点醒来的迹象。",
+                "com_touch_hair_fainted_2": "$self$没有恢复意识，头顶被搓热了也依旧毫无反应。",
+                "com_touch_hair_fainted_3": "无论$target$怎么揉弄头发，$self$都闭着眼一动不动。",
+                "com_touch_hair_restrained_succ_1": "$self$原本绷紧的肩膀慢慢松了下来，闷声道：\"……力道倒还挺轻的。\"",
+                "com_touch_hair_restrained_succ_2": "被绑着没法躲，$self$小声嘀咕：\"……别把头发揉成鸡窝就行。\"",
+                "com_touch_hair_restrained_succ_3": "头顶被轻抚得有些发困，$self$垂下视线不再咬牙硬撑。",
+                "com_touch_hair_restrained_fail_1": "头发被扯得头皮生疼却没法躲，$self$气得眼圈发红：\"轻点！扯痛我了！\"",
+                "com_touch_hair_restrained_fail_2": "$self$咬着牙瞪向$target$，语气发哑：\"趁人被绑住乱抓头发，算什么本事……\"",
+                "com_touch_hair_restrained_fail_3": "$self$浑身绷紧，声音里带着火气：\"别再拽了，头皮都要被扯掉了！\"",
+                "com_touch_hair_woken_1": "$self$迷迷糊糊睁开眼，看见$target$的手正停在自己头顶：\"唔……你刚才在摸我头？\"",
+                "com_touch_hair_woken_2": "被头顶的动静弄醒，$self$打了个哈欠，倒没怎么生气：\"干嘛趁我睡着揉我头发呀……\"",
+                "com_touch_hair_woken_3": "$self$刚醒过来，声音还有点沙哑：\"手倒挺轻的，就是把我弄醒了。\"",
+                "com_touch_hair_Refuse_woken_1": "$self$刚一醒过来就沉下脸瞪着$target$：\"趁我睡着乱摸别人头发，你有病吧！\"",
+                "com_touch_hair_Refuse_woken_2": "被弄醒的$self$拉下脸，语气生硬得很：\"把你的手拿开，别烦我睡觉！\"",
+                "com_touch_hair_Refuse_woken_3": "$self$还没彻底清醒就已经拉下脸斥道：\"滚远点，别乱碰！\"",
+                "com_touch_hair_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的头发。\"",
+                "com_touch_hair_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰头发，请自重。\"",
+                "com_touch_hair_Begin_Fainted_1": "$self$毫无知觉地昏迷着，头顶被$target$抚摸时没有任何反应。",
+                "com_touch_hair_Begin_Fainted_2": "头发被轻轻拨弄，$self$仍闭着眼一动不动，呼吸声轻弱而平缓。",
+                "com_touch_hair_Begin_Fainted_3": "$self$完全失去了意识，任由$target$的手在自己头上轻抚。",
+                "com_touch_hair_Begin_Restrained_1": "$self$被绑着动弹不得，只能偏过头咬牙道：\"别碰我头……\"",
+                "com_touch_hair_Begin_Restrained_2": "手脚都被制住，$self$狠狠瞪着靠近的$target$，呼吸一下子急了。",
+                "com_touch_hair_Begin_Restrained_3": "$self$无力挣开束缚，缩着脖子闭上眼，满脸抗拒。",
+                "com_touch_hair_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，脸颊微热，不好意思地把视线移向别处。",
+                "com_touch_hair_Ongoing_Player_2": "被摸着头时撞上$target$的目光，$self$耳根发烫，冲对方递去一个别看了的眼神。",
+                "com_touch_hair_Ongoing_Player_3": "$self$小声冲站在旁边的$target$抱怨：\"喂，有那么好看吗，一直盯着。\"",
+                "com_touch_hair_Ongoing_NPC_1": "$self$顺了顺被摸乱的头发，冲$target$笑道：\"摸够了吧？头发都要被你揉散了。\"",
+                "com_touch_hair_Ongoing_NPC_2": "抚摸停下后，$self$看着$target$调侃道：\"手感就这么好啊？\"",
+                "com_touch_hair_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，再摸下去我真要犯困了。\""
             },
             "en-us": {
                 "com_touch_hair_Begin_1": "$self$ naturally leans her head into $target$'s palm as if accustomed to it, letting out a comfortable hum.",

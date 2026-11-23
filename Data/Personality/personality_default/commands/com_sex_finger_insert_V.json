@@ -275,6 +275,333 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requireSelfNotMaster": true,
+                                    "requireMaster": true,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccessGTE": "Success"
+                                            },
+                                            "_comment": "2.5.10 独自V指入自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_Self_M_11",
+                                                "com_sex_finger_insert_V_Self_M_12"
+                                            ],
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "_comment": "2.5.9 独自V指入自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                                    "responses": [
+                                                        "com_sex_finger_insert_V_Self_M_9",
+                                                        "com_sex_finger_insert_V_Self_M_10"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.11 独自V指入自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_Self_M_13",
+                                                "com_sex_finger_insert_V_Self_M_14"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Self_M_15",
+                                        "com_sex_finger_insert_V_Self_M_16"
+                                    ],
+                                    "_comment": "2.5.12 独自V指入自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）"
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "2.5.10 独自V指入自慰 结果正面 无允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Self_11",
+                                        "com_sex_finger_insert_V_Self_12"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.5.5 睡眠中 独自V指入自慰 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_Self_1",
+                                                "com_sex_finger_insert_V_Self_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "doll",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.5.6 时停中 独自V指入自慰 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_Self_3",
+                                                "com_sex_finger_insert_V_Self_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "_comment": "2.5.9 独自V指入自慰 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_Self_9",
+                                                "com_sex_finger_insert_V_Self_10"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.5.5 睡眠中 独自V指入自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Self_1",
+                                        "com_sex_finger_insert_V_Self_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "doll",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.5.6 时停中 独自V指入自慰 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Self_3",
+                                        "com_sex_finger_insert_V_Self_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "2.5.11 独自V指入自慰 尝试但结果负面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Self_13",
+                                        "com_sex_finger_insert_V_Self_14"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_finger_insert_V_Self_15",
+                                "com_sex_finger_insert_V_Self_16"
+                            ],
+                            "_comment": "2.5.12 独自V指入自慰 尝试但结果负面 无允许 口上文"
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被V指入 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_1",
+                                        "com_sex_finger_insert_V_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被V指入 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_3",
+                                        "com_sex_finger_insert_V_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 V指入口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 被V指入 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_15",
+                                                "com_sex_finger_insert_V_16"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 被V指入 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_V_17",
+                                                "com_sex_finger_insert_V_18"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 被V指入 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_finger_insert_V_19",
+                                        "com_sex_finger_insert_V_20"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "fingering",
+                                        "spread_pussy",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被V指入 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_21",
+                                        "com_sex_finger_insert_V_22"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被V指入 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_finger_insert_V_23",
+                                "com_sex_finger_insert_V_24"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -383,56 +710,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被V指入 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_V_21",
-                                        "com_sex_finger_insert_V_22"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被V指入 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_finger_insert_V_23",
-                                "com_sex_finger_insert_V_24"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -473,143 +750,12 @@
                             "responses": [
                                 "com_sex_finger_insert_V_27",
                                 "com_sex_finger_insert_V_28"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "fingering",
-                                "spread_pussy",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.5.5 睡眠中 独自V指入自慰 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_1",
-                                "com_sex_finger_insert_V_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "fingering",
-                                "spread_pussy",
-                                "doll",
-                                "idle"
-                            ],
-                            "_comment": "2.5.6 时停中 独自V指入自慰 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_3",
-                                "com_sex_finger_insert_V_Self_4"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success",
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.9 独自V指入自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_M_9",
-                                "com_sex_finger_insert_V_Self_M_10"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success",
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.9 独自V指入自慰 结果正面 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_9",
-                                "com_sex_finger_insert_V_Self_10"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "2.5.10 独自V指入自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_M_11",
-                                "com_sex_finger_insert_V_Self_M_12"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "2.5.10 独自V指入自慰 结果正面 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_11",
-                                "com_sex_finger_insert_V_Self_12"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.11 独自V指入自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_M_13",
-                                "com_sex_finger_insert_V_Self_M_14"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.11 独自V指入自慰 尝试但结果负面 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_13",
-                                "com_sex_finger_insert_V_Self_14"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.12 独自V指入自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_M_15",
-                                "com_sex_finger_insert_V_Self_M_16"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.12 独自V指入自慰 尝试但结果负面 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_15",
-                                "com_sex_finger_insert_V_Self_16"
-                            ]
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -624,8 +770,52 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_insert_V_Refuse_Receiver_1",
+                                "com_sex_finger_insert_V_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "useActiveTags": false,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "useActiveTags": false,
+                                    "_comment": "2.5.7 拒绝独自V指入自慰的指令 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_V_Self_5",
+                                        "com_sex_finger_insert_V_Self_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_finger_insert_V_Self_7",
+                                "com_sex_finger_insert_V_Self_8"
+                            ],
+                            "_comment": "2.5.8 拒绝独自V指入自慰的指令 无允许 口上文"
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -728,31 +918,6 @@
                                 "com_sex_finger_insert_V_13",
                                 "com_sex_finger_insert_V_14"
                             ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requirePermission": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.7 拒绝独自V指入自慰的指令 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_5",
-                                "com_sex_finger_insert_V_Self_6"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.8 拒绝独自V指入自慰的指令 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_V_Self_7",
-                                "com_sex_finger_insert_V_Self_8"
-                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -847,7 +1012,9 @@
                 "com_sex_finger_insert_V_Self_M_15": "$self$麻木地抽送着手指给$target$看，腿间干干的。\n\"……看够了吗，我演不好这种戏。\"",
                 "com_sex_finger_insert_V_Self_M_16": "$self$的手指停在穴口，僵着不肯再动。\n\"够了没有……够了吧……我不想再插了。\"",
                 "com_sex_finger_insert_V_Self_15": "$self$麻木地抽送着手指，小穴干干的不见水。\n\"……怎么就是没感觉。\"",
-                "com_sex_finger_insert_V_Self_16": "$self$把手指从小穴退出来，没了兴致。\n\"……不弄了，白费劲。\""
+                "com_sex_finger_insert_V_Self_16": "$self$把手指从小穴退出来，没了兴致。\n\"……不弄了，白费劲。\"",
+                "com_sex_finger_insert_V_Refuse_Receiver_1": "$self$冷着脸推开$target$的手。\n\"别碰这里，我现在没心情。\"",
+                "com_sex_finger_insert_V_Refuse_Receiver_2": "$self$往后退开，避开了$target$的动作。\n\"不要……别这样碰我。\""
             },
             "en-us": {}
         }

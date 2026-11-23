@@ -141,8 +141,26 @@
                     "ID": "com_touch_head_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_head_Refuse_rec_1",
+                                "pb_com_touch_head_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -184,7 +202,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_head_Refuse_fb_1",
+                                "pb_com_touch_head_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -330,8 +351,26 @@
                     "ID": "com_touch_hair_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_hair_Refuse_rec_1",
+                                "pb_com_touch_hair_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -373,7 +412,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hair_Refuse_fb_1",
+                                "pb_com_touch_hair_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -519,8 +561,26 @@
                     "ID": "com_touch_cheek_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_cheek_Refuse_rec_1",
+                                "pb_com_touch_cheek_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -562,7 +622,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_cheek_Refuse_fb_1",
+                                "pb_com_touch_cheek_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -708,8 +771,26 @@
                     "ID": "com_touch_ears_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_ears_Refuse_rec_1",
+                                "pb_com_touch_ears_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -751,7 +832,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_ears_Refuse_fb_1",
+                                "pb_com_touch_ears_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -897,8 +981,26 @@
                     "ID": "com_touch_fingers_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_fingers_Refuse_rec_1",
+                                "pb_com_touch_fingers_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -940,7 +1042,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_fingers_Refuse_fb_1",
+                                "pb_com_touch_fingers_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1086,8 +1191,26 @@
                     "ID": "com_touch_foot_toes_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_foot_toes_Refuse_rec_1",
+                                "pb_com_touch_foot_toes_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1129,7 +1252,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_foot_toes_Refuse_fb_1",
+                                "pb_com_touch_foot_toes_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1275,8 +1401,26 @@
                     "ID": "com_touch_abdomen_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_abdomen_Refuse_rec_1",
+                                "pb_com_touch_abdomen_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1318,7 +1462,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_abdomen_Refuse_fb_1",
+                                "pb_com_touch_abdomen_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1464,8 +1611,26 @@
                     "ID": "com_touch_butt_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_butt_Refuse_rec_1",
+                                "pb_com_touch_butt_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1507,7 +1672,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_butt_Refuse_fb_1",
+                                "pb_com_touch_butt_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1653,8 +1821,26 @@
                     "ID": "com_touch_thigh_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_thigh_Refuse_rec_1",
+                                "pb_com_touch_thigh_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1696,7 +1882,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_thigh_Refuse_fb_1",
+                                "pb_com_touch_thigh_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1842,8 +2031,26 @@
                     "ID": "com_touch_shoulders_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_shoulders_Refuse_rec_1",
+                                "pb_com_touch_shoulders_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1885,7 +2092,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_shoulders_Refuse_fb_1",
+                                "pb_com_touch_shoulders_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -2031,8 +2241,26 @@
                     "ID": "com_touch_hug_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_hug_Refuse_rec_1",
+                                "pb_com_touch_hug_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -2074,7 +2302,10 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hug_Refuse_fb_1",
+                                "pb_com_touch_hug_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -2220,8 +2451,26 @@
                     "ID": "com_touch_back_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "pb_com_touch_back_Refuse_rec_1",
+                                "pb_com_touch_back_Refuse_rec_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -2263,12 +2512,70 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_back_Refuse_fb_1",
+                                "pb_com_touch_back_Refuse_fb_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
                 }
             }
         ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "pb_com_touch_abdomen_Refuse_rec_1": "$self$避开了$target$伸向腹部的手。\n\"别碰我的小腹，现在不太方便。\"",
+                "pb_com_touch_abdomen_Refuse_rec_2": "$self$把小腹往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_abdomen_Refuse_fb_1": "$self$皱起眉，护住自己的腹部。\n\"别乱碰。\"",
+                "pb_com_touch_abdomen_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_back_Refuse_rec_1": "$self$避开了$target$伸向背部的手。\n\"别碰我的后背，现在不太方便。\"",
+                "pb_com_touch_back_Refuse_rec_2": "$self$把后背往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_back_Refuse_fb_1": "$self$皱起眉，护住自己的背部。\n\"别乱碰。\"",
+                "pb_com_touch_back_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_butt_Refuse_rec_1": "$self$避开了$target$伸向屁股的手。\n\"别碰我的臀部，现在不太方便。\"",
+                "pb_com_touch_butt_Refuse_rec_2": "$self$把臀部往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_butt_Refuse_fb_1": "$self$皱起眉，护住自己的屁股。\n\"别乱碰。\"",
+                "pb_com_touch_butt_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_cheek_Refuse_rec_1": "$self$避开了$target$伸向脸颊的手。\n\"别碰我的脸，现在不太方便。\"",
+                "pb_com_touch_cheek_Refuse_rec_2": "$self$把脸往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_cheek_Refuse_fb_1": "$self$皱起眉，护住自己的脸颊。\n\"别乱碰。\"",
+                "pb_com_touch_cheek_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_ears_Refuse_rec_1": "$self$避开了$target$伸向耳朵的手。\n\"别碰我的耳尖，现在不太方便。\"",
+                "pb_com_touch_ears_Refuse_rec_2": "$self$把耳尖往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_ears_Refuse_fb_1": "$self$皱起眉，护住自己的耳朵。\n\"别乱碰。\"",
+                "pb_com_touch_ears_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_fingers_Refuse_rec_1": "$self$避开了$target$伸向手指的手。\n\"别碰我的手，现在不太方便。\"",
+                "pb_com_touch_fingers_Refuse_rec_2": "$self$把手往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_fingers_Refuse_fb_1": "$self$皱起眉，护住自己的手指。\n\"别乱碰。\"",
+                "pb_com_touch_fingers_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_foot_toes_Refuse_rec_1": "$self$避开了$target$伸向脚趾的手。\n\"别碰我的脚，现在不太方便。\"",
+                "pb_com_touch_foot_toes_Refuse_rec_2": "$self$把脚往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_foot_toes_Refuse_fb_1": "$self$皱起眉，护住自己的脚趾。\n\"别乱碰。\"",
+                "pb_com_touch_foot_toes_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_hair_Refuse_rec_1": "$self$避开了$target$伸向头发的手。\n\"别碰我的脑袋，现在不太方便。\"",
+                "pb_com_touch_hair_Refuse_rec_2": "$self$把脑袋往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_hair_Refuse_fb_1": "$self$皱起眉，护住自己的头发。\n\"别乱碰。\"",
+                "pb_com_touch_hair_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_head_Refuse_rec_1": "$self$避开了$target$伸向头部的手。\n\"别碰我的头，现在不太方便。\"",
+                "pb_com_touch_head_Refuse_rec_2": "$self$把头往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_head_Refuse_fb_1": "$self$皱起眉，护住自己的头部。\n\"别乱碰。\"",
+                "pb_com_touch_head_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_hug_Refuse_rec_1": "$self$侧身避开了$target$张开的手臂。\n\"别抱过来，我现在不想碰。\"",
+                "pb_com_touch_hug_Refuse_rec_2": "$self$抬手抵住$target$的胸口，拉开距离。\n\"抱歉，还是别这样了。\"",
+                "pb_com_touch_hug_Refuse_fb_1": "$self$往后退开半步，冷冷摇头。\n\"别靠近我。\"",
+                "pb_com_touch_hug_Refuse_fb_2": "$self$别过脸去，拒人于千里之外。\n\"现在不行。\"",
+                "pb_com_touch_shoulders_Refuse_rec_1": "$self$避开了$target$伸向肩膀的手。\n\"别碰我的肩，现在不太方便。\"",
+                "pb_com_touch_shoulders_Refuse_rec_2": "$self$把肩往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_shoulders_Refuse_fb_1": "$self$皱起眉，护住自己的肩膀。\n\"别乱碰。\"",
+                "pb_com_touch_shoulders_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_thigh_Refuse_rec_1": "$self$避开了$target$伸向大腿的手。\n\"别碰我的腿，现在不太方便。\"",
+                "pb_com_touch_thigh_Refuse_rec_2": "$self$把腿往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
+                "pb_com_touch_thigh_Refuse_fb_1": "$self$皱起眉，护住自己的大腿。\n\"别乱碰。\"",
+                "pb_com_touch_thigh_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\""
+            },
+            "en-us": {}
+        }
     }
 }

@@ -357,6 +357,375 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M",
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 睡眠中 接吻",
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_Sleep_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M",
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 接吻",
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_Timestop_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 接吻 有允许",
+                                            "responses": [
+                                                "com_sex_oral_kiss_FE_Player_1"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "blush",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 接吻 有允许（还不熟练）",
+                                            "responses": [
+                                                "com_sex_oral_kiss_FE_1",
+                                                "com_sex_oral_kiss_FE_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "blush",
+                                                "shy",
+                                                "trembling"
+                                            ],
+                                            "_comment": "初体验 接吻 未允许 好意（还不熟练）",
+                                            "responses": [
+                                                "com_sex_oral_kiss_FE_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "angry",
+                                        "cry",
+                                        "tearful"
+                                    ],
+                                    "_comment": "初体验 接吻 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_4",
+                                        "com_sex_oral_kiss_FE_5"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 接吻",
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_Partner_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "sleeping",
+                                        "relaxed",
+                                        "slightly_frowning",
+                                        "unconscious"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 亲吻口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_1",
+                                        "com_sex_oral_kiss_2",
+                                        "com_sex_oral_kiss_3",
+                                        "com_sex_oral_kiss_4",
+                                        "com_sex_oral_kiss_5",
+                                        "com_sex_oral_kiss_6",
+                                        "com_sex_oral_kiss_7",
+                                        "com_sex_oral_kiss_8",
+                                        "com_sex_oral_kiss_9",
+                                        "com_sex_oral_kiss_10",
+                                        "com_sex_oral_kiss_11",
+                                        "com_sex_oral_kiss_12",
+                                        "com_sex_oral_kiss_13",
+                                        "com_sex_oral_kiss_14",
+                                        "com_sex_oral_kiss_15",
+                                        "com_sex_oral_kiss_16",
+                                        "com_sex_oral_kiss_17",
+                                        "com_sex_oral_kiss_18",
+                                        "com_sex_oral_kiss_19",
+                                        "com_sex_oral_kiss_20",
+                                        "com_sex_oral_kiss_21",
+                                        "com_sex_oral_kiss_22"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle",
+                                        "frozen_mid_motion",
+                                        "unaware",
+                                        "still"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被亲吻口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_23",
+                                        "com_sex_oral_kiss_24",
+                                        "com_sex_oral_kiss_25",
+                                        "com_sex_oral_kiss_26",
+                                        "com_sex_oral_kiss_27",
+                                        "com_sex_oral_kiss_28",
+                                        "com_sex_oral_kiss_29",
+                                        "com_sex_oral_kiss_30",
+                                        "com_sex_oral_kiss_31",
+                                        "com_sex_oral_kiss_32",
+                                        "com_sex_oral_kiss_33",
+                                        "com_sex_oral_kiss_34",
+                                        "com_sex_oral_kiss_35",
+                                        "com_sex_oral_kiss_36",
+                                        "com_sex_oral_kiss_37",
+                                        "com_sex_oral_kiss_38",
+                                        "com_sex_oral_kiss_39",
+                                        "com_sex_oral_kiss_40",
+                                        "com_sex_oral_kiss_41",
+                                        "com_sex_oral_kiss_42",
+                                        "com_sex_oral_kiss_43",
+                                        "com_sex_oral_kiss_44"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 亲吻口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.5",
+                                            "responses": [
+                                                "com_sex_oral_kiss_85",
+                                                "com_sex_oral_kiss_86",
+                                                "com_sex_oral_kiss_87",
+                                                "com_sex_oral_kiss_88",
+                                                "com_sex_oral_kiss_89",
+                                                "com_sex_oral_kiss_90",
+                                                "com_sex_oral_kiss_91",
+                                                "com_sex_oral_kiss_92",
+                                                "com_sex_oral_kiss_93",
+                                                "com_sex_oral_kiss_94",
+                                                "com_sex_oral_kiss_95",
+                                                "com_sex_oral_kiss_96",
+                                                "com_sex_oral_kiss_97",
+                                                "com_sex_oral_kiss_98",
+                                                "com_sex_oral_kiss_99",
+                                                "com_sex_oral_kiss_100"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "kiss",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.2.7",
+                                            "responses": [
+                                                "com_sex_oral_kiss_101",
+                                                "com_sex_oral_kiss_102",
+                                                "com_sex_oral_kiss_103",
+                                                "com_sex_oral_kiss_104",
+                                                "com_sex_oral_kiss_105",
+                                                "com_sex_oral_kiss_106",
+                                                "com_sex_oral_kiss_107",
+                                                "com_sex_oral_kiss_108",
+                                                "com_sex_oral_kiss_109",
+                                                "com_sex_oral_kiss_110",
+                                                "com_sex_oral_kiss_111",
+                                                "com_sex_oral_kiss_112",
+                                                "com_sex_oral_kiss_113",
+                                                "com_sex_oral_kiss_114",
+                                                "com_sex_oral_kiss_115",
+                                                "com_sex_oral_kiss_116"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "sleep",
+                                        "smile",
+                                        "blush",
+                                        "lazy"
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_kiss_117",
+                                        "com_sex_oral_kiss_118"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 亲吻 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_119",
+                                        "com_sex_oral_kiss_120",
+                                        "com_sex_oral_kiss_121",
+                                        "com_sex_oral_kiss_122",
+                                        "com_sex_oral_kiss_123",
+                                        "com_sex_oral_kiss_124",
+                                        "com_sex_oral_kiss_125",
+                                        "com_sex_oral_kiss_126",
+                                        "com_sex_oral_kiss_127",
+                                        "com_sex_oral_kiss_128",
+                                        "com_sex_oral_kiss_129",
+                                        "com_sex_oral_kiss_130",
+                                        "com_sex_oral_kiss_131",
+                                        "com_sex_oral_kiss_132",
+                                        "com_sex_oral_kiss_133",
+                                        "com_sex_oral_kiss_134"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 亲吻 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_kiss_135",
+                                "com_sex_oral_kiss_136",
+                                "com_sex_oral_kiss_137",
+                                "com_sex_oral_kiss_138",
+                                "com_sex_oral_kiss_139",
+                                "com_sex_oral_kiss_140",
+                                "com_sex_oral_kiss_141",
+                                "com_sex_oral_kiss_142",
+                                "com_sex_oral_kiss_143",
+                                "com_sex_oral_kiss_144",
+                                "com_sex_oral_kiss_145",
+                                "com_sex_oral_kiss_146",
+                                "com_sex_oral_kiss_147",
+                                "com_sex_oral_kiss_148",
+                                "com_sex_oral_kiss_149",
+                                "com_sex_oral_kiss_150"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "firstexp_M",
@@ -651,80 +1020,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "kiss",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 亲吻 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_kiss_119",
-                                        "com_sex_oral_kiss_120",
-                                        "com_sex_oral_kiss_121",
-                                        "com_sex_oral_kiss_122",
-                                        "com_sex_oral_kiss_123",
-                                        "com_sex_oral_kiss_124",
-                                        "com_sex_oral_kiss_125",
-                                        "com_sex_oral_kiss_126",
-                                        "com_sex_oral_kiss_127",
-                                        "com_sex_oral_kiss_128",
-                                        "com_sex_oral_kiss_129",
-                                        "com_sex_oral_kiss_130",
-                                        "com_sex_oral_kiss_131",
-                                        "com_sex_oral_kiss_132",
-                                        "com_sex_oral_kiss_133",
-                                        "com_sex_oral_kiss_134"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 亲吻 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "kiss",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_oral_kiss_135",
-                                "com_sex_oral_kiss_136",
-                                "com_sex_oral_kiss_137",
-                                "com_sex_oral_kiss_138",
-                                "com_sex_oral_kiss_139",
-                                "com_sex_oral_kiss_140",
-                                "com_sex_oral_kiss_141",
-                                "com_sex_oral_kiss_142",
-                                "com_sex_oral_kiss_143",
-                                "com_sex_oral_kiss_144",
-                                "com_sex_oral_kiss_145",
-                                "com_sex_oral_kiss_146",
-                                "com_sex_oral_kiss_147",
-                                "com_sex_oral_kiss_148",
-                                "com_sex_oral_kiss_149",
-                                "com_sex_oral_kiss_150"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
@@ -786,7 +1081,12 @@
                                 "com_sex_oral_kiss_178",
                                 "com_sex_oral_kiss_179",
                                 "com_sex_oral_kiss_180"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -802,7 +1102,9 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {

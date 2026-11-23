@@ -313,6 +313,295 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_V",
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "sleeping",
+                                        "pain"
+                                    ],
+                                    "_comment": "初体验 睡眠中 正面位V",
+                                    "responses": [
+                                        "com_sex_P_missionary_FE_Sleep_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_V",
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 正面位V",
+                                    "responses": [
+                                        "com_sex_P_missionary_FE_Timestop_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_V"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "blush",
+                                                "pain",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 正面位V 有允许",
+                                            "responses": [
+                                                "com_sex_P_missionary_FE_Player_1"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "blush",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 正面位V 有允许（还在适应）",
+                                            "responses": [
+                                                "com_sex_P_missionary_FE_1",
+                                                "com_sex_P_missionary_FE_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "blush",
+                                                "pain",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 正面位V 未允许 好意（还在适应）",
+                                            "responses": [
+                                                "com_sex_P_missionary_FE_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "pain",
+                                        "tearful",
+                                        "cry"
+                                    ],
+                                    "_comment": "初体验 正面位V 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_P_missionary_FE_4",
+                                        "com_sex_P_missionary_FE_5"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "missionary"
+                                    ],
+                                    "_comment": "对方初体验 正面位V（插入的一方）",
+                                    "responses": [
+                                        "com_sex_P_missionary_FE_Partner_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 ($self$) 睡眠中 正面位V口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_1",
+                                        "com_sex_P_missionary_2",
+                                        "com_sex_P_missionary_3",
+                                        "com_sex_P_missionary_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 ($self$) 时停中 被正面位V口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_5",
+                                        "com_sex_P_missionary_6",
+                                        "com_sex_P_missionary_7",
+                                        "com_sex_P_missionary_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 正面位V口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5",
+                                            "responses": [
+                                                "com_sex_P_missionary_23",
+                                                "com_sex_P_missionary_24",
+                                                "com_sex_P_missionary_25",
+                                                "com_sex_P_missionary_26"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "missionary",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7",
+                                            "responses": [
+                                                "com_sex_P_missionary_27",
+                                                "com_sex_P_missionary_28"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 正面位V口上文 （无论结果好坏）",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_P_missionary_29",
+                                        "com_sex_P_missionary_30"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "missionary",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 正面位V 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_missionary_31",
+                                        "com_sex_P_missionary_32"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 正面位V 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "missionary",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_P_missionary_33",
+                                "com_sex_P_missionary_34",
+                                "com_sex_P_missionary_35",
+                                "com_sex_P_missionary_36"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "firstexp_V",
@@ -551,56 +840,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "missionary",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 正面位V 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_P_missionary_31",
-                                        "com_sex_P_missionary_32"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 正面位V 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "missionary",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_P_missionary_33",
-                                "com_sex_P_missionary_34",
-                                "com_sex_P_missionary_35",
-                                "com_sex_P_missionary_36"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -641,7 +880,12 @@
                                 "com_sex_P_missionary_40",
                                 "com_sex_P_missionary_41",
                                 "com_sex_P_missionary_42"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -656,8 +900,42 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_missionary_Refuse_Receiver_3",
+                                "com_sex_P_missionary_Refuse_Receiver_4"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_missionary_Refuse_Receiver_1",
+                                "com_sex_P_missionary_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -861,7 +1139,11 @@
                 "com_sex_P_missionary_FE_3": "\"我不知道……第一次该怎么做才好……\"\n\n$self$又疼又慌，只会紧紧抓着床单。",
                 "com_sex_P_missionary_FE_4": "\"疼……够了……出去……\"\n\n初次撕裂般的疼痛让$self$的眼泪一直没停。",
                 "com_sex_P_missionary_FE_5": "\"……快点结束。\"\n\n$self$死死盯着天花板，只有攥白的指节泄了底。",
-                "com_sex_P_missionary_FE_Partner_1": "\"放轻松……我来引导你。\"\n\n察觉到身下人的生涩，$self$放轻了动作。"
+                "com_sex_P_missionary_FE_Partner_1": "\"放轻松……我来引导你。\"\n\n察觉到身下人的生涩，$self$放轻了动作。",
+                "com_sex_P_missionary_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
+                "com_sex_P_missionary_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\"",
+                "com_sex_P_missionary_Refuse_Receiver_3": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
+                "com_sex_P_missionary_Refuse_Receiver_4": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
             },
             "en-us": {
                 "com_sex_P_missionary_Climax_1": "$self$ thrusts his hips deep to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",

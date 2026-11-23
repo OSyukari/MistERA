@@ -171,6 +171,161 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "footjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 足交 口上文",
+                                    "responses": [
+                                        "com_sex_legs_P_1",
+                                        "com_sex_legs_P_2",
+                                        "com_sex_legs_P_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "footjob",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 足交 口上文",
+                                    "responses": [
+                                        "com_sex_legs_P_4",
+                                        "com_sex_legs_P_5",
+                                        "com_sex_legs_P_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 足交口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "footjob",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 足交 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_legs_P_20",
+                                                "com_sex_legs_P_21"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "footjob",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 足交 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_legs_P_22",
+                                                "com_sex_legs_P_23"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 足交 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "footjob",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_legs_P_24",
+                                        "com_sex_legs_P_25"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "footjob",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 足交 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_legs_P_26",
+                                        "com_sex_legs_P_27",
+                                        "com_sex_legs_P_28"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 足交 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "footjob",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_legs_P_29",
+                                "com_sex_legs_P_30",
+                                "com_sex_legs_P_31"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
@@ -275,56 +430,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "footjob",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 足交 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_legs_P_26",
-                                        "com_sex_legs_P_27",
-                                        "com_sex_legs_P_28"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 足交 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "footjob",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_legs_P_29",
-                                "com_sex_legs_P_30",
-                                "com_sex_legs_P_31"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -365,7 +470,12 @@
                                 "com_sex_legs_P_35",
                                 "com_sex_legs_P_36",
                                 "com_sex_legs_P_37"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -380,8 +490,26 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_legs_P_Refuse_Receiver_1",
+                                "com_sex_legs_P_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -553,7 +681,9 @@
                 "com_sex_legs_P_Begin_Sleep_1": "$target$握住$self$熟睡中的双脚贴上肉棒，按着脚心来回磨蹭，她痒得在梦里缩了缩脚趾，又软软地松开，没醒。",
                 "com_sex_legs_P_Begin_Sleep_2": "肉棒被她的脚底板夹着慢慢套弄，前液蹭在脚心拉出亮痕，$self$只是含糊地呓语了一句，翻个身继续睡。",
                 "com_sex_legs_P_Begin_Timestop_1": "$target$抬起她悬在半空的脚贴上肉棒，按着脚心来回磨蹭，脚趾僵在蜷着的弧度上，$self$的腿没有挣动。",
-                "com_sex_legs_P_Begin_Timestop_2": "肉棒被$self$的脚底板碾得胀大，前液蹭在脚心上拉出亮痕，定格的房间里只剩皮肤摩擦的沙沙声。"
+                "com_sex_legs_P_Begin_Timestop_2": "肉棒被$self$的脚底板碾得胀大，前液蹭在脚心上拉出亮痕，定格的房间里只剩皮肤摩擦的沙沙声。",
+                "com_sex_legs_P_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
+                "com_sex_legs_P_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
             }
         }
     }

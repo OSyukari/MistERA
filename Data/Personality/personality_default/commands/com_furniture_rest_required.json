@@ -1,0 +1,239 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "独自（对象是玩家）",
+                                    "responses": [
+                                        "com_furniture_rest_required_Result_Player_1",
+                                        "com_furniture_rest_required_Result_Player_2",
+                                        "com_furniture_rest_required_Result_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_rest_required_Result_Self_1",
+                                "com_furniture_rest_required_Result_Self_2",
+                                "com_furniture_rest_required_Result_Self_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "对象是玩家",
+                            "responses": [
+                                "com_furniture_rest_required_Result_Player_1",
+                                "com_furniture_rest_required_Result_Player_2",
+                                "com_furniture_rest_required_Result_Player_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "通用开始",
+                            "responses": [
+                                "com_furniture_rest_required_Begin_1",
+                                "com_furniture_rest_required_Begin_2",
+                                "com_furniture_rest_required_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己 → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_rest_required_Refuse_1",
+                                "com_furniture_rest_required_Refuse_2",
+                                "com_furniture_rest_required_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "自己 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_rest_required_Interrupt_1",
+                                "com_furniture_rest_required_Interrupt_2",
+                                "com_furniture_rest_required_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_rest_required_Tryjoin_1",
+                                "com_furniture_rest_required_Tryjoin_2",
+                                "com_furniture_rest_required_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_rest_required_Joined_1",
+                                "com_furniture_rest_required_Joined_2",
+                                "com_furniture_rest_required_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_rest_required_Join_Refused_1",
+                                "com_furniture_rest_required_Join_Refused_2",
+                                "com_furniture_rest_required_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_rest_required_Join_1",
+                                "com_furniture_rest_required_Join_2",
+                                "com_furniture_rest_required_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_rest_required_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_rest_required_JoinFailed_1",
+                                "com_furniture_rest_required_JoinFailed_2",
+                                "com_furniture_rest_required_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_rest_required_Result_Self_1": "“嗯……躺了这一阵，浑身总算没那么沉了。”",
+                "com_furniture_rest_required_Result_Self_2": "$self$舒展了一下肩背，缓缓呼出一口气：“恢复得差不多了。”",
+                "com_furniture_rest_required_Result_Self_3": "“好多了，总算能重新动弹起来。”",
+                "com_furniture_rest_required_Result_Player_1": "“我缓过来了，$target$你歇得怎么样？”",
+                "com_furniture_rest_required_Result_Player_2": "$self$坐起身活动了下脖子，看向一旁的$target$：“感觉精神多了。”",
+                "com_furniture_rest_required_Result_Player_3": "“躺了这么久真解乏，接下来有什么打算吗？”",
+                "com_furniture_rest_required_Begin_1": "“身子有点吃不消了……我也躺会儿，$target$你自便。”",
+                "com_furniture_rest_required_Begin_2": "$self$找了个舒服的姿势靠稳，朝$target$偏了偏头：“有什么事待会儿再说。”",
+                "com_furniture_rest_required_Begin_3": "“总算能躺平歇会儿了，这两天实在有点累。”",
+                "com_furniture_rest_required_Refuse_1": "“我还撑得住，不用特意躺下来静养。”",
+                "com_furniture_rest_required_Refuse_2": "$self$摇摇头站着没动：“现在躺下反而觉得憋闷。”",
+                "com_furniture_rest_required_Refuse_3": "“我没事，有那功夫不如去做点别的。”",
+                "com_furniture_rest_required_Interrupt_1": "“啊，$target$……我正躺着缓劲呢，有急事吗？”",
+                "com_furniture_rest_required_Interrupt_2": "$self$略微支起半边身子看向$target$：“抱歉，这会儿不太方便起身。”",
+                "com_furniture_rest_required_Interrupt_3": "“你进来啦，$target$，随便坐，我再躺一会儿。”",
+                "com_furniture_rest_required_Tryjoin_1": "“$target$，我也有点撑不住了，能顺便躺会儿吗？”",
+                "com_furniture_rest_required_Tryjoin_2": "$self$走近床边看着$target$：“旁边还有空位的话我也歇一下。”",
+                "com_furniture_rest_required_Tryjoin_3": "“介意我也躺下来静养一会儿吗，$target$？”",
+                "com_furniture_rest_required_Joined_1": "“谢谢……呼，一躺下来感觉整个人都松快了。”",
+                "com_furniture_rest_required_Joined_2": "$self$在空出的位置躺平，闭上眼睛：“我就静静待着，不吵你。”",
+                "com_furniture_rest_required_Joined_3": "“谢啦$target$，一起歇会儿吧。”",
+                "com_furniture_rest_required_Join_Refused_1": "“好吧，那我不打扰你休息了。”",
+                "com_furniture_rest_required_Join_Refused_2": "$self$点点头退开两步：“我另外找个地方歇着去。”",
+                "com_furniture_rest_required_Join_Refused_3": "“没事，你好好静养吧。”",
+                "com_furniture_rest_required_Join_1": "“来吧$target$，往里挪挪还是够躺的。”",
+                "com_furniture_rest_required_Join_2": "$self$朝内侧让出一点位置：“你也累了吧，一起歇会儿。”",
+                "com_furniture_rest_required_Join_3": "“行啊，大家一块儿躺着静养，别出声吵着就行。”",
+                "com_furniture_rest_required_JoinFailed_1": "“抱歉啊$target$，这地方躺两个人太挤了，你去别处歇吧。”",
+                "com_furniture_rest_required_JoinFailed_2": "$self$抬眼看了看$target$：“这会儿不太方便多个人待着，见谅。”",
+                "com_furniture_rest_required_JoinFailed_3": "“地方有限，$target$你再找找别的空位吧。”"
+            }
+        }
+    }
+}

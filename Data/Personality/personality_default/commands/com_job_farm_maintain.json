@@ -138,22 +138,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_job_farm_maintain_Join_5",
-                                "com_job_farm_maintain_Join_6",
-                                "com_job_farm_maintain_Join_15"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfForced": true
                             },
                             "extraSelfPortraitTags": [
@@ -171,6 +155,22 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_job_farm_maintain_Join_5",
+                                "com_job_farm_maintain_Join_6",
+                                "com_job_farm_maintain_Join_15"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -180,7 +180,10 @@
                                 "com_job_farm_maintain_Join_9",
                                 "com_job_farm_maintain_Join_10",
                                 "com_job_farm_maintain_Join_13"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -193,7 +196,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -342,6 +346,26 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_job_farm_maintain_Self_Success_1",
+                                        "com_job_farm_maintain_Self_Success_2",
+                                        "com_job_farm_maintain_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_farm_maintain_Self_Fail_1",
+                                "com_job_farm_maintain_Self_Fail_2",
+                                "com_job_farm_maintain_Self_Fail_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -420,7 +444,10 @@
                                 "com_job_farm_maintain_11",
                                 "com_job_farm_maintain_12",
                                 "com_job_farm_maintain_17"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -434,7 +461,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -556,7 +584,13 @@
                 "com_job_farm_maintain_17": "$self$ 甩了甩满是泥水的手，烦躁地站起身：\"算了，这片没救了，干不下去了。\"",
                 "com_job_farm_maintain_Interrupt_14": "$self$ 朝$target$招招手：\"正好我刚歇口气，过来乘会儿凉？\"",
                 "com_job_farm_maintain_Interrupt_15": "$self$ 朝$target$偏了偏头，脸颊透着热意：\"过来帮我擦下汗好不好？手脏着呢。\"",
-                "com_job_farm_maintain_Join_15": "$self$ 笑着指向隔壁那排：\"你弄那条垄吧，咱们分开浇水快得很。\""
+                "com_job_farm_maintain_Join_15": "$self$ 笑着指向隔壁那排：\"你弄那条垄吧，咱们分开浇水快得很。\"",
+                "com_job_farm_maintain_Self_Success_1": "$self$直起腰揉了揉后背，浇完水松完土，整片田看着精神多了。",
+                "com_job_farm_maintain_Self_Success_2": "\"杂草都清干净了，接下来就等它们好好长吧。\" $self$拍干净手上的浮土。",
+                "com_job_farm_maintain_Self_Success_3": "活干得比预想中顺当，$self$把工具收拾好，长出一口气。",
+                "com_job_farm_maintain_Self_Fail_1": "$self$盯着一地歪斜的苗叶直叹气，忙活半天反倒弄坏了好几棵。",
+                "com_job_farm_maintain_Self_Fail_2": "\"虫子没清干净，水还浇多了……\" $self$苦恼地放下水桶。",
+                "com_job_farm_maintain_Self_Fail_3": "太阳晒得人发晕，活也没干利索，$self$摇摇头先撤回阴凉处歇着。"
             },
             "en-us": {
                 "kojo_default_com_job_farm_maintain_accept_success_1": "$self$ hummed a song as they carefully watered and fertilized the crops.",

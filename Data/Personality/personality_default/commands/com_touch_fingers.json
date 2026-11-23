@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_fingers_Begin_Fainted_1",
+                                "com_touch_fingers_Begin_Fainted_2",
+                                "com_touch_fingers_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_fingers_Begin_Restrained_1",
+                                "com_touch_fingers_Begin_Restrained_2",
+                                "com_touch_fingers_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -99,6 +131,309 @@
                     "ID": "com_touch_fingers",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_fingers_fainted_1",
+                                                "com_touch_fingers_fainted_2",
+                                                "com_touch_fingers_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_fingers_restrained_succ_1",
+                                                "com_touch_fingers_restrained_succ_2",
+                                                "com_touch_fingers_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_fingers_woken_1",
+                                                "com_touch_fingers_woken_2",
+                                                "com_touch_fingers_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被撫摸手指 口上文",
+                                            "responses": [
+                                                "com_touch_fingers_1",
+                                                "com_touch_fingers_2",
+                                                "com_touch_fingers_3",
+                                                "com_touch_fingers_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被撫摸手指 口上文",
+                                            "responses": [
+                                                "com_touch_fingers_5",
+                                                "com_touch_fingers_6",
+                                                "com_touch_fingers_7",
+                                                "com_touch_fingers_8"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_fingers_21",
+                                                "com_touch_fingers_22",
+                                                "com_touch_fingers_23",
+                                                "com_touch_fingers_24"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_fingers_25",
+                                        "com_touch_fingers_26",
+                                        "com_touch_fingers_27",
+                                        "com_touch_fingers_28"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被撫摸手指 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_1",
+                                        "com_touch_fingers_2",
+                                        "com_touch_fingers_3",
+                                        "com_touch_fingers_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被撫摸手指 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_5",
+                                        "com_touch_fingers_6",
+                                        "com_touch_fingers_7",
+                                        "com_touch_fingers_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_fingers_fainted_1",
+                                        "com_touch_fingers_fainted_2",
+                                        "com_touch_fingers_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_fingers_restrained_fail_1",
+                                        "com_touch_fingers_restrained_fail_2",
+                                        "com_touch_fingers_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_fingers_woken_1",
+                                        "com_touch_fingers_woken_2",
+                                        "com_touch_fingers_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_fingers_33",
+                                "com_touch_fingers_34",
+                                "com_touch_fingers_35",
+                                "com_touch_fingers_36"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被撫摸手指 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_1",
+                                        "com_touch_fingers_2",
+                                        "com_touch_fingers_3",
+                                        "com_touch_fingers_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被撫摸手指 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_5",
+                                        "com_touch_fingers_6",
+                                        "com_touch_fingers_7",
+                                        "com_touch_fingers_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_21",
+                                        "com_touch_fingers_22",
+                                        "com_touch_fingers_23",
+                                        "com_touch_fingers_24"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_fingers_25",
+                                "com_touch_fingers_26",
+                                "com_touch_fingers_27",
+                                "com_touch_fingers_28"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -139,52 +474,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_fingers_21",
-                                        "com_touch_fingers_22",
-                                        "com_touch_fingers_23",
-                                        "com_touch_fingers_24"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_fingers_25",
-                                "com_touch_fingers_26",
-                                "com_touch_fingers_27",
-                                "com_touch_fingers_28"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -221,7 +510,12 @@
                                 "com_touch_fingers_34",
                                 "com_touch_fingers_35",
                                 "com_touch_fingers_36"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -233,8 +527,42 @@
                     "ID": "com_touch_fingers_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_fingers_Refuse_Receiver_1",
+                                "com_touch_fingers_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_fingers_Refuse_woken_1",
+                                        "com_touch_fingers_Refuse_woken_2",
+                                        "com_touch_fingers_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -301,6 +629,37 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_fingers_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_fingers_Ongoing_Player_1",
+                                        "com_touch_fingers_Ongoing_Player_2",
+                                        "com_touch_fingers_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_fingers_Ongoing_NPC_1",
+                                "com_touch_fingers_Ongoing_NPC_2",
+                                "com_touch_fingers_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -360,7 +719,36 @@
                 "com_touch_fingers_Begin_Timestop_1": "$target$拿起悬在半途的手，把$self$的手指逐根捏过，那只手软得没有任何力道。",
                 "com_touch_fingers_Begin_Timestop_2": "掌心被指尖描着画圈，$self$的手指没有回握，只是摊着任人摆弄。",
                 "com_touch_fingers_Begin_Sleep_3": "手指被轻轻揉捏着，$self$在睡梦里含糊哼了一声，眼皮一直没抬。",
-                "com_touch_fingers_Begin_Timestop_3": "手指被拉平又松开，$self$站在原地一动不动，目光仍停在原来的落点上。"
+                "com_touch_fingers_Begin_Timestop_3": "手指被拉平又松开，$self$站在原地一动不动，目光仍停在原来的落点上。",
+                "com_touch_fingers_fainted_1": "手指被反复捏揉，$self$始终昏迷着，没有半点醒来的迹象。",
+                "com_touch_fingers_fainted_2": "$self$没有恢复意识，掌心被搓热了也依旧毫无反应。",
+                "com_touch_fingers_fainted_3": "无论$target$怎么拨弄指节，$self$都闭着眼一动不动。",
+                "com_touch_fingers_restrained_succ_1": "$self$原本攥紧的手指慢慢松了下来，别过脸闷声道：\"……倒也没那么难受。\"",
+                "com_touch_fingers_restrained_succ_2": "被绑着没法挡，$self$小声嘀咕：\"……只许捏手指，不准乱来。\"",
+                "com_touch_fingers_restrained_succ_3": "指节被揉得松快了些，$self$垂下视线不再咬牙硬撑。",
+                "com_touch_fingers_restrained_fail_1": "指节被捏得生疼却抽不回手，$self$气得眼圈发红：\"轻点！手指要被你掰断了！\"",
+                "com_touch_fingers_restrained_fail_2": "$self$咬着牙瞪向$target$，语气发哑：\"趁人被绑住欺负人，算什么本事……\"",
+                "com_touch_fingers_restrained_fail_3": "$self$浑身绷紧，声音里带着火气：\"别再乱捏了，疼死了！\"",
+                "com_touch_fingers_woken_1": "$self$迷迷糊糊睁开眼，看见$target$正握着自己的手指：\"唔……你握我手干嘛呀？\"",
+                "com_touch_fingers_woken_2": "被手上的动静弄醒，$self$打了个哈欠，倒没怎么生气：\"干嘛趁我睡着捏手指呀……\"",
+                "com_touch_fingers_woken_3": "$self$刚醒过来，声音还有点沙哑：\"手倒挺暖和的，就是把我弄醒了。\"",
+                "com_touch_fingers_Refuse_woken_1": "$self$刚一醒过来就沉下脸瞪着$target$：\"趁我睡着乱摸别人手，你有病吧！\"",
+                "com_touch_fingers_Refuse_woken_2": "被弄醒的$self$拉下脸，语气生硬得很：\"把你的手拿开，别烦我睡觉！\"",
+                "com_touch_fingers_Refuse_woken_3": "$self$还没彻底清醒就已经拉下脸斥道：\"滚远点，别乱碰！\"",
+                "com_touch_fingers_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的手指。\"",
+                "com_touch_fingers_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰手指，请自重。\"",
+                "com_touch_fingers_Begin_Fainted_1": "$self$毫无知觉地昏迷着，手指被$target$捏住时软软地垂着，没有任何反应。",
+                "com_touch_fingers_Begin_Fainted_2": "指尖被轻轻摩挲，$self$仍闭着眼一动不动，呼吸声轻弱而平缓。",
+                "com_touch_fingers_Begin_Fainted_3": "$self$完全失去了意识，任由$target$把玩自己的手掌。",
+                "com_touch_fingers_Begin_Restrained_1": "$self$手腕被绑着抽不回手，只能攥紧指尖咬牙道：\"别碰我的手……\"",
+                "com_touch_fingers_Begin_Restrained_2": "手脚都被制住，$self$狠狠瞪着$target$，呼吸一下子急了。",
+                "com_touch_fingers_Begin_Restrained_3": "$self$无力挣开束缚，偏过头去不看那只抓着自己手指的手。",
+                "com_touch_fingers_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，脸颊微热，不好意思地把视线移向别处。",
+                "com_touch_fingers_Ongoing_Player_2": "被握着手揉捏时撞上$target$的目光，$self$耳根发烫，冲对方递去一个别看了的眼神。",
+                "com_touch_fingers_Ongoing_Player_3": "$self$小声冲站在旁边的$target$抱怨：\"喂，有那么好看吗，一直盯着。\"",
+                "com_touch_fingers_Ongoing_NPC_1": "$self$活动了一下指节，冲$target$笑道：\"捏够了吧？手都被你搓热了。\"",
+                "com_touch_fingers_Ongoing_NPC_2": "揉捏停下后，$self$看着$target$调侃道：\"手指有这么好玩吗，一直捏个没完。\"",
+                "com_touch_fingers_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，这下手指松快多了，谢了。\""
             },
             "en-us": {
                 "com_touch_fingers_Begin_1": "$self$ didn't pull back; instead, she interlaced her fingers with $target$'s, holding hands tightly.",

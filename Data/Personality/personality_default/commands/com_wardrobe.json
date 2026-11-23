@@ -63,6 +63,63 @@
                     "ID": "com_undress_outer",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_outer_new_1",
+                                        "com_undress_outer_new_2",
+                                        "com_undress_outer_new_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_outer_new_4",
+                                        "com_undress_outer_new_5",
+                                        "com_undress_outer_new_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_outer_new_10",
+                                        "com_undress_outer_new_11",
+                                        "com_undress_outer_new_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_undress_outer_Receiver_1",
+                                "com_undress_outer_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "com_undress_outer_new_7",
+                                "com_undress_outer_new_8",
+                                "com_undress_outer_new_9"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -143,7 +200,12 @@
                                 "com_undress_outer_K_1",
                                 "com_undress_outer_K_2",
                                 "com_undress_outer_K_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -155,8 +217,80 @@
                     "ID": "com_undress_outer_Refuse",
                     "variants": [
                         {
+                            "requireRefusalContext": "ReceiverDeclined",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_outer_Refuse_new_4",
+                                        "com_undress_outer_Refuse_new_5",
+                                        "com_undress_outer_Refuse_new_6"
+                                    ]
+                                }
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_outer_Refuse_new_4",
+                                "com_undress_outer_Refuse_new_5",
+                                "com_undress_outer_Refuse_new_6"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_outer_Refuse_new_1",
+                                        "com_undress_outer_Refuse_new_2",
+                                        "com_undress_outer_Refuse_new_3"
+                                    ]
+                                }
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_outer_Refuse_new_1",
+                                "com_undress_outer_Refuse_new_2",
+                                "com_undress_outer_Refuse_new_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_outer_Refuse_Receiver_1",
+                                "com_undress_outer_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -279,6 +413,63 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_inner_new_1",
+                                        "com_undress_inner_new_2",
+                                        "com_undress_inner_new_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_inner_new_4",
+                                        "com_undress_inner_new_5",
+                                        "com_undress_inner_new_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_inner_new_10",
+                                        "com_undress_inner_new_11",
+                                        "com_undress_inner_new_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_undress_inner_Receiver_1",
+                                "com_undress_inner_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "com_undress_inner_new_7",
+                                "com_undress_inner_new_8",
+                                "com_undress_inner_new_9"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -358,7 +549,12 @@
                                 "com_undress_inner_K_1",
                                 "com_undress_inner_K_2",
                                 "com_undress_inner_K_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -373,8 +569,80 @@
                     ],
                     "variants": [
                         {
+                            "requireRefusalContext": "ReceiverDeclined",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_inner_Refuse_new_4",
+                                        "com_undress_inner_Refuse_new_5",
+                                        "com_undress_inner_Refuse_new_6"
+                                    ]
+                                }
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_inner_Refuse_new_4",
+                                "com_undress_inner_Refuse_new_5",
+                                "com_undress_inner_Refuse_new_6"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_inner_Refuse_new_1",
+                                        "com_undress_inner_Refuse_new_2",
+                                        "com_undress_inner_Refuse_new_3"
+                                    ]
+                                }
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_inner_Refuse_new_1",
+                                "com_undress_inner_Refuse_new_2",
+                                "com_undress_inner_Refuse_new_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_inner_Refuse_Receiver_1",
+                                "com_undress_inner_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -497,6 +765,63 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_skin_new_1",
+                                        "com_undress_skin_new_2",
+                                        "com_undress_skin_new_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_skin_new_4",
+                                        "com_undress_skin_new_5",
+                                        "com_undress_skin_new_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_undress_skin_new_10",
+                                        "com_undress_skin_new_11",
+                                        "com_undress_skin_new_12"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_undress_skin_Receiver_1",
+                                "com_undress_skin_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "com_undress_skin_new_7",
+                                "com_undress_skin_new_8",
+                                "com_undress_skin_new_9"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -576,7 +901,12 @@
                                 "com_undress_skin_K_1",
                                 "com_undress_skin_K_2",
                                 "com_undress_skin_K_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -591,8 +921,80 @@
                     ],
                     "variants": [
                         {
+                            "requireRefusalContext": "ReceiverDeclined",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_skin_Refuse_new_4",
+                                        "com_undress_skin_Refuse_new_5",
+                                        "com_undress_skin_Refuse_new_6"
+                                    ]
+                                }
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_skin_Refuse_new_4",
+                                "com_undress_skin_Refuse_new_5",
+                                "com_undress_skin_Refuse_new_6"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_skin_Refuse_new_1",
+                                        "com_undress_skin_Refuse_new_2",
+                                        "com_undress_skin_Refuse_new_3"
+                                    ]
+                                }
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_skin_Refuse_new_1",
+                                "com_undress_skin_Refuse_new_2",
+                                "com_undress_skin_Refuse_new_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_undress_skin_Refuse_Receiver_1",
+                                "com_undress_skin_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -962,7 +1364,73 @@
                 "com_undress_inner_Begin_C_3": "$self$犹豫着抬起手，小声嘀咕了一句“别看太仔细啊”，才配合地松开力道。",
                 "com_undress_outer_Begin_C_3": "$self$耳根有些发烫，半推半就地配合着抬起了手。",
                 "com_undress_inner_E_3": "停滞的时间里，$self$连眼睫都没有颤动半下，对身上的凉意全无察觉。",
-                "com_undress_inner_J_3": "只剩贴身衣物遮体，凉意和屈辱让$self$咬紧下唇，不敢抬头看$target$。"
+                "com_undress_inner_J_3": "只剩贴身衣物遮体，凉意和屈辱让$self$咬紧下唇，不敢抬头看$target$。",
+                "com_undress_inner_new_1": "衣物离开身体后，$self$只剩贴身衣物遮体，依旧昏迷不醒。",
+                "com_undress_inner_new_2": "$self$自始至终没有恢复意识，暴露在空气里的皮肤透出几分苍白。",
+                "com_undress_inner_new_3": "凉意落在身上，$self$依然沉在昏迷里，半点反应也没有。",
+                "com_undress_inner_new_4": "只剩贴身衣物蔽体，$self$冷得轻颤，被绑着连伸手遮挡都做不到。",
+                "com_undress_inner_new_5": "$self$咬着唇把脸扭向一旁，眼眶发红地喘着气：\"……满意了吗？\"",
+                "com_undress_inner_new_6": "束缚勒得手腕发疼，$self$屈辱地紧闭双眼，不愿面对$target$的目光。",
+                "com_undress_inner_new_7": "$self$把脱下的衣物叠放到一旁，只留贴身衣物，顿时觉得凉爽了许多。",
+                "com_undress_inner_new_8": "\"好了，这样轻便多了。\" $self$看了眼身上，自言自语了一句。",
+                "com_undress_inner_new_9": "$self$活动了一下肩背，将换下来的衣服搭在旁边。",
+                "com_undress_inner_new_10": "$self$冷得一个激灵醒过来，低头一看只剩贴身衣物，顿时红了脸：\"你、你趁我睡着脱我衣服……？\"",
+                "com_undress_inner_new_11": "睡意一下子散了大半，$self$下意识抱住胳膊看向$target$：\"……要脱也先叫醒我啊。\"",
+                "com_undress_inner_new_12": "$self$迷糊地揉了揉眼，察觉身上空落落的才慌忙抓过旁边的衣物遮住：\"唔……怎么这么冷。\"",
+                "com_undress_inner_Receiver_1": "$self$微微一僵，还是顺从地配合着$target$的动作脱下衣物。",
+                "com_undress_inner_Receiver_2": "$self$没有反抗，任由$target$把衣服褪了下来。",
+                "com_undress_inner_Refuse_new_1": "$self$护住领口往后退开：\"别开玩笑了，我才不当着你的面脱衣服。\"",
+                "com_undress_inner_Refuse_new_2": "\"好端端的让我脱衣服干什么？\" $self$皱着眉拒绝了$target$。",
+                "com_undress_inner_Refuse_new_3": "$self$态度坚决地摇摇头：\"不可能，自己待着去吧。\"",
+                "com_undress_inner_Refuse_new_4": "$self$猛地惊醒，一把拍开$target$的手抓紧衣服：\"你要干什么！滚开！\"",
+                "com_undress_inner_Refuse_new_5": "\"别碰我！\" $self$脸色瞬间冷了下来，护住胸口往后缩去。",
+                "com_undress_inner_Refuse_new_6": "睡意被吓得一干二净，$self$抓紧衣襟瞪着$target$：\"趁人睡着脱衣服，你还要不要脸？\"",
+                "com_undress_inner_Refuse_Receiver_1": "$self$按住自己的衣服往后退开，警惕地看着$target$。\n\"别乱动，我不想脱！\"",
+                "com_undress_inner_Refuse_Receiver_2": "$self$护住身前，果断地摇了摇头。\n\"不行，别碰我的衣服。\"",
+                "com_undress_outer_new_1": "外衣被脱下后，$self$依旧昏迷不醒，脸色苍白地靠在原处。",
+                "com_undress_outer_new_2": "$self$自始至终没有恢复意识，只剩里面的衣物贴在身上，呼吸依然浅慢。",
+                "com_undress_outer_new_3": "空气贴上没了外衣遮挡的肩头，$self$依然没有醒来的迹象。",
+                "com_undress_outer_new_4": "外衣落到一旁，$self$冷得缩了缩脖子，被绑着连抱紧自己都做不到。",
+                "com_undress_outer_new_5": "\"……你想干什么？\" $self$喘着气瞪向$target$，眼底满是戒备。",
+                "com_undress_outer_new_6": "$self$被捆住的手腕挣出一圈红痕，却只能眼睁睁看着外衣被剥走。",
+                "com_undress_outer_new_7": "$self$把脱下来的外衣随手搭好，长舒了一口气，身上顿时轻快了不少。",
+                "com_undress_outer_new_8": "\"果然脱掉外衣舒服多了。\" $self$活动了一下肩膀，自言自语道。",
+                "com_undress_outer_new_9": "$self$理了理里头的衣领，把外衣放到一边。",
+                "com_undress_outer_new_10": "$self$迷迷糊糊地睁开眼，发现外衣没了才猛地清醒过来：\"……你脱我外衣干嘛？\"",
+                "com_undress_outer_new_11": "凉意让$self$一个激灵醒过来，她看了看搭在一旁的外衣，又看向$target$：\"……至少提前叫醒我一声啊。\"",
+                "com_undress_outer_new_12": "$self$揉了揉眼睛坐起身，后知后觉地抱住肩：\"唔……怪不得觉得有点冷。\"",
+                "com_undress_outer_Receiver_1": "$self$微微一僵，还是顺从地配合着$target$的动作脱下衣物。",
+                "com_undress_outer_Receiver_2": "$self$没有反抗，任由$target$把衣服褪了下来。",
+                "com_undress_outer_Refuse_new_1": "$self$按住领口摇摇头：\"我不脱，现在这样刚好。\"",
+                "com_undress_outer_Refuse_new_2": "\"平白无故的，干嘛让我脱外衣？\" $self$皱了皱眉，没有照做。",
+                "com_undress_outer_Refuse_new_3": "$self$把外衣拢紧了些，干脆地回绝了$target$：\"不去脱。\"",
+                "com_undress_outer_Refuse_new_4": "$self$猛地惊醒过来，一把攥紧衣襟往后退：\"你在干什么！趁我睡着扒衣服？\"",
+                "com_undress_outer_Refuse_new_5": "\"别碰我！\" $self$瞬间清醒，警惕地护住领口瞪着$target$。",
+                "com_undress_outer_Refuse_new_6": "$self$抓紧外衣拉好，脸色沉了下来：\"谁准你动手动脚的？\"",
+                "com_undress_outer_Refuse_Receiver_1": "$self$按住自己的衣服往后退开，警惕地看着$target$。\n\"别乱动，我不想脱！\"",
+                "com_undress_outer_Refuse_Receiver_2": "$self$护住身前，果断地摇了摇头。\n\"不行，别碰我的衣服。\"",
+                "com_undress_skin_new_1": "最后的遮挡离开身体，$self$光着身子陷在昏迷里，丝毫不知自己已暴露在视线中。",
+                "com_undress_skin_new_2": "$self$自始至终没有恢复意识，赤裸的肌肤在空气中透出几分苍白。",
+                "com_undress_skin_new_3": "凉意贴上光裸的身体，$self$依然毫无反应，只剩微弱的呼吸。",
+                "com_undress_skin_new_4": "全身赤裸却连伸手遮挡都做不到，$self$羞愤交加地紧闭双眼：\"你这个混蛋……\"",
+                "com_undress_skin_new_5": "光着身子被绑在原处，$self$屈辱得浑身发冷，咬紧下唇不让眼泪掉下来。",
+                "com_undress_skin_new_6": "$self$被捆住的手腕挣得发红，别过脸不肯看$target$落向自己身体的视线。",
+                "com_undress_skin_new_7": "$self$把最后的贴身衣物也脱了下来，微凉的空气贴上皮肤，整个人彻底放松下来。",
+                "com_undress_skin_new_8": "\"总算脱干净了……\" $self$看了眼放到一旁的衣物，舒展了一下肩背。",
+                "com_undress_skin_new_9": "身上再无半点束缚，$self$轻轻呼出一口气，将换下来的贴身衣物收好。",
+                "com_undress_skin_new_10": "$self$冷得醒过来，低头发现自己全身光溜溜的，顿时红透了脸：\"你、你把我的贴身衣物都脱了……！？\"",
+                "com_undress_skin_new_11": "意识回笼后，$self$慌忙抱住胸前看向$target$：\"……至少先叫醒我再动手啊！\"",
+                "com_undress_skin_new_12": "$self$揉着眼坐起身，后知后觉地缩紧身子：\"唔……怎么什么都没穿了。\"",
+                "com_undress_skin_Receiver_1": "$self$微微一僵，还是顺从地配合着$target$的动作脱下衣物。",
+                "com_undress_skin_Receiver_2": "$self$没有反抗，任由$target$把衣服褪了下来。",
+                "com_undress_skin_Refuse_new_1": "$self$一把按住腰间往后退：\"你要我当着你的面脱光？想都别想！\"",
+                "com_undress_skin_Refuse_new_2": "\"这种事我才不做。\" $self$冷着脸回绝了$target$，护紧身上的贴身衣物。",
+                "com_undress_skin_Refuse_new_3": "$self$又羞又气地瞪着$target$：\"别提出这么过分的要求！\"",
+                "com_undress_skin_Refuse_new_4": "$self$猛地惊醒，一把拍开$target$的手抓紧贴身衣物：\"滚开！趁我睡着想干什么！\"",
+                "com_undress_skin_Refuse_new_5": "\"别碰我！\" $self$脸色骤冷，护住身体往后缩去。",
+                "com_undress_skin_Refuse_new_6": "睡意瞬间消散，$self$拉紧衣缘瞪着$target$：\"你还要不要脸！\"",
+                "com_undress_skin_Refuse_Receiver_1": "$self$按住自己的衣服往后退开，警惕地看着$target$。\n\"别乱动，我不想脱！\"",
+                "com_undress_skin_Refuse_Receiver_2": "$self$护住身前，果断地摇了摇头。\n\"不行，别碰我的衣服。\""
             },
             "en-us": {
                 "com_undress_outer_Begin_A_1": "$self$ lifts her arms to help $target$, a small smile on her lips.",

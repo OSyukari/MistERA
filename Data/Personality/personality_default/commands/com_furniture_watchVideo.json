@@ -155,22 +155,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_furniture_watchVideo_Join_5",
-                                "com_furniture_watchVideo_Join_6",
-                                "com_furniture_watchVideo_Join_11"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfForced": true
                             },
                             "extraSelfPortraitTags": [
@@ -188,6 +172,22 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_furniture_watchVideo_Join_5",
+                                "com_furniture_watchVideo_Join_6",
+                                "com_furniture_watchVideo_Join_11"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -197,7 +197,10 @@
                                 "com_furniture_watchVideo_Join_9",
                                 "com_furniture_watchVideo_Join_10",
                                 "com_furniture_watchVideo_Join_12"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -210,7 +213,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -398,6 +402,26 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_furniture_watchVideo_Self_Success_1",
+                                        "com_furniture_watchVideo_Self_Success_2",
+                                        "com_furniture_watchVideo_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_furniture_watchVideo_Self_Fail_1",
+                                "com_furniture_watchVideo_Self_Fail_2",
+                                "com_furniture_watchVideo_Self_Fail_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -480,7 +504,10 @@
                                 "com_furniture_watchVideo_17",
                                 "com_furniture_watchVideo_18",
                                 "com_furniture_watchVideo_19"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -494,7 +521,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -676,7 +704,13 @@
                 "com_furniture_watchVideo_Join_15": "$self$冲$target$摆摆手：\"这会儿位子不太够，下回再凑。\"",
                 "com_furniture_watchVideo_21": "$self$冷淡地把视线转开：\"不去，你自己看着办。\"",
                 "com_furniture_watchVideo_Tryjoin_3": "$self$朝沙发空位看了一眼：\"我正闲着呢，顺便蹭着一起看会儿行吗？\"",
-                "com_furniture_watchVideo_22": "$self$拍了拍膝盖：\"今天不太想看片子，改天有空再说。\""
+                "com_furniture_watchVideo_22": "$self$拍了拍膝盖：\"今天不太想看片子，改天有空再说。\"",
+                "com_furniture_watchVideo_Self_Success_1": "$self$伸了个懒腰关掉屏幕，刚才那段确实挺抓人的，时间过得飞快。",
+                "com_furniture_watchVideo_Self_Success_2": "\"还不错，比预想中耐看多了。\" $self$顺手把遥控器放回茶几。",
+                "com_furniture_watchVideo_Self_Success_3": "脑子跟着放松下来，$self$靠着椅背缓了会儿神，心情挺舒坦。",
+                "com_furniture_watchVideo_Self_Fail_1": "$self$打了个哈欠把屏幕关掉，刚才看了半天都没怎么进脑子，白费工夫。",
+                "com_furniture_watchVideo_Self_Fail_2": "\"节奏太磨蹭了，看到一半直犯困。\" $self$揉了揉发涩的眼角。",
+                "com_furniture_watchVideo_Self_Fail_3": "越看越觉得无聊，$self$叹了口气起身去干别的事了。"
             },
             "en-us": {
                 "com_furniture_watchVideo_Begin_1": "$self$ immediately hands over the remote: \"Sure! Watching alone was getting a bit boring anyway.\"",

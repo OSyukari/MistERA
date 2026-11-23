@@ -7,6 +7,20 @@
                     "ID": "com_interaction_talk_Begin",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_interaction_talk_Begin_Restrained_1",
+                                "com_interaction_talk_Begin_Restrained_2",
+                                "com_interaction_talk_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
                             "requirement": {
@@ -137,22 +151,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_interaction_talk_Join_5",
-                                "com_interaction_talk_Join_6",
-                                "com_interaction_talk_Join_13"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfForced": true
                             },
                             "extraSelfPortraitTags": [
@@ -170,6 +168,22 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_interaction_talk_Join_5",
+                                "com_interaction_talk_Join_6",
+                                "com_interaction_talk_Join_13"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -179,7 +193,10 @@
                                 "com_interaction_talk_Join_9",
                                 "com_interaction_talk_Join_10",
                                 "com_interaction_talk_Join_12"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -192,7 +209,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -339,6 +357,39 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccessGTE": "Success"
+                                            },
+                                            "responses": [
+                                                "com_interaction_talk_Restrained_Success_1",
+                                                "com_interaction_talk_Restrained_Success_2",
+                                                "com_interaction_talk_Restrained_Success_3"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_interaction_talk_Restrained_Fail_1",
+                                        "com_interaction_talk_Restrained_Fail_2",
+                                        "com_interaction_talk_Restrained_Fail_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_interaction_talk_Receiver_1",
+                                "com_interaction_talk_Receiver_2"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -417,7 +468,10 @@
                                 "com_interaction_talk_11",
                                 "com_interaction_talk_12",
                                 "com_interaction_talk_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -431,7 +485,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -553,7 +608,18 @@
                 "com_interaction_talk_Join_14": "“……嗯，你随便吧。”$self$声音发紧，垂下了眼。",
                 "com_interaction_talk_16": "“我还有别的事要做，你自己忙吧。”",
                 "com_interaction_talk_Join_15": "“不好意思啊$target$，这会儿先别插话，回头再聊。”",
-                "com_interaction_talk_Begin_12": "“突然叫我说话……倒也不是不行啦。”"
+                "com_interaction_talk_Begin_12": "“突然叫我说话……倒也不是不行啦。”",
+                "com_interaction_talk_Restrained_Success_1": "“聊两句倒是没那么闷了……不过这绳子能松一松吗？”",
+                "com_interaction_talk_Restrained_Success_2": "$self$往后靠了靠，缓了口气：“话是说完了，接下来呢？”",
+                "com_interaction_talk_Restrained_Success_3": "“行吧，$target$讲得还挺有意思的，就是我这姿势不太舒服。”",
+                "com_interaction_talk_Restrained_Fail_1": "“手腕勒得难受，我实在接不上你的话……”",
+                "com_interaction_talk_Restrained_Fail_2": "$self$烦躁地扭过头去：“别光顾着瞎聊了，先松开我行不行？”",
+                "com_interaction_talk_Restrained_Fail_3": "“……没听进去，这种状态下谁有心思跟你聊。”",
+                "com_interaction_talk_Receiver_1": "$self$停下话头看向$target$，接过话茬聊了起来。\n\"嗯，你说得对。\"",
+                "com_interaction_talk_Receiver_2": "$self$顺着$target$的话点点头。\n\"原来是这样啊，我明白了。\"",
+                "com_interaction_talk_Begin_Restrained_1": "“手脚都绑着呢，你还有心情跟我闲聊啊……”",
+                "com_interaction_talk_Begin_Restrained_2": "$self$动了动发紧的手腕，抬眼看过去：“你想说什么？”",
+                "com_interaction_talk_Begin_Restrained_3": "“……行吧，总比干待着强，你说。”"
             },
             "en-us": {
                 "com_interaction_talk_Begin_1": "$self$ immediately shuts her book, eyes full of anticipation: \"Sure! I was bored to death anyway!\"",

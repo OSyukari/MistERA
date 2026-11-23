@@ -1,0 +1,262 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "独自（对象是玩家）",
+                                    "responses": [
+                                        "com_furniture_mealPrep_Result_Player_1",
+                                        "com_furniture_mealPrep_Result_Player_2",
+                                        "com_furniture_mealPrep_Result_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_mealPrep_Result_Self_1",
+                                "com_furniture_mealPrep_Result_Self_2",
+                                "com_furniture_mealPrep_Result_Self_3"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "对象是玩家",
+                            "responses": [
+                                "com_furniture_mealPrep_Result_Player_1",
+                                "com_furniture_mealPrep_Result_Player_2",
+                                "com_furniture_mealPrep_Result_Player_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "通用开始",
+                            "responses": [
+                                "com_furniture_mealPrep_Begin_1",
+                                "com_furniture_mealPrep_Begin_2",
+                                "com_furniture_mealPrep_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己 → 玩家 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_mealPrep_Refuse_1",
+                                "com_furniture_mealPrep_Refuse_2",
+                                "com_furniture_mealPrep_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "自己 → 玩家 ｜ 进行中",
+                            "responses": [
+                                "com_furniture_mealPrep_Ongoing_1",
+                                "com_furniture_mealPrep_Ongoing_2",
+                                "com_furniture_mealPrep_Ongoing_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "自己 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_furniture_mealPrep_Interrupt_1",
+                                "com_furniture_mealPrep_Interrupt_2",
+                                "com_furniture_mealPrep_Interrupt_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_furniture_mealPrep_Tryjoin_1",
+                                "com_furniture_mealPrep_Tryjoin_2",
+                                "com_furniture_mealPrep_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_furniture_mealPrep_Joined_1",
+                                "com_furniture_mealPrep_Joined_2",
+                                "com_furniture_mealPrep_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_furniture_mealPrep_Join_Refused_1",
+                                "com_furniture_mealPrep_Join_Refused_2",
+                                "com_furniture_mealPrep_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requirement": {},
+                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_furniture_mealPrep_Join_1",
+                                "com_furniture_mealPrep_Join_2",
+                                "com_furniture_mealPrep_Join_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_mealPrep_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_furniture_mealPrep_JoinFailed_1",
+                                "com_furniture_mealPrep_JoinFailed_2",
+                                "com_furniture_mealPrep_JoinFailed_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_mealPrep_Result_Self_1": "“嗯，分量看着刚好，收尾收拾一下就行。”",
+                "com_furniture_mealPrep_Result_Self_2": "$self$拍了拍手上的碎屑，把台面顺手擦干净：“差不多齐活了。”",
+                "com_furniture_mealPrep_Result_Self_3": "“味道闻着还行，总算把这顿备妥了。”",
+                "com_furniture_mealPrep_Result_Player_1": "“我这边弄完了，$target$你那份还差多少？”",
+                "com_furniture_mealPrep_Result_Player_2": "$self$解下围在身前的边角擦了擦手，凑过去看了眼：“闻起来挺香的嘛。”",
+                "com_furniture_mealPrep_Result_Player_3": "“各自备好省事多了，正好差不多时间收工。”",
+                "com_furniture_mealPrep_Begin_1": "“刚好肚子也有点饿了，$target$你先挑想做的那份吧。”",
+                "com_furniture_mealPrep_Begin_2": "$self$卷起袖口，朝$target$偏了偏头：“别把台面占满就行。”",
+                "com_furniture_mealPrep_Begin_3": "“我从这边开始理食材，咱们各弄各的互不耽误。”",
+                "com_furniture_mealPrep_Refuse_1": "“我现在不想下厨，你自己弄或者换别人吧。”",
+                "com_furniture_mealPrep_Refuse_2": "$self$靠在一旁摆了摆手：“今天没那个精力张罗吃的。”",
+                "com_furniture_mealPrep_Refuse_3": "“抱歉，手头还有事，备餐这活儿先推了。”",
+                "com_furniture_mealPrep_Ongoing_1": "$self$手底下没停，顺口问了一句：“$target$干站着不无聊吗？”",
+                "com_furniture_mealPrep_Ongoing_2": "“还得再等一会儿才好，$target$别光盯着看啊。”",
+                "com_furniture_mealPrep_Ongoing_3": "$self$抽空朝旁边瞄了一眼，又低头继续忙活手里的活计。",
+                "com_furniture_mealPrep_Interrupt_1": "“哟，$target$，我正准备吃的呢，怎么过来了？”",
+                "com_furniture_mealPrep_Interrupt_2": "$self$手上忙着没法握手，只朝$target$点了个头：“找我有事？”",
+                "com_furniture_mealPrep_Interrupt_3": "“别站门口挡着风，$target$有事先进来说。”",
+                "com_furniture_mealPrep_Tryjoin_1": "“$target$，你在弄吃的啊？我也过来一起备一份行吗？”",
+                "com_furniture_mealPrep_Tryjoin_2": "$self$探头看了看台面：“还有空位的话算我一个呗？”",
+                "com_furniture_mealPrep_Tryjoin_3": "“反正一会儿也要吃，我过来一块儿准备吧，$target$？”",
+                "com_furniture_mealPrep_Joined_1": "“行，我用旁边这块地方，不抢你的位置。”",
+                "com_furniture_mealPrep_Joined_2": "$self$站到台前洗了洗手：“人多一起备餐还挺热闹。”",
+                "com_furniture_mealPrep_Joined_3": "“谢啦$target$，那我先处理我这边。”",
+                "com_furniture_mealPrep_Join_Refused_1": "“行吧，地方确实也不大，你先忙。”",
+                "com_furniture_mealPrep_Join_Refused_2": "$self$退开两步：“那我等会儿再过来弄。”",
+                "com_furniture_mealPrep_Join_Refused_3": "“没事，你先弄完，我不着急。”",
+                "com_furniture_mealPrep_Join_1": "“来吧$target$，旁边还空着一块位置。”",
+                "com_furniture_mealPrep_Join_2": "$self$往边上挪了半步，把台面分出一半：“别把我的菜混一块儿就行。”",
+                "com_furniture_mealPrep_Join_3": "“正好，$target$过来一起搭把手也快些。”",
+                "com_furniture_mealPrep_JoinFailed_1": "“抱歉啊$target$，台面就这么大，挤不开人，等会儿吧。”",
+                "com_furniture_mealPrep_JoinFailed_2": "$self$朝$target$摇摇头：“这轮快弄完了，你先歇着。”",
+                "com_furniture_mealPrep_JoinFailed_3": "“现在不太方便插手，$target$你先去忙别的吧。”"
+            }
+        }
+    }
+}

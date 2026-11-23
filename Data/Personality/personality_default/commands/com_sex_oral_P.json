@@ -307,6 +307,295 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M",
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "初体验 睡眠中 口交",
+                                    "responses": [
+                                        "com_sex_oral_P_FE_Sleep_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M",
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 口交",
+                                    "responses": [
+                                        "com_sex_oral_P_FE_Timestop_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "blush",
+                                                "shy",
+                                                "love"
+                                            ],
+                                            "_comment": "初体验 玩家专用 口交 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_FE_Player_1"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "blush",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 口交 有允许（还不熟练）",
+                                            "responses": [
+                                                "com_sex_oral_P_FE_1",
+                                                "com_sex_oral_P_FE_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "blush",
+                                                "shy",
+                                                "trembling"
+                                            ],
+                                            "_comment": "初体验 口交 未允许 好意（还不熟练）",
+                                            "responses": [
+                                                "com_sex_oral_P_FE_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "fear",
+                                        "trembling",
+                                        "tearful"
+                                    ],
+                                    "_comment": "初体验 口交 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_oral_P_FE_4",
+                                        "com_sex_oral_P_FE_5"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "blowjob",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 口交（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_P_FE_Partner_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 口交 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Sleep_1",
+                                        "com_sex_oral_P_Sleep_2",
+                                        "com_sex_oral_P_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 口交 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Timestop_1",
+                                        "com_sex_oral_P_Timestop_2",
+                                        "com_sex_oral_P_Timestop_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 口交口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 口交 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_P_16",
+                                                "com_sex_oral_P_17",
+                                                "com_sex_oral_P_18"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "blowjob",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 口交 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_oral_P_19",
+                                                "com_sex_oral_P_20",
+                                                "com_sex_oral_P_21"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 口交 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_P_22",
+                                        "com_sex_oral_P_23",
+                                        "com_sex_oral_P_24"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 口交 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_25",
+                                        "com_sex_oral_P_26",
+                                        "com_sex_oral_P_27"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 口交 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_28",
+                                "com_sex_oral_P_29",
+                                "com_sex_oral_P_30"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "firstexp_M",
@@ -545,56 +834,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 口交 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_P_25",
-                                        "com_sex_oral_P_26",
-                                        "com_sex_oral_P_27"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 口交 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_oral_P_28",
-                                "com_sex_oral_P_29",
-                                "com_sex_oral_P_30"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -635,7 +874,12 @@
                                 "com_sex_oral_P_34",
                                 "com_sex_oral_P_35",
                                 "com_sex_oral_P_36"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -650,8 +894,26 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_Refuse_Receiver_1",
+                                "com_sex_oral_P_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -853,7 +1115,9 @@
                 "com_sex_oral_P_FE_3": "\"这样……对吗……我完全没经验……\"\n\n$self$又慌又窘，只能笨拙地吞吐着。",
                 "com_sex_oral_P_FE_4": "\"唔……不行了……嘴酸……\"\n\n初次口侍的生涩让$self$的动作又慢又僵，眼泪憋在眼眶里。",
                 "com_sex_oral_P_FE_5": "\"……快点结束。\"\n\n$self$面无表情地含着，只有泛红的眼角泄了底。",
-                "com_sex_oral_P_FE_Partner_1": "\"别急……用嘴唇裹住就行。\"\n\n察觉到对方口中的生涩，$self$放轻了声音。"
+                "com_sex_oral_P_FE_Partner_1": "\"别急……用嘴唇裹住就行。\"\n\n察觉到对方口中的生涩，$self$放轻了声音。",
+                "com_sex_oral_P_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
+                "com_sex_oral_P_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
             }
         }
     }

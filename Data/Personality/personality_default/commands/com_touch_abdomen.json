@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_abdomen_Begin_Fainted_1",
+                                "com_touch_abdomen_Begin_Fainted_2",
+                                "com_touch_abdomen_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_abdomen_Begin_Restrained_1",
+                                "com_touch_abdomen_Begin_Restrained_2",
+                                "com_touch_abdomen_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -99,6 +131,309 @@
                     "ID": "com_touch_abdomen",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_abdomen_fainted_1",
+                                                "com_touch_abdomen_fainted_2",
+                                                "com_touch_abdomen_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_abdomen_restrained_succ_1",
+                                                "com_touch_abdomen_restrained_succ_2",
+                                                "com_touch_abdomen_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_abdomen_woken_1",
+                                                "com_touch_abdomen_woken_2",
+                                                "com_touch_abdomen_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被抚摸腹部 口上文",
+                                            "responses": [
+                                                "com_touch_abdomen_2_3_2_1",
+                                                "com_touch_abdomen_2_3_2_2",
+                                                "com_touch_abdomen_2_3_2_3",
+                                                "com_touch_abdomen_2_3_2_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被抚摸腹部 口上文",
+                                            "responses": [
+                                                "com_touch_abdomen_2_3_1_1",
+                                                "com_touch_abdomen_2_3_1_2",
+                                                "com_touch_abdomen_2_3_1_3",
+                                                "com_touch_abdomen_2_3_1_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_abdomen_2_1_3_1",
+                                                "com_touch_abdomen_2_1_3_2",
+                                                "com_touch_abdomen_2_1_3_3",
+                                                "com_touch_abdomen_2_1_3_4"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_abdomen_2_2_5_1",
+                                        "com_touch_abdomen_2_2_5_2",
+                                        "com_touch_abdomen_2_2_5_3",
+                                        "com_touch_abdomen_2_2_5_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸腹部 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_3_2_1",
+                                        "com_touch_abdomen_2_3_2_2",
+                                        "com_touch_abdomen_2_3_2_3",
+                                        "com_touch_abdomen_2_3_2_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸腹部 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_3_1_1",
+                                        "com_touch_abdomen_2_3_1_2",
+                                        "com_touch_abdomen_2_3_1_3",
+                                        "com_touch_abdomen_2_3_1_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_abdomen_fainted_1",
+                                        "com_touch_abdomen_fainted_2",
+                                        "com_touch_abdomen_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_abdomen_restrained_fail_1",
+                                        "com_touch_abdomen_restrained_fail_2",
+                                        "com_touch_abdomen_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_abdomen_woken_1",
+                                        "com_touch_abdomen_woken_2",
+                                        "com_touch_abdomen_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_abdomen_2_2_6_1",
+                                "com_touch_abdomen_2_2_6_2",
+                                "com_touch_abdomen_2_2_6_3",
+                                "com_touch_abdomen_2_2_6_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被抚摸腹部 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_3_2_1",
+                                        "com_touch_abdomen_2_3_2_2",
+                                        "com_touch_abdomen_2_3_2_3",
+                                        "com_touch_abdomen_2_3_2_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被抚摸腹部 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_3_1_1",
+                                        "com_touch_abdomen_2_3_1_2",
+                                        "com_touch_abdomen_2_3_1_3",
+                                        "com_touch_abdomen_2_3_1_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_1_3_1",
+                                        "com_touch_abdomen_2_1_3_2",
+                                        "com_touch_abdomen_2_1_3_3",
+                                        "com_touch_abdomen_2_1_3_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_abdomen_2_2_5_1",
+                                "com_touch_abdomen_2_2_5_2",
+                                "com_touch_abdomen_2_2_5_3",
+                                "com_touch_abdomen_2_2_5_4"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -139,52 +474,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_abdomen_2_1_3_1",
-                                        "com_touch_abdomen_2_1_3_2",
-                                        "com_touch_abdomen_2_1_3_3",
-                                        "com_touch_abdomen_2_1_3_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_abdomen_2_2_5_1",
-                                "com_touch_abdomen_2_2_5_2",
-                                "com_touch_abdomen_2_2_5_3",
-                                "com_touch_abdomen_2_2_5_4"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -221,7 +510,12 @@
                                 "com_touch_abdomen_2_2_6_2",
                                 "com_touch_abdomen_2_2_6_3",
                                 "com_touch_abdomen_2_2_6_4"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -233,8 +527,42 @@
                     "ID": "com_touch_abdomen_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_abdomen_Refuse_Receiver_1",
+                                "com_touch_abdomen_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_abdomen_Refuse_woken_1",
+                                        "com_touch_abdomen_Refuse_woken_2",
+                                        "com_touch_abdomen_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -300,6 +628,37 @@
                         }
                     ],
                     "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_abdomen_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_abdomen_Ongoing_Player_1",
+                                        "com_touch_abdomen_Ongoing_Player_2",
+                                        "com_touch_abdomen_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_abdomen_Ongoing_NPC_1",
+                                "com_touch_abdomen_Ongoing_NPC_2",
+                                "com_touch_abdomen_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
                 }
             }
         ]
@@ -375,7 +734,36 @@
                 "com_touch_abdomen_Begin_Timestop_1": "$target$的手掌贴上定格的小腹慢慢揉按，$self$站在原地一动不动，呼吸节奏丝毫未变。",
                 "com_touch_abdomen_Begin_Timestop_2": "指腹沿着腹侧画圈，$self$搭在身侧的手悬着，目光仍停在原来的落点上。",
                 "com_touch_abdomen_Begin_Timestop_3": "腹部被手掌按出浅浅的凹陷，$self$毫无反应，连嘴角弧度都停在上一秒。",
-                "com_touch_abdomen_Begin_Sleep_3": "小腹被轻柔地按着，$self$在睡梦里哼唧了一声，眼皮一直没抬。"
+                "com_touch_abdomen_Begin_Sleep_3": "小腹被轻柔地按着，$self$在睡梦里哼唧了一声，眼皮一直没抬。",
+                "com_touch_abdomen_fainted_1": "小腹被反复揉按，$self$始终昏迷着，肚皮只随着手上的力道微微起伏。",
+                "com_touch_abdomen_fainted_2": "$self$没有恢复意识，腹部被搓热了也依旧毫无反应。",
+                "com_touch_abdomen_fainted_3": "无论$target$怎么按揉，$self$都闭着眼一动不动。",
+                "com_touch_abdomen_restrained_succ_1": "$self$原本紧绷的小腹慢慢放松下来，别过脸闷声道：\"……倒也没那么难受。\"",
+                "com_touch_abdomen_restrained_succ_2": "被绑着没法挡，$self$小声嘀咕：\"……手还挺暖和的，但也不准乱摸。\"",
+                "com_touch_abdomen_restrained_succ_3": "腹部的揉按让人渐渐松懈，$self$垂下视线不再绷着身子。",
+                "com_touch_abdomen_restrained_fail_1": "肚子被按得生疼却没法躲，$self$气得眼圈发红：\"住手！压到胃了！\"",
+                "com_touch_abdomen_restrained_fail_2": "$self$咬着牙瞪向$target$，语气发哑：\"趁人被绑住乱摸，算什么本事……\"",
+                "com_touch_abdomen_restrained_fail_3": "$self$浑身绷紧，声音里带着火气：\"别再按了，难受死了！\"",
+                "com_touch_abdomen_woken_1": "$self$迷迷糊糊睁开眼，低头看见$target$的手正放在自己肚子上：\"唔……你这是在帮我捂肚子？\"",
+                "com_touch_abdomen_woken_2": "被腹部的动静弄醒，$self$打了个哈欠，倒没怎么生气：\"干嘛趁我睡着摸肚子呀……\"",
+                "com_touch_abdomen_woken_3": "$self$刚醒过来，声音还有点沙哑：\"手放这儿倒挺暖和的，就是有点痒。\"",
+                "com_touch_abdomen_Refuse_woken_1": "$self$刚一醒过来就沉下脸瞪着$target$：\"趁我睡着乱摸别人肚子，你有病吧！\"",
+                "com_touch_abdomen_Refuse_woken_2": "被弄醒的$self$拉下脸，语气生硬得很：\"把你的手拿开，别烦我睡觉！\"",
+                "com_touch_abdomen_Refuse_woken_3": "$self$还没彻底清醒就已经拉下脸斥道：\"滚远点，别乱碰！\"",
+                "com_touch_abdomen_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的腹部。\"",
+                "com_touch_abdomen_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰腹部，请自重。\"",
+                "com_touch_abdomen_Begin_Fainted_1": "$self$毫无知觉地昏迷着，小腹被$target$的手掌贴上时没有任何反应。",
+                "com_touch_abdomen_Begin_Fainted_2": "手掌压在肚皮上，$self$仍闭着眼，连呼吸的起伏都没有变乱。",
+                "com_touch_abdomen_Begin_Fainted_3": "$self$完全失去了意识，任由$target$的手在自己腹部轻揉。",
+                "com_touch_abdomen_Begin_Restrained_1": "$self$被绑着动弹不得，只能绷紧小腹咬牙道：\"别碰我肚子……\"",
+                "com_touch_abdomen_Begin_Restrained_2": "手脚都被制住，$self$狠狠瞪着靠近的$target$，呼吸一下子急了。",
+                "com_touch_abdomen_Begin_Restrained_3": "$self$无力挣开束缚，偏过脸去不敢看腹部上的那只手。",
+                "com_touch_abdomen_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，不好意思地把视线移向别处。",
+                "com_touch_abdomen_Ongoing_Player_2": "被揉着肚子时撞上$target$的目光，$self$脸颊微热，冲对方摆了摆手示意别看了。",
+                "com_touch_abdomen_Ongoing_Player_3": "$self$小声冲站在旁边的$target$抱怨：\"喂，有那么好看吗，一直盯着。\"",
+                "com_touch_abdomen_Ongoing_NPC_1": "$self$缓了口气，冲$target$笑道：\"手艺不错嘛，肚子暖和多了。\"",
+                "com_touch_abdomen_Ongoing_NPC_2": "揉按停下后，$self$看着$target$调侃道：\"摸够了吧？差点都要被你按睡着了。\"",
+                "com_touch_abdomen_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，这下舒服多了，谢了。\""
             },
             "en-us": {
                 "com_touch_abdomen_Begin_1": "$self$ doesn't shy away, relaxing her abdominal muscles as $target$'s palm rests against her. \"Don't tickle me, I'm very ticklish.\"",

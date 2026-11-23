@@ -146,7 +146,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -168,7 +169,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_cleaning_JoinFailed_1",
+                                "pb_com_job_cleaning_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -329,7 +333,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -356,7 +361,10 @@
                                 "distant"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_cleaning_Refuse_1",
+                                "pb_com_job_cleaning_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -507,7 +515,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -529,7 +538,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_farm_cultivate_crop_JoinFailed_1",
+                                "pb_com_job_farm_cultivate_crop_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -690,7 +702,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -717,7 +730,10 @@
                                 "distant"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_farm_cultivate_crop_Refuse_1",
+                                "pb_com_job_farm_cultivate_crop_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -868,7 +884,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -890,7 +907,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_farm_maintain_JoinFailed_1",
+                                "pb_com_job_farm_maintain_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -1051,7 +1071,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1078,7 +1099,10 @@
                                 "distant"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_farm_maintain_Refuse_1",
+                                "pb_com_job_farm_maintain_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1229,7 +1253,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1251,7 +1276,10 @@
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_production_cooking_JoinFailed_1",
+                                "pb_com_job_production_cooking_JoinFailed_2"
+                            ]
                         }
                     ],
                     "template": "commandJoinFailed"
@@ -1412,7 +1440,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -1439,12 +1468,38 @@
                                 "distant"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_production_cooking_Refuse_1",
+                                "pb_com_job_production_cooking_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
                 }
             }
         ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "pb_com_job_cleaning_Refuse_1": "$self$摇头拒绝了。\n\"我现在不想去打扫，你自己忙吧。\"",
+                "pb_com_job_cleaning_Refuse_2": "$self$摆摆手。\n\"清扫的事先不了，我有别的安排。\"",
+                "pb_com_job_cleaning_JoinFailed_1": "$self$停下手里的活看了看。\n\"这边人手够了，不用再加人。\"",
+                "pb_com_job_cleaning_JoinFailed_2": "$self$摇了摇头。\n\"这里地方窄，一个人弄反而快些。\"",
+                "pb_com_job_farm_cultivate_crop_Refuse_1": "$self$摇摇头。\n\"现在不想去照料作物，换个时间吧。\"",
+                "pb_com_job_farm_cultivate_crop_Refuse_2": "$self$摆了摆手。\n\"地里的活先不了，我没那个力气。\"",
+                "pb_com_job_farm_cultivate_crop_JoinFailed_1": "$self$直起腰看了一眼。\n\"这片田我自己照看就行，不用过来帮忙。\"",
+                "pb_com_job_farm_cultivate_crop_JoinFailed_2": "$self$摇了摇头。\n\"人多了反而容易踩坏苗，算了吧。\"",
+                "pb_com_job_farm_maintain_Refuse_1": "$self$摇头拒绝。\n\"农田维护的事现在不干，你自己处理吧。\"",
+                "pb_com_job_farm_maintain_Refuse_2": "$self$摆手推辞。\n\"先不了，我现在没空去弄田里的事。\"",
+                "pb_com_job_farm_maintain_JoinFailed_1": "$self$擦了擦汗，摇摇头。\n\"这边的活我自己收尾就好，不用掺和。\"",
+                "pb_com_job_farm_maintain_JoinFailed_2": "$self$摆了摆手。\n\"工具有限，人多也使不开。\"",
+                "pb_com_job_production_cooking_Refuse_1": "$self$摇摇头。\n\"我现在不想下厨，你自己做吧。\"",
+                "pb_com_job_production_cooking_Refuse_2": "$self$摆手推辞道。\n\"做饭的事先不了，没什么心情。\"",
+                "pb_com_job_production_cooking_JoinFailed_1": "$self$看了一眼灶台，摇摇头。\n\"厨房里转不开身，我一个人来就行。\"",
+                "pb_com_job_production_cooking_JoinFailed_2": "$self$摆了摆手。\n\"这边火候正忙着，先别挤进来。\""
+            },
+            "en-us": {}
+        }
     }
 }

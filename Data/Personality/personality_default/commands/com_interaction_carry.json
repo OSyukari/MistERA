@@ -1,0 +1,398 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Result_Timestop_1",
+                                        "com_interaction_carry_Result_Timestop_2",
+                                        "com_interaction_carry_Result_Timestop_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Result_Sleep_1",
+                                        "com_interaction_carry_Result_Sleep_2",
+                                        "com_interaction_carry_Result_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Result_Fainted_1",
+                                        "com_interaction_carry_Result_Fainted_2",
+                                        "com_interaction_carry_Result_Fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Result_Woken_1",
+                                        "com_interaction_carry_Result_Woken_2",
+                                        "com_interaction_carry_Result_Woken_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_interaction_carry_Result_Receiver_1",
+                                "com_interaction_carry_Result_Receiver_2",
+                                "com_interaction_carry_Result_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "_comment": "受方（时停中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Begin_Timestop_1",
+                                        "com_interaction_carry_Begin_Timestop_2",
+                                        "com_interaction_carry_Begin_Timestop_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（睡眠中） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Begin_Sleep_1",
+                                        "com_interaction_carry_Begin_Sleep_2",
+                                        "com_interaction_carry_Begin_Sleep_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_carry_Begin_Fainted_1",
+                                        "com_interaction_carry_Begin_Fainted_2",
+                                        "com_interaction_carry_Begin_Fainted_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_interaction_carry_Begin_Receiver_1",
+                                "com_interaction_carry_Begin_Receiver_2",
+                                "com_interaction_carry_Begin_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "selfTags": [
+                                    "justWokenUp"
+                                ]
+                            },
+                            "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_interaction_carry_Refuse_Woken_1",
+                                "com_interaction_carry_Refuse_Woken_2",
+                                "com_interaction_carry_Refuse_Woken_3"
+                            ]
+                        },
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_interaction_carry_Refuse_1",
+                                "com_interaction_carry_Refuse_2",
+                                "com_interaction_carry_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_interaction_carry_Interrupt_Doer_1",
+                                "com_interaction_carry_Interrupt_Doer_2",
+                                "com_interaction_carry_Interrupt_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_interaction_carry_Interrupt_Receiver_1",
+                                "com_interaction_carry_Interrupt_Receiver_2",
+                                "com_interaction_carry_Interrupt_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_interaction_carry_Tryjoin_1",
+                                "com_interaction_carry_Tryjoin_2",
+                                "com_interaction_carry_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_interaction_carry_Joined_1",
+                                "com_interaction_carry_Joined_2",
+                                "com_interaction_carry_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_interaction_carry_Join_Refused_1",
+                                "com_interaction_carry_Join_Refused_2",
+                                "com_interaction_carry_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_interaction_carry_Join_Doer_1",
+                                "com_interaction_carry_Join_Doer_2",
+                                "com_interaction_carry_Join_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_interaction_carry_Join_Receiver_1",
+                                "com_interaction_carry_Join_Receiver_2",
+                                "com_interaction_carry_Join_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_carry_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_interaction_carry_JoinFailed_Doer_1",
+                                "com_interaction_carry_JoinFailed_Doer_2",
+                                "com_interaction_carry_JoinFailed_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_interaction_carry_JoinFailed_Receiver_1",
+                                "com_interaction_carry_JoinFailed_Receiver_2",
+                                "com_interaction_carry_JoinFailed_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_carry_Result_Timestop_1": "即使换了位置，时间静止中的$self$眼神和姿态依然定格着。",
+                "com_interaction_carry_Result_Timestop_2": "$self$安静地停在$target$怀里，呼吸和动静都停住了。",
+                "com_interaction_carry_Result_Timestop_3": "$self$被时间锁住，对眼前发生的一切毫无感知。",
+                "com_interaction_carry_Result_Sleep_1": "$self$安稳地窝在$target$怀里，在睡梦中轻轻咂了下嘴。",
+                "com_interaction_carry_Result_Sleep_2": "睡熟的$self$额头贴着$target$的衣领，丝毫没被脚步声吵醒。",
+                "com_interaction_carry_Result_Sleep_3": "$self$呼吸均匀，随着$target$走动的节奏微微晃着。",
+                "com_interaction_carry_Result_Fainted_1": "$self$软绵绵地靠在$target$臂弯里，意识仍然没有恢复。",
+                "com_interaction_carry_Result_Fainted_2": "昏厥中的$self$脸色没什么血色，只随着$target$的步伐轻轻起伏。",
+                "com_interaction_carry_Result_Fainted_3": "$self$完全醒不过来，只能被动地依靠$target$托着体重。",
+                "com_interaction_carry_Result_Woken_1": "“唔……怎么忽然腾空了？是你抱着我啊。”",
+                "com_interaction_carry_Result_Woken_2": "$self$睁开眼怔了一下，随后抓稳了$target$的肩膀：“走稳点，别摔着。”",
+                "com_interaction_carry_Result_Woken_3": "“睡得正沉呢……算了，你要带我去哪儿？”",
+                "com_interaction_carry_Result_Receiver_1": "“还挺稳当的嘛，要走去哪儿？”",
+                "com_interaction_carry_Result_Receiver_2": "$self$调整了一下坐姿，免得胳膊压得$target$不舒服。",
+                "com_interaction_carry_Result_Receiver_3": "“累了就早点把我放下来，别硬撑。”",
+                "com_interaction_carry_Begin_Timestop_1": "时间静止中的$self$连姿势都没有变过，像个不会动的人偶。",
+                "com_interaction_carry_Begin_Timestop_2": "$self$直挺挺地停在半空般的姿态里，对被抱起全无知觉。",
+                "com_interaction_carry_Begin_Timestop_3": "凝固在原地的$self$没有半点配合或反抗，只是静静地维持着原样。",
+                "com_interaction_carry_Begin_Sleep_1": "睡着中的$self$被晃动了一下，只是嘟囔了半声又安静下来。",
+                "com_interaction_carry_Begin_Sleep_2": "$self$无意识地往$target$肩窝里靠了靠，呼吸依然平稳。",
+                "com_interaction_carry_Begin_Sleep_3": "还在熟睡的$self$整个人松松垮垮地挂在$target$臂弯里。",
+                "com_interaction_carry_Begin_Fainted_1": "昏迷中的$self$浑身使不上劲，手臂顺着重力垂了下来。",
+                "com_interaction_carry_Begin_Fainted_2": "$self$闭着眼没有任何挣扎，任由$target$托住自己的身体。",
+                "com_interaction_carry_Begin_Fainted_3": "失去意识的$self$毫无反应，脑袋无力地歪向一侧。",
+                "com_interaction_carry_Begin_Receiver_1": "“哎、等等，稳着点啊。”$self$下意识抓住了$target$的肩膀。",
+                "com_interaction_carry_Begin_Receiver_2": "$self$顺势把重心靠过去，免得自己晃来晃去。",
+                "com_interaction_carry_Begin_Receiver_3": "“突然就抱起来了……小心别闪着腰。”",
+                "com_interaction_carry_Refuse_Woken_1": "“干嘛趁我睡着乱抱人！快放我下来！”",
+                "com_interaction_carry_Refuse_Woken_2": "$self$一下子清醒过来，伸手推开$target$：“我自己有脚！”",
+                "com_interaction_carry_Refuse_Woken_3": "“吓我一跳……别莫名其妙抱起来就走啊。”",
+                "com_interaction_carry_Refuse_1": "“别乱抱人啊，我自己能走。”",
+                "com_interaction_carry_Refuse_2": "$self$往后退开一步，拉开了和$target$的距离：“手拿开。”",
+                "com_interaction_carry_Refuse_3": "“我又没伤没病的，不需要你抱。”",
+                "com_interaction_carry_Interrupt_Doer_1": "“只是顺手帮个忙，$target$别大惊小怪的。”",
+                "com_interaction_carry_Interrupt_Doer_2": "$self$稳了稳手臂，朝$target$点了个头：“有事待会儿再说。”",
+                "com_interaction_carry_Interrupt_Doer_3": "“$target$，麻烦让一下路，我正抱着人呢。”",
+                "com_interaction_carry_Interrupt_Receiver_1": "“别误会啊$target$，只是懒得自己走路而已。”",
+                "com_interaction_carry_Interrupt_Receiver_2": "$self$被$target$撞见，有些不自在地清了清嗓子：“干嘛这么看着我们？”",
+                "com_interaction_carry_Interrupt_Receiver_3": "“哟，$target$，你先忙你的，不用管我们。”",
+                "com_interaction_carry_Tryjoin_1": "“你们这是要去哪儿？我能跟着一起吗？”",
+                "com_interaction_carry_Tryjoin_2": "$self$凑近看了看，$target$怀里还抱着人：“需要我搭把手吗？”",
+                "com_interaction_carry_Tryjoin_3": "“$target$，方便的话我也同行一段吧。”",
+                "com_interaction_carry_Joined_1": "“行，那我走旁边替你们看着点路。”",
+                "com_interaction_carry_Joined_2": "$self$放轻脚步跟上$target$：“要是手酸了跟我说。”",
+                "com_interaction_carry_Joined_3": "“有个人搭把手总归稳当些。”",
+                "com_interaction_carry_Join_Refused_1": "“行吧，那你们小心点走，我不添乱了。”",
+                "com_interaction_carry_Join_Refused_2": "$self$退开两步，让出通道：“有需要再叫我。”",
+                "com_interaction_carry_Join_Refused_3": "“没事，我自己走另一边。”",
+                "com_interaction_carry_Join_Doer_1": "“来吧$target$，顺便帮我看着点门坎。”",
+                "com_interaction_carry_Join_Doer_2": "$self$腾不出手来打招呼，只朝$target$抬了抬下巴：“跟上就行。”",
+                "com_interaction_carry_Join_Doer_3": "“多个人照应也好，走吧。”",
+                "com_interaction_carry_Join_Receiver_1": "“$target$也来一块儿走啊，路上别踩着了。”",
+                "com_interaction_carry_Join_Receiver_2": "$self$冲$target$摆了摆手：“有人搭个伴也好。”",
+                "com_interaction_carry_Join_Receiver_3": "“人多点倒热闹，就是我现在不太方便挪动。”",
+                "com_interaction_carry_JoinFailed_Doer_1": "“我现在抱着人腾不开手，就不一块儿了，$target$。”",
+                "com_interaction_carry_JoinFailed_Doer_2": "$self$稳了稳步子：“回头有空再聊。”",
+                "com_interaction_carry_JoinFailed_Doer_3": "“这边人够了，$target$你先去忙吧。”",
+                "com_interaction_carry_JoinFailed_Receiver_1": "“抱歉啊$target$，这会儿实在不方便多带个人。”",
+                "com_interaction_carry_JoinFailed_Receiver_2": "$self$朝$target$点点头：“等会儿腾开手再说吧。”",
+                "com_interaction_carry_JoinFailed_Receiver_3": "“你先忙自己的去，这边我们自己应付得来。”"
+            }
+        }
+    }
+}

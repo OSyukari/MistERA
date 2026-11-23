@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_foot_toes_Begin_Fainted_1",
+                                "com_touch_foot_toes_Begin_Fainted_2",
+                                "com_touch_foot_toes_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_foot_toes_Begin_Restrained_1",
+                                "com_touch_foot_toes_Begin_Restrained_2",
+                                "com_touch_foot_toes_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -96,6 +128,298 @@
                     "ID": "com_touch_foot_toes",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_foot_toes_fainted_1",
+                                                "com_touch_foot_toes_fainted_2",
+                                                "com_touch_foot_toes_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_foot_toes_restrained_succ_1",
+                                                "com_touch_foot_toes_restrained_succ_2",
+                                                "com_touch_foot_toes_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_foot_toes_woken_1",
+                                                "com_touch_foot_toes_woken_2",
+                                                "com_touch_foot_toes_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被撫摸脚趾 口上文",
+                                            "responses": [
+                                                "com_touch_foot_toes_Sleep_01",
+                                                "com_touch_foot_toes_Sleep_02",
+                                                "com_touch_foot_toes_Sleep_03"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被撫摸脚趾 口上文",
+                                            "responses": [
+                                                "com_touch_foot_toes_TimeStop_01",
+                                                "com_touch_foot_toes_TimeStop_02",
+                                                "com_touch_foot_toes_TimeStop_03"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被撫摸脚趾 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_foot_toes_SuccPerm_01",
+                                                "com_touch_foot_toes_SuccPerm_02",
+                                                "com_touch_foot_toes_SuccPerm_03"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被撫摸脚趾 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_foot_toes_SuccNoPerm_01",
+                                        "com_touch_foot_toes_SuccNoPerm_02",
+                                        "com_touch_foot_toes_SuccNoPerm_03"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被撫摸脚趾 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_Sleep_01",
+                                        "com_touch_foot_toes_Sleep_02",
+                                        "com_touch_foot_toes_Sleep_03"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被撫摸脚趾 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_TimeStop_01",
+                                        "com_touch_foot_toes_TimeStop_02",
+                                        "com_touch_foot_toes_TimeStop_03"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_foot_toes_fainted_1",
+                                        "com_touch_foot_toes_fainted_2",
+                                        "com_touch_foot_toes_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_foot_toes_restrained_fail_1",
+                                        "com_touch_foot_toes_restrained_fail_2",
+                                        "com_touch_foot_toes_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_foot_toes_woken_1",
+                                        "com_touch_foot_toes_woken_2",
+                                        "com_touch_foot_toes_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_foot_toes_BadNoPerm_01",
+                                "com_touch_foot_toes_BadNoPerm_02",
+                                "com_touch_foot_toes_BadNoPerm_03"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被撫摸脚趾 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_Sleep_01",
+                                        "com_touch_foot_toes_Sleep_02",
+                                        "com_touch_foot_toes_Sleep_03"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被撫摸脚趾 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_TimeStop_01",
+                                        "com_touch_foot_toes_TimeStop_02",
+                                        "com_touch_foot_toes_TimeStop_03"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被撫摸脚趾 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_SuccPerm_01",
+                                        "com_touch_foot_toes_SuccPerm_02",
+                                        "com_touch_foot_toes_SuccPerm_03"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被撫摸脚趾 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_foot_toes_SuccNoPerm_01",
+                                "com_touch_foot_toes_SuccNoPerm_02",
+                                "com_touch_foot_toes_SuccNoPerm_03"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -134,50 +458,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被撫摸脚趾 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_foot_toes_SuccPerm_01",
-                                        "com_touch_foot_toes_SuccPerm_02",
-                                        "com_touch_foot_toes_SuccPerm_03"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被撫摸脚趾 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_foot_toes_SuccNoPerm_01",
-                                "com_touch_foot_toes_SuccNoPerm_02",
-                                "com_touch_foot_toes_SuccNoPerm_03"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -212,7 +492,12 @@
                                 "com_touch_foot_toes_BadNoPerm_01",
                                 "com_touch_foot_toes_BadNoPerm_02",
                                 "com_touch_foot_toes_BadNoPerm_03"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -224,8 +509,42 @@
                     "ID": "com_touch_foot_toes_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_foot_toes_Refuse_Receiver_1",
+                                "com_touch_foot_toes_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_foot_toes_Refuse_woken_1",
+                                        "com_touch_foot_toes_Refuse_woken_2",
+                                        "com_touch_foot_toes_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -289,6 +608,37 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_foot_toes_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_foot_toes_Ongoing_Player_1",
+                                        "com_touch_foot_toes_Ongoing_Player_2",
+                                        "com_touch_foot_toes_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_foot_toes_Ongoing_NPC_1",
+                                "com_touch_foot_toes_Ongoing_NPC_2",
+                                "com_touch_foot_toes_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -336,7 +686,36 @@
                 "com_touch_foot_toes_Begin_Timestop_1": "$target$托起悬在半空的脚，把脚趾逐根捏过，$self$的脚保持着原本的弧度，没有任何反应。",
                 "com_touch_foot_toes_Begin_Timestop_2": "脚心被指腹轻轻刮过，$self$的脚趾没有蜷缩，只是停在原处任由摆弄。",
                 "com_touch_foot_toes_Begin_Sleep_3": "脚趾被轻轻揉捏着，$self$只是动了动脚踝，眼皮一直没抬。",
-                "com_touch_foot_toes_Begin_Timestop_3": "脚趾被分开又松手，$self$站在原地一动不动，目光仍停在原来的落点上。"
+                "com_touch_foot_toes_Begin_Timestop_3": "脚趾被分开又松手，$self$站在原地一动不动，目光仍停在原来的落点上。",
+                "com_touch_foot_toes_fainted_1": "脚趾被反复揉捏，$self$始终昏迷着，没有半点醒来的迹象。",
+                "com_touch_foot_toes_fainted_2": "$self$没有恢复意识，脚底被搓热了也依旧毫无反应。",
+                "com_touch_foot_toes_fainted_3": "无论$target$怎么拨弄脚趾，$self$都闭着眼一动不动。",
+                "com_touch_foot_toes_restrained_succ_1": "$self$原本蜷紧的脚趾慢慢松了下来，别过脸闷声道：\"……好痒，别老挠脚心。\"",
+                "com_touch_foot_toes_restrained_succ_2": "被绑着没法躲，$self$小声嘀咕：\"……力道倒还不重。\"",
+                "com_touch_foot_toes_restrained_succ_3": "脚上的酸胀被揉散了些，$self$垂下视线不再咬牙硬撑。",
+                "com_touch_foot_toes_restrained_fail_1": "脚趾被捏得生疼却抽不回脚，$self$气得眼圈发红：\"轻点！弄疼我了！\"",
+                "com_touch_foot_toes_restrained_fail_2": "$self$咬着牙瞪向$target$，语气发哑：\"趁人被绑住摸脚，真够恶心的……\"",
+                "com_touch_foot_toes_restrained_fail_3": "$self$浑身绷紧，声音里带着火气：\"别再扯我脚趾了，疼死了！\"",
+                "com_touch_foot_toes_woken_1": "$self$迷迷糊糊睁开眼，低头看见$target$正捏着自己的脚：\"唔……你捏我脚趾干嘛呀？\"",
+                "com_touch_foot_toes_woken_2": "被脚上的痒意弄醒，$self$打了个哈欠，倒没怎么生气：\"好痒啊，难怪梦里一直觉得不对劲。\"",
+                "com_touch_foot_toes_woken_3": "$self$刚醒过来，声音还有点沙哑：\"醒了醒了，别挠脚心了。\"",
+                "com_touch_foot_toes_Refuse_woken_1": "$self$刚一醒过来就沉下脸瞪着$target$：\"趁我睡着摸别人脚趾，变态啊你！\"",
+                "com_touch_foot_toes_Refuse_woken_2": "被弄醒的$self$拉下脸，语气生硬得很：\"把你的手拿开，恶心死了！\"",
+                "com_touch_foot_toes_Refuse_woken_3": "$self$还没彻底清醒就已经拉下脸斥道：\"滚远点，别乱碰！\"",
+                "com_touch_foot_toes_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的脚趾。\"",
+                "com_touch_foot_toes_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰脚趾，请自重。\"",
+                "com_touch_foot_toes_Begin_Fainted_1": "$self$毫无知觉地昏迷着，脚趾被$target$捏住时没有任何反应。",
+                "com_touch_foot_toes_Begin_Fainted_2": "脚心和趾缝被轻轻碰触，$self$仍闭着眼一动不动，呼吸声轻弱而平缓。",
+                "com_touch_foot_toes_Begin_Fainted_3": "$self$完全失去了意识，任由$target$把玩自己的脚趾。",
+                "com_touch_foot_toes_Begin_Restrained_1": "$self$被绑着动弹不得，只能蜷紧脚趾咬牙道：\"别碰我的脚……\"",
+                "com_touch_foot_toes_Begin_Restrained_2": "手脚都被制住，$self$狠狠瞪着$target$，呼吸一下子急了。",
+                "com_touch_foot_toes_Begin_Restrained_3": "$self$无力挣开束缚，偏过脸去不看那只握着自己脚踝的手。",
+                "com_touch_foot_toes_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，脸颊一热，不好意思地把视线移向别处。",
+                "com_touch_foot_toes_Ongoing_Player_2": "被摸着脚趾时撞上$target$的目光，$self$耳根发烫，冲对方摆了摆手示意别看了。",
+                "com_touch_foot_toes_Ongoing_Player_3": "$self$小声冲站在旁边的$target$抱怨：\"喂，这有什么好看的，别一直盯着。\"",
+                "com_touch_foot_toes_Ongoing_NPC_1": "$self$蜷了蜷脚趾，冲$target$笑道：\"捏够了吧？脚都让你搓热了。\"",
+                "com_touch_foot_toes_Ongoing_NPC_2": "揉捏停下后，$self$看着$target$调侃道：\"就这么喜欢摸脚啊？\"",
+                "com_touch_foot_toes_Ongoing_NPC_3": "$self$语气带着点羞恼对$target$说道：\"行啦，下次别老往脚心上挠。\""
             },
             "en-us": {
                 "com_touch_foot_toes_Begin_01": "$self$ felt ticklish and couldn't help shrinking her foot back, but immediately extended it again with a doting smile. \"Seriously, do you like this place that much?\"",

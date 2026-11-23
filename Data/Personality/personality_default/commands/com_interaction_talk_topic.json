@@ -1,0 +1,357 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_interaction_talk_topic_Result_Restrained_Success_1",
+                                                "com_interaction_talk_topic_Result_Restrained_Success_2",
+                                                "com_interaction_talk_topic_Result_Restrained_Success_3"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_interaction_talk_topic_Result_Success_1",
+                                        "com_interaction_talk_topic_Result_Success_2",
+                                        "com_interaction_talk_topic_Result_Success_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                                    "responses": [
+                                        "com_interaction_talk_topic_Result_Restrained_Fail_1",
+                                        "com_interaction_talk_topic_Result_Restrained_Fail_2",
+                                        "com_interaction_talk_topic_Result_Restrained_Fail_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受·判定失败",
+                            "responses": [
+                                "com_interaction_talk_topic_Result_Fail_1",
+                                "com_interaction_talk_topic_Result_Fail_2",
+                                "com_interaction_talk_topic_Result_Fail_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                                    "responses": [
+                                        "com_interaction_talk_topic_Begin_Restrained_1",
+                                        "com_interaction_talk_topic_Begin_Restrained_2",
+                                        "com_interaction_talk_topic_Begin_Restrained_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_interaction_talk_topic_Begin_Receiver_1",
+                                "com_interaction_talk_topic_Begin_Receiver_2",
+                                "com_interaction_talk_topic_Begin_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "ReceiverDeclined",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "responses": [
+                                "com_interaction_talk_topic_Refuse_1",
+                                "com_interaction_talk_topic_Refuse_2",
+                                "com_interaction_talk_topic_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_interaction_talk_topic_Ongoing_Player_1",
+                                        "com_interaction_talk_topic_Ongoing_Player_2",
+                                        "com_interaction_talk_topic_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_interaction_talk_topic_Ongoing_NPC_1",
+                                "com_interaction_talk_topic_Ongoing_NPC_2",
+                                "com_interaction_talk_topic_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Interrupt",
+                    "template": "commandInterrupt",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_interaction_talk_topic_Interrupt_Doer_1",
+                                "com_interaction_talk_topic_Interrupt_Doer_2",
+                                "com_interaction_talk_topic_Interrupt_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 新来的人 ｜ 接受",
+                            "responses": [
+                                "com_interaction_talk_topic_Interrupt_Receiver_1",
+                                "com_interaction_talk_topic_Interrupt_Receiver_2",
+                                "com_interaction_talk_topic_Interrupt_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Tryjoin",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 尝试加入",
+                            "responses": [
+                                "com_interaction_talk_topic_Tryjoin_1",
+                                "com_interaction_talk_topic_Tryjoin_2",
+                                "com_interaction_talk_topic_Tryjoin_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Joined",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入成功",
+                            "responses": [
+                                "com_interaction_talk_topic_Joined_1",
+                                "com_interaction_talk_topic_Joined_2",
+                                "com_interaction_talk_topic_Joined_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Join_Refused",
+                    "template": "interaction",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "targetBaseID": "PLAYER"
+                            },
+                            "_comment": "加入者 → 玩家 ｜ 加入被拒绝",
+                            "responses": [
+                                "com_interaction_talk_topic_Join_Refused_1",
+                                "com_interaction_talk_topic_Join_Refused_2",
+                                "com_interaction_talk_topic_Join_Refused_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_Join",
+                    "template": "commandJoin",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_interaction_talk_topic_Join_Doer_1",
+                                "com_interaction_talk_topic_Join_Doer_2",
+                                "com_interaction_talk_topic_Join_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "_comment": "受方 → 加入者 ｜ 接受",
+                            "responses": [
+                                "com_interaction_talk_topic_Join_Receiver_1",
+                                "com_interaction_talk_topic_Join_Receiver_2",
+                                "com_interaction_talk_topic_Join_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_talk_topic_JoinFailed",
+                    "template": "commandJoinFailed",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_interaction_talk_topic_JoinFailed_Doer_1",
+                                "com_interaction_talk_topic_JoinFailed_Doer_2",
+                                "com_interaction_talk_topic_JoinFailed_Doer_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 未能加入的人 ｜ 未能加入",
+                            "responses": [
+                                "com_interaction_talk_topic_JoinFailed_Receiver_1",
+                                "com_interaction_talk_topic_JoinFailed_Receiver_2",
+                                "com_interaction_talk_topic_JoinFailed_Receiver_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_talk_topic_Result_Restrained_Success_1": "“……行吧，聊完这些倒是没那么憋闷了。”",
+                "com_interaction_talk_topic_Result_Restrained_Success_2": "$self$靠着身后缓了口气：“话说完了，能把绑解开了吗？”",
+                "com_interaction_talk_topic_Result_Restrained_Success_3": "“没想到被绑着还能跟$target$聊这么久……算了，谢谢你解闷。”",
+                "com_interaction_talk_topic_Result_Success_1": "“原来还有这种门道，听你这么一说我心里有数了。”",
+                "com_interaction_talk_topic_Result_Success_2": "$self$若有所思地点点头：“这个话题聊得挺值，下次再接着说。”",
+                "com_interaction_talk_topic_Result_Success_3": "“哈哈，没想到你对这事还挺了解的嘛。”",
+                "com_interaction_talk_topic_Result_Restrained_Fail_1": "“手腕勒得生疼，我实在没法顺着你的话接下去……”",
+                "com_interaction_talk_topic_Result_Restrained_Fail_2": "$self$别过脸去，懒得再接腔：“别光顾着说这些没用的了。”",
+                "com_interaction_talk_topic_Result_Restrained_Fail_3": "“……听不进去，先把我放开再说行不行？”",
+                "com_interaction_talk_topic_Result_Fail_1": "“感觉越聊越岔开了……算了，改天再说吧。”",
+                "com_interaction_talk_topic_Result_Fail_2": "$self$有些无奈地摊了摊手：“这事儿咱俩好像不在一个频道上。”",
+                "com_interaction_talk_topic_Result_Fail_3": "“行吧，听起来你也没比我更清楚。”",
+                "com_interaction_talk_topic_Begin_Restrained_1": "“人都绑成这样了还有心思找我聊这个……行吧，你说。”",
+                "com_interaction_talk_topic_Begin_Restrained_2": "$self$动了动受缚的手腕，抬眼看向$target$：“趁机转移一下注意力也好。”",
+                "com_interaction_talk_topic_Begin_Restrained_3": "“……至少嘴还能说话，你想聊什么就快点吧。”",
+                "com_interaction_talk_topic_Begin_Receiver_1": "“哦？你也对这个感兴趣啊，说说看。”",
+                "com_interaction_talk_topic_Begin_Receiver_2": "$self$往$target$这边转了转脸，接过话头：“我正好也想聊聊这事呢。”",
+                "com_interaction_talk_topic_Begin_Receiver_3": "“行啊，反正这会儿有空，听听你的想法。”",
+                "com_interaction_talk_topic_Refuse_1": "“抱歉，我现在不太想聊这个。”",
+                "com_interaction_talk_topic_Refuse_2": "$self$摆了摆手，移开视线：“换个时候再说吧，我手头还有事。”",
+                "com_interaction_talk_topic_Refuse_3": "“我对这话题没什么兴趣，你找别人聊吧。”",
+                "com_interaction_talk_topic_Ongoing_Player_1": "$self$朝旁边看了一眼，冲$target$点了下头又继续聊下去。",
+                "com_interaction_talk_topic_Ongoing_Player_2": "“嗯？$target$在旁边听着呢？没事，也不是什么不能说的事。”",
+                "com_interaction_talk_topic_Ongoing_Player_3": "$self$把话说到一半，顺势扫了$target$一眼：“别干站着啊。”",
+                "com_interaction_talk_topic_Ongoing_NPC_1": "“行，今天这事就先聊到这儿吧，$target$。”",
+                "com_interaction_talk_topic_Ongoing_NPC_2": "$self$伸了个懒腰，冲$target$笑笑：“回头想到新的再说。”",
+                "com_interaction_talk_topic_Ongoing_NPC_3": "“跟$target$聊完倒是痛快了不少，先各自忙去吧。”",
+                "com_interaction_talk_topic_Interrupt_Doer_1": "“$target$，过来一起听听？正说起这事呢。”",
+                "com_interaction_talk_topic_Interrupt_Doer_2": "$self$看向走近的$target$，顺手让出点空位：“找我有事？”",
+                "com_interaction_talk_topic_Interrupt_Doer_3": "“先等我把这句说完，$target$，很快就好。”",
+                "com_interaction_talk_topic_Interrupt_Receiver_1": "“哟，$target$，我们正聊着呢，你也来凑凑热闹？”",
+                "com_interaction_talk_topic_Interrupt_Receiver_2": "$self$停下话头朝$target$招了招手：“来得正好。”",
+                "com_interaction_talk_topic_Interrupt_Receiver_3": "“$target$，有事找我们？这边刚说到一半。”",
+                "com_interaction_talk_topic_Tryjoin_1": "“听你们聊得挺起劲的，$target$，算我一个呗？”",
+                "com_interaction_talk_topic_Tryjoin_2": "$self$走近几步，朝$target$探了探头：“我也想听听这个话题。”",
+                "com_interaction_talk_topic_Tryjoin_3": "“$target$，介意我插一句嘴吗？”",
+                "com_interaction_talk_topic_Joined_1": "“谢啦，说到哪儿了？我也听听。”",
+                "com_interaction_talk_topic_Joined_2": "$self$站到旁边凑近了些：“这事我之前也听说过一点。”",
+                "com_interaction_talk_topic_Joined_3": "“那我就不客气地加入啦，$target$。”",
+                "com_interaction_talk_topic_Join_Refused_1": "“行，那我不打扰你们了，继续聊吧。”",
+                "com_interaction_talk_topic_Join_Refused_2": "$self$摆了摆手退开两步：“回头有空再跟$target$聊。”",
+                "com_interaction_talk_topic_Join_Refused_3": "“这样啊……那我先去忙自己的了。”",
+                "com_interaction_talk_topic_Join_Doer_1": "“来得正好$target$，快过来一起聊聊。”",
+                "com_interaction_talk_topic_Join_Doer_2": "$self$朝$target$抬了抬下巴：“你来得巧，正讲到这儿。”",
+                "com_interaction_talk_topic_Join_Doer_3": "“多个人多个想法，$target$你也说说看。”",
+                "com_interaction_talk_topic_Join_Receiver_1": "“来吧$target$，正好缺个人一起出出主意。”",
+                "com_interaction_talk_topic_Join_Receiver_2": "$self$朝$target$挪出点位置：“我们刚说到关键地方呢。”",
+                "com_interaction_talk_topic_Join_Receiver_3": "“欢迎啊，$target$，你对这事怎么看？”",
+                "com_interaction_talk_topic_JoinFailed_Doer_1": "“今天这话题不方便多个人听，$target$体谅一下。”",
+                "com_interaction_talk_topic_JoinFailed_Doer_2": "$self$示意$target$先别过来：“过会儿有空再找你聊。”",
+                "com_interaction_talk_topic_JoinFailed_Doer_3": "“先这样吧$target$，这边很快就结束了。”",
+                "com_interaction_talk_topic_JoinFailed_Receiver_1": "“抱歉啊$target$，这边正好聊到要紧处，回头再找你。”",
+                "com_interaction_talk_topic_JoinFailed_Receiver_2": "$self$朝$target$点了点头：“现在不太方便插话，下次聊吧。”",
+                "com_interaction_talk_topic_JoinFailed_Receiver_3": "“你先忙自己的去，$target$，等会儿再说。”"
+            }
+        }
+    }
+}

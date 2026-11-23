@@ -139,22 +139,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_job_farm_cultivate_crop_Join_5",
-                                "com_job_farm_cultivate_crop_Join_6",
-                                "com_job_farm_cultivate_crop_Join_12"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfForced": true
                             },
                             "extraSelfPortraitTags": [
@@ -172,6 +156,22 @@
                             ]
                         },
                         {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Join_5",
+                                "com_job_farm_cultivate_crop_Join_6",
+                                "com_job_farm_cultivate_crop_Join_12"
+                            ]
+                        },
+                        {
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -181,7 +181,10 @@
                                 "com_job_farm_cultivate_crop_Join_9",
                                 "com_job_farm_cultivate_crop_Join_10",
                                 "com_job_farm_cultivate_crop_Join_13"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandJoin"
@@ -194,7 +197,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -343,6 +347,26 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "responses": [
+                                        "com_job_farm_cultivate_crop_Self_Success_1",
+                                        "com_job_farm_cultivate_crop_Self_Success_2",
+                                        "com_job_farm_cultivate_crop_Self_Success_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Self_Fail_1",
+                                "com_job_farm_cultivate_crop_Self_Fail_2",
+                                "com_job_farm_cultivate_crop_Self_Fail_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
@@ -422,7 +446,10 @@
                                 "com_job_farm_cultivate_crop_11",
                                 "com_job_farm_cultivate_crop_12",
                                 "com_job_farm_cultivate_crop_16"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -436,7 +463,8 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -562,7 +590,13 @@
                 "com_job_farm_cultivate_crop_Join_15": "$self$握紧手里的铲子退开半步，低声应道：\"……请便。\"",
                 "com_job_farm_cultivate_crop_15": "$self$直起腰朝$target$比了个手势：\"土压得很实，应该都能长起来。\"",
                 "com_job_farm_cultivate_crop_16": "$self$盯着一地散落的泥块叹了口气：\"算了，这一块全种歪了，白忙活。\"",
-                "com_job_farm_cultivate_crop_Joined_3": "$self$点点头拿起种苗：\"行，你挖坑，我跟着往下栽。\""
+                "com_job_farm_cultivate_crop_Joined_3": "$self$点点头拿起种苗：\"行，你挖坑，我跟着往下栽。\"",
+                "com_job_farm_cultivate_crop_Self_Success_1": "$self$拍掉手套上的泥巴，看着排得整整齐齐的田垄，心里踏实了不少。",
+                "com_job_farm_cultivate_crop_Self_Success_2": "\"行距和深浅都刚刚好，接下来只要按时浇水就行。\" $self$直起腰舒了口气。",
+                "com_job_farm_cultivate_crop_Self_Success_3": "收拾好工具站起身，$self$满意地看了一眼刚栽好的那片地，准备回去歇会儿。",
+                "com_job_farm_cultivate_crop_Self_Fail_1": "$self$看着歪歪扭扭栽得深浅不一的苗株，无奈地揉了揉酸痛的后腰。",
+                "com_job_farm_cultivate_crop_Self_Fail_2": "\"土太硬了，挖得手生疼也没种齐整……\" $self$叹了口气，把铲子插回土里。",
+                "com_job_farm_cultivate_crop_Self_Fail_3": "忙活了半天效果却不太理想，$self$摇摇头收起工具，打算先回去休息。"
             },
             "en-us": {
                 "kojo_default_com_job_farm_cultivate_crop_refuse_1": "$self$: \"Planting crops, huh... why don't you find someone more experienced to work with?\"",

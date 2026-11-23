@@ -45,6 +45,38 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "_comment": "受方（昏迷（非睡眠）） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_cheek_Begin_Fainted_1",
+                                "com_touch_cheek_Begin_Fainted_2",
+                                "com_touch_cheek_Begin_Fainted_3"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "selfTags": [
+                                    "restrained"
+                                ]
+                            },
+                            "_comment": "受方（被束缚） → 对方（玩家或 NPC） ｜ 接受",
+                            "responses": [
+                                "com_touch_cheek_Begin_Restrained_1",
+                                "com_touch_cheek_Begin_Restrained_2",
+                                "com_touch_cheek_Begin_Restrained_3"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requirePermission": true
                             },
@@ -99,6 +131,309 @@
                     "ID": "com_touch_cheek",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_player only version": {
+                                        "requirement": {
+                                            "targetBaseID": "PLAYER"
+                                        }
+                                    },
+                                    "_strong com variant": {
+                                        "requireCOMStrongVariant": true
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "unconscious"
+                                                ],
+                                                "excludeSelfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_cheek_fainted_1",
+                                                "com_touch_cheek_fainted_2",
+                                                "com_touch_cheek_fainted_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "restrained"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_cheek_restrained_succ_1",
+                                                "com_touch_cheek_restrained_succ_2",
+                                                "com_touch_cheek_restrained_succ_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "responses": [
+                                                "com_touch_cheek_woken_1",
+                                                "com_touch_cheek_woken_2",
+                                                "com_touch_cheek_woken_3"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "sleeping"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sleeping",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.3.2 睡眠中 被捏脸蛋 口上文",
+                                            "responses": [
+                                                "com_touch_cheek_Sleep_1",
+                                                "com_touch_cheek_Sleep_2",
+                                                "com_touch_cheek_Sleep_3",
+                                                "com_touch_cheek_Sleep_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAction": false,
+                                                "selfTags": [
+                                                    "timestop"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "doll",
+                                                "empty",
+                                                "silence",
+                                                "idle"
+                                            ],
+                                            "_comment": "2.3.1 时停中 被捏脸蛋 口上文",
+                                            "responses": [
+                                                "com_touch_cheek_TimeStop_1",
+                                                "com_touch_cheek_TimeStop_2",
+                                                "com_touch_cheek_TimeStop_3",
+                                                "com_touch_cheek_TimeStop_4"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被捏脸蛋 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_cheek_Success_Allow_1",
+                                                "com_touch_cheek_Success_Allow_2",
+                                                "com_touch_cheek_Success_Allow_3",
+                                                "com_touch_cheek_Success_Allow_4"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.5 ($self$) 被捏脸蛋 结果正面 未允许 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "com_touch_cheek_Success_NoAllow_1",
+                                        "com_touch_cheek_Success_NoAllow_2",
+                                        "com_touch_cheek_Success_NoAllow_3",
+                                        "com_touch_cheek_Success_NoAllow_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被捏脸蛋 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Sleep_1",
+                                        "com_touch_cheek_Sleep_2",
+                                        "com_touch_cheek_Sleep_3",
+                                        "com_touch_cheek_Sleep_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被捏脸蛋 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_TimeStop_1",
+                                        "com_touch_cheek_TimeStop_2",
+                                        "com_touch_cheek_TimeStop_3",
+                                        "com_touch_cheek_TimeStop_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "unconscious"
+                                        ],
+                                        "excludeSelfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_cheek_fainted_1",
+                                        "com_touch_cheek_fainted_2",
+                                        "com_touch_cheek_fainted_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "restrained"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_cheek_restrained_fail_1",
+                                        "com_touch_cheek_restrained_fail_2",
+                                        "com_touch_cheek_restrained_fail_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "com_touch_cheek_woken_1",
+                                        "com_touch_cheek_woken_2",
+                                        "com_touch_cheek_woken_3"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_touch_cheek_Bad_NoAllow_1",
+                                "com_touch_cheek_Bad_NoAllow_2",
+                                "com_touch_cheek_Bad_NoAllow_3",
+                                "com_touch_cheek_Bad_NoAllow_4"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被捏脸蛋 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Sleep_1",
+                                        "com_touch_cheek_Sleep_2",
+                                        "com_touch_cheek_Sleep_3",
+                                        "com_touch_cheek_Sleep_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被捏脸蛋 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_TimeStop_1",
+                                        "com_touch_cheek_TimeStop_2",
+                                        "com_touch_cheek_TimeStop_3",
+                                        "com_touch_cheek_TimeStop_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被捏脸蛋 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_cheek_Success_Allow_1",
+                                        "com_touch_cheek_Success_Allow_2",
+                                        "com_touch_cheek_Success_Allow_3",
+                                        "com_touch_cheek_Success_Allow_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被捏脸蛋 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_touch_cheek_Success_NoAllow_1",
+                                "com_touch_cheek_Success_NoAllow_2",
+                                "com_touch_cheek_Success_NoAllow_3",
+                                "com_touch_cheek_Success_NoAllow_4"
+                            ]
+                        },
+                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
@@ -139,52 +474,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被捏脸蛋 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_cheek_Success_Allow_1",
-                                        "com_touch_cheek_Success_Allow_2",
-                                        "com_touch_cheek_Success_Allow_3",
-                                        "com_touch_cheek_Success_Allow_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被捏脸蛋 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_cheek_Success_NoAllow_1",
-                                "com_touch_cheek_Success_NoAllow_2",
-                                "com_touch_cheek_Success_NoAllow_3",
-                                "com_touch_cheek_Success_NoAllow_4"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -221,7 +510,12 @@
                                 "com_touch_cheek_Bad_NoAllow_2",
                                 "com_touch_cheek_Bad_NoAllow_3",
                                 "com_touch_cheek_Bad_NoAllow_4"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -233,8 +527,42 @@
                     "ID": "com_touch_cheek_Refuse",
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_cheek_Refuse_Receiver_1",
+                                "com_touch_cheek_Refuse_Receiver_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_touch_cheek_Refuse_woken_1",
+                                        "com_touch_cheek_Refuse_woken_2",
+                                        "com_touch_cheek_Refuse_woken_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -301,6 +629,37 @@
                     ],
                     "template": "commandRefuse"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_cheek_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "受方 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_touch_cheek_Ongoing_Player_1",
+                                        "com_touch_cheek_Ongoing_Player_2",
+                                        "com_touch_cheek_Ongoing_Player_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "受方 → NPC ｜ 结束",
+                            "responses": [
+                                "com_touch_cheek_Ongoing_NPC_1",
+                                "com_touch_cheek_Ongoing_NPC_2",
+                                "com_touch_cheek_Ongoing_NPC_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -361,7 +720,36 @@
                 "com_touch_cheek_Begin_Timestop_1": "$target$的指背贴上她定格的脸颊轻擦，$self$的视线停在原来的落点上，眼睫没动。",
                 "com_touch_cheek_Begin_Timestop_2": "$self$的脸被捧住端详，颊肉被指腹按出浅窝又弹回，脸上仍是上一秒的神情。",
                 "com_touch_cheek_Begin_Timestop_3": "脸颊被两根手指轻轻捏住往外扯了扯，$self$一动不动，连嘴角弧度都没有变。",
-                "com_touch_cheek_Begin_Sleep_3": "$self$沉在睡梦里，被人碰了脸也只是把下巴往领口缩了缩，眼皮动都没动。"
+                "com_touch_cheek_Begin_Sleep_3": "$self$沉在睡梦里，被人碰了脸也只是把下巴往领口缩了缩，眼皮动都没动。",
+                "com_touch_cheek_fainted_1": "脸颊被反复揉捏，$self$始终昏迷着，头部只随着$target$手上的力道微微晃动。",
+                "com_touch_cheek_fainted_2": "$self$没有恢复意识，松手后脸上留下一片按出来的红印。",
+                "com_touch_cheek_fainted_3": "无论$target$怎么拉扯颊肉，$self$都毫无反应地闭着眼，像彻底失去了感知。",
+                "com_touch_cheek_restrained_succ_1": "$self$原本一直往后躲的脑袋慢慢停了下来，脸颊发烫，没再继续挣扎。",
+                "com_touch_cheek_restrained_succ_2": "手被绑着没法挡，$self$把脸偏开一些，嘴硬道：\"……捏够了没有，别以为我不敢咬你。\"",
+                "com_touch_cheek_restrained_succ_3": "脸上的触碰倒没那么讨厌，$self$松了口气似的垂下视线，默许了$target$的动作。",
+                "com_touch_cheek_restrained_fail_1": "脸颊被捏得生疼却抬不起手推开，$self$气得眼圈发红：\"放开！弄疼我了！\"",
+                "com_touch_cheek_restrained_fail_2": "$self$使劲晃着脑袋想甩开$target$的手，束缚勒得手腕生疼也没停下。",
+                "com_touch_cheek_restrained_fail_3": "$self$憋着气瞪向$target$，半边脸被捏得发麻：\"等我解开绳子……你给我等着。\"",
+                "com_touch_cheek_woken_1": "$self$迷迷糊糊睁开眼，摸了摸自己还有点发温的脸颊：\"唔……你刚才在捏我脸？\"",
+                "com_touch_cheek_woken_2": "被脸上的动静弄醒，$self$揉着眼睛打了个哈欠，倒没怎么生气：\"叫醒我干嘛呀……\"",
+                "com_touch_cheek_woken_3": "$self$醒过来才发现$target$的手还在自己脸侧，愣了两秒后哼了一声：\"趁我睡着搞偷袭啊。\"",
+                "com_touch_cheek_Refuse_woken_1": "$self$刚一醒过来就烦躁地瞪着$target$：\"大清早的捏什么捏，有病啊！\"",
+                "com_touch_cheek_Refuse_woken_2": "被捏脸弄醒的$self$拉下脸，语气生硬得很：\"别趁人睡着的时候乱碰！\"",
+                "com_touch_cheek_Refuse_woken_3": "$self$还没完全清醒就已经先把脸沉了下来，语气冲得很：\"滚远点，别烦我睡觉。\"",
+                "com_touch_cheek_Refuse_Receiver_1": "$self$避开了$target$的触碰，不满地皱起眉。\n\"别随便碰我的脸颊。\"",
+                "com_touch_cheek_Refuse_Receiver_2": "$self$把$target$的手推开。\n\"我现在不想被碰脸颊，请自重。\"",
+                "com_touch_cheek_Begin_Fainted_1": "$self$毫无知觉地垂着头，脸颊被$target$捏住时也没有半点反应。",
+                "com_touch_cheek_Begin_Fainted_2": "被手指按压的颊肉微微陷下去，$self$仍闭着眼，连呼吸都没有改变节奏。",
+                "com_touch_cheek_Begin_Fainted_3": "$self$整个人软绵绵地昏着，任由$target$在自己脸上碰来碰去。",
+                "com_touch_cheek_Begin_Restrained_1": "$self$双手被绑着没法抬手挡，只能使劲往后仰头避开$target$的手指。",
+                "com_touch_cheek_Begin_Restrained_2": "挣不开束缚，$self$偏过脸咬紧牙关：\"别碰我的脸……\"",
+                "com_touch_cheek_Begin_Restrained_3": "$self$被制住动弹不得，只能瞪着靠过来的$target$，呼吸一下子急了。",
+                "com_touch_cheek_Ongoing_Player_1": "$self$余光瞥见$target$在一旁看着，脸颊微热，不好意思地把头往旁边偏了点。",
+                "com_touch_cheek_Ongoing_Player_2": "$self$被捏着脸颊没法好好说话，朝$target$含糊地递去一个眼神，像是在问还看什么。",
+                "com_touch_cheek_Ongoing_Player_3": "$self$任由另一人碰着自己的脸，同时冲站在一旁的$target$摆了摆手：\"别光站着看了。\"",
+                "com_touch_cheek_Ongoing_NPC_1": "$self$揉了揉刚才被捏过的脸颊，冲$target$笑道：\"捏够了吧？脸都要被你搓热了。\"",
+                "com_touch_cheek_Ongoing_NPC_2": "动作停下后，$self$顺手理了理脸侧的碎发：\"下次轻点，我脸皮薄着呢。\"",
+                "com_touch_cheek_Ongoing_NPC_3": "$self$偏头看了看$target$，语气轻松：\"手感有这么好吗，一直捏个没完。\""
             },
             "en-us": {
                 "com_touch_cheek_Begin_1": "$self$ doesn't shy away, but instead leans her cheek into $target$'s palm, like a small animal seeking affection.",

@@ -337,6 +337,322 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "_player only version": {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER"
+                                }
+                            },
+                            "_strong com variant": {
+                                "requireCOMStrongVariant": true
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M",
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "sleeping",
+                                        "pain"
+                                    ],
+                                    "_comment": "初体验 睡眠中 被强制口交",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_Sleep_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "firstexp_M",
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "doll",
+                                        "empty"
+                                    ],
+                                    "_comment": "初体验 时停中 被强制口交",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_Timestop_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_M"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "blush",
+                                                "pain",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 玩家专用 被强制口交 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_FE_Player_1"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "blush",
+                                                "pain"
+                                            ],
+                                            "_comment": "初体验 被强制口交 有允许（还不习惯）",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_FE_1",
+                                                "com_sex_oral_P_Force_FE_2"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "blush",
+                                                "pain",
+                                                "shy"
+                                            ],
+                                            "_comment": "初体验 被强制口交 未允许 好意（还不习惯）",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_FE_3"
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "pain",
+                                        "tearful",
+                                        "cry"
+                                    ],
+                                    "_comment": "初体验 被强制口交 未允许 敌意",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_4",
+                                        "com_sex_oral_P_Force_FE_5"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced"
+                                    ],
+                                    "_comment": "对方初体验 被强制口交（使用对方嘴的一方）",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_Partner_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "sleeping"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "sleeping",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.3.2 睡眠中 被强制口交 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_1",
+                                        "com_sex_oral_P_Force_2",
+                                        "com_sex_oral_P_Force_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAction": false,
+                                        "selfTags": [
+                                            "timestop"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle"
+                                    ],
+                                    "_comment": "2.3.1 时停中 被强制口交 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_4",
+                                        "com_sex_oral_P_Force_5",
+                                        "com_sex_oral_P_Force_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment1": "玩家专用 刚睡醒时的 强制口交口上文",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.1.5  玩家专用的 刚睡醒时的 被强制口交 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_22",
+                                                "com_sex_oral_P_Force_23",
+                                                "com_sex_oral_P_Force_24"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced",
+                                                "sleep",
+                                                "smile",
+                                                "blush",
+                                                "lazy"
+                                            ],
+                                            "_comment": "2.2.7 玩家专用的 刚睡醒时的 被强制口交 无允许 好意 口上文",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_25",
+                                                "com_sex_oral_P_Force_26",
+                                                "com_sex_oral_P_Force_27"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.8 玩家专用 刚睡醒时的 被强制口交 无允许 敌意 口上文",
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "scared",
+                                        "submissive"
+                                    ],
+                                    "responses": [
+                                        "com_sex_oral_P_Force_28",
+                                        "com_sex_oral_P_Force_29",
+                                        "com_sex_oral_P_Force_30"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "love",
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.3 ($self$) 被强制口交 结果正面 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_31",
+                                        "com_sex_oral_P_Force_32",
+                                        "com_sex_oral_P_Force_33"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.5 ($self$) 被强制口交 结果正面 未允许 口上文",
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "blush",
+                                "shy",
+                                "surprised",
+                                "happy",
+                                "aroused"
+                            ],
+                            "responses": [
+                                "com_sex_oral_P_Force_34",
+                                "com_sex_oral_P_Force_35",
+                                "com_sex_oral_P_Force_36"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "firstexp_M",
@@ -598,60 +914,6 @@
                             ]
                         },
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "irrumatio",
-                                        "blowjob",
-                                        "forced",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被强制口交 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_P_Force_31",
-                                        "com_sex_oral_P_Force_32",
-                                        "com_sex_oral_P_Force_33"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被强制口交 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "irrumatio",
-                                "blowjob",
-                                "forced",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_oral_P_Force_34",
-                                "com_sex_oral_P_Force_35",
-                                "com_sex_oral_P_Force_36"
-                            ]
-                        },
-                        {
                             "variants": [
                                 {
                                     "requirement": {
@@ -696,7 +958,12 @@
                                 "com_sex_oral_P_Force_40",
                                 "com_sex_oral_P_Force_41",
                                 "com_sex_oral_P_Force_42"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
                         }
                     ],
                     "template": "commandResult"
@@ -711,8 +978,26 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_Force_Refuse_Receiver_1",
+                                "com_sex_oral_P_Force_Refuse_Receiver_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "allowRecording": true
                             },
                             "variants": [
                                 {
@@ -914,7 +1199,9 @@
                 "com_sex_oral_P_Force_FE_3": "\"我不知道……喉咙该怎么放松……\"\n\n$self$又呛又抖，眼泪一直没停。",
                 "com_sex_oral_P_Force_FE_4": "\"……呃……够、够了……\"\n\n初次被顶到喉底的剧痛让$self$浑身痉挛，眼泪鼻涕糊了一脸。",
                 "com_sex_oral_P_Force_FE_5": "\"……快点结束。\"\n\n$self$空洞地张着嘴，任由摆布。",
-                "com_sex_oral_P_Force_FE_Partner_1": "\"别用牙……放松喉咙。\"\n\n察觉到对方口腔的僵硬，$self$放缓了动作。"
+                "com_sex_oral_P_Force_FE_Partner_1": "\"别用牙……放松喉咙。\"\n\n察觉到对方口腔的僵硬，$self$放缓了动作。",
+                "com_sex_oral_P_Force_Refuse_Receiver_1": "$self$用力推开了$target$，神色戒备。\n\"别碰我！我没同意做这种事。\"",
+                "com_sex_oral_P_Force_Refuse_Receiver_2": "$self$往后退开一步，冷冷地拒绝了$target$。\n\"现在不行，请离我远点。\""
             }
         }
     }
