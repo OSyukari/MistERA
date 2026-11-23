@@ -106,7 +106,8 @@
                             "_comment": "2.3.6 NPC请求加入",
                             "responses": [
                                 "com_furniture_watchVideo_Tryjoin_1",
-                                "com_furniture_watchVideo_Tryjoin_2"
+                                "com_furniture_watchVideo_Tryjoin_2",
+                                "com_furniture_watchVideo_Tryjoin_3"
                             ]
                         }
                     ],
@@ -122,7 +123,8 @@
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": [
                                 "com_furniture_watchVideo_Joined_1",
-                                "com_furniture_watchVideo_Joined_2"
+                                "com_furniture_watchVideo_Joined_2",
+                                "com_furniture_watchVideo_Joined_3"
                             ]
                         }
                     ],
@@ -138,7 +140,8 @@
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
                                 "com_furniture_watchVideo_Join_Refused_1",
-                                "com_furniture_watchVideo_Join_Refused_2"
+                                "com_furniture_watchVideo_Join_Refused_2",
+                                "com_furniture_watchVideo_Join_Refused_3"
                             ]
                         }
                     ],
@@ -162,7 +165,8 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_furniture_watchVideo_Join_5",
-                                "com_furniture_watchVideo_Join_6"
+                                "com_furniture_watchVideo_Join_6",
+                                "com_furniture_watchVideo_Join_11"
                             ]
                         },
                         {
@@ -179,7 +183,8 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_furniture_watchVideo_Join_7",
-                                "com_furniture_watchVideo_Join_8"
+                                "com_furniture_watchVideo_Join_8",
+                                "com_furniture_watchVideo_Join_14"
                             ]
                         },
                         {
@@ -190,7 +195,8 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_furniture_watchVideo_Join_9",
-                                "com_furniture_watchVideo_Join_10"
+                                "com_furniture_watchVideo_Join_10",
+                                "com_furniture_watchVideo_Join_12"
                             ]
                         }
                     ],
@@ -220,7 +226,8 @@
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
                                         "com_furniture_watchVideo_Join_1",
-                                        "com_furniture_watchVideo_Join_2"
+                                        "com_furniture_watchVideo_Join_2",
+                                        "com_furniture_watchVideo_Join_15"
                                     ]
                                 }
                             ],
@@ -233,7 +240,8 @@
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_furniture_watchVideo_Join_3",
-                                "com_furniture_watchVideo_Join_4"
+                                "com_furniture_watchVideo_Join_4",
+                                "com_furniture_watchVideo_Join_13"
                             ]
                         }
                     ],
@@ -451,7 +459,8 @@
                                     "_comment": "2.5.1 失败但正面反馈",
                                     "responses": [
                                         "com_furniture_watchVideo_15",
-                                        "com_furniture_watchVideo_16"
+                                        "com_furniture_watchVideo_16",
+                                        "com_furniture_watchVideo_20"
                                     ]
                                 }
                             ],
@@ -469,7 +478,8 @@
                             ],
                             "responses": [
                                 "com_furniture_watchVideo_17",
-                                "com_furniture_watchVideo_18"
+                                "com_furniture_watchVideo_18",
+                                "com_furniture_watchVideo_19"
                             ]
                         }
                     ],
@@ -501,7 +511,8 @@
                                     "useActiveTags": false,
                                     "responses": [
                                         "com_furniture_watchVideo_1",
-                                        "com_furniture_watchVideo_2"
+                                        "com_furniture_watchVideo_2",
+                                        "com_furniture_watchVideo_22"
                                     ]
                                 }
                             ],
@@ -518,7 +529,8 @@
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
                                 "com_furniture_watchVideo_3",
-                                "com_furniture_watchVideo_4"
+                                "com_furniture_watchVideo_4",
+                                "com_furniture_watchVideo_21"
                             ]
                         }
                     ],
@@ -532,7 +544,7 @@
             "zh-cn": {
                 "com_furniture_watchVideo_Begin_1": "$self$立刻把遥控器递了过去：\"好啊！正好一个人看有点无聊。\"",
                 "com_furniture_watchVideo_Begin_2": "$self$开心地往旁边挪了挪：\"快来快来，这个节目超有意思的！\"",
-                "com_furniture_watchVideo_Begin_3": "$self$拍了拍大腿：\"只要你不抢我的零食，一起看当然没问题。\"",
+                "com_furniture_watchVideo_Begin_3": "$self$拍了拍旁边的空位：\"只要别一直剧透，一起看当然没问题。\"",
                 "com_furniture_watchVideo_Begin_4": "$self$眼睛一亮，立刻站了起来。\"好啊！我正愁没事做呢！\"",
                 "com_furniture_watchVideo_Begin_5": "$self$开心地凑了过来：\"看什么看什么？我也要看！\"",
                 "com_furniture_watchVideo_Begin_6": "$self$咬着嘴唇低下了头，虽然不情愿但还是挪开了一些位置。",
@@ -557,24 +569,24 @@
                 "com_furniture_watchVideo_Begin_25": "$self$慵懒地陷进沙发里，随手按下了遥控器的电源键。",
                 "com_furniture_watchVideo_Begin_26": "$self$盘腿坐在地毯上，打开电视试图寻找一些背景音。",
                 "com_furniture_watchVideo_Begin_27": "$self$有些无聊地抓起遥控器，漫无目的地开始切换频道。",
-                "com_furniture_watchVideo_Begin_28": "$self$拿起遥控器，陷进了柔软的沙发里。\"看看今天有什么新闻吧。\"",
-                "com_furniture_watchVideo_Begin_29": "$self$打开电视，熟练地切换到了收藏的频道。",
-                "com_furniture_watchVideo_Begin_30": "$self$抱起一包零食，盘起腿坐在了电视机前。\"终于到了追剧时间了！\"",
-                "com_furniture_watchVideo_Tryjoin_1": "$self$探头探脑地凑过来：\"这是那个新出的电影吗？能不能加我一个？\"",
-                "com_furniture_watchVideo_Tryjoin_2": "$self$有些不好意思地抓抓头发：\"那个……介意我一起看吗？看起来很有趣的样子。\"",
-                "com_furniture_watchVideo_Joined_1": "$self$欢呼一声，直接跳到了沙发上。\"太棒了！我就知道你最好了！\"",
+                "com_furniture_watchVideo_Begin_28": "$self$把遥控器搁在茶几上：\"先放着吧，挑个舒服点的角度看。\"",
+                "com_furniture_watchVideo_Begin_29": "$self$找了个靠垫垫在身后，抬眼看向屏幕。",
+                "com_furniture_watchVideo_Begin_30": "$self$往沙发里一靠，顺手把音量调到顺耳的位置。\"正片开始了吗？\"",
+                "com_furniture_watchVideo_Tryjoin_1": "$self$探头探脑地凑过来：\"这是什么片子？能不能加我一个？\"",
+                "com_furniture_watchVideo_Tryjoin_2": "$self$有些不好意思地抓了抓脸颊：\"那个……介意我一起看吗？看起来很有趣的样子。\"",
+                "com_furniture_watchVideo_Joined_1": "$self$欢呼一声，直接坐到了沙发上：\"太棒了！我就知道你最好了！\"",
                 "com_furniture_watchVideo_Joined_2": "$self$立刻找了个舒服的姿势坐好，脸上挂满了期待。",
-                "com_furniture_watchVideo_Join_Refused_1": "$self$失望地垂下肩膀，撇了撇嘴。\"小气鬼……不看就不看。\"",
-                "com_furniture_watchVideo_Join_Refused_2": "$self$尴尬地笑了笑，慢慢退了出去。\"啊，这样啊，那我不打扰了。\"",
+                "com_furniture_watchVideo_Join_Refused_1": "$self$失望地垂下肩膀，撇了撇嘴：\"小气鬼……不看就不看。\"",
+                "com_furniture_watchVideo_Join_Refused_2": "$self$尴尬地笑了笑，慢慢退了出去：\"啊，这样啊，那我不打扰了。\"",
                 "com_furniture_watchVideo_Join_1": "$self$歉意地笑了笑：\"抱歉呀，我想一个人安静地把这部剧看完。\"",
                 "com_furniture_watchVideo_Join_2": "$self$摇摇头：\"现在不太方便，下次再一起吧。\"",
-                "com_furniture_watchVideo_Join_3": "$self$不耐烦地啧了一声：\"这沙发容不下两个人，去别处待着。\"",
-                "com_furniture_watchVideo_Join_4": "$self$冷冷地说道：\"我在享受独处时间，请勿打扰。\"",
-                "com_furniture_watchVideo_Join_5": "$self$立刻往旁边挪了挪，拍着身边的空位。\"当然可以！快来快来！\"",
-                "com_furniture_watchVideo_Join_6": "$self$笑着递过遥控器：\"正好多个人讨论剧情更有意思。\"",
-                "com_furniture_watchVideo_Join_7": "$self$身体僵硬了一下，默默地缩到了沙发的另一头。\"……随你便。\"",
-                "com_furniture_watchVideo_Join_8": "$self$不敢直视$target$的眼睛，把遥控器放在了桌上。\"您坐这里……\"",
-                "com_furniture_watchVideo_Join_9": "$self$有些诧异地看了$target$一眼，然后默默挪开了一些位置。\"呃……你想看就看吧。\"",
+                "com_furniture_watchVideo_Join_3": "$self$不耐烦地啧了一声：\"这地方容不下两个人，去别处待着。\"",
+                "com_furniture_watchVideo_Join_4": "$self$冷冷地说道：\"别来打扰我看东西。\"",
+                "com_furniture_watchVideo_Join_5": "$self$立刻往旁边挪了挪，拍着身边的空位：\"当然可以！快来快来！\"",
+                "com_furniture_watchVideo_Join_6": "$self$笑着递过遥控器：\"正好多个人一起看更有意思。\"",
+                "com_furniture_watchVideo_Join_7": "$self$动作顿住，默默地缩到了沙发的另一头：\"……随你便。\"",
+                "com_furniture_watchVideo_Join_8": "$self$不敢直视$target$的眼睛，把遥控器放在了桌上：\"您坐这里……\"",
+                "com_furniture_watchVideo_Join_9": "$self$有些诧异地看了$target$一眼，然后默默挪开了一些位置：\"呃……你想看就看吧。\"",
                 "com_furniture_watchVideo_Join_10": "$self$虽然没有说话，但还是默许了$target$坐在身边。",
                 "com_furniture_watchVideo_Ongoing_1": "$self$单手托着下巴，面无表情地看着屏幕上的画面。",
                 "com_furniture_watchVideo_Ongoing_2": "$self$偶尔拿起杯子喝一口水，视线始终没有离开电视。",
@@ -585,15 +597,15 @@
                 "com_furniture_watchVideo_Ongoing_7": "电视屏幕的光影映在$self$专注的脸上，她甚至忘记了吃手里的薯片。",
                 "com_furniture_watchVideo_Ongoing_8": "$self$随着剧情的发展时而皱眉，时而微笑。",
                 "com_furniture_watchVideo_Ongoing_9": "$self$慵懒地换了个姿势，目不转睛地盯着屏幕。",
-                "com_furniture_watchVideo_Interrupt_1": "$self$浑身一僵，原本摇晃的小腿瞬间停住，有些慌乱地想要站起来却又不敢动弹，视线在屏幕和$target$之间游移。\"",
+                "com_furniture_watchVideo_Interrupt_1": "$self$停下晃动的小腿，有些慌乱地想要站起来却又不敢动弹，视线在屏幕和$target$之间游移。",
                 "com_furniture_watchVideo_Interrupt_2": "$self$下意识地缩起脖子，把遥控器紧紧抱在怀里，像是在寻求某种防御。\"我……我马上就关掉……\"",
                 "com_furniture_watchVideo_Interrupt_3": "$self$迅速坐正了身体，有些局促地拉扯着自己的衣角，连大气都不敢出。\"对不起，我不知道您这个时候会来……\"",
                 "com_furniture_watchVideo_Interrupt_4": "$self$眼神闪烁着不敢直视$target$，身体不由自主地往沙发的角落里缩去，试图降低自己的存在感。",
-                "com_furniture_watchVideo_Interrupt_5": "$self$尽管电视里播放着喜剧，$self$的脸上却没有任何笑意，反而因为$target$的靠近而微微发抖。",
-                "com_furniture_watchVideo_Interrupt_6": "$self$听到脚步声的瞬间，身体僵硬了一下，抓着抱枕的手指微微发白。",
+                "com_furniture_watchVideo_Interrupt_5": "$self$尽管电视里正放着画面，脸上却没有任何放松的意思，反而因为$target$的靠近而微微发抖。",
+                "com_furniture_watchVideo_Interrupt_6": "$self$听到脚步声的瞬间动作顿住，抓着抱枕的手指用力收紧。",
                 "com_furniture_watchVideo_Interrupt_7": "$self$慌乱地想要关掉电视，眼神游移不定，不敢直视$target$。",
                 "com_furniture_watchVideo_Interrupt_8": "$self$缩起脖子，尽可能地减小自己的存在感，连呼吸都变得小心翼翼。",
-                "com_furniture_watchVideo_Interrupt_9": "$self$浑身一僵，下意识地想要关掉电视，手指有些发抖。\"啊……我、我马上就关掉……\"",
+                "com_furniture_watchVideo_Interrupt_9": "$self$下意识地想要去够遥控器关掉电视，手指有些发抖。\"啊……我、我马上就关掉……\"",
                 "com_furniture_watchVideo_Interrupt_10": "$self$缩在沙发角落里，眼神闪躲着不敢看$target$。",
                 "com_furniture_watchVideo_Interrupt_11": "$self$注意到了$target$的到来，随即烦躁地咂了一下舌，把电视音量调大了好几格，仿佛是为了盖过对方的存在感。",
                 "com_furniture_watchVideo_Interrupt_12": "$self$翻了个白眼，身体刻意背对着$target$，像是在构建一道无形的墙壁。\"别挡着我看电视，碍眼。\"",
@@ -616,9 +628,9 @@
                 "com_furniture_watchVideo_Interrupt_29": "$self$听到动静，转过头拍了拍身边的空位。\"快来，$target$，这一集刚好演到精彩的地方！\"",
                 "com_furniture_watchVideo_Interrupt_30": "$self$笑着把手里的零食递了过去。\"要一起看吗？这个综艺超好笑的。\"",
                 "com_furniture_watchVideo_Interrupt_31": "$self$慵懒地换了个姿势，故意展露出曲线，眼神虽然看着电视，余光却在那粘腻地在$target$身上打转。\"嗯哼~这里的剧情好无聊啊，不如我们做点更有趣的事？\"",
-                "com_furniture_watchVideo_Interrupt_32": "$self$用手指卷着发梢，嘴唇微张，发出意味不明的轻哼声，完全不在意电视里演了什么。\"$target$，过来陪我坐会儿嘛~贴着我坐。\"",
-                "com_furniture_watchVideo_Interrupt_33": "$self$双腿交叠摩擦了一下，脸颊泛起不自然的红晕，视线虽然盯着屏幕，呼吸却变得急促起来。\"你在那边看着我……让我怎么专心看电视啊……\"",
-                "com_furniture_watchVideo_Interrupt_34": "$self$咬着下唇，眼神迷离地瞥向$target$，一只手不知何时已经悄悄伸向了自己的领口。\"电视里的男主角……完全没法和你比呢。\"",
+                "com_furniture_watchVideo_Interrupt_32": "$self$手指绕着衣角轻轻打转，嘴唇微张，发出含糊的轻哼声，完全不在意电视里演了什么。\"$target$，过来陪我坐会儿嘛。\"",
+                "com_furniture_watchVideo_Interrupt_33": "$self$双腿交叠了一下，脸颊泛起热意，视线虽然盯着屏幕，呼吸却变得有点急：\"你在那边看着我……让我怎么专心看下去啊……\"",
+                "com_furniture_watchVideo_Interrupt_34": "$self$咬着下唇，眼神迷离地瞥向$target$，手指悄悄搭上领口：\"画面里的哪有真人好看。\"",
                 "com_furniture_watchVideo_Interrupt_35": "$self$故意发出甜腻的叹息声，身体像蛇一样在沙发上扭动，试图吸引$target$的注意。",
                 "com_furniture_watchVideo_Interrupt_36": "$self$虽然眼睛看着电视，但修长的双腿却有意无意地换了个更撩人的姿势，朝向$target$。",
                 "com_furniture_watchVideo_Interrupt_37": "$self$咬着嘴唇，眼神变得迷离，视线虽然在屏幕上，心思却显然飘到了$target$身上。",
@@ -635,10 +647,10 @@
                 "com_furniture_watchVideo_Interrupt_48": "$self$继续看着屏幕，甚至没有调整坐姿，只是微微点了点头算是打招呼。",
                 "com_furniture_watchVideo_Interrupt_49": "$self$只是淡淡看了一眼$target$，又转回了头。\"你要用客厅吗？我还要看一会儿。\"",
                 "com_furniture_watchVideo_Interrupt_50": "$self$点了点头算是打招呼，视线没有离开屏幕。",
-                "com_furniture_watchVideo_1": "$self$摆摆手笑道：\"谢啦，但我现在的精神头只够听听音乐。\"",
-                "com_furniture_watchVideo_2": "$self$指了指手里的书：\"下次吧，我想先把这一章看完。\"",
+                "com_furniture_watchVideo_1": "$self$摆摆手笑道：\"谢啦，但我现在的精神头只够安静歇会儿。\"",
+                "com_furniture_watchVideo_2": "$self$歉意地摇了摇头：\"下次吧，我现在眼睛有点酸，不想盯着屏幕看。\"",
                 "com_furniture_watchVideo_3": "$self$头也不抬地哼了一声：\"没兴趣，别来烦我。\"",
-                "com_furniture_watchVideo_4": "$self$嫌弃地挥挥手：\"和你一起看？得了吧，品味差太多了。\"",
+                "com_furniture_watchVideo_4": "$self$嫌弃地挥挥手：\"看这个？得了吧，我可没那闲工夫。\"",
                 "com_furniture_watchVideo_5": "$self$伸了个大大的懒腰，满足地关掉了电视。\"呼，这期节目做得真不错。\"",
                 "com_furniture_watchVideo_6": "$self$意犹未尽地哼着片尾曲，脸上挂着轻松的笑容。\"感觉心情变好了不少呢。\"",
                 "com_furniture_watchVideo_7": "$self$从沙发上弹起来，精神抖擞地活动了一下脖子。\"果然放松一下是对的！\"",
@@ -646,13 +658,25 @@
                 "com_furniture_watchVideo_9": "$self$兴奋地抓着$target$的手臂：\"刚才那个反转你看到了吗？太厉害了！\"",
                 "com_furniture_watchVideo_10": "$self$一脸晦气地关掉电源，把遥控器丢在一边。\"浪费时间，这剧情简直是灾难。\"",
                 "com_furniture_watchVideo_11": "$self$揉了揉有些发酸的眼睛，叹了口气。\"越看越无聊，还不如去睡觉。\"",
-                "com_furniture_watchVideo_12": "$self$面无表情地盯着黑掉的屏幕，显得有些空虚。\"全是些没营养的东西……\"",
+                "com_furniture_watchVideo_12": "$self$盯着黑掉的屏幕，显得有些空虚：\"全是些没营养的东西……\"",
                 "com_furniture_watchVideo_13": "虽然看完了全集，但$self$看起来并不开心。\"结局竟然是这样？感觉被喂了屎……\"",
                 "com_furniture_watchVideo_14": "$self$揉了揉有些干涩的眼睛，疲惫地说道：\"虽然是好剧，但这剧情也太致郁了，心情好差。\"",
-                "com_furniture_watchVideo_15": "虽然节目很无聊，$self$却笑得很开心。\"剧情烂透了，不过和你一起吐槽还挺有意思的。\"",
+                "com_furniture_watchVideo_15": "虽然节目很无聊，$self$却笑得很开心：\"剧情烂透了，不过和你一起吐槽还挺有意思的。\"",
                 "com_furniture_watchVideo_16": "$self$伸了个懒腰：\"完全没看懂在讲什么，但放松一下也不错。\"",
-                "com_furniture_watchVideo_17": "$self$关掉电视，脸上的表情很微妙。\"这简直是浪费生命的30分钟……\"",
-                "com_furniture_watchVideo_18": "$self$叹了口气，揉着酸痛的脖子。\"早知道就不看这个了，无聊透顶。\""
+                "com_furniture_watchVideo_17": "$self$关掉电视，脸上的表情很微妙：\"这简直是浪费生命……\"",
+                "com_furniture_watchVideo_18": "$self$叹了口气，揉着酸痛的脖子：\"早知道就不看这个了，无聊透顶。\"",
+                "com_furniture_watchVideo_Join_11": "$self$顺手把旁边的靠垫摆正：\"坐这儿吧，视角正好。\"",
+                "com_furniture_watchVideo_19": "$self$把遥控器往茶几上一放：\"节奏拖拖拉拉的，看得人直犯困。\"",
+                "com_furniture_watchVideo_Join_Refused_3": "$self$点点头转身往外走：\"行吧，那我去干点别的。\"",
+                "com_furniture_watchVideo_Join_12": "$self$偏头看了眼空位：\"行吧，别说话太吵就行。\"",
+                "com_furniture_watchVideo_20": "$self$朝$target$偏了下头：\"虽然这片子质量一般，不过坐一块儿消磨时间还挺舒服的。\"",
+                "com_furniture_watchVideo_Join_13": "$self$头也没回地回绝：\"不行，走开。\"",
+                "com_furniture_watchVideo_Joined_3": "$self$朝$target$点点头，顺势把视线投向了屏幕：\"前面演到哪儿了？\"",
+                "com_furniture_watchVideo_Join_14": "$self$往角落里挪了挪，低着头没敢再出声。",
+                "com_furniture_watchVideo_Join_15": "$self$冲$target$摆摆手：\"这会儿位子不太够，下回再凑。\"",
+                "com_furniture_watchVideo_21": "$self$冷淡地把视线转开：\"不去，你自己看着办。\"",
+                "com_furniture_watchVideo_Tryjoin_3": "$self$朝沙发空位看了一眼：\"我正闲着呢，顺便蹭着一起看会儿行吗？\"",
+                "com_furniture_watchVideo_22": "$self$拍了拍膝盖：\"今天不太想看片子，改天有空再说。\""
             },
             "en-us": {
                 "com_furniture_watchVideo_Begin_1": "$self$ immediately hands over the remote: \"Sure! Watching alone was getting a bit boring anyway.\"",

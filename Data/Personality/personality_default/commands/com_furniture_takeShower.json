@@ -30,7 +30,9 @@
                                 "requireTargetAction": false
                             },
                             "responses": [
-                                "kojo_shower_refuse_self"
+                                "kojo_shower_refuse_self",
+                                "kojo_shower_refuse_self_1",
+                                "kojo_shower_refuse_self_2"
                             ]
                         },
                         {
@@ -52,7 +54,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_refuse_helper_marriage"
+                                        "kojo_shower_refuse_helper_marriage",
+                                        "kojo_shower_refuse_helper_marriage_1",
+                                        "kojo_shower_refuse_helper_marriage_2"
                                     ]
                                 },
                                 {
@@ -65,7 +69,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_refuse_helper_couple"
+                                        "kojo_shower_refuse_helper_couple",
+                                        "kojo_shower_refuse_helper_couple_1",
+                                        "kojo_shower_refuse_helper_couple_2"
                                     ]
                                 },
                                 {
@@ -78,12 +84,16 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_refuse_helper_fwb"
+                                        "kojo_shower_refuse_helper_fwb",
+                                        "kojo_shower_refuse_helper_fwb_1",
+                                        "kojo_shower_refuse_helper_fwb_2"
                                     ]
                                 }
                             ],
                             "responses": [
-                                "kojo_shower_refuse_helper_fallback"
+                                "kojo_shower_refuse_helper_fallback",
+                                "kojo_shower_refuse_helper_fallback_1",
+                                "kojo_shower_refuse_helper_fallback_2"
                             ]
                         },
                         {
@@ -105,7 +115,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_refuse_receiver_marriage"
+                                        "kojo_shower_refuse_receiver_marriage",
+                                        "kojo_shower_refuse_receiver_marriage_1",
+                                        "kojo_shower_refuse_receiver_marriage_2"
                                     ]
                                 },
                                 {
@@ -118,7 +130,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_refuse_receiver_couple"
+                                        "kojo_shower_refuse_receiver_couple",
+                                        "kojo_shower_refuse_receiver_couple_1",
+                                        "kojo_shower_refuse_receiver_couple_2"
                                     ]
                                 },
                                 {
@@ -131,12 +145,16 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_refuse_receiver_fwb"
+                                        "kojo_shower_refuse_receiver_fwb",
+                                        "kojo_shower_refuse_receiver_fwb_1",
+                                        "kojo_shower_refuse_receiver_fwb_2"
                                     ]
                                 }
                             ],
                             "responses": [
-                                "kojo_shower_refuse_receiver_fallback"
+                                "kojo_shower_refuse_receiver_fallback",
+                                "kojo_shower_refuse_receiver_fallback_1",
+                                "kojo_shower_refuse_receiver_fallback_2"
                             ]
                         }
                     ],
@@ -166,7 +184,9 @@
                                 "variantID": 0
                             },
                             "responses": [
-                                "kojo_shower_accept_self"
+                                "kojo_shower_accept_self",
+                                "kojo_shower_accept_self_1",
+                                "kojo_shower_accept_self_2"
                             ]
                         },
                         {
@@ -182,7 +202,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_accept_helper_marriage"
+                                        "kojo_shower_accept_helper_marriage",
+                                        "kojo_shower_accept_helper_marriage_1",
+                                        "kojo_shower_accept_helper_marriage_2"
                                     ]
                                 },
                                 {
@@ -192,7 +214,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_accept_helper_couple"
+                                        "kojo_shower_accept_helper_couple",
+                                        "kojo_shower_accept_helper_couple_1",
+                                        "kojo_shower_accept_helper_couple_2"
                                     ]
                                 },
                                 {
@@ -202,12 +226,16 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_accept_helper_fwb"
+                                        "kojo_shower_accept_helper_fwb",
+                                        "kojo_shower_accept_helper_fwb_1",
+                                        "kojo_shower_accept_helper_fwb_2"
                                     ]
                                 }
                             ],
                             "responses": [
-                                "kojo_shower_accept_helper_fallback"
+                                "kojo_shower_accept_helper_fallback",
+                                "kojo_shower_accept_helper_fallback_1",
+                                "kojo_shower_accept_helper_fallback_2"
                             ]
                         },
                         {
@@ -223,7 +251,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_accept_receiver_marriage"
+                                        "kojo_shower_accept_receiver_marriage",
+                                        "kojo_shower_accept_receiver_marriage_1",
+                                        "kojo_shower_accept_receiver_marriage_2"
                                     ]
                                 },
                                 {
@@ -233,7 +263,9 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_accept_receiver_couple"
+                                        "kojo_shower_accept_receiver_couple",
+                                        "kojo_shower_accept_receiver_couple_1",
+                                        "kojo_shower_accept_receiver_couple_2"
                                     ]
                                 },
                                 {
@@ -243,12 +275,16 @@
                                         ]
                                     },
                                     "responses": [
-                                        "kojo_shower_accept_receiver_fwb"
+                                        "kojo_shower_accept_receiver_fwb",
+                                        "kojo_shower_accept_receiver_fwb_1",
+                                        "kojo_shower_accept_receiver_fwb_2"
                                     ]
                                 }
                             ],
                             "responses": [
-                                "kojo_shower_accept_receiver_fallback"
+                                "kojo_shower_accept_receiver_fallback",
+                                "kojo_shower_accept_receiver_fallback_1",
+                                "kojo_shower_accept_receiver_fallback_2"
                             ]
                         }
                     ],
@@ -979,24 +1015,24 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kojo_shower_accept_self": "$self$应了一声。\"嗯，我去冲个澡。\"",
-                "kojo_shower_refuse_self": "$self$摇摇头。\"我现在不想洗，晚些再说。\"",
-                "kojo_shower_accept_helper_marriage": "$self$朝$target$笑了笑。\"好，我帮你洗。水太热了就告诉我，别忍着。\"",
+                "kojo_shower_accept_self": "$self$应了一声：\"嗯，我去冲个澡。\"",
+                "kojo_shower_refuse_self": "$self$摇摇头：\"我现在不想洗，晚些再说。\"",
+                "kojo_shower_accept_helper_marriage": "$self$朝$target$笑了笑：\"好，我帮你洗。水太热了就告诉我，别忍着。\"",
                 "kojo_shower_accept_helper_couple": "$self$轻快地应道：\"好啊，我帮你洗，背后够不到的地方交给我。\"",
-                "kojo_shower_accept_helper_fwb": "$self$点点头。\"可以，帮你洗干净。今天就做这个。\"",
+                "kojo_shower_accept_helper_fwb": "$self$点点头：\"可以，帮你洗干净。今天就做这个。\"",
                 "kojo_shower_accept_helper_fallback": "$self$应道：\"可以，我来帮你清洗。不舒服就说。\"",
-                "kojo_shower_accept_receiver_marriage": "$self$的语气松快下来。\"那就麻烦你了，背后我自己总是够不着。\"",
-                "kojo_shower_accept_receiver_couple": "$self$有些不好意思地笑了。\"嗯，想请你帮我洗。动作轻一点就好。\"",
-                "kojo_shower_accept_receiver_fwb": "$self$看向$target$。\"好，帮我清洗就行，别闹。\"",
-                "kojo_shower_accept_receiver_fallback": "$self$点头。\"谢谢，请帮我洗一下。需要我换姿势就告诉我。\"",
-                "kojo_shower_refuse_helper_marriage": "$self$抱歉地看向$target$。\"我现在实在顾不过来，没法帮你洗。等一会儿吧。\"",
+                "kojo_shower_accept_receiver_marriage": "$self$的语气松快下来：\"那就麻烦你了，背后我自己总是够不着。\"",
+                "kojo_shower_accept_receiver_couple": "$self$有些不好意思地笑了：\"嗯，想请你帮我洗。动作轻一点就好。\"",
+                "kojo_shower_accept_receiver_fwb": "$self$看向$target$：\"好，帮我清洗就行，别闹。\"",
+                "kojo_shower_accept_receiver_fallback": "$self$点头：\"谢谢，请帮我洗一下。需要我换姿势就告诉我。\"",
+                "kojo_shower_refuse_helper_marriage": "$self$抱歉地看向$target$：\"我现在实在顾不过来，没法帮你洗。等一会儿吧。\"",
                 "kojo_shower_refuse_helper_couple": "$self$轻声回道：\"抱歉，我现在不方便帮你洗。不是在生你的气。\"",
-                "kojo_shower_refuse_helper_fwb": "$self$摇头。\"今天不帮忙洗澡，你自己来吧。\"",
+                "kojo_shower_refuse_helper_fwb": "$self$摇头：\"今天不帮忙洗澡，你自己来吧。\"",
                 "kojo_shower_refuse_helper_fallback": "$self$回道：\"抱歉，我现在不能帮你清洗。\"",
-                "kojo_shower_refuse_receiver_marriage": "$self$轻轻摇头。\"不用啦，今天我想自己洗。毛巾留给我就好。\"",
-                "kojo_shower_refuse_receiver_couple": "$self$有些迟疑。\"今天还不想让你帮我洗，给我一点自己的时间吧。\"",
+                "kojo_shower_refuse_receiver_marriage": "$self$轻轻摇头：\"不用啦，今天我想自己洗。毛巾留给我就好。\"",
+                "kojo_shower_refuse_receiver_couple": "$self$有些迟疑：\"今天还不想让你帮我洗，给我一点自己的时间吧。\"",
                 "kojo_shower_refuse_receiver_fwb": "$self$直截了当地说：\"不用帮我洗，熟归熟，这次我想自己来。\"",
-                "kojo_shower_refuse_receiver_fallback": "$self$摇头。\"不用帮忙，我不想让别人替我洗。\"",
+                "kojo_shower_refuse_receiver_fallback": "$self$摇头：\"不用帮忙，我不想让别人替我洗。\"",
                 "kojo_shower_self_undress": "$self$轻声自语：\"衣服别弄湿了。\"",
                 "kojo_shower_self_beginwash": "$self$舒了口气。\"这个水温正合适。\"",
                 "kojo_shower_self_expel": "$self$缓缓呼出一口气。\"不急，慢慢清理干净。\"",
@@ -1037,7 +1073,43 @@
                 "kojo_shower_helperend_marriage": "$self$关切地叮嘱$target$：\"好了，擦干再穿衣服，别着凉。\"",
                 "kojo_shower_helperend_couple": "$self$笑着说道：\"洗好了，慢慢出来，别滑倒。\"",
                 "kojo_shower_helperend_fwb": "$self$向$target$说道：\"好了，清洗完了。记得擦干。\"",
-                "kojo_shower_helperend_fallback": "$self$说道：\"清洗完成了，需要帮忙的话再叫我。\""
+                "kojo_shower_helperend_fallback": "$self$说道：\"清洗完成了，需要帮忙的话再叫我。\"",
+                "kojo_shower_accept_receiver_fwb_1": "\"行啊，你帮我搓下背，省得我自己费劲。\" $self$站定后抬了抬胳膊。",
+                "kojo_shower_accept_receiver_fwb_2": "$self$瞥了$target$一眼：\"手脚规矩点冲水，洗完还得干正事呢。\"",
+                "kojo_shower_refuse_receiver_couple_1": "\"不用麻烦，我自己洗习惯了。\" $self$往后退了半步避开手。",
+                "kojo_shower_refuse_receiver_couple_2": "$self$摇摇头：\"今天不太方便，我自己冲完就出去。\"",
+                "kojo_shower_accept_receiver_fallback_1": "\"那麻烦你了，水温应该刚好。\" $self$站在原地配合着。",
+                "kojo_shower_accept_receiver_fallback_2": "$self$稍微侧过身子，方便$target$拿水冲洗。",
+                "kojo_shower_accept_helper_fwb_1": "\"行，站好别乱动，免得水全溅到外面。\" $self$拿着喷头凑近了些。",
+                "kojo_shower_accept_helper_fwb_2": "$self$应了一声：\"那就我来帮你冲，早洗完早歇着。\"",
+                "kojo_shower_refuse_receiver_fwb_1": "\"别凑过来了，今天只打算一个人冲个澡。\" $self$抬手挡了一下。",
+                "kojo_shower_refuse_receiver_fwb_2": "$self$干脆地回绝了：\"不用搭手，我自己洗更利索。\"",
+                "kojo_shower_refuse_helper_couple_1": "\"我现在有点累，站着帮人搓洗太吃力了，下次吧。\" $self$摆摆手。",
+                "kojo_shower_refuse_helper_couple_2": "$self$摇了摇头：\"这会儿不太行，你自己先洗吧。\"",
+                "kojo_shower_accept_helper_couple_1": "\"站稳了别滑倒，水有点急。\" $self$凑近帮着调节花洒。",
+                "kojo_shower_accept_helper_couple_2": "$self$朝$target$偏了下头：\"哪块水凉了说一声啊。\"",
+                "kojo_shower_refuse_receiver_fallback_1": "\"我自己能洗，用不着你插手。\" $self$直接往后退开。",
+                "kojo_shower_refuse_receiver_fallback_2": "$self$态度很明确：\"出去吧，我不习惯别人帮我洗澡。\"",
+                "kojo_shower_refuse_self_1": "\"这会儿水估计太凉，懒得去冲。\" $self$摆手回绝。",
+                "kojo_shower_refuse_self_2": "$self$没往浴室那边走：\"等忙完这阵再洗吧，现在不去。\"",
+                "kojo_shower_accept_receiver_marriage_1": "\"帮我试下水温别太烫就行。\" $self$说着往水柱下站近了些。",
+                "kojo_shower_accept_receiver_marriage_2": "$self$把头发撩到一侧，顺手把擦身用的东西递给$target$。",
+                "kojo_shower_refuse_helper_fwb_1": "\"没兴致折腾这个，你自己进去洗。\" $self$干脆地回绝了。",
+                "kojo_shower_refuse_helper_fwb_2": "$self$摊了摊手：\"今天不想动手帮你洗，自己解决。\"",
+                "kojo_shower_accept_self_1": "\"身上黏糊糊的，正好去冲一下。\" $self$说着走进了水雾里。",
+                "kojo_shower_accept_self_2": "$self$顺手抓过毛巾搭在肩上：\"我洗个澡，很快就好。\"",
+                "kojo_shower_accept_helper_marriage_1": "\"来吧，转过去点，我先帮你把背上冲干净。\" $self$试了试水温。",
+                "kojo_shower_accept_helper_marriage_2": "$self$拿起沐浴用品：\"放心交给我，正好帮你按按肩膀。\"",
+                "kojo_shower_refuse_receiver_marriage_1": "\"你先出去等吧，我自己冲一下很快的。\" $self$朝$target$摆了摆手。",
+                "kojo_shower_refuse_receiver_marriage_2": "$self$往水龙头那边退了一步：\"今天不想让人围着，我自己来就行。\"",
+                "kojo_shower_accept_helper_fallback_1": "\"行，那我从肩头开始冲，你站稳点。\" $self$试过水温后开始动手。",
+                "kojo_shower_accept_helper_fallback_2": "$self$点点头：\"好，我动作尽量快些。\"",
+                "kojo_shower_refuse_helper_fallback_1": "\"我手头还有事，没法过去帮你洗。\" $self$摇了摇头。",
+                "kojo_shower_refuse_helper_fallback_2": "$self$拒绝了这个要求：\"你自己洗吧，我不方便帮忙。\"",
+                "kojo_shower_refuse_helper_marriage_1": "\"手里还有事没收尾，你自己先冲着行吗？\" $self$朝$target$摇了摇头。",
+                "kojo_shower_refuse_helper_marriage_2": "$self$叹了口气：\"这会儿真抽不开身帮你洗，晚点再说。\"",
+                "kojo_shower_accept_receiver_couple_1": "\"后面我自己总搓不匀，正好麻烦你啦。\" $self$朝$target$转过背去。",
+                "kojo_shower_accept_receiver_couple_2": "$self$抓了抓胳膊，小声叮嘱：\"别光顾着闹，早点洗完早点出去。\""
             },
             "en-us": {
                 "kojo_shower_accept_self": "$self$ agrees. \"Yes, I'll go take a shower.\"",

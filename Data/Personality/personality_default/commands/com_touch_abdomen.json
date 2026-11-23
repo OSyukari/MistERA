@@ -20,7 +20,8 @@
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_abdomen_Begin_Sleep_1",
-                                "com_touch_abdomen_Begin_Sleep_2"
+                                "com_touch_abdomen_Begin_Sleep_2",
+                                "com_touch_abdomen_Begin_Sleep_3"
                             ]
                         },
                         {
@@ -39,7 +40,8 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_abdomen_Begin_Timestop_1",
-                                "com_touch_abdomen_Begin_Timestop_2"
+                                "com_touch_abdomen_Begin_Timestop_2",
+                                "com_touch_abdomen_Begin_Timestop_3"
                             ]
                         },
                         {
@@ -56,9 +58,7 @@
                                 "com_touch_abdomen_Begin_1",
                                 "com_touch_abdomen_Begin_2",
                                 "com_touch_abdomen_Begin_3",
-                                "com_touch_abdomen_Begin_4",
-                                "com_touch_abdomen_Begin_5",
-                                "com_touch_abdomen_Begin_6"
+                                "com_touch_abdomen_Begin_4"
                             ]
                         },
                         {
@@ -73,8 +73,7 @@
                                 "com_touch_abdomen_Begin_2_2_1_1",
                                 "com_touch_abdomen_Begin_2_2_1_2",
                                 "com_touch_abdomen_Begin_2_2_1_3",
-                                "com_touch_abdomen_Begin_2_2_1_4",
-                                "com_touch_abdomen_Begin_2_2_1_5"
+                                "com_touch_abdomen_Begin_2_2_1_4"
                             ]
                         },
                         {
@@ -87,8 +86,7 @@
                                 "com_touch_abdomen_Begin_2_2_2_1",
                                 "com_touch_abdomen_Begin_2_2_2_2",
                                 "com_touch_abdomen_Begin_2_2_2_3",
-                                "com_touch_abdomen_Begin_2_2_2_4",
-                                "com_touch_abdomen_Begin_2_2_2_5"
+                                "com_touch_abdomen_Begin_2_2_2_4"
                             ]
                         }
                     ],
@@ -116,9 +114,7 @@
                                 "com_touch_abdomen_2_3_2_1",
                                 "com_touch_abdomen_2_3_2_2",
                                 "com_touch_abdomen_2_3_2_3",
-                                "com_touch_abdomen_2_3_2_4",
-                                "com_touch_abdomen_2_3_2_5",
-                                "com_touch_abdomen_2_3_2_6"
+                                "com_touch_abdomen_2_3_2_4"
                             ]
                         },
                         {
@@ -139,9 +135,7 @@
                                 "com_touch_abdomen_2_3_1_1",
                                 "com_touch_abdomen_2_3_1_2",
                                 "com_touch_abdomen_2_3_1_3",
-                                "com_touch_abdomen_2_3_1_4",
-                                "com_touch_abdomen_2_3_1_5",
-                                "com_touch_abdomen_2_3_1_6"
+                                "com_touch_abdomen_2_3_1_4"
                             ]
                         },
                         {
@@ -171,8 +165,7 @@
                                         "com_touch_abdomen_2_1_3_1",
                                         "com_touch_abdomen_2_1_3_2",
                                         "com_touch_abdomen_2_1_3_3",
-                                        "com_touch_abdomen_2_1_3_4",
-                                        "com_touch_abdomen_2_1_3_5"
+                                        "com_touch_abdomen_2_1_3_4"
                                     ]
                                 }
                             ],
@@ -188,8 +181,7 @@
                                 "com_touch_abdomen_2_2_5_1",
                                 "com_touch_abdomen_2_2_5_2",
                                 "com_touch_abdomen_2_2_5_3",
-                                "com_touch_abdomen_2_2_5_4",
-                                "com_touch_abdomen_2_2_5_5"
+                                "com_touch_abdomen_2_2_5_4"
                             ]
                         },
                         {
@@ -209,8 +201,7 @@
                                         "com_touch_abdomen_2_1_4_1",
                                         "com_touch_abdomen_2_1_4_2",
                                         "com_touch_abdomen_2_1_4_3",
-                                        "com_touch_abdomen_2_1_4_4",
-                                        "com_touch_abdomen_2_1_4_5"
+                                        "com_touch_abdomen_2_1_4_4"
                                     ]
                                 }
                             ],
@@ -229,8 +220,7 @@
                                 "com_touch_abdomen_2_2_6_1",
                                 "com_touch_abdomen_2_2_6_2",
                                 "com_touch_abdomen_2_2_6_3",
-                                "com_touch_abdomen_2_2_6_4",
-                                "com_touch_abdomen_2_2_6_5"
+                                "com_touch_abdomen_2_2_6_4"
                             ]
                         }
                     ],
@@ -267,8 +257,7 @@
                                         "com_touch_abdomen_2_1_2_1",
                                         "com_touch_abdomen_2_1_2_2",
                                         "com_touch_abdomen_2_1_2_3",
-                                        "com_touch_abdomen_2_1_2_4",
-                                        "com_touch_abdomen_2_1_2_5"
+                                        "com_touch_abdomen_2_1_2_4"
                                     ]
                                 },
                                 {
@@ -290,8 +279,7 @@
                                         "com_touch_abdomen_2_2_3_1",
                                         "com_touch_abdomen_2_2_3_2",
                                         "com_touch_abdomen_2_2_3_3",
-                                        "com_touch_abdomen_2_2_3_4",
-                                        "com_touch_abdomen_2_2_3_5"
+                                        "com_touch_abdomen_2_2_3_4"
                                     ]
                                 }
                             ],
@@ -307,8 +295,7 @@
                                 "com_touch_abdomen_2_2_4_1",
                                 "com_touch_abdomen_2_2_4_2",
                                 "com_touch_abdomen_2_2_4_3",
-                                "com_touch_abdomen_2_2_4_4",
-                                "com_touch_abdomen_2_2_4_5"
+                                "com_touch_abdomen_2_2_4_4"
                             ]
                         }
                     ],
@@ -320,73 +307,75 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_touch_abdomen_Begin_1": "$self$没有躲闪，放松腹部肌肉任由$target$的手掌贴上来。\"别乱挠哦，我很怕痒的。\"",
-                "com_touch_abdomen_Begin_2": "$self$顺势后仰，露出毫无防备的小腹，嘴角含笑。\"想在那里取暖吗？真是孩子气呢。\"",
-                "com_touch_abdomen_Begin_3": "$self$轻按住$target$放在自己肚子上的手，没有移开的意思。\"刚吃饱不久，动作温柔点。\"",
-                "com_touch_abdomen_Begin_4": "$self$低头注视那只手，眼中流露出一丝安心。\"嗯……这种触感还不赖。\"",
+                "com_touch_abdomen_Begin_1": "$self$没有躲闪，放松小腹任由$target$的手掌贴上来：\"别乱挠哦，我很怕痒的。\"",
+                "com_touch_abdomen_Begin_2": "$self$轻按住$target$放在自己肚子上的手：\"刚吃饱不久，动作轻点。\"",
+                "com_touch_abdomen_Begin_3": "$self$低头看了一眼那只手，语气柔和：\"嗯……你手心挺暖和的。\"",
+                "com_touch_abdomen_Begin_4": "$self$闭上眼睛调整着呼吸，任由$target$在自己腹侧揉按：\"就一会儿啊，别闹。\"",
                 "com_touch_abdomen_Begin_5": "$self$沉默不语，只是配合着$target$的动作调整呼吸节奏，身体显得格外柔软。",
                 "com_touch_abdomen_Begin_6": "$self$主动掀起衣摆，大方地展示出肌肤。\"仅限两分钟哦？\"",
-                "com_touch_abdomen_Begin_2_2_1_1": "$self$身体明显僵硬了一下，错愕地说道。\"呃？这、这是什么新式打招呼吗？\"",
-                "com_touch_abdomen_Begin_2_2_1_2": "$self$愣在原地，视线在$target$的手和脸之间游移，一时忘了反应。\"那个……您在做什么？\"",
-                "com_touch_abdomen_Begin_2_2_1_3": "$self$虽感意外却未推开，困惑地眨眨眼。\"如果是检查身体的话……请快一点。\"",
-                "com_touch_abdomen_Begin_2_2_1_4": "$self$紧张地屏住呼吸，双手无处安放。\"如果不疼的话……倒是没关系……\"",
+                "com_touch_abdomen_Begin_2_2_1_1": "$self$愣了一下，错愕地看着$target$：\"呃？这、这是干什么？\"",
+                "com_touch_abdomen_Begin_2_2_1_2": "$self$视线在$target$的手和脸之间来回挪动，一时忘了反应：\"那个……怎么突然摸肚子？\"",
+                "com_touch_abdomen_Begin_2_2_1_3": "$self$虽感意外却没说什么，眨了眨眼：\"如果不疼的话……倒也不是不行……\"",
+                "com_touch_abdomen_Begin_2_2_1_4": "$self$迟疑地看着$target$，耳根有些发热：\"你平时也这么随便碰人吗？\"",
                 "com_touch_abdomen_Begin_2_2_1_5": "$self$迟疑地看着$target$，似乎在揣测意图。\"这就是所谓的……治疗吗？\"",
-                "com_touch_abdomen_Begin_2_2_2_1": "$self$浑身颤抖，死死咬住下唇不敢出声。\"……我知道了，请不要伤害我。\"",
-                "com_touch_abdomen_Begin_2_2_2_2": "$self$紧闭双眼，身体紧绷如石，任由那只手在腹部游走。\"只要……只要这样就行了吗？\"",
-                "com_touch_abdomen_Begin_2_2_2_3": "$self$脸色苍白眼神空洞，双手紧抓身下布料。\"……随意吧。\"",
-                "com_touch_abdomen_Begin_2_2_2_4": "$self$发出一声短促惊呼，随即捂住嘴惊恐地看向$target$。\"对不起……我不会反抗的。\"",
+                "com_touch_abdomen_Begin_2_2_2_1": "$self$浑身发抖，咬住下唇不敢出声：\"……我知道了，别伤害我。\"",
+                "com_touch_abdomen_Begin_2_2_2_2": "$self$紧闭双眼，小腹紧绷着任由那只手碰触：\"只要……只要这样就行了吗？\"",
+                "com_touch_abdomen_Begin_2_2_2_3": "$self$脸色发白，垂着眼不敢看$target$，声音发颤：\"……请轻一点。\"",
+                "com_touch_abdomen_Begin_2_2_2_4": "$self$发出一声短促的惊呼，随即捂住嘴惊恐地看向$target$：\"对不起……我不会乱动的。\"",
                 "com_touch_abdomen_Begin_2_2_2_5": "$self$像是放弃挣扎般垂下头，身体因恐惧随动作细微抽搐。\"……请轻一点。\"",
-                "com_touch_abdomen_2_3_2_1": "$self$发出含糊呓语，下意识想翻身躲避腹部异样感，却被按住。",
-                "com_touch_abdomen_2_3_2_2": "$self$眉头微皱，但在手掌温暖抚慰下很快舒展，呼吸转为平稳。",
-                "com_touch_abdomen_2_3_2_3": "$self$迷糊地伸出手，像赶苍蝇般挥了一下，随即又沉沉睡去。",
-                "com_touch_abdomen_2_3_2_4": "$self$似乎把手当成抱枕的一部分，主动抱住蹭了蹭，嘴里嘟囔着。",
+                "com_touch_abdomen_2_3_2_1": "$self$发出含糊的呓语，在睡梦中轻轻扭了扭腰，仍未醒来。",
+                "com_touch_abdomen_2_3_2_2": "$self$呼吸平缓，随着腹部温热的抚慰沉沉睡着。",
+                "com_touch_abdomen_2_3_2_3": "$self$迷糊地哼了一声，抬手在身侧虚晃了下又垂回去。",
+                "com_touch_abdomen_2_3_2_4": "$self$全无察觉，只随着腹部被按压的节奏发出轻浅的呼噜声。",
                 "com_touch_abdomen_2_3_2_5": "$self$受刺激身体本能缩了一下，随后发出沉重呼吸声，依然未醒。",
                 "com_touch_abdomen_2_3_2_6": "$self$全无察觉，只是随着腹部被按压的节奏，喉间发出轻微呼噜声。",
-                "com_touch_abdomen_2_3_1_1": "$self$静止原地，唯有腹部肌肤随$target$手指按压而凹陷，无生理回弹。",
-                "com_touch_abdomen_2_3_1_2": "$self$保持上一秒姿势，完全不知有一只手正在她皮肤上肆意游走。",
-                "com_touch_abdomen_2_3_1_3": "$self$表情凝固在微笑瞬间，对小腹传来的触感温度毫无知觉。",
-                "com_touch_abdomen_2_3_1_4": "$self$腹部软肉被随意揉捏成各种形状，宛如一块静止的柔软粘土。",
+                "com_touch_abdomen_2_3_1_1": "$self$定在原地，腹部肌肤随$target$手指按压而凹陷，松手后仍停了半拍才回弹。",
+                "com_touch_abdomen_2_3_1_2": "$self$保持着上一秒的姿势，对小腹上传来的揉按毫无知觉。",
+                "com_touch_abdomen_2_3_1_3": "$self$像一尊静止的人偶，目光停在前方，任由$target$的手掌在腹部游走。",
+                "com_touch_abdomen_2_3_1_4": "$self$连呼吸节奏都停在原地，只剩身躯被按压出细微的起伏。",
                 "com_touch_abdomen_2_3_1_5": "$self$毫无反应地承受一切，仅皮肤因摩擦微红，无任何神经信号反馈。",
                 "com_touch_abdomen_2_3_1_6": "$self$连呼吸都被冻结，手掌在她腹部的抚摸如同幽灵穿过静止雕塑。",
-                "com_touch_abdomen_2_1_2_1": "$self$触电般缩身，笑着拍掉$target$的手。\"呀！好痒！别碰那里！\"",
-                "com_touch_abdomen_2_1_2_2": "$self$捂着肚子退后半步，带着戏谑的警惕。\"你手太凉了！绝对不行！\"",
-                "com_touch_abdomen_2_1_2_3": "$self$抓住$target$手腕，坚定摇头。\"刚吃完饭肚子不舒服，别闹。\"",
-                "com_touch_abdomen_2_1_2_4": "$self$难为情地侧身避开接触。\"这里……最近胖了一点，不想被碰。\"",
+                "com_touch_abdomen_2_1_2_1": "$self$笑着缩了缩肚子：\"别挠那里，很痒的！\"",
+                "com_touch_abdomen_2_1_2_2": "$self$摇了摇头，语气带着疲惫：\"刚吃过东西肚子不舒服，今天别碰了。\"",
+                "com_touch_abdomen_2_1_2_3": "$self$冲$target$摆摆手：\"你手太凉了，我可不想肚皮受凉。\"",
+                "com_touch_abdomen_2_1_2_4": "$self$难为情地别过脸：\"最近肚子上长肉了，不想被摸。\"",
                 "com_touch_abdomen_2_1_2_5": "$self$叹气，把$target$的手拿开并塞个抱枕过去。\"摸这个吧，手感差不多。\"",
-                "com_touch_abdomen_2_2_3_1": "$self$礼貌而坚定地挡住$target$的手，挂着职业化微笑。\"请注意您的手，这个部位不太合适。\"",
-                "com_touch_abdomen_2_2_3_2": "$self$不动声色后退一步，拉开安全距离。\"不好意思，我不习惯这么亲近。\"",
-                "com_touch_abdomen_2_2_3_3": "$self$尴尬地抓抓头发，侧身避过。\"那个，能不能别碰肚子？感觉怪怪的。\"",
-                "com_touch_abdomen_2_2_3_4": "$self$伸手轻轻架住$target$手臂。\"虽不想扫兴，但这有点越过我的舒适圈了。\"",
+                "com_touch_abdomen_2_2_3_1": "$self$礼貌地摇了摇头：\"抱歉，我不习惯让人随便碰肚子。\"",
+                "com_touch_abdomen_2_2_3_2": "$self$尴尬地笑了笑，语气有些局促：\"那个……能不能别摸这里？怪别扭的。\"",
+                "com_touch_abdomen_2_2_3_3": "$self$神情为难地偏开视线：\"这有点越过我的底线了，换别的事聊吧。\"",
+                "com_touch_abdomen_2_2_3_4": "$self$用玩笑口吻婉拒道：\"肚子上又没什么好摸的，还是算了吧。\"",
                 "com_touch_abdomen_2_2_3_5": "$self$用玩笑语气化解尴尬。\"哎呀，肚子上全是肉，可没什么好摸的。\"",
-                "com_touch_abdomen_2_2_4_1": "$self$猛地拍掉伸来的手，眼神瞬间转冷。\"你想干什么？离我远点！\"",
-                "com_touch_abdomen_2_2_4_2": "$self$厌恶皱眉，迅速倒退并做出防御姿态。\"别用你的脏手碰我！\"",
-                "com_touch_abdomen_2_2_4_3": "$self$响亮咋舌，毫不掩饰眼中鄙夷。\"谁允许你碰这里的？真恶心。\"",
-                "com_touch_abdomen_2_2_4_4": "$self$冰冷盯着$target$，语气充满警告。\"再往前伸一寸，我就报警了。\"",
+                "com_touch_abdomen_2_2_4_1": "$self$沉下脸喝道：\"你想干什么？离我远点！\"",
+                "com_touch_abdomen_2_2_4_2": "$self$满脸嫌恶地瞪着$target$：\"谁准你碰我肚子的？真恶心。\"",
+                "com_touch_abdomen_2_2_4_3": "$self$脸色难看，语气冷硬：\"把你的手拿开，别逼我翻脸。\"",
+                "com_touch_abdomen_2_2_4_4": "$self$拉下脸冷哼一声：\"再敢乱伸手，就别怪我不客气。\"",
                 "com_touch_abdomen_2_2_4_5": "$self$正眼都不看$target$，嫌弃地拍打刚才被碰的衣服位置。\"下次注意点分寸。\"",
-                "com_touch_abdomen_2_1_3_1": "$self$呼吸变得绵长，整个人像猫一样蜷缩起来。\"嗯……意外地很舒服，手掌热热的……\"",
-                "com_touch_abdomen_2_1_3_2": "$self$半眯眼睛，发出一声轻哼。\"你的按摩技术什么时候变得这么好了？\"",
-                "com_touch_abdomen_2_1_3_3": "$self$把手覆在$target$手背上引导动作。\"再往旁边一点……对，就是那里。\"",
-                "com_touch_abdomen_2_1_3_4": "$self$脸上泛起淡红，声音变得黏糊。\"稍微……有点困了。继续这样也没关系。\"",
+                "com_touch_abdomen_2_1_3_1": "$self$呼吸变得绵长，懒洋洋地靠着：\"嗯……手掌热热的，还挺舒服。\"",
+                "com_touch_abdomen_2_1_3_2": "$self$半眯着眼睛轻哼了一声：\"你这按摩手法什么时候练出来的？\"",
+                "com_touch_abdomen_2_1_3_3": "$self$把手覆在$target$手背上：\"再往旁边揉一点……对，就是那里。\"",
+                "com_touch_abdomen_2_1_3_4": "$self$脸上泛起红晕，声音轻软：\"这样摸着都有点犯困了。\"",
                 "com_touch_abdomen_2_1_3_5": "$self$发出一声满足叹息，完全放松警惕。\"感觉胃暖暖的，真神奇。\"",
-                "com_touch_abdomen_2_2_5_1": "$self$原本紧绷的肩膀渐松，眼神戒备消散。\"……不得不承认，你的手法很专业。\"",
-                "com_touch_abdomen_2_2_5_2": "$self$意外地低头看，似不再排斥接触。\"原来不是恶作剧吗？抱歉刚才误会你了。\"",
-                "com_touch_abdomen_2_2_5_3": "$self$长出一口气，神情变得柔和。\"这种热度……倒是正好缓解了我的胃痛。\"",
-                "com_touch_abdomen_2_2_5_4": "$self$不好意思地别过头，声音变小。\"稍微……没那么讨厌了。\"",
+                "com_touch_abdomen_2_2_5_1": "$self$紧绷的肩膀慢慢松了下来：\"……不得不承认，还挺解乏的。\"",
+                "com_touch_abdomen_2_2_5_2": "$self$低头看了一眼，神情缓和不少：\"原来真是帮忙揉肚子啊，刚才误会你了。\"",
+                "com_touch_abdomen_2_2_5_3": "$self$长出一口气，小腹暖和起来后语气也软了：\"这种热度……倒是不难受。\"",
+                "com_touch_abdomen_2_2_5_4": "$self$别过脸去，声音变小了些：\"……不准乱摸别的地方，就这一次。\"",
                 "com_touch_abdomen_2_2_5_5": "$self$不知不觉适应了这个距离。\"如果不乱动的话，再放一会儿也可以。\"",
-                "com_touch_abdomen_2_1_4_1": "$self$没忍住笑场，扭动身体躲开手。\"不行不行！太痒了，受不了了！\"",
-                "com_touch_abdomen_2_1_4_2": "$self$僵硬地坐直身子，轻轻推开$target$。\"好了……一直摸这里感觉怪怪的。\"",
-                "com_touch_abdomen_2_1_4_3": "$self$皱眉，似感到一丝不适。\"是不是按得太重了？有点疼。\"",
-                "com_touch_abdomen_2_1_4_4": "$self$尴尬清嗓子，把衣服拉下来。\"那个……时间太长了吧？有点难为情。\"",
+                "com_touch_abdomen_2_1_4_1": "$self$忍不住缩了缩肚子，连声讨饶：\"不行不行！太痒了，受不了！\"",
+                "com_touch_abdomen_2_1_4_2": "$self$叹了口气，语气有些不耐烦：\"好啦，一直摸肚子怪别扭的。\"",
+                "com_touch_abdomen_2_1_4_3": "$self$蹙眉吸了口凉气：\"你按得太重了吧？肚子有点疼。\"",
+                "com_touch_abdomen_2_1_4_4": "$self$尴尬地清了清嗓子：\"时间也差不多了吧？老这么摸着像什么样子。\"",
                 "com_touch_abdomen_2_1_4_5": "$self$抓住$target$乱动的手指，语气严肃。\"越界了哦。只是摸摸的话已经够了吧。\"",
-                "com_touch_abdomen_2_2_6_1": "$self$忍无可忍挥开$target$的手，呼吸急促。\"够了！你是变态吗？还要摸多久！\"",
-                "com_touch_abdomen_2_2_6_2": "$self$浑身不适感达顶点，脸色极难看。\"不仅没有变好，反而更让人火大了。\"",
-                "com_touch_abdomen_2_2_6_3": "$self$强忍反胃感，迅速整理衣服退开。\"我真是疯了才会让你继续。\"",
-                "com_touch_abdomen_2_2_6_4": "$self$厌恶溢出，冷冷瞪着$target$。\"现在的流氓都这么有耐心吗？滚开。\"",
+                "com_touch_abdomen_2_2_6_1": "$self$忍无可忍地喘了口气，冲$target$喝道：\"够了！还要摸到什么时候！\"",
+                "com_touch_abdomen_2_2_6_2": "$self$脸色难看极了，满眼火气：\"不仅没舒服多少，反而更让人火大！\"",
+                "com_touch_abdomen_2_2_6_3": "$self$拉下脸盯着$target$，满脸反感：\"你是把人的容忍当成好欺负吗？\"",
+                "com_touch_abdomen_2_2_6_4": "$self$咬牙别过脸去，眼圈发红，不再肯搭理$target$。",
                 "com_touch_abdomen_2_2_6_5": "$self$咬牙切齿低语，身体因愤怒轻颤。\"利用别人的容忍度也是有限度的……\"",
-                "com_touch_abdomen_Begin_Sleep_1": "$target$的手掌贴上她熟睡中起伏的小腹慢慢揉按，$self$在梦里含糊地呓语了一句，眉头轻皱，却没醒。",
-                "com_touch_abdomen_Begin_Sleep_2": "掌心焐出的热缓缓渗进去，$self$随着揉按的节奏呼吸渐渐放缓，喉间发出轻微的呼噜声。",
-                "com_touch_abdomen_Begin_Timestop_1": "$target$的手掌贴上她定格的小腹慢慢揉按，掌心焐出的热缓缓渗进去，$self$的腰没有躲开。",
-                "com_touch_abdomen_Begin_Timestop_2": "指腹沿着肚脐画圈，蹭得皮肤泛起浅红，$self$搭在身侧的手悬着，指尖离腹侧还差半寸。"
+                "com_touch_abdomen_Begin_Sleep_1": "$target$的手掌贴上熟睡中起伏的小腹慢慢揉按，$self$在梦里含糊呓语了一句，没醒。",
+                "com_touch_abdomen_Begin_Sleep_2": "掌心焐出的热渗进小腹，$self$随着揉按的节奏呼吸渐渐放缓，喉间发出轻浅的呼噜声。",
+                "com_touch_abdomen_Begin_Timestop_1": "$target$的手掌贴上定格的小腹慢慢揉按，$self$站在原地一动不动，呼吸节奏丝毫未变。",
+                "com_touch_abdomen_Begin_Timestop_2": "指腹沿着腹侧画圈，$self$搭在身侧的手悬着，目光仍停在原来的落点上。",
+                "com_touch_abdomen_Begin_Timestop_3": "腹部被手掌按出浅浅的凹陷，$self$毫无反应，连嘴角弧度都停在上一秒。",
+                "com_touch_abdomen_Begin_Sleep_3": "小腹被轻柔地按着，$self$在睡梦里哼唧了一声，眼皮一直没抬。"
             },
             "en-us": {
                 "com_touch_abdomen_Begin_1": "$self$ doesn't shy away, relaxing her abdominal muscles as $target$'s palm rests against her. \"Don't tickle me, I'm very ticklish.\"",

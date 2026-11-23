@@ -19,7 +19,8 @@
                             ],
                             "responses": [
                                 "kojo_sleep_begin_forced_1",
-                                "kojo_sleep_begin_forced_2"
+                                "kojo_sleep_begin_forced_2",
+                                "kojo_sleep_begin_forced_3"
                             ]
                         },
                         {
@@ -31,7 +32,8 @@
                             ],
                             "responses": [
                                 "kojo_sleep_begin_together_1",
-                                "kojo_sleep_begin_together_2"
+                                "kojo_sleep_begin_together_2",
+                                "kojo_sleep_begin_together_3"
                             ]
                         },
                         {
@@ -46,7 +48,8 @@
                             ],
                             "responses": [
                                 "kojo_sleep_begin_like_1",
-                                "kojo_sleep_begin_like_2"
+                                "kojo_sleep_begin_like_2",
+                                "kojo_sleep_begin_like_3"
                             ]
                         },
                         {
@@ -356,21 +359,21 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kojo_sleep_begin_forced_1": "$self$迟疑了一下，还是低声应了下来，朝睡觉的地方走去。",
+                "kojo_sleep_begin_forced_1": "$self$迟疑了一下，还是低声应了下来，朝床边走去。",
                 "kojo_sleep_begin_forced_2": "$self$抿着嘴移开视线，默默照着吩咐安顿下来。",
-                "kojo_sleep_begin_together_1": "$self$看了$target$一眼，在旁边安顿下来。\"晚安。\"",
+                "kojo_sleep_begin_together_1": "$self$看了$target$一眼，在旁边安顿下来：“晚安。”",
                 "kojo_sleep_begin_together_2": "$self$给$target$留出些地方，调整姿势准备休息。",
-                "kojo_sleep_begin_like_1": "$self$打了个哈欠，笑着点头。\"嗯，是该睡了。\"",
-                "kojo_sleep_begin_like_2": "$self$揉了揉眼睛。\"好，该休息了。\"",
+                "kojo_sleep_begin_like_1": "$self$打了个哈欠，笑着点头：“嗯，是该睡了。”",
+                "kojo_sleep_begin_like_2": "$self$揉了揉眼睛：“好，正好我也困了。”",
                 "kojo_sleep_begin_1": "$self$点了点头，安顿下来准备休息。",
                 "kojo_sleep_begin_2": "$self$伸了个懒腰。\"该睡了。\"",
                 "kojo_sleep_begin_3": "$self$揉揉眼睛，慢吞吞地找了个舒服的姿势。",
                 "kojo_sleep_refuse_polite_1": "$self$歉意地摇摇头。\"抱歉，我现在还不想睡。\"",
                 "kojo_sleep_refuse_polite_2": "$self$摆了摆手。\"你先休息吧，我还有点事。\"",
                 "kojo_sleep_refuse_polite_3": "$self$轻声说：\"谢谢，不过我暂时还睡不着。\"",
-                "kojo_sleep_refuse_hostile_1": "$self$皱起眉头。\"我什么时候睡不用你管。\"",
-                "kojo_sleep_refuse_hostile_2": "$self$冷淡地回道：\"不去，别烦我。\"",
-                "kojo_sleep_refuse_hostile_3": "$self$瞥了$target$一眼。\"你自己睡去吧。\"",
+                "kojo_sleep_refuse_hostile_1": "$self$沉下脸：“我什么时候睡不用你管。”",
+                "kojo_sleep_refuse_hostile_2": "$self$冷淡地回道：“不去，别烦我。”",
+                "kojo_sleep_refuse_hostile_3": "$self$瞥了$target$一眼：“你自己睡去吧。”",
                 "kojo_sleep_complete_1": "$self$安静下来，闭上了眼睛。",
                 "kojo_sleep_complete_2": "$self$调整了一下姿势，准备歇息。",
                 "kojo_sleep_complete_3": "$self$放松下来，不再说话。",
@@ -385,7 +388,10 @@
                 "kojo_sleep_join_fallback": "$self$确认$target$没有被惊醒，便安静下来。",
                 "kojo_sleep_kiss_marriage": "$self$望向$target$，困倦地笑了一下。\"嗯，晚安。明早见。\"",
                 "kojo_sleep_kiss_close": "$self$愣了一瞬，随后对$target$露出浅浅的笑。\"晚安，睡个好觉。\"",
-                "kojo_sleep_kiss_fallback": "$self$有些意外地看了$target$一眼，轻声道：\"……晚安。\""
+                "kojo_sleep_kiss_fallback": "$self$有些意外地看了$target$一眼，轻声道：\"……晚安。\"",
+                "kojo_sleep_begin_together_3": "“你也早点睡吧，明早再说。”",
+                "kojo_sleep_begin_like_3": "“那晚安啦，$target$。”",
+                "kojo_sleep_begin_forced_3": "“……知道了，我这就去睡。”$self$声音发紧，没敢多说什么。"
             },
             "en-us": {
                 "kojo_sleep_begin_forced_1": "$self$ hesitates, then quietly agrees and moves over to rest.",

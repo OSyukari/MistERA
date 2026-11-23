@@ -23,7 +23,8 @@
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_job_production_cooking_Begin_1",
-                                "com_job_production_cooking_Begin_2"
+                                "com_job_production_cooking_Begin_2",
+                                "com_job_production_cooking_Begin_12"
                             ]
                         },
                         {
@@ -41,7 +42,8 @@
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_job_production_cooking_Begin_3",
-                                "com_job_production_cooking_Begin_4"
+                                "com_job_production_cooking_Begin_4",
+                                "com_job_production_cooking_Begin_11"
                             ]
                         },
                         {
@@ -53,7 +55,8 @@
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_job_production_cooking_Begin_5",
-                                "com_job_production_cooking_Begin_6"
+                                "com_job_production_cooking_Begin_6",
+                                "com_job_production_cooking_Begin_13"
                             ]
                         },
                         {
@@ -86,7 +89,8 @@
                             "_comment": "2.3.6 NPC请求加入",
                             "responses": [
                                 "com_job_production_cooking_Tryjoin_1",
-                                "com_job_production_cooking_Tryjoin_2"
+                                "com_job_production_cooking_Tryjoin_2",
+                                "com_job_production_cooking_Tryjoin_3"
                             ]
                         }
                     ],
@@ -102,7 +106,8 @@
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": [
                                 "com_job_production_cooking_Joined_1",
-                                "com_job_production_cooking_Joined_2"
+                                "com_job_production_cooking_Joined_2",
+                                "com_job_production_cooking_Joined_3"
                             ]
                         }
                     ],
@@ -118,7 +123,8 @@
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
                                 "com_job_production_cooking_Join_Refused_1",
-                                "com_job_production_cooking_Join_Refused_2"
+                                "com_job_production_cooking_Join_Refused_2",
+                                "com_job_production_cooking_Join_Refused_3"
                             ]
                         }
                     ],
@@ -142,7 +148,8 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_production_cooking_Join_5",
-                                "com_job_production_cooking_Join_6"
+                                "com_job_production_cooking_Join_6",
+                                "com_job_production_cooking_Join_11"
                             ]
                         },
                         {
@@ -159,7 +166,8 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_production_cooking_Join_7",
-                                "com_job_production_cooking_Join_8"
+                                "com_job_production_cooking_Join_8",
+                                "com_job_production_cooking_Join_13"
                             ]
                         },
                         {
@@ -170,7 +178,8 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_production_cooking_Join_9",
-                                "com_job_production_cooking_Join_10"
+                                "com_job_production_cooking_Join_10",
+                                "com_job_production_cooking_Join_14"
                             ]
                         }
                     ],
@@ -200,7 +209,8 @@
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
                                         "com_job_production_cooking_Join_1",
-                                        "com_job_production_cooking_Join_2"
+                                        "com_job_production_cooking_Join_2",
+                                        "com_job_production_cooking_Join_12"
                                     ]
                                 }
                             ],
@@ -213,7 +223,8 @@
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_production_cooking_Join_3",
-                                "com_job_production_cooking_Join_4"
+                                "com_job_production_cooking_Join_4",
+                                "com_job_production_cooking_Join_15"
                             ]
                         }
                     ],
@@ -255,7 +266,8 @@
                             "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
                                 "com_job_production_cooking_Interrupt_1",
-                                "com_job_production_cooking_Interrupt_2"
+                                "com_job_production_cooking_Interrupt_2",
+                                "com_job_production_cooking_Interrupt_14"
                             ]
                         },
                         {
@@ -270,7 +282,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_job_production_cooking_Interrupt_3",
-                                "com_job_production_cooking_Interrupt_4"
+                                "com_job_production_cooking_Interrupt_4",
+                                "com_job_production_cooking_Interrupt_12"
                             ]
                         },
                         {
@@ -286,7 +299,8 @@
                             "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
                                 "com_job_production_cooking_Interrupt_5",
-                                "com_job_production_cooking_Interrupt_6"
+                                "com_job_production_cooking_Interrupt_6",
+                                "com_job_production_cooking_Interrupt_15"
                             ]
                         },
                         {
@@ -300,7 +314,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_job_production_cooking_Interrupt_7",
-                                "com_job_production_cooking_Interrupt_8"
+                                "com_job_production_cooking_Interrupt_8",
+                                "com_job_production_cooking_Interrupt_13"
                             ]
                         },
                         {
@@ -311,7 +326,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_job_production_cooking_Interrupt_9",
-                                "com_job_production_cooking_Interrupt_10"
+                                "com_job_production_cooking_Interrupt_10",
+                                "com_job_production_cooking_Interrupt_11"
                             ]
                         }
                     ],
@@ -363,7 +379,8 @@
                             ],
                             "responses": [
                                 "com_job_production_cooking_End_7",
-                                "com_job_production_cooking_End_8"
+                                "com_job_production_cooking_End_8",
+                                "com_job_production_cooking_End_16"
                             ]
                         },
                         {
@@ -401,7 +418,8 @@
                             ],
                             "responses": [
                                 "com_job_production_cooking_End_11",
-                                "com_job_production_cooking_End_12"
+                                "com_job_production_cooking_End_12",
+                                "com_job_production_cooking_End_15"
                             ]
                         }
                     ],
@@ -433,7 +451,8 @@
                                     "useActiveTags": false,
                                     "responses": [
                                         "com_job_production_cooking_End_1",
-                                        "com_job_production_cooking_End_2"
+                                        "com_job_production_cooking_End_2",
+                                        "com_job_production_cooking_End_14"
                                     ]
                                 }
                             ],
@@ -450,7 +469,8 @@
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
                                 "com_job_production_cooking_End_3",
-                                "com_job_production_cooking_End_4"
+                                "com_job_production_cooking_End_4",
+                                "com_job_production_cooking_End_13"
                             ]
                         }
                     ],
@@ -464,7 +484,7 @@
             "zh-cn": {
                 "com_job_production_cooking_Begin_1": "$self$眼睛一亮，立刻站了起来：“好啊！我正想露一手呢！”",
                 "com_job_production_cooking_Begin_2": "$self$挽住$target$的胳膊：“这种事怎么能少了我？走走走！”",
-                "com_job_production_cooking_Begin_3": "$self$身体僵硬了一下，低着头默默地走向厨房。“……我知道了。”",
+                "com_job_production_cooking_Begin_3": "$self$停顿了一下，低着头默默地走向厨房。“……我知道了。”",
                 "com_job_production_cooking_Begin_4": "$self$不敢看$target$的眼睛，颤抖着声音回答：“好、好的……只要你不生气……”",
                 "com_job_production_cooking_Begin_5": "$self$愣了一下，指着自己：“诶？我也要一起吗？好吧，如果不嫌弃我笨手笨脚的话。”",
                 "com_job_production_cooking_Begin_6": "$self$挠了挠头：“既然你都这么说了……那我就打个下手吧。”",
@@ -474,15 +494,15 @@
                 "com_job_production_cooking_Begin_10": "$self$挽起袖子，眼神变得犀利起来。“是时候展现真正的技术了。”",
                 "com_job_production_cooking_Tryjoin_1": "$self$探头探脑地凑进厨房：“好香啊！需不需要帮忙？”",
                 "com_job_production_cooking_Tryjoin_2": "$self$卷起袖子走了进来：“看着很有趣的样子，加我一个呗？”",
-                "com_job_production_cooking_Joined_1": "$self$开心地比了个‘耶’的手势，迅速加入了备菜队伍。",
+                "com_job_production_cooking_Joined_1": "$self$开心地比了个手势，迅速加入了备菜队伍。",
                 "com_job_production_cooking_Joined_2": "$self$接过围裙，脸上洋溢着满足的笑容。“那就请多指教啦，大厨！”",
                 "com_job_production_cooking_Join_Refused_1": "$self$有些失落地垂下肩膀，嘟囔着退了出去。“什么嘛，小气鬼……”",
-                "com_job_production_cooking_Join_Refused_2": "$self$撇了撇嘴，耸耸肩道：“行行行，不打扰你们二人世界。”",
+                "com_job_production_cooking_Join_Refused_2": "$self$撇了撇嘴，耸耸肩道：“行行行，不打扰你大展身手了。”",
                 "com_job_production_cooking_Join_1": "$self$用手背把$target$推开，笑道：“这里油烟大，你出去等着吃就好啦。”",
                 "com_job_production_cooking_Join_2": "$self$摇摇头：“不用不用，我已经快搞定啦，你去休息吧。”",
                 "com_job_production_cooking_Join_3": "$self$警惕地护住灶台：“别来添乱！上次厨房差点被你炸了。”",
                 "com_job_production_cooking_Join_4": "$self$皱起眉头：“出去！这里不需要你插手。”",
-                "com_job_production_cooking_Join_5": "$self$往旁边挪了一步，让出位置：“正如我意！快来帮我切洋葱！”",
+                "com_job_production_cooking_Join_5": "$self$往旁边挪了一步，让出位置：“正如我意！快来帮我切配菜！”",
                 "com_job_production_cooking_Join_6": "$self$把搅拌器递给$target$：“那就拜托你了，我的得力助手。”",
                 "com_job_production_cooking_Join_7": "$self$不敢反抗，默默地让出主厨的位置，退到角落打下手。",
                 "com_job_production_cooking_Join_8": "$self$低着头，声音细若蚊蝇：“随、随你喜欢……”",
@@ -502,10 +522,10 @@
                 "com_job_production_cooking_Interrupt_8": "$self$咬着嘴唇，眼神湿润地看着$target$。“其实……比起做饭，我更想……没、没什么！”",
                 "com_job_production_cooking_Interrupt_9": "$self$只是淡淡地点了点头，继续专注于切菜。",
                 "com_job_production_cooking_Interrupt_10": "$self$指了指旁边的椅子。“如果不忙的话，可以坐在那里等。”",
-                "com_job_production_cooking_End_1": "$self$笑着摆摆手：“抱歉啦，我今天是'只吃不洗'派。”",
-                "com_job_production_cooking_End_2": "$self$指了指正在追的电视剧：“等我看完这集？在那之前还是饶了我吧。”",
+                "com_job_production_cooking_End_1": "$self$笑着摆摆手：“抱歉啦，我今天手头还有别的事，实在抽不开身。”",
+                "com_job_production_cooking_End_2": "$self$歉意地看着$target$：“等我忙完这阵吧？在那之前还是饶了我。”",
                 "com_job_production_cooking_End_3": "$self$翻了个白眼：“你看我像是会做饭的样子吗？”",
-                "com_job_production_cooking_End_4": "$self$不耐烦地转过身去：“没空，自己叫外卖去。”",
+                "com_job_production_cooking_End_4": "$self$不耐烦地转过身去：“没空，你自己看着解决。”",
                 "com_job_production_cooking_End_5": "$self$骄傲地端出成品，香气四溢。“当当当当！完美！快夸我！”",
                 "com_job_production_cooking_End_6": "$self$看着大家满足的吃相，露出了欣慰的笑容。“太好了，看来努力没有白费。”",
                 "com_job_production_cooking_End_7": "虽然料理很完美，但$self$只是疲惫地解下围裙。“太累了……下次还是叫外卖吧。”",
@@ -516,7 +536,27 @@
                 "com_job_production_cooking_End_12": "$self$把失败的料理倒进垃圾桶，眼眶有些发红。“我想静一静，别理我。”",
                 "kojo_default_com_job_production_cooking_accept_failure_1": "$self$：“完了，盐放太多了！要不还是吃泡面吧……” ",
                 "kojo_default_com_job_production_cooking_accept_success_1": "$self$：“呼…总算按着菜谱一步一步做出来了” ",
-                "kojo_default_com_job_production_cooking_accept_success_2": "$self$：“完成了！嗯，至少外观是对的……希望味道别太奇怪。”"
+                "kojo_default_com_job_production_cooking_accept_success_2": "$self$：“完成了！嗯，至少外观是对的……希望味道别太奇怪。”",
+                "com_job_production_cooking_Join_11": "$self$笑着指了指洗菜池：“人多干活快，你帮我把那边冲一下。”",
+                "com_job_production_cooking_Interrupt_11": "$self$看了一眼炉火，头也不回地说：“还有几分钟好，有事等会儿再说。”",
+                "com_job_production_cooking_Interrupt_12": "$self$哼了一声，背对着$target$继续翻炒：“没事别在这儿晃悠，看着烦。”",
+                "com_job_production_cooking_Tryjoin_3": "$self$看了一眼案板上的食材：“东西挺多的，我来帮你打个下手？”",
+                "com_job_production_cooking_End_13": "$self$摇摇头直接回绝：“不去，找别人做去。”",
+                "com_job_production_cooking_Interrupt_13": "$self$借着擦汗的动作靠在灶台边，眼神悄悄往$target$身上飘：“你要不要靠过来闻闻香不香？”",
+                "com_job_production_cooking_Interrupt_14": "$self$赶紧关小了火，低着头不敢正眼看$target$：“我、我很快就能做好……”",
+                "com_job_production_cooking_Join_12": "$self$朝$target$摆摆手：“台面太挤了，下顿再一起弄。”",
+                "com_job_production_cooking_End_14": "$self$朝$target$点点头：“今天不太想碰油烟，下顿我再掌勺。”",
+                "com_job_production_cooking_Join_13": "$self$往旁边挪开两步，把案板前的空位让给$target$。",
+                "com_job_production_cooking_Join_14": "$self$点点头腾出半边台面：“行，你站这边帮着看下火候。”",
+                "com_job_production_cooking_Begin_11": "$self$攥紧了围裙边角，小声应道：“我这就去做……”",
+                "com_job_production_cooking_Join_Refused_3": "$self$点点头转身离开：“好吧，做好了记得叫我一声。”",
+                "com_job_production_cooking_End_15": "$self$关掉火，看着糊底的锅面长叹一口气：“白折腾半天，全毁了。”",
+                "com_job_production_cooking_Join_15": "$self$冷冷地回绝：“一边待着去，别挡着我用火。”",
+                "com_job_production_cooking_Begin_12": "$self$点点头，爽快地往厨房走：“正好饿了，做点热乎的吃。”",
+                "com_job_production_cooking_End_16": "$self$揉了揉被油烟熏得发酸的眼睛，没怎么兴致地把锅铲搁到一边。",
+                "com_job_production_cooking_Interrupt_15": "$self$偏头冲$target$示意了一下台面：“刚出锅的，小心烫。”",
+                "com_job_production_cooking_Begin_13": "$self$眨了眨眼，随即点点头：“行，那我先去洗菜。”",
+                "com_job_production_cooking_Joined_3": "$self$点点头洗干净手：“说吧，我先切哪样？”"
             },
             "en-us": {
                 "com_job_production_cooking_Begin_1": "$self$'s eyes lit up as she stood up immediately: \"Alright! I was just thinking of showing off my skills!\"",

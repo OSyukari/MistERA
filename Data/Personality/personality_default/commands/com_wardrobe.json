@@ -21,7 +21,8 @@
                             "_comment": "接受 被脱外衣 有允许",
                             "responses": [
                                 "com_undress_outer_Begin_A_1",
-                                "com_undress_outer_Begin_A_2"
+                                "com_undress_outer_Begin_A_2",
+                                "com_undress_outer_Begin_A_3"
                             ]
                         },
                         {
@@ -35,7 +36,8 @@
                             "_comment": "接受 被脱外衣 被迫",
                             "responses": [
                                 "com_undress_outer_Begin_B_1",
-                                "com_undress_outer_Begin_B_2"
+                                "com_undress_outer_Begin_B_2",
+                                "com_undress_outer_Begin_B_3"
                             ]
                         },
                         {
@@ -47,7 +49,8 @@
                             "_comment": "接受 被脱外衣 未允许",
                             "responses": [
                                 "com_undress_outer_Begin_C_1",
-                                "com_undress_outer_Begin_C_2"
+                                "com_undress_outer_Begin_C_2",
+                                "com_undress_outer_Begin_C_3"
                             ]
                         }
                     ],
@@ -73,7 +76,8 @@
                             "_comment": "睡眠中 被脱外衣",
                             "responses": [
                                 "com_undress_outer_D_1",
-                                "com_undress_outer_D_2"
+                                "com_undress_outer_D_2",
+                                "com_undress_outer_D_3"
                             ]
                         },
                         {
@@ -92,7 +96,8 @@
                             "_comment": "时停中 被脱外衣",
                             "responses": [
                                 "com_undress_outer_E_1",
-                                "com_undress_outer_E_2"
+                                "com_undress_outer_E_2",
+                                "com_undress_outer_E_3"
                             ]
                         },
                         {
@@ -107,7 +112,8 @@
                             "_comment": "完成 被脱外衣 有允许",
                             "responses": [
                                 "com_undress_outer_I_1",
-                                "com_undress_outer_I_2"
+                                "com_undress_outer_I_2",
+                                "com_undress_outer_I_3"
                             ]
                         },
                         {
@@ -122,7 +128,8 @@
                             "_comment": "完成 被脱外衣 被迫",
                             "responses": [
                                 "com_undress_outer_J_1",
-                                "com_undress_outer_J_2"
+                                "com_undress_outer_J_2",
+                                "com_undress_outer_J_3"
                             ]
                         },
                         {
@@ -134,7 +141,8 @@
                             "_comment": "完成 被脱外衣 未允许",
                             "responses": [
                                 "com_undress_outer_K_1",
-                                "com_undress_outer_K_2"
+                                "com_undress_outer_K_2",
+                                "com_undress_outer_K_3"
                             ]
                         }
                     ],
@@ -165,7 +173,8 @@
                                     "_comment": "拒绝 被脱外衣 有允许",
                                     "responses": [
                                         "com_undress_outer_F_1",
-                                        "com_undress_outer_F_2"
+                                        "com_undress_outer_F_2",
+                                        "com_undress_outer_F_3"
                                     ]
                                 },
                                 {
@@ -182,7 +191,8 @@
                                     "_comment": "拒绝 被脱外衣 无允许 善意",
                                     "responses": [
                                         "com_undress_outer_G_1",
-                                        "com_undress_outer_G_2"
+                                        "com_undress_outer_G_2",
+                                        "com_undress_outer_G_3"
                                     ]
                                 }
                             ],
@@ -195,7 +205,8 @@
                             "_comment": "拒绝 被脱外衣 无允许 敌意",
                             "responses": [
                                 "com_undress_outer_H_1",
-                                "com_undress_outer_H_2"
+                                "com_undress_outer_H_2",
+                                "com_undress_outer_H_3"
                             ]
                         }
                     ],
@@ -222,7 +233,8 @@
                             "_comment": "接受 被脱衣物 有允许",
                             "responses": [
                                 "com_undress_inner_Begin_A_1",
-                                "com_undress_inner_Begin_A_2"
+                                "com_undress_inner_Begin_A_2",
+                                "com_undress_inner_Begin_A_3"
                             ]
                         },
                         {
@@ -237,7 +249,8 @@
                             "_comment": "接受 被脱衣物 被迫",
                             "responses": [
                                 "com_undress_inner_Begin_B_1",
-                                "com_undress_inner_Begin_B_2"
+                                "com_undress_inner_Begin_B_2",
+                                "com_undress_inner_Begin_B_3"
                             ]
                         },
                         {
@@ -249,7 +262,8 @@
                             "_comment": "接受 被脱衣物 未允许",
                             "responses": [
                                 "com_undress_inner_Begin_C_1",
-                                "com_undress_inner_Begin_C_2"
+                                "com_undress_inner_Begin_C_2",
+                                "com_undress_inner_Begin_C_3"
                             ]
                         }
                     ],
@@ -277,7 +291,8 @@
                             "_comment": "睡眠中 被脱衣物",
                             "responses": [
                                 "com_undress_inner_D_1",
-                                "com_undress_inner_D_2"
+                                "com_undress_inner_D_2",
+                                "com_undress_inner_D_3"
                             ]
                         },
                         {
@@ -296,7 +311,8 @@
                             "_comment": "时停中 被脱衣物",
                             "responses": [
                                 "com_undress_inner_E_1",
-                                "com_undress_inner_E_2"
+                                "com_undress_inner_E_2",
+                                "com_undress_inner_E_3"
                             ]
                         },
                         {
@@ -311,7 +327,8 @@
                             "_comment": "完成 被脱衣物 有允许",
                             "responses": [
                                 "com_undress_inner_I_1",
-                                "com_undress_inner_I_2"
+                                "com_undress_inner_I_2",
+                                "com_undress_inner_I_3"
                             ]
                         },
                         {
@@ -326,7 +343,8 @@
                             "_comment": "完成 被脱衣物 被迫",
                             "responses": [
                                 "com_undress_inner_J_1",
-                                "com_undress_inner_J_2"
+                                "com_undress_inner_J_2",
+                                "com_undress_inner_J_3"
                             ]
                         },
                         {
@@ -338,7 +356,8 @@
                             "_comment": "完成 被脱衣物 未允许",
                             "responses": [
                                 "com_undress_inner_K_1",
-                                "com_undress_inner_K_2"
+                                "com_undress_inner_K_2",
+                                "com_undress_inner_K_3"
                             ]
                         }
                     ],
@@ -372,7 +391,8 @@
                                     "_comment": "拒绝 被脱衣物 有允许",
                                     "responses": [
                                         "com_undress_inner_F_1",
-                                        "com_undress_inner_F_2"
+                                        "com_undress_inner_F_2",
+                                        "com_undress_inner_F_3"
                                     ]
                                 },
                                 {
@@ -389,7 +409,8 @@
                                     "_comment": "拒绝 被脱衣物 无允许 善意",
                                     "responses": [
                                         "com_undress_inner_G_1",
-                                        "com_undress_inner_G_2"
+                                        "com_undress_inner_G_2",
+                                        "com_undress_inner_G_3"
                                     ]
                                 }
                             ],
@@ -402,7 +423,8 @@
                             "_comment": "拒绝 被脱衣物 无允许 敌意",
                             "responses": [
                                 "com_undress_inner_H_1",
-                                "com_undress_inner_H_2"
+                                "com_undress_inner_H_2",
+                                "com_undress_inner_H_3"
                             ]
                         }
                     ],
@@ -507,7 +529,8 @@
                             "_comment": "时停中 被脱贴身衣物",
                             "responses": [
                                 "com_undress_skin_E_1",
-                                "com_undress_skin_E_2"
+                                "com_undress_skin_E_2",
+                                "com_undress_skin_E_3"
                             ]
                         },
                         {
@@ -522,7 +545,8 @@
                             "_comment": "完成 被脱贴身衣物 有允许",
                             "responses": [
                                 "com_undress_skin_I_1",
-                                "com_undress_skin_I_2"
+                                "com_undress_skin_I_2",
+                                "com_undress_skin_I_3"
                             ]
                         },
                         {
@@ -537,7 +561,8 @@
                             "_comment": "完成 被脱贴身衣物 被迫",
                             "responses": [
                                 "com_undress_skin_J_1",
-                                "com_undress_skin_J_2"
+                                "com_undress_skin_J_2",
+                                "com_undress_skin_J_3"
                             ]
                         },
                         {
@@ -549,7 +574,8 @@
                             "_comment": "完成 被脱贴身衣物 未允许",
                             "responses": [
                                 "com_undress_skin_K_1",
-                                "com_undress_skin_K_2"
+                                "com_undress_skin_K_2",
+                                "com_undress_skin_K_3"
                             ]
                         }
                     ],
@@ -583,7 +609,8 @@
                                     "_comment": "拒绝 被脱贴身衣物 有允许",
                                     "responses": [
                                         "com_undress_skin_F_1",
-                                        "com_undress_skin_F_2"
+                                        "com_undress_skin_F_2",
+                                        "com_undress_skin_F_3"
                                     ]
                                 },
                                 {
@@ -600,7 +627,8 @@
                                     "_comment": "拒绝 被脱贴身衣物 无允许 善意",
                                     "responses": [
                                         "com_undress_skin_G_1",
-                                        "com_undress_skin_G_2"
+                                        "com_undress_skin_G_2",
+                                        "com_undress_skin_G_3"
                                     ]
                                 }
                             ],
@@ -613,7 +641,8 @@
                             "_comment": "拒绝 被脱贴身衣物 无允许 敌意",
                             "responses": [
                                 "com_undress_skin_H_1",
-                                "com_undress_skin_H_2"
+                                "com_undress_skin_H_2",
+                                "com_undress_skin_H_3"
                             ]
                         }
                     ],
@@ -819,7 +848,7 @@
             "zh-cn": {
                 "com_undress_outer_Begin_A_1": "$self$轻轻抬起手臂，配合着$target$的动作，嘴角带着一点笑意。",
                 "com_undress_outer_Begin_A_2": "“热了吗……还是想看我穿得少一点？”$self$小声说着，没有躲开。",
-                "com_undress_outer_Begin_B_1": "$self$僵在原地，咬着嘴唇任由$target$的手伸向自己的外衣。",
+                "com_undress_outer_Begin_B_1": "$self$站在原地不敢乱动，咬着嘴唇任由$target$的手伸向自己的外衣。",
                 "com_undress_outer_Begin_B_2": "$self$的肩膀微微发抖，却不敢开口拒绝。",
                 "com_undress_outer_Begin_C_1": "“诶？等、等一下……”$self$有些慌乱，最后还是没有阻止。",
                 "com_undress_outer_Begin_C_2": "$self$别过脸去，犹豫了一下才松开了抓着外衣的手。",
@@ -841,7 +870,7 @@
                 "com_undress_outer_K_2": "“……就只是外衣而已吧？”$self$小声嘀咕着。",
                 "com_undress_inner_Begin_A_1": "$self$红着脸，主动解开了衣服的扣子。",
                 "com_undress_inner_Begin_A_2": "“轻一点……”$self$低声说着，乖乖抬起了手臂。",
-                "com_undress_inner_Begin_B_1": "$self$紧闭双眼，身体僵硬地任由$target$剥下衣服。",
+                "com_undress_inner_Begin_B_1": "$self$紧闭双眼，身子绷紧地任由$target$剥下衣服。",
                 "com_undress_inner_Begin_B_2": "$self$的手指揪着衣角，最终还是无力地松开了。",
                 "com_undress_inner_Begin_C_1": "“真、真的要脱吗……？”$self$满脸通红，却没有逃开。",
                 "com_undress_inner_Begin_C_2": "$self$低着头，任由$target$的手碰到自己的衣服。",
@@ -880,7 +909,7 @@
                 "com_undress_skin_G_1": "“不行不行不行！”$self$羞得几乎要哭出来。",
                 "com_undress_skin_G_2": "$self$一把推开$target$：“你太过分了！”",
                 "com_undress_skin_H_1": "“你敢！”$self$的眼神里充满了愤怒与警惕。",
-                "com_undress_skin_H_2": "$self$狠狠地瞪着$target$，死死护住了身体。",
+                "com_undress_skin_H_2": "$self$狠狠地瞪着$target$，紧紧护住了身体。",
                 "com_undress_skin_I_1": "一丝不挂的$self$害羞地望着$target$，眼中带着期待。",
                 "com_undress_skin_I_2": "“……接下来，你想做什么？”$self$小声问道。",
                 "com_undress_skin_J_1": "$self$徒劳地用双手遮掩着赤裸的身体，抽泣个不停。",
@@ -904,7 +933,36 @@
                 "com_redress_I_3": "$self$顺手抚平衣摆，朝$target$弯起嘴角：“穿好啦，暖和多了。”",
                 "com_redress_K_1": "$self$松了口气，整理了一下衣服。",
                 "com_redress_K_2": "“……谢、谢谢。”$self$别扭地道了声谢。",
-                "com_redress_K_3": "$self$低头扯平衣角，脸颊还留着一点红晕：“总算穿好了。”"
+                "com_redress_K_3": "$self$低头扯平衣角，脸颊还留着一点红晕：“总算穿好了。”",
+                "com_undress_skin_I_3": "身上再无遮挡，$self$双腿微拢又轻轻松开，眼波湿润地看着$target$：\"别光看着呀……\"",
+                "com_undress_outer_Begin_A_3": "$self$顺着$target$的力道松开肩膀，任由外衣滑落到臂弯。",
+                "com_undress_outer_Begin_B_3": "攥着衣角的手指松了又紧，$self$低着头，没敢看$target$的脸。",
+                "com_undress_outer_H_3": "$self$厌恶地往后退开两步，拉下脸警告道：“手拿开。”",
+                "com_undress_skin_E_3": "停滞的时间里，$self$赤裸着保持原有姿态，对周遭的一切毫无反应。",
+                "com_undress_inner_I_3": "露出大半肌肤后，$self$脸颊发烫，反而往前凑近了半步：\"接下来呢？\"",
+                "com_undress_inner_G_3": "$self$一把按住衣襟，又羞又急地看着$target$：\"怎么能突然脱这个啊！\"",
+                "com_undress_inner_Begin_B_3": "呼吸一阵发紧，$self$咬着下唇不敢出声，只能忍受着衣物被一点点拉下。",
+                "com_undress_inner_Begin_A_3": "$self$把肩上的衣物往下一褪，呼吸带着几分热意，眼神没有躲开$target$。",
+                "com_undress_skin_H_3": "$self$猛地拍开$target$伸过来的手，脸色铁青：\"滚远点！\"",
+                "com_undress_inner_H_3": "$self$拉紧衣襟往后退开，眼神冷硬：\"别用那种眼神看我，滚开。\"",
+                "com_undress_outer_D_3": "少了外衣的束缚，$self$在梦里舒展了一下肩背，依旧沉沉睡着。",
+                "com_undress_skin_F_3": "$self$羞怯地按住$target$的手背，小声求饶：\"今天先到这里好不好？\"",
+                "com_undress_outer_K_3": "$self$下意识抱了抱胳膊，眼神有些躲闪地避开了$target$的视线。",
+                "com_undress_outer_I_3": "少了外衣的束缚，$self$轻松地活动了一下肩膀，朝$target$眨了眨眼。",
+                "com_undress_inner_D_3": "贴身衣物露在空气里，$self$依旧合着眼，呼吸平稳地沉在梦中。",
+                "com_undress_inner_F_3": "$self$轻轻拨开$target$的手指，小声商量：\"等只剩我们俩的时候再说嘛。\"",
+                "com_undress_skin_K_3": "$self$并拢膝盖遮挡身前，耳朵红得发烫，眼神躲闪着不敢看$target$。",
+                "com_undress_outer_F_3": "$self$护住领口往后躲了躲，眼神带着几分无奈：“待会儿再说，乖。”",
+                "com_undress_outer_E_3": "停滞的视线没有半点波澜，$self$保持着原本的姿势，任凭外衣离开肩头。",
+                "com_undress_outer_J_3": "凉意一下子贴上肩头，$self$缩着脖子，手指紧抓着内层衣料不敢松开。",
+                "com_undress_outer_G_3": "$self$抬手挡住$target$，语气又急又窘：“别突然动手啊！”",
+                "com_undress_skin_J_3": "光着身子暴露在视线里，$self$浑身发冷，只能缩紧双臂遮住胸前，泪水止不住地掉。",
+                "com_undress_inner_K_3": "$self$双臂交叠挡在身前，耳根红透地嘟囔着：\"这也太让人难为情了……\"",
+                "com_undress_skin_G_3": "$self$满脸涨红地捂紧贴身衣物，往后连退两步：\"怎么能突然脱这个！\"",
+                "com_undress_inner_Begin_C_3": "$self$犹豫着抬起手，小声嘀咕了一句“别看太仔细啊”，才配合地松开力道。",
+                "com_undress_outer_Begin_C_3": "$self$耳根有些发烫，半推半就地配合着抬起了手。",
+                "com_undress_inner_E_3": "停滞的时间里，$self$连眼睫都没有颤动半下，对身上的凉意全无察觉。",
+                "com_undress_inner_J_3": "只剩贴身衣物遮体，凉意和屈辱让$self$咬紧下唇，不敢抬头看$target$。"
             },
             "en-us": {
                 "com_undress_outer_Begin_A_1": "$self$ lifts her arms to help $target$, a small smile on her lips.",

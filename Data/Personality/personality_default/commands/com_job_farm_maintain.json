@@ -23,7 +23,8 @@
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_job_farm_maintain_Begin_1",
-                                "com_job_farm_maintain_Begin_2"
+                                "com_job_farm_maintain_Begin_2",
+                                "com_job_farm_maintain_Begin_13"
                             ]
                         },
                         {
@@ -41,7 +42,8 @@
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_job_farm_maintain_Begin_3",
-                                "com_job_farm_maintain_Begin_4"
+                                "com_job_farm_maintain_Begin_4",
+                                "com_job_farm_maintain_Begin_12"
                             ]
                         },
                         {
@@ -53,7 +55,8 @@
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_job_farm_maintain_Begin_5",
-                                "com_job_farm_maintain_Begin_6"
+                                "com_job_farm_maintain_Begin_6",
+                                "com_job_farm_maintain_Begin_11"
                             ]
                         },
                         {
@@ -86,7 +89,8 @@
                             "_comment": "2.3.6 NPC请求加入",
                             "responses": [
                                 "com_job_farm_maintain_Tryjoin_1",
-                                "com_job_farm_maintain_Tryjoin_2"
+                                "com_job_farm_maintain_Tryjoin_2",
+                                "com_job_farm_maintain_Tryjoin_3"
                             ]
                         }
                     ],
@@ -102,7 +106,8 @@
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": [
                                 "com_job_farm_maintain_Joined_1",
-                                "com_job_farm_maintain_Joined_2"
+                                "com_job_farm_maintain_Joined_2",
+                                "com_job_farm_maintain_Joined_3"
                             ]
                         }
                     ],
@@ -118,7 +123,8 @@
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
                                 "com_job_farm_maintain_Join_Refused_1",
-                                "com_job_farm_maintain_Join_Refused_2"
+                                "com_job_farm_maintain_Join_Refused_2",
+                                "com_job_farm_maintain_Join_Refused_3"
                             ]
                         }
                     ],
@@ -142,7 +148,8 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_maintain_Join_5",
-                                "com_job_farm_maintain_Join_6"
+                                "com_job_farm_maintain_Join_6",
+                                "com_job_farm_maintain_Join_15"
                             ]
                         },
                         {
@@ -159,7 +166,8 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_maintain_Join_7",
-                                "com_job_farm_maintain_Join_8"
+                                "com_job_farm_maintain_Join_8",
+                                "com_job_farm_maintain_Join_11"
                             ]
                         },
                         {
@@ -170,7 +178,8 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_maintain_Join_9",
-                                "com_job_farm_maintain_Join_10"
+                                "com_job_farm_maintain_Join_10",
+                                "com_job_farm_maintain_Join_13"
                             ]
                         }
                     ],
@@ -200,7 +209,8 @@
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
                                         "com_job_farm_maintain_Join_1",
-                                        "com_job_farm_maintain_Join_2"
+                                        "com_job_farm_maintain_Join_2",
+                                        "com_job_farm_maintain_Join_12"
                                     ]
                                 }
                             ],
@@ -213,7 +223,8 @@
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_maintain_Join_3",
-                                "com_job_farm_maintain_Join_4"
+                                "com_job_farm_maintain_Join_4",
+                                "com_job_farm_maintain_Join_14"
                             ]
                         }
                     ],
@@ -256,7 +267,8 @@
                             "_comment": "2.2.3 态度：恐惧 有他人登场",
                             "responses": [
                                 "com_job_farm_maintain_Interrupt_1",
-                                "com_job_farm_maintain_Interrupt_2"
+                                "com_job_farm_maintain_Interrupt_2",
+                                "com_job_farm_maintain_Interrupt_13"
                             ]
                         },
                         {
@@ -271,7 +283,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_job_farm_maintain_Interrupt_3",
-                                "com_job_farm_maintain_Interrupt_4"
+                                "com_job_farm_maintain_Interrupt_4",
+                                "com_job_farm_maintain_Interrupt_12"
                             ]
                         },
                         {
@@ -287,7 +300,8 @@
                             "_comment": "2.2.1 态度：好意 有他人登场",
                             "responses": [
                                 "com_job_farm_maintain_Interrupt_5",
-                                "com_job_farm_maintain_Interrupt_6"
+                                "com_job_farm_maintain_Interrupt_6",
+                                "com_job_farm_maintain_Interrupt_14"
                             ]
                         },
                         {
@@ -301,7 +315,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_job_farm_maintain_Interrupt_7",
-                                "com_job_farm_maintain_Interrupt_8"
+                                "com_job_farm_maintain_Interrupt_8",
+                                "com_job_farm_maintain_Interrupt_15"
                             ]
                         },
                         {
@@ -312,7 +327,8 @@
                             "useActiveTags": false,
                             "responses": [
                                 "com_job_farm_maintain_Interrupt_9",
-                                "com_job_farm_maintain_Interrupt_10"
+                                "com_job_farm_maintain_Interrupt_10",
+                                "com_job_farm_maintain_Interrupt_11"
                             ]
                         }
                     ],
@@ -344,7 +360,8 @@
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
                                         "com_job_farm_maintain_5",
-                                        "com_job_farm_maintain_6"
+                                        "com_job_farm_maintain_6",
+                                        "com_job_farm_maintain_16"
                                     ]
                                 }
                             ],
@@ -362,7 +379,8 @@
                             ],
                             "responses": [
                                 "com_job_farm_maintain_7",
-                                "com_job_farm_maintain_8"
+                                "com_job_farm_maintain_8",
+                                "com_job_farm_maintain_13"
                             ]
                         },
                         {
@@ -400,7 +418,8 @@
                             ],
                             "responses": [
                                 "com_job_farm_maintain_11",
-                                "com_job_farm_maintain_12"
+                                "com_job_farm_maintain_12",
+                                "com_job_farm_maintain_17"
                             ]
                         }
                     ],
@@ -432,7 +451,8 @@
                                     "useActiveTags": false,
                                     "responses": [
                                         "com_job_farm_maintain_1",
-                                        "com_job_farm_maintain_2"
+                                        "com_job_farm_maintain_2",
+                                        "com_job_farm_maintain_14"
                                     ]
                                 }
                             ],
@@ -449,7 +469,8 @@
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
                                 "com_job_farm_maintain_3",
-                                "com_job_farm_maintain_4"
+                                "com_job_farm_maintain_4",
+                                "com_job_farm_maintain_15"
                             ]
                         }
                     ],
@@ -463,15 +484,15 @@
             "zh-cn": {
                 "kojo_default_com_job_farm_maintain_accept_success_1": "$self$ 一边哼着歌，一边认真地给作物浇水施肥。",
                 "kojo_default_com_job_farm_maintain_accept_failure_1": "$self$：\"完了，刚才除草的时候，不小心把菜苗也拔掉了！\" ",
-                "com_job_farm_maintain_Begin_1": "$self$ 眼睛一亮，立刻跳了起来。\"好啊！我正想去看看那边的草莓长得怎么样了！\"",
-                "com_job_farm_maintain_Begin_2": "$self$ 利落地挽起头发。\"没问题，正好我也需要活动活动筋骨，走吧！\"",
+                "com_job_farm_maintain_Begin_1": "$self$ 眼睛一亮，立刻跳了起来。\"好啊！我正想去看看那边的作物长得怎么样了！\"",
+                "com_job_farm_maintain_Begin_2": "$self$ 利落地挽起袖口。\"没问题，正好我也需要活动活动筋骨，走吧！\"",
                 "com_job_farm_maintain_Begin_3": "$self$ 咬着下唇，眼神中充满了抗拒，但还是颤巍巍地站了起来。\"我知道了……我会去的……请别生气。\"",
                 "com_job_farm_maintain_Begin_4": "$self$ 低着头，不敢直视$target$的眼睛，声音细若蚊蝇。\"只要我去……你就不会那样对我了吗？……好。\"",
                 "com_job_farm_maintain_Begin_5": "$self$ 愣了一下，指了指自己。\"诶？我也要去吗？……好吧，既然你都这么说了。\"",
                 "com_job_farm_maintain_Begin_6": "$self$ 挠了挠头，有些困惑。\"我不太擅长那个……不过如果你坚持的话，我可以试试。\"",
                 "com_job_farm_maintain_Begin_7": "$self$ 换上了一双耐脏的长靴，把帽檐压低了一些。\"好了，今天要把这片杂草清理干净。\"",
                 "com_job_farm_maintain_Begin_8": "$self$ 深吸了一口带着泥土芬芳的空气，拿起了放在墙角的喷壶。\"这些小家伙应该渴坏了。\"",
-                "com_job_farm_maintain_Begin_9": "$self$ 挽起袖子，露出白皙的小臂，眼神在田垄间扫视。\"嗯……先从修剪枯枝开始吧。\"",
+                "com_job_farm_maintain_Begin_9": "$self$ 挽起袖子露出小臂，眼神在田垄间扫视。\"嗯……先从修剪枯枝开始吧。\"",
                 "com_job_farm_maintain_Begin_10": "$self$ 拍了拍脸颊给自己打气，提着沉甸甸的肥料袋走向田地。",
                 "com_job_farm_maintain_Tryjoin_1": "$self$ 看着忙碌的$target$，有些手痒地凑了过去。\"看起来挺有意思的，我也能来帮把手吗？\"",
                 "com_job_farm_maintain_Tryjoin_2": "$self$ 提着自己的小工具箱走近。\"那个……如果不介意的话，我可以负责那边的除草工作。\"",
@@ -480,12 +501,12 @@
                 "com_job_farm_maintain_Join_Refused_1": "$self$ 失落地垂下肩膀，踢了踢路边的小石子。\"什么嘛……小气鬼。\"",
                 "com_job_farm_maintain_Join_Refused_2": "$self$ 尴尬地收回手，强颜欢笑。\"啊，这样啊……那我就不打扰你了，加油哦。\"",
                 "com_job_farm_maintain_Join_1": "$self$ 擦了把汗，笑着摇摇头。\"谢谢你的好意，不过这片地我已经快弄完了，你在旁边歇着就好。\"",
-                "com_job_farm_maintain_Join_2": "$self$ 温柔地推开$target$伸过来的手。\"别弄脏手了，这点小事我自己能搞定。\"",
+                "com_job_farm_maintain_Join_2": "$self$ 朝$target$摆摆手：\"别弄脏手了，这点小事我自己能搞定。\"",
                 "com_job_farm_maintain_Join_3": "$self$ 警惕地护住身下的幼苗。\"别碰！你根本不懂怎么弄，只会帮倒忙。\"",
                 "com_job_farm_maintain_Join_4": "$self$ 不耐烦地挥手像赶苍蝇一样。\"走开走开，你在这里只会碍手碍脚。\"",
                 "com_job_farm_maintain_Join_5": "$self$ 惊喜地递过一把铲子。\"求之不得！我都快累死了，快来帮帮我！\"",
                 "com_job_farm_maintain_Join_6": "$self$ 往旁边挪了挪位置，拍了拍身边的空地。\"来得正好，两个人干活肯定快多了。\"",
-                "com_job_farm_maintain_Join_7": "$self$ 身体僵硬了一下，默默地往旁边退开。\"这是你的地盘……你想怎么样都可以……\"",
+                "com_job_farm_maintain_Join_7": "$self$ 动作顿住，默默地往旁边退开。\"这是你的地盘……你想怎么样都可以……\"",
                 "com_job_farm_maintain_Join_8": "$self$ 不敢反驳，只能低头继续手中的动作，尽量减少存在感。\"如果你坚持的话……请便……\"",
                 "com_job_farm_maintain_Join_9": "$self$ 有些惊讶地眨了眨眼。\"你是认真的吗？这可是很累的脏活……随你便吧。\"",
                 "com_job_farm_maintain_Join_10": "$self$ 迟疑了一下，还是把多余的手套递了过去。\"没想到你会对这个感兴趣……好吧。\"",
@@ -494,16 +515,16 @@
                 "com_job_farm_maintain_Ongoing_3": "$self$ 小心翼翼地用剪刀去除多余的侧芽，动作轻柔得像是在对待易碎的艺术品",
                 "com_job_farm_maintain_Ongoing_4": "$self$ 提着水桶穿梭在田垄间，清澈的水流随着她的动作均匀地洒在根部",
                 "com_job_farm_maintain_Interrupt_1": "$self$ 听到脚步声猛地颤抖了一下，手中的铲子差点掉落在地，眼神闪烁地看向$target$。\"我……我正在努力工作，没有偷懒……\"",
-                "com_job_farm_maintain_Interrupt_2": "$self$ 下意识地退后半步，把自己缩在茂密的玉米秆阴影里。\"请、请不要过来……这里都是泥……\"",
+                "com_job_farm_maintain_Interrupt_2": "$self$ 下意识地退后半步，把自己缩在茂密的作物阴影里。\"请、请不要过来……这里都是泥……\"",
                 "com_job_farm_maintain_Interrupt_3": "$self$ 手中的剪刀发出咔嚓一声脆响，冷冷地瞥了$target$一眼。\"如果你是来捣乱的，我手里的家伙可不长眼睛。\"",
                 "com_job_farm_maintain_Interrupt_4": "$self$ 没有停下手中的活，只是背对着$target$啧了一声。\"真晦气，这片田里的害虫好像变多了。\"",
-                "com_job_farm_maintain_Interrupt_5": "$self$ 直起腰，看到$target$时露出了灿烂的笑容，举起沾满泥土的手挥了挥。\"嘿！你看！番茄已经开始变红了！\"",
+                "com_job_farm_maintain_Interrupt_5": "$self$ 直起腰，看到$target$时露出了灿烂的笑容，举起沾满泥土的手挥了挥。\"嘿！你看！长势比前两天好多了！\"",
                 "com_job_farm_maintain_Interrupt_6": "$self$ 擦了擦汗，眼神温柔地注视着走近的$target$。\"你怎么来了？小心别踩到刚播下的种子。\"",
                 "com_job_farm_maintain_Interrupt_7": "$self$ 故意挺直了身体，让汗水顺着脖颈滑入衣领深处，眼神迷离地望向$target$。\"在这种地方见面……你是想看我满身大汗的样子吗？\"",
                 "com_job_farm_maintain_Interrupt_8": "$self$ 咬着嘴唇，用带着泥土腥味的手指轻轻勾弄着自己的领口。\"比起照顾这些植物……我更想让你来‘照顾’一下我呢……\"",
                 "com_job_farm_maintain_Interrupt_9": "$self$ 只是淡淡地点了点头，算是打过招呼，随即又低头继续摆弄手中的幼苗。\"如果不帮忙的话，请站远一点。\"",
                 "com_job_farm_maintain_Interrupt_10": "$self$ 有些意外地挑了挑眉，语气平淡。\"借过一下，你挡住阳光了。\"",
-                "com_job_farm_maintain_1": "$self$ 歉意地笑了笑，指了指自己干净的衣服。\"抱歉，$target$，我刚洗完澡，实在不想弄脏了。\"",
+                "com_job_farm_maintain_1": "$self$ 歉意地笑了笑，指了指自己干净的袖口。\"抱歉，$target$，我这身衣服刚换上，实在不想弄得满是泥。\"",
                 "com_job_farm_maintain_2": "$self$ 摆了摆手。\"今天腰有点酸，我就不去凑热闹了，祝你们丰收。\"",
                 "com_job_farm_maintain_3": "$self$ 翻了个白眼，嫌弃地看了一眼$target$指甲里的泥土。\"在那大太阳底下暴晒？你是想毁了我的皮肤吗？\"",
                 "com_job_farm_maintain_4": "$self$ 冷笑一声。\"这种粗活还是你自己干吧，别把我想象成廉价劳动力。\"",
@@ -514,7 +535,28 @@
                 "com_job_farm_maintain_9": "$self$ 看着枯萎的叶子，无奈地笑了笑，却并没有太沮丧。\"虽然失败了，但在阳光下流汗的感觉还不坏嘛。\"",
                 "com_job_farm_maintain_10": "$self$ 拍了拍身上的泥土。\"至少学到了怎么施肥，下次一定能种好的！\"",
                 "com_job_farm_maintain_11": "$self$ 看着被虫子啃食殆尽的叶片，气得眼眶发红。\"我明明那么努力了……为什么还是救不活它们！\"",
-                "com_job_farm_maintain_12": "$self$ 颓废地坐在田埂上，把枯枝折断。\"浪费了整整一下午……我真是个笨蛋。\""
+                "com_job_farm_maintain_12": "$self$ 颓废地坐在田埂上，把枯枝折断。\"浪费了整整一下午……我真是个笨蛋。\"",
+                "com_job_farm_maintain_Begin_11": "$self$ 眨了眨眼，随即跟上脚步：\"好吧，那我从哪块地开始？\"",
+                "com_job_farm_maintain_13": "$self$ 拍打着沾满尘土的裤脚，语气满是倦意：\"总算弄完了，快回去洗洗。\"",
+                "com_job_farm_maintain_14": "$self$ 朝$target$点点头：\"我手头还有点事要忙，地里的活下回再帮吧。\"",
+                "com_job_farm_maintain_15": "$self$ 抱起胳膊往后退了一步：\"我不去，自己找别人吧。\"",
+                "com_job_farm_maintain_Interrupt_11": "$self$ 看了一眼$target$：\"找我有事？等我把这一行浇完再说。\"",
+                "com_job_farm_maintain_Join_11": "$self$ 缩了缩肩膀，把旁边的空位让出来，不敢抬头看$target$。",
+                "com_job_farm_maintain_Interrupt_12": "$self$ 沉着脸把土块铲到一边：\"别踩到刚整好的垄，没事赶紧走。\"",
+                "com_job_farm_maintain_Join_12": "$self$ 指了指田埂：\"今天地方不太够用，下回再一块儿打理吧。\"",
+                "com_job_farm_maintain_Begin_12": "$self$ 攥紧衣角默默低头：\"……我马上去田里。\"",
+                "com_job_farm_maintain_Tryjoin_3": "$self$ 朝$target$示意了一下空水桶：\"地还挺大的，算我一个一起弄吧？\"",
+                "com_job_farm_maintain_Begin_13": "$self$ 朝$target$点点头，拿上工具便走：\"今天天气不错，干活正好。\"",
+                "com_job_farm_maintain_Join_13": "$self$ 点点头：\"行，那你注意别踩到嫩芽就行。\"",
+                "com_job_farm_maintain_Interrupt_13": "$self$ 赶紧低下头加快了手上的动作，生怕哪里做得不好惹怒了$target$。",
+                "com_job_farm_maintain_Join_14": "$self$ 冷哼一声：\"不用你插手，别把土踩实了。\"",
+                "com_job_farm_maintain_Join_Refused_3": "$self$ 点点头把工具放回架子：\"知道了，那我去干点别的。\"",
+                "com_job_farm_maintain_16": "$self$ 擦掉额角的汗水，朝$target$扬了扬下巴：\"这片地打理得够利索了吧！\"",
+                "com_job_farm_maintain_Joined_3": "$self$ 拎起水桶点点头：\"行，你浇这头，我去清理那边。\"",
+                "com_job_farm_maintain_17": "$self$ 甩了甩满是泥水的手，烦躁地站起身：\"算了，这片没救了，干不下去了。\"",
+                "com_job_farm_maintain_Interrupt_14": "$self$ 朝$target$招招手：\"正好我刚歇口气，过来乘会儿凉？\"",
+                "com_job_farm_maintain_Interrupt_15": "$self$ 朝$target$偏了偏头，脸颊透着热意：\"过来帮我擦下汗好不好？手脏着呢。\"",
+                "com_job_farm_maintain_Join_15": "$self$ 笑着指向隔壁那排：\"你弄那条垄吧，咱们分开浇水快得很。\""
             },
             "en-us": {
                 "kojo_default_com_job_farm_maintain_accept_success_1": "$self$ hummed a song as they carefully watered and fertilized the crops.",

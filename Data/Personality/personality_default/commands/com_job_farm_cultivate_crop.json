@@ -23,7 +23,8 @@
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Begin_1",
-                                "com_job_farm_cultivate_crop_Begin_2"
+                                "com_job_farm_cultivate_crop_Begin_2",
+                                "com_job_farm_cultivate_crop_Begin_14"
                             ]
                         },
                         {
@@ -41,7 +42,8 @@
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Begin_3",
-                                "com_job_farm_cultivate_crop_Begin_4"
+                                "com_job_farm_cultivate_crop_Begin_4",
+                                "com_job_farm_cultivate_crop_Begin_12"
                             ]
                         },
                         {
@@ -53,7 +55,8 @@
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Begin_5",
-                                "com_job_farm_cultivate_crop_Begin_6"
+                                "com_job_farm_cultivate_crop_Begin_6",
+                                "com_job_farm_cultivate_crop_Begin_13"
                             ]
                         },
                         {
@@ -87,7 +90,8 @@
                             "_comment": "2.3.6 NPC请求加入",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Tryjoin_1",
-                                "com_job_farm_cultivate_crop_Tryjoin_2"
+                                "com_job_farm_cultivate_crop_Tryjoin_2",
+                                "com_job_farm_cultivate_crop_Tryjoin_3"
                             ]
                         }
                     ],
@@ -103,7 +107,8 @@
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Joined_1",
-                                "com_job_farm_cultivate_crop_Joined_2"
+                                "com_job_farm_cultivate_crop_Joined_2",
+                                "com_job_farm_cultivate_crop_Joined_3"
                             ]
                         }
                     ],
@@ -119,7 +124,8 @@
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_Refused_1",
-                                "com_job_farm_cultivate_crop_Join_Refused_2"
+                                "com_job_farm_cultivate_crop_Join_Refused_2",
+                                "com_job_farm_cultivate_crop_Join_Refused_3"
                             ]
                         }
                     ],
@@ -143,7 +149,8 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_5",
-                                "com_job_farm_cultivate_crop_Join_6"
+                                "com_job_farm_cultivate_crop_Join_6",
+                                "com_job_farm_cultivate_crop_Join_12"
                             ]
                         },
                         {
@@ -160,7 +167,8 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_7",
-                                "com_job_farm_cultivate_crop_Join_8"
+                                "com_job_farm_cultivate_crop_Join_8",
+                                "com_job_farm_cultivate_crop_Join_15"
                             ]
                         },
                         {
@@ -171,7 +179,8 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_9",
-                                "com_job_farm_cultivate_crop_Join_10"
+                                "com_job_farm_cultivate_crop_Join_10",
+                                "com_job_farm_cultivate_crop_Join_13"
                             ]
                         }
                     ],
@@ -201,7 +210,8 @@
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
                                         "com_job_farm_cultivate_crop_Join_1",
-                                        "com_job_farm_cultivate_crop_Join_2"
+                                        "com_job_farm_cultivate_crop_Join_2",
+                                        "com_job_farm_cultivate_crop_Join_14"
                                     ]
                                 }
                             ],
@@ -214,7 +224,8 @@
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_Join_3",
-                                "com_job_farm_cultivate_crop_Join_4"
+                                "com_job_farm_cultivate_crop_Join_4",
+                                "com_job_farm_cultivate_crop_Join_11"
                             ]
                         }
                     ],
@@ -350,7 +361,8 @@
                                     "_comment": "2.5.3 成功（正面反馈）行动结束结果",
                                     "responses": [
                                         "com_job_farm_cultivate_crop_5",
-                                        "com_job_farm_cultivate_crop_6"
+                                        "com_job_farm_cultivate_crop_6",
+                                        "com_job_farm_cultivate_crop_15"
                                     ]
                                 }
                             ],
@@ -368,7 +380,8 @@
                             ],
                             "responses": [
                                 "com_job_farm_cultivate_crop_7",
-                                "com_job_farm_cultivate_crop_8"
+                                "com_job_farm_cultivate_crop_8",
+                                "com_job_farm_cultivate_crop_14"
                             ]
                         },
                         {
@@ -407,7 +420,8 @@
                             ],
                             "responses": [
                                 "com_job_farm_cultivate_crop_11",
-                                "com_job_farm_cultivate_crop_12"
+                                "com_job_farm_cultivate_crop_12",
+                                "com_job_farm_cultivate_crop_16"
                             ]
                         }
                     ],
@@ -458,7 +472,8 @@
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
                                 "com_job_farm_cultivate_crop_3",
-                                "com_job_farm_cultivate_crop_4"
+                                "com_job_farm_cultivate_crop_4",
+                                "com_job_farm_cultivate_crop_13"
                             ]
                         }
                     ],
@@ -477,7 +492,7 @@
                 "com_job_farm_cultivate_crop_Begin_1": "$self$眼睛一亮，立刻站了起来。\"好啊！我早就想种种看了！\"",
                 "com_job_farm_cultivate_crop_Begin_2": "$self$兴奋地挽起袖子：\"走走走，我也来露一手！\"",
                 "com_job_farm_cultivate_crop_Begin_3": "$self$脸色发白，颤抖着点了点头。\"我、我知道了……我会照做的。\"",
-                "com_job_farm_cultivate_crop_Begin_4": "$self$不敢反抗，只能僵硬地跟在后面。\"请别生气，我去就是了。\"",
+                "com_job_farm_cultivate_crop_Begin_4": "$self$不敢反抗，只能低头跟在后面。\"请别生气，我去就是了。\"",
                 "com_job_farm_cultivate_crop_Begin_5": "$self$有些意外地指了指自己。\"诶？我也要来吗？好吧，既然你都邀请了。\"",
                 "com_job_farm_cultivate_crop_Begin_6": "$self$犹豫了一下，还是接过了递来的工具。\"我可不保证能种活哦。\"",
                 "com_job_farm_cultivate_crop_Begin_7": "$self$带上了沾着泥土的手套，拿起小铲子走向预留的空地。",
@@ -497,7 +512,7 @@
                 "com_job_farm_cultivate_crop_Join_4": "$self$冷冷地说道：\"你只会越帮越忙，离远点。\"",
                 "com_job_farm_cultivate_crop_Join_5": "$self$惊喜地递过一副备用手套。\"求之不得！两个人干活肯定快多了！\"",
                 "com_job_farm_cultivate_crop_Join_6": "$self$往旁边挪了挪位置。\"来来来，这个坑归你挖！\"",
-                "com_job_farm_cultivate_crop_Join_7": "$self$身体僵硬地往旁边缩了缩，没敢出声反对。",
+                "com_job_farm_cultivate_crop_Join_7": "$self$动作顿住，默默往旁边缩了缩，没敢出声反对。",
                 "com_job_farm_cultivate_crop_Join_8": "$self$低下头默默让出了位置，眼神中闪烁着不安。\"你想怎么样都行……\"",
                 "com_job_farm_cultivate_crop_Join_9": "$self$愣了一下，随即耸耸肩。\"如果你坚持的话……只要别嫌累就行。\"",
                 "com_job_farm_cultivate_crop_Join_10": "$self$把铲子分了一半出去。\"那就麻烦你了？其实挺枯燥的。\"",
@@ -506,11 +521,11 @@
                 "com_job_farm_cultivate_crop_Ongoing_3": "$self$跪在泥土上，细心地将多余的杂草拔除，动作轻柔得像在抚摸宠物。",
                 "com_job_farm_cultivate_crop_Ongoing_4": "$self$正拿着喷壶，均匀地给每一片叶子洒上水珠。",
                 "com_job_farm_cultivate_crop_Ongoing_5": "$self$全神贯注地修剪着多余的枝叶，完全没有注意到时间的流逝。",
-                "com_job_farm_cultivate_crop_Interrupt_1": "$self$身体猛地一僵，手中的喷壶差点掉落。\"对、对不起……我马上就弄完……\"",
+                "com_job_farm_cultivate_crop_Interrupt_1": "$self$手下一抖，手中的喷壶差点掉落。\"对、对不起……我马上就弄完……\"",
                 "com_job_farm_cultivate_crop_Interrupt_2": "$self$下意识地缩起肩膀，试图用植物挡住自己的身体。\"我……我没有偷懒……\"",
                 "com_job_farm_cultivate_crop_Interrupt_3": "$self$低着头不敢看对方，声音细若游丝。\"请不要踩坏它们……\"",
                 "com_job_farm_cultivate_crop_Interrupt_4": "$self$手上的动作停顿了一下，并没有回头。\"如果你是来找茬的，请离我的植物远点。\"",
-                "com_job_farm_cultivate_crop_Interrupt_5": "$self$握紧了手中的铲子，眼神冰冷地瞥了一眼来人。\"这里不欢迎你。\"",
+                "com_job_farm_cultivate_crop_Interrupt_5": "$self$握紧了手中的铲子，冷冷地瞥了一眼来人。\"这里不欢迎你。\"",
                 "com_job_farm_cultivate_crop_Interrupt_6": "$self$故意用力铲了一铲土，扬起的尘土向对方飘去。",
                 "com_job_farm_cultivate_crop_Interrupt_7": "$self$听到脚步声抬起头，露出了一个灿烂的笑容。\"是你呀！快来看，这棵苗长得多好！\"",
                 "com_job_farm_cultivate_crop_Interrupt_8": "$self$擦了擦脸颊上的泥土，开心地招了招手。\"哎呀，被你看到了脏兮兮的样子。\"",
@@ -525,14 +540,29 @@
                 "com_job_farm_cultivate_crop_2": "$self$抱歉地看着$target$：\"现在这太阳太毒了，我怕晒黑，晚点再说吧？\"",
                 "com_job_farm_cultivate_crop_3": "$self$皱起眉头，仿佛听到了什么笑话。\"你是认真的吗？让我去玩泥巴？\"",
                 "com_job_farm_cultivate_crop_4": "$self$嫌弃地后退了一步。\"没兴趣，别把那些脏东西带到我这里来。\"",
-                "com_job_farm_cultivate_crop_5": "$self$看着破土而出的新芽，满脸都是成就感。\"快看！它活了！我们成功了！\"",
-                "com_job_farm_cultivate_crop_6": "$self$小心翼翼地抚摸着翠绿的叶片，脸上洋溢着温柔的笑意。\"这感觉真好，谢谢你陪我一起。\"",
-                "com_job_farm_cultivate_crop_7": "虽然植物种活了，$self$却疲惫地揉着腰。\"虽然结果是好的，但这代价也太大了，下次再也不干了。\"",
-                "com_job_farm_cultivate_crop_8": "$self$看着满手的泥污和断掉的指甲，叹了口气。\"为了这点绿化牺牲这么多，真不知道值不值。\"",
+                "com_job_farm_cultivate_crop_5": "$self$看着刚埋稳的幼苗，满脸都是成就感。\"看，这排栽得多齐整！\"",
+                "com_job_farm_cultivate_crop_6": "$self$拍掉手上的土，脸上洋溢着轻松的笑意。\"总算种完啦，谢谢你陪我一起。\"",
+                "com_job_farm_cultivate_crop_7": "虽然全都种下去了，$self$却疲惫地揉着腰。\"虽然弄完了，但这活也太累人了，下次再也不干了。\"",
+                "com_job_farm_cultivate_crop_8": "$self$看着满手的泥污和折断的指甲，叹了口气。\"折腾这么久，腰都要直不起来了。\"",
                 "com_job_farm_cultivate_crop_9": "虽然幼苗没能挺过第一晚，$self$却并不气馁。\"至少我学到了不少经验，下次一定能行！\"",
                 "com_job_farm_cultivate_crop_10": "$self$看着枯萎的叶子苦笑了一下，随即拍了拍$target$的背。\"没事啦，过程开心最重要嘛！\"",
-                "com_job_farm_cultivate_crop_11": "$self$看着死去植物，眼眶微微泛红。\"怎么会这样……我明明那么用心了……\"",
-                "com_job_farm_cultivate_crop_12": "$self$烦躁地把工具扔进箱子里。\"浪费了两个小时，简直就是场灾难。\""
+                "com_job_farm_cultivate_crop_11": "$self$看着歪倒的幼苗，眼眶微微泛红。\"怎么会这样……我明明那么用心了……\"",
+                "com_job_farm_cultivate_crop_12": "$self$烦躁地把工具扔进箱子里。\"浪费了这么久，简直就是场灾难。\"",
+                "com_job_farm_cultivate_crop_Join_11": "$self$沉着脸挥手赶人：\"一边去，别踩坏我刚埋好的苗。\"",
+                "com_job_farm_cultivate_crop_13": "$self$冷淡地摆摆手：\"不去，你自己慢慢种吧。\"",
+                "com_job_farm_cultivate_crop_Tryjoin_3": "$self$指了指旁边空着的垄沟：\"活挺多的吧，我也来搭把手？\"",
+                "com_job_farm_cultivate_crop_Join_12": "$self$笑着指了指旁边的育苗盘：\"帮我递一下苗，咱们分工合作。\"",
+                "com_job_farm_cultivate_crop_Join_Refused_3": "$self$耸耸肩转身走开：\"知道了，我忙别的去。\"",
+                "com_job_farm_cultivate_crop_Begin_12": "$self$攥着工具默默挪向地头，不敢多说半个字。",
+                "com_job_farm_cultivate_crop_14": "$self$把小铲子丢回桶里，没好气地拍掉腿上的土：\"总算熬到头了。\"",
+                "com_job_farm_cultivate_crop_Begin_13": "$self$眨了眨眼，随即走上前：\"那我照着你教的试试看。\"",
+                "com_job_farm_cultivate_crop_Join_13": "$self$点点头让出一块空地：\"行，你种那边，注意株距。\"",
+                "com_job_farm_cultivate_crop_Begin_14": "$self$朝$target$点点头：\"行，这批种下去过阵子就能收了。\"",
+                "com_job_farm_cultivate_crop_Join_14": "$self$朝$target$摆摆手：\"这片地很小，我一个人马上就种完了。\"",
+                "com_job_farm_cultivate_crop_Join_15": "$self$握紧手里的铲子退开半步，低声应道：\"……请便。\"",
+                "com_job_farm_cultivate_crop_15": "$self$直起腰朝$target$比了个手势：\"土压得很实，应该都能长起来。\"",
+                "com_job_farm_cultivate_crop_16": "$self$盯着一地散落的泥块叹了口气：\"算了，这一块全种歪了，白忙活。\"",
+                "com_job_farm_cultivate_crop_Joined_3": "$self$点点头拿起种苗：\"行，你挖坑，我跟着往下栽。\""
             },
             "en-us": {
                 "kojo_default_com_job_farm_cultivate_crop_refuse_1": "$self$: \"Planting crops, huh... why don't you find someone more experienced to work with?\"",

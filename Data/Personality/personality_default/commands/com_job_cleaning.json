@@ -23,7 +23,8 @@
                             "_comment": "2.3.3 主动接受",
                             "responses": [
                                 "com_job_cleaning_Begin_1",
-                                "com_job_cleaning_Begin_2"
+                                "com_job_cleaning_Begin_2",
+                                "com_job_cleaning_Begin_10"
                             ]
                         },
                         {
@@ -41,7 +42,8 @@
                             "_comment": "2.3.5 被动接受（屈服）",
                             "responses": [
                                 "com_job_cleaning_Begin_3",
-                                "com_job_cleaning_Begin_4"
+                                "com_job_cleaning_Begin_4",
+                                "com_job_cleaning_Begin_11"
                             ]
                         },
                         {
@@ -53,7 +55,8 @@
                             "_comment": "2.3.4 被动接受（惊讶不反感）",
                             "responses": [
                                 "com_job_cleaning_Begin_5",
-                                "com_job_cleaning_Begin_6"
+                                "com_job_cleaning_Begin_6",
+                                "com_job_cleaning_Begin_12"
                             ]
                         },
                         {
@@ -85,7 +88,8 @@
                             "_comment": "2.3.6 NPC请求加入",
                             "responses": [
                                 "com_job_cleaning_Tryjoin_1",
-                                "com_job_cleaning_Tryjoin_2"
+                                "com_job_cleaning_Tryjoin_2",
+                                "com_job_cleaning_Tryjoin_3"
                             ]
                         }
                     ],
@@ -101,7 +105,8 @@
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
                             "responses": [
                                 "com_job_cleaning_Joined_1",
-                                "com_job_cleaning_Joined_2"
+                                "com_job_cleaning_Joined_2",
+                                "com_job_cleaning_Joined_3"
                             ]
                         }
                     ],
@@ -117,7 +122,8 @@
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
                             "responses": [
                                 "com_job_cleaning_Join_Refused_1",
-                                "com_job_cleaning_Join_Refused_2"
+                                "com_job_cleaning_Join_Refused_2",
+                                "com_job_cleaning_Join_Refused_3"
                             ]
                         }
                     ],
@@ -141,7 +147,8 @@
                             "_comment": "2.4.3 主动接受 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_cleaning_Join_5",
-                                "com_job_cleaning_Join_6"
+                                "com_job_cleaning_Join_6",
+                                "com_job_cleaning_Join_15"
                             ]
                         },
                         {
@@ -158,7 +165,8 @@
                             "_comment": "2.4.5 被动接受（屈服） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_cleaning_Join_7",
-                                "com_job_cleaning_Join_8"
+                                "com_job_cleaning_Join_8",
+                                "com_job_cleaning_Join_11"
                             ]
                         },
                         {
@@ -169,7 +177,8 @@
                             "_comment": "2.4.4 被动接受（惊讶不反感） NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_cleaning_Join_9",
-                                "com_job_cleaning_Join_10"
+                                "com_job_cleaning_Join_10",
+                                "com_job_cleaning_Join_13"
                             ]
                         }
                     ],
@@ -199,7 +208,8 @@
                                     "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
                                     "responses": [
                                         "com_job_cleaning_Join_1",
-                                        "com_job_cleaning_Join_2"
+                                        "com_job_cleaning_Join_2",
+                                        "com_job_cleaning_Join_12"
                                     ]
                                 }
                             ],
@@ -212,7 +222,8 @@
                             "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
                             "responses": [
                                 "com_job_cleaning_Join_3",
-                                "com_job_cleaning_Join_4"
+                                "com_job_cleaning_Join_4",
+                                "com_job_cleaning_Join_14"
                             ]
                         }
                     ],
@@ -365,7 +376,8 @@
                             ],
                             "responses": [
                                 "com_job_cleaning_7",
-                                "com_job_cleaning_8"
+                                "com_job_cleaning_8",
+                                "com_job_cleaning_15"
                             ]
                         },
                         {
@@ -385,8 +397,7 @@
                                     "responses": [
                                         "kojo_default_com_job_cleaning_accept_failure_1",
                                         "kojo_default_com_job_cleaning_accept_failure_2",
-                                        "com_job_cleaning_9",
-                                        "com_job_cleaning_10"
+                                        "com_job_cleaning_9"
                                     ]
                                 }
                             ],
@@ -404,7 +415,8 @@
                             ],
                             "responses": [
                                 "com_job_cleaning_11",
-                                "com_job_cleaning_12"
+                                "com_job_cleaning_12",
+                                "com_job_cleaning_14"
                             ]
                         }
                     ],
@@ -436,7 +448,8 @@
                                     "useActiveTags": false,
                                     "responses": [
                                         "com_job_cleaning_1",
-                                        "com_job_cleaning_2"
+                                        "com_job_cleaning_2",
+                                        "com_job_cleaning_13"
                                     ]
                                 }
                             ],
@@ -453,7 +466,8 @@
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
                             "responses": [
                                 "com_job_cleaning_3",
-                                "com_job_cleaning_4"
+                                "com_job_cleaning_4",
+                                "com_job_cleaning_16"
                             ]
                         }
                     ],
@@ -465,8 +479,8 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kojo_default_com_job_cleaning_accept_failure_1": "$self$在吸尘的时候不小心把某些重要的资料吸进去了！",
-                "kojo_default_com_job_cleaning_accept_failure_2": "$self$在整理桌子的时候不小心打翻了水杯！",
+                "kojo_default_com_job_cleaning_accept_failure_1": "$self$看着依然有些乱的角落，却忍不住笑出了声：\"虽然没彻底弄完，但刚才那阵手忙脚乱还挺好玩的。\"",
+                "kojo_default_com_job_cleaning_accept_failure_2": "$self$无所谓地拍了拍手上的灰：\"尽力啦！反正比之前好多了，剩下的以后再说吧！\"",
                 "kojo_default_com_job_cleaning_accept_success_1": "$self$看着整洁的房间，满意地点了点头。",
                 "com_job_cleaning_Begin_1": "$self$爽快地答应道：\"没问题！正觉得有点无聊呢，一起弄吧！\"",
                 "com_job_cleaning_Begin_2": "$self$挽起袖子，一副干劲十足的样子：\"包在我身上！我可是整理小能手。\"",
@@ -478,25 +492,25 @@
                 "com_job_cleaning_Begin_8": "$self$看着有些凌乱的房间，无奈地叹了口气，开始动手整理桌上的文件。",
                 "com_job_cleaning_Begin_9": "$self$戴上围裙，眼神变得犀利起来：\"大扫除时间到！脏东西统统消失！\"",
                 "com_job_cleaning_Tryjoin_1": "$self$看着忙碌的$target$，凑上前问道：\"看起来挺辛苦的，我也来搭把手吧？\"",
-                "com_job_cleaning_Tryjoin_2": "$self$有些手痒地拿起一块抹布：\"那个，我能一起帮忙吗？我有强迫症看着难受。\"",
-                "com_job_cleaning_Joined_1": "$self$开心地比了个OK的手势：\"好勒！那就比比谁弄得更干净！\"",
+                "com_job_cleaning_Tryjoin_2": "$self$有些手痒地拿起一块抹布：\"那个，我能一起帮忙吗？看着乱糟糟的怪难受的。\"",
+                "com_job_cleaning_Joined_1": "$self$开心地比了个手势：\"好嘞！那就比比谁弄得更干净！\"",
                 "com_job_cleaning_Joined_2": "$self$立刻投入了工作状态，动作麻利：\"多谢啦，两个人干果然快多了。\"",
                 "com_job_cleaning_Join_Refused_1": "$self$有些失落地放下了手里的东西：\"好吧……那你自己加油。\"",
                 "com_job_cleaning_Join_Refused_2": "$self$耸了耸肩，转身离开：\"行行行，不打扰你的兴致了。\"",
                 "com_job_cleaning_Join_1": "$self$擦了擦汗，笑着拒绝道：\"不用啦，这点小事我自己能搞定，你去休息吧。\"",
-                "com_job_cleaning_Join_2": "$self$挡在了$target$面前：\"这里灰尘大，你别弄脏了手，我一个人就行。\"",
+                "com_job_cleaning_Join_2": "$self$朝$target$摆了摆手：\"这里灰尘大，你别弄脏了手，我一个人就行。\"",
                 "com_job_cleaning_Join_3": "$self$冷冷地说道：\"别来添乱，你在旁边只会碍手碍脚。\"",
-                "com_job_cleaning_Join_4": "$self$不耐烦地推开了$target$：\"走开走开，不需要你假惺惺的帮忙。\"",
+                "com_job_cleaning_Join_4": "$self$不耐烦地挥手赶人：\"走开走开，不需要你假惺惺的帮忙。\"",
                 "com_job_cleaning_Join_5": "$self$眼睛一亮，把扫帚递了过去：\"太好了！正愁一个人干不完呢，快来快来！\"",
                 "com_job_cleaning_Join_6": "$self$感激地看着$target$：\"真的吗？那是帮大忙了！那一块就拜托你了。\"",
-                "com_job_cleaning_Join_7": "$self$身体僵硬了一下，默默地低头让开：\"……随你便吧。\"",
+                "com_job_cleaning_Join_7": "$self$动作顿住，默默地低头让开：\"……随你便吧。\"",
                 "com_job_cleaning_Join_8": "$self$不敢直视$target$的眼睛，只能唯唯诺诺地把工具递过去：\"是……请用……\"",
                 "com_job_cleaning_Join_9": "$self$有些惊讶地眨了眨眼：\"诶？你要帮我吗？嗯……倒是不介意啦。\"",
                 "com_job_cleaning_Join_10": "$self$迟疑了一下，还是让出了一块位置：\"虽然没想到你会感兴趣……那就麻烦你了。\"",
                 "com_job_cleaning_Ongoing_1": "$self$正哼着不知名的小调，用抹布仔细擦拭着窗台上的灰尘。",
                 "com_job_cleaning_Ongoing_2": "$self$全神贯注地分类着地上的垃圾，额头上渗出了一层细密的汗珠。",
                 "com_job_cleaning_Ongoing_3": "$self$手里拿着吸尘器在房间里来回走动，机器的轰鸣声掩盖了周围的动静。",
-                "com_job_cleaning_Interrupt_1": "$self$听到脚步声，受惊般地缩紧了肩膀，握着扫帚的手指因为用力而发白。",
+                "com_job_cleaning_Interrupt_1": "$self$听到脚步声，受惊般地缩紧了肩膀，握着扫帚的手攥得死紧。",
                 "com_job_cleaning_Interrupt_2": "$self$下意识地退到了墙角，眼神闪烁不定，似乎随时准备逃跑。",
                 "com_job_cleaning_Interrupt_3": "$self$低着头不敢看$target$，清理动作变得僵硬而机械：\"对、对不起……我马上就弄完……\"",
                 "com_job_cleaning_Interrupt_4": "$self$只是冷冷地瞥了$target$一眼，手中的动作反而更加用力，仿佛在发泄不满。",
@@ -512,17 +526,32 @@
                 "com_job_cleaning_Interrupt_14": "$self$依然保持着原本的节奏，并没有因为$target$的出现而改变动作。",
                 "com_job_cleaning_Interrupt_15": "$self$随口说了一句：\"小心地滑。\"然后继续专注于拖地。",
                 "com_job_cleaning_1": "$self$抱歉地摆摆手：\"虽然很想帮忙，但我手上还有别的事走不开。\"",
-                "com_job_cleaning_2": "$self$苦笑着指了指自己的衣服：\"下次吧，今天穿这身不太方便干活。\"",
+                "com_job_cleaning_2": "$self$苦笑着摊了摊手：\"下次吧，我现在实在有点乏，干不动重活。\"",
                 "com_job_cleaning_3": "$self$翻了个白眼，双手抱胸：\"哈？这种脏活为什么要我做？\"",
                 "com_job_cleaning_4": "$self$嫌弃地撇撇嘴：\"没空，你自己弄不就好了。\"",
                 "com_job_cleaning_5": "$self$看着焕然一新的房间，满意地叉着腰：\"哼哼，完美！简直像新房子一样！\"",
                 "com_job_cleaning_6": "$self$擦掉汗水，回头对$target$露出灿烂的笑容：\"虽然很累，但看到这么干净还是很有成就感呢！\"",
                 "com_job_cleaning_7": "$self$瘫坐在椅子上，一脸生无可恋：\"虽然弄干净了，但我的腰快断了……下次绝对不干了。\"",
-                "com_job_cleaning_8": "$self$看着被洗得发白的手，心情有些低落：\"为了这点破事花了这么久，感觉真不值得。\"",
-                "com_job_cleaning_9": "$self$看着依然有些乱的角落，却忍不住笑出了声：\"虽然没彻底弄完，但刚才那阵手忙脚乱还挺好玩的。\"",
+                "com_job_cleaning_8": "$self$看着被洗得泛红的手，心情有些低落：\"为了这点破事花了这么久，感觉真不值得。\"",
+                "com_job_cleaning_9": "$self$朝$target$吐了吐舌头：\"好像越帮越忙了点……不过至少活动开筋骨了。\"",
                 "com_job_cleaning_10": "$self$无所谓地拍了拍手上的灰：\"尽力啦！反正比之前好多了，剩下的以后再说吧！\"",
-                "com_job_cleaning_11": "$self$烦躁地把抹布摔在地上：\"啊啊啊！为什么越弄越乱啊！我不干了！\"",
-                "com_job_cleaning_12": "$self$蹲在地上抱着膝盖，看着打翻的水桶，声音带着哭腔：\"搞砸了……明明想弄好的……\""
+                "com_job_cleaning_11": "$self$烦躁地把抹布摔在地上：\"为什么越弄越乱啊！我不干了！\"",
+                "com_job_cleaning_12": "$self$蹲在地上扶着额头，看着踢翻的水桶，声音有点发闷：\"搞砸了……明明想弄好的……\"",
+                "com_job_cleaning_Begin_10": "$self$朝$target$点点头：\"行啊，顺手把这边也清一清，看着清爽些。\"",
+                "com_job_cleaning_13": "$self$朝$target$点点头：\"抱歉啊，这会儿抽不出手去打扫。\"",
+                "com_job_cleaning_Join_11": "$self$往墙边退开几步，低着头不敢吭声。",
+                "com_job_cleaning_Join_12": "$self$指了指门口：\"快扫完了，不用特地凑进来。\"",
+                "com_job_cleaning_Tryjoin_3": "$self$朝$target$示意了一下墙角的工具：\"多个人干快点，算我一个吧？\"",
+                "com_job_cleaning_14": "$self$甩了甩沾满灰尘的手，没好气地把扫帚靠回墙边。\"真倒霉，白费一番功夫。\"",
+                "com_job_cleaning_Begin_11": "$self$低下头避开$target$的视线，硬着头皮往角落走去：\"……这就去扫。\"",
+                "com_job_cleaning_15": "$self$把抹布往桶里一扔：\"累死人了，灰尘怎么擦都擦不完。\"",
+                "com_job_cleaning_16": "$self$冷冷地移开视线：\"我不干，找别人去。\"",
+                "com_job_cleaning_Joined_3": "$self$拿起抹布点点头：\"行，我先从窗台那边擦起。\"",
+                "com_job_cleaning_Join_Refused_3": "$self$点点头把工具归回原位：\"知道了，我忙别的去。\"",
+                "com_job_cleaning_Join_13": "$self$指了指另一侧的架子：\"那你擦那边吧，互不耽误。\"",
+                "com_job_cleaning_Join_14": "$self$看都没看$target$一眼：\"滚一边去，别踩脏我刚拖的地方。\"",
+                "com_job_cleaning_Begin_12": "$self$眨了眨眼，随即接过话头：\"好吧，那我从这边开始扫起。\"",
+                "com_job_cleaning_Join_15": "$self$往旁边让出半步：\"来得正好，角落里的灰我正够不着呢。\""
             },
             "en-us": {
                 "kojo_default_com_job_cleaning_accept_failure_1": "$self$ accidentally sucked up some important documents with the vacuum cleaner!",

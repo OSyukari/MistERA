@@ -20,7 +20,8 @@
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_hug_Begin_Sleep_1",
-                                "com_touch_hug_Begin_Sleep_2"
+                                "com_touch_hug_Begin_Sleep_2",
+                                "com_touch_hug_Begin_Sleep_3"
                             ]
                         },
                         {
@@ -39,7 +40,8 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_hug_Begin_Timestop_1",
-                                "com_touch_hug_Begin_Timestop_2"
+                                "com_touch_hug_Begin_Timestop_2",
+                                "com_touch_hug_Begin_Timestop_3"
                             ]
                         },
                         {
@@ -56,9 +58,7 @@
                                 "com_touch_hug_Begin_1",
                                 "com_touch_hug_Begin_2",
                                 "com_touch_hug_Begin_3",
-                                "com_touch_hug_Begin_4",
-                                "com_touch_hug_Begin_5",
-                                "com_touch_hug_Begin_6"
+                                "com_touch_hug_Begin_4"
                             ]
                         },
                         {
@@ -73,9 +73,7 @@
                                 "com_touch_hug_Begin_7",
                                 "com_touch_hug_Begin_8",
                                 "com_touch_hug_Begin_9",
-                                "com_touch_hug_Begin_10",
-                                "com_touch_hug_Begin_11",
-                                "com_touch_hug_Begin_12"
+                                "com_touch_hug_Begin_10"
                             ]
                         },
                         {
@@ -88,9 +86,7 @@
                                 "com_touch_hug_Begin_13",
                                 "com_touch_hug_Begin_14",
                                 "com_touch_hug_Begin_15",
-                                "com_touch_hug_Begin_16",
-                                "com_touch_hug_Begin_17",
-                                "com_touch_hug_Begin_18"
+                                "com_touch_hug_Begin_16"
                             ]
                         }
                     ],
@@ -118,9 +114,7 @@
                                 "com_touch_hug_1",
                                 "com_touch_hug_2",
                                 "com_touch_hug_3",
-                                "com_touch_hug_4",
-                                "com_touch_hug_5",
-                                "com_touch_hug_6"
+                                "com_touch_hug_4"
                             ]
                         },
                         {
@@ -141,9 +135,7 @@
                                 "com_touch_hug_7",
                                 "com_touch_hug_8",
                                 "com_touch_hug_9",
-                                "com_touch_hug_10",
-                                "com_touch_hug_11",
-                                "com_touch_hug_12"
+                                "com_touch_hug_10"
                             ]
                         },
                         {
@@ -173,9 +165,7 @@
                                         "com_touch_hug_31",
                                         "com_touch_hug_32",
                                         "com_touch_hug_33",
-                                        "com_touch_hug_34",
-                                        "com_touch_hug_35",
-                                        "com_touch_hug_36"
+                                        "com_touch_hug_34"
                                     ]
                                 }
                             ],
@@ -191,9 +181,7 @@
                                 "com_touch_hug_37",
                                 "com_touch_hug_38",
                                 "com_touch_hug_39",
-                                "com_touch_hug_40",
-                                "com_touch_hug_41",
-                                "com_touch_hug_42"
+                                "com_touch_hug_40"
                             ]
                         },
                         {
@@ -213,9 +201,7 @@
                                         "com_touch_hug_43",
                                         "com_touch_hug_44",
                                         "com_touch_hug_45",
-                                        "com_touch_hug_46",
-                                        "com_touch_hug_47",
-                                        "com_touch_hug_48"
+                                        "com_touch_hug_46"
                                     ]
                                 }
                             ],
@@ -234,9 +220,7 @@
                                 "com_touch_hug_49",
                                 "com_touch_hug_50",
                                 "com_touch_hug_51",
-                                "com_touch_hug_52",
-                                "com_touch_hug_53",
-                                "com_touch_hug_54"
+                                "com_touch_hug_52"
                             ]
                         }
                     ],
@@ -273,9 +257,7 @@
                                         "com_touch_hug_13",
                                         "com_touch_hug_14",
                                         "com_touch_hug_15",
-                                        "com_touch_hug_16",
-                                        "com_touch_hug_17",
-                                        "com_touch_hug_18"
+                                        "com_touch_hug_16"
                                     ]
                                 },
                                 {
@@ -297,9 +279,7 @@
                                         "com_touch_hug_19",
                                         "com_touch_hug_20",
                                         "com_touch_hug_21",
-                                        "com_touch_hug_22",
-                                        "com_touch_hug_23",
-                                        "com_touch_hug_24"
+                                        "com_touch_hug_22"
                                     ]
                                 }
                             ],
@@ -315,9 +295,7 @@
                                 "com_touch_hug_25",
                                 "com_touch_hug_26",
                                 "com_touch_hug_27",
-                                "com_touch_hug_28",
-                                "com_touch_hug_29",
-                                "com_touch_hug_30"
+                                "com_touch_hug_28"
                             ]
                         }
                     ],
@@ -329,82 +307,84 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_touch_hug_Begin_1": "$self$很自然地张开双臂，把脸深深埋进了$target$的颈窝里，发出一声舒服的叹息。",
-                "com_touch_hug_Begin_2": "$self$笑着迎了上去，双手温柔地环住$target$的腰。\"怎么突然这么粘人？\"",
-                "com_touch_hug_Begin_3": "$self$没有说话，只是安静地靠在$target$胸口，聆听着那令人安心的心跳声。",
-                "com_touch_hug_Begin_4": "$self$顺势倒进$target$怀里，像只寻得温暖的小动物一样亲昵地蹭了蹭。",
+                "com_touch_hug_Begin_1": "$self$自然地张开双臂迎上去，把脸埋进$target$颈窝，长舒了一口气。",
+                "com_touch_hug_Begin_2": "$self$笑着环住$target$的腰，打趣道：\"怎么突然这么粘人？\"",
+                "com_touch_hug_Begin_3": "$self$没有说话，安静地靠在$target$胸口，听着对方平稳的心跳声。",
+                "com_touch_hug_Begin_4": "$self$顺势往$target$怀里靠了靠，闭上眼享受片刻的安稳。",
                 "com_touch_hug_Begin_5": "$self$踮起脚尖，把下巴轻轻搁在$target$的肩膀上，双手安抚似地拍着对方的背。",
                 "com_touch_hug_Begin_6": "$self$闭上眼睛，全身心地放松，任由$target$的气息将自己完全包裹。",
-                "com_touch_hug_Begin_7": "$self$整个人愣在原地，双手尴尬地悬在半空，一时有些手足无措。",
-                "com_touch_hug_Begin_8": "$self$瞪大了眼睛，身体有些僵直，但并没有第一时间推开$target$。\"那个……这是？\"",
-                "com_touch_hug_Begin_9": "$self$被突如其来的拥抱吓了一跳，发出一声短促而可爱的惊呼。\"欸？！\"",
-                "com_touch_hug_Begin_10": "$self$有些手足无措地眨着眼睛，被动地感受着$target$传来的体温。",
+                "com_touch_hug_Begin_7": "$self$愣在原地，抬起的手悬在半空没落下去，一时有些无措。",
+                "com_touch_hug_Begin_8": "$self$眨了眨眼，没有立刻推开$target$，只是小声问：\"那个……怎么突然抱过来了？\"",
+                "com_touch_hug_Begin_9": "$self$被突如其来的拥抱吓了一跳，脸颊发热，视线往旁边躲了躲。",
+                "com_touch_hug_Begin_10": "$self$迟疑了一下，还是抬手轻轻搭在了$target$的手臂上。",
                 "com_touch_hug_Begin_11": "$self$下意识地屏住了呼吸，眼神慌乱地四处游移，不知道该看向哪里。",
                 "com_touch_hug_Begin_12": "$self$虽然感到些许困惑，但还是礼貌性地把手轻轻搭在了$target$的手臂上。",
-                "com_touch_hug_Begin_13": "$self$瑟缩了一下，咬着嘴唇不敢反抗，身体在微微发抖。",
-                "com_touch_hug_Begin_14": "$self$脸色发白，双手紧紧攥着衣角，眼神中充满了无法掩饰的恐惧和无助。",
-                "com_touch_hug_Begin_15": "$self$紧闭着双眼，像个没有生气的木偶一样任由摆布，屏住呼吸祈祷这一切快点结束。",
-                "com_touch_hug_Begin_16": "$self$虽然很想逃跑，但在$target$的威压下只能僵硬地站着，指尖冰凉。",
+                "com_touch_hug_Begin_13": "$self$瑟缩了一下，咬住嘴唇不敢反抗，肩膀微微发抖。",
+                "com_touch_hug_Begin_14": "$self$脸色发白，双手攥紧指尖，垂着眼不敢看$target$。",
+                "com_touch_hug_Begin_15": "$self$紧闭双眼一动不敢动，只盼着对方快点松开自己。",
+                "com_touch_hug_Begin_16": "$self$把头偏向一边，声音发颤：\"别……别抱这么紧……\"",
                 "com_touch_hug_Begin_17": "$self$发出细微的呜咽声，把头偏向一边，极力避免与$target$有任何视线接触。",
                 "com_touch_hug_Begin_18": "$self$全身肌肉紧绷，每一根神经都在尖叫着排斥，却动弹不得。",
-                "com_touch_hug_1": "$self$在睡梦中发出轻微的哼唧声，无意识地往热源的方向拱了拱。",
-                "com_touch_hug_2": "$self$呼吸依旧平稳，对于这趁虚而入的拥抱毫不知情，反而睡得更香甜了。",
-                "com_touch_hug_3": "$self$皱了皱眉，似乎在梦里遇到了什么干扰，但很快又在温暖的怀抱中舒展开来。",
-                "com_touch_hug_4": "$self$翻了个身，一条腿大大咧咧地跨在了$target$身上，像抱等身抱枕一样紧紧抱住了对方。",
+                "com_touch_hug_1": "$self$在睡梦中轻轻哼了一声，无意识地往暖和的地方靠了靠。",
+                "com_touch_hug_2": "$self$呼吸平稳绵长，被抱在怀里也毫不知情，反倒睡得更安稳了。",
+                "com_touch_hug_3": "$self$翻了个半身，一条手臂顺势搭在$target$身上，像是抱住了什么暖和的东西。",
+                "com_touch_hug_4": "$self$嘴里嘟囔着含糊的梦话，任由$target$调整她的姿势，一直没有醒。",
                 "com_touch_hug_5": "$self$嘴里嘟囔着听不清的梦话，顺从地任由$target$调整她的睡姿以便抱得更紧。",
                 "com_touch_hug_6": "$self$睫毛微微颤动，似乎感觉到了什么，但最终还是没有醒来，只是把脸埋得更深了。",
-                "com_touch_hug_7": "$self$保持着上一秒的姿势一动不动，唯有$target$的手指在她的肌肤上留下了陷落的痕迹。",
-                "com_touch_hug_8": "$self$凝固在空中的发丝被$target$拨弄开，露出了毫无防备的洁白后颈。",
-                "com_touch_hug_9": "$self$无法做出任何反应，但随着时间的推移，被紧拥的皮肤开始泛起不自然的潮红。",
-                "com_touch_hug_10": "$self$像一尊精美的雕塑，任由$target$将脸埋入她的胸口，感受着单方面的体温传递。",
+                "com_touch_hug_7": "$self$保持着上一秒的姿势定在原地，唯有被抱紧的衣料随$target$的力道压出褶皱。",
+                "com_touch_hug_8": "$self$像一尊静止的塑像，任由$target$将她揽在怀里，没有半点回应。",
+                "com_touch_hug_9": "$self$睁着眼睛却没有眨动，只能任凭$target$调整着拥抱她的姿势。",
+                "com_touch_hug_10": "无论被抱得多紧，$self$始终站在那里纹丝不动，只有体重随着对方的动作微微偏斜。",
                 "com_touch_hug_11": "$self$静止的眼眸中倒映着$target$肆意妄为的样子，却无法眨眼，甚至无法呼吸。",
                 "com_touch_hug_12": "$self$身体随着$target$的动作被随意摆弄成迎合拥抱的姿势，仿佛她原本就是为了这一刻而存在。",
-                "com_touch_hug_13": "$self$轻轻推开了$target$的手，脸上带着歉意。\"抱歉，身上全是汗，先让我去洗个澡好吗？\"",
-                "com_touch_hug_14": "$self$有些别扭地侧过身子，避开了$target$的接触。\"别闹了，我还在生气呢。\"",
-                "com_touch_hug_15": "$self$叹了口气，按住$target$的肩膀摇了摇头。\"现在没心情抱抱，我很累。\"",
-                "com_touch_hug_16": "$self$用手指抵住$target$的胸口，半开玩笑地推拒着。\"去去去，忙着呢，别捣乱。\"",
+                "com_touch_hug_13": "$self$笑着摇了摇头：\"今天有点累了，先别抱。\"",
+                "com_touch_hug_14": "$self$别过脸去，语气有点别扭：\"别闹，正烦着呢。\"",
+                "com_touch_hug_15": "$self$叹了口气，神色疲惫：\"现在真没心情，等会儿再说吧。\"",
+                "com_touch_hug_16": "$self$冲$target$摆了摆手，半开玩笑地敷衍：\"去去去，正忙着呢，别捣乱。\"",
                 "com_touch_hug_17": "$self$虽然没有用力反抗，但身体僵硬地向后缩了缩。\"这里有人看着呢……\"",
                 "com_touch_hug_18": "$self$快速地在$target$脸颊啄了一下就退开了。\"好啦，拥抱就算了，快去干正事。\"",
-                "com_touch_hug_19": "$self$不动声色地退后半步，伸出手改为握手姿势。\"我想我们还没熟到这个地步吧？\"",
-                "com_touch_hug_20": "$self$尴尬地笑了笑，用手臂挡在胸前。\"那个……我不太习惯和人肢体接触。\"",
-                "com_touch_hug_21": "$self$灵活地侧身闪过，开玩笑似地摆了摆手。\"这种见面礼对我来说太超前啦。\"",
-                "com_touch_hug_22": "$self$轻轻扶住$target$的手臂阻止了进一步靠近。\"保持一点距离比较好哦。\"",
+                "com_touch_hug_19": "$self$客气地摇了摇头：\"我们还没熟到随便拥抱的地步吧？\"",
+                "com_touch_hug_20": "$self$尴尬地笑了笑，语气有些局促：\"那个……我不太习惯和人这样贴着。\"",
+                "com_touch_hug_21": "$self$神情为难地笑了下，语气还算温和：\"还是保持一点距离比较好。\"",
+                "com_touch_hug_22": "$self$礼貌地婉拒道：\"不好意思，拥抱就免了。\"",
                 "com_touch_hug_23": "$self$礼貌但坚定地摇了摇头。\"请自重，$target$先生。\"",
                 "com_touch_hug_24": "$self$后退一步保持安全距离，微笑着说：\"您的心意我领了，拥抱就不必了。\"",
-                "com_touch_hug_25": "$self$猛地甩开$target$的手，眼神冰冷刺骨。\"别碰我！\"",
-                "com_touch_hug_26": "$self$厌恶地皱起眉头，像看垃圾一样看着$target$。\"你想干什么？离我远点。\"",
-                "com_touch_hug_27": "$self$毫不客气地一把推在$target$胸口。\"谁允许你动手动脚的？\"",
-                "com_touch_hug_28": "$self$立刻后退并摆出防御姿态，厉声喝道：\"再靠近我就要采取措施了！\"",
+                "com_touch_hug_25": "$self$沉下脸喝道：\"别碰我！\"",
+                "com_touch_hug_26": "$self$拉下脸，厌恶地瞪着$target$：\"你想干什么？离我远点。\"",
+                "com_touch_hug_27": "$self$脸色难看，语气冷硬：\"谁准你靠这么近的？\"",
+                "com_touch_hug_28": "$self$冷着脸警告道：\"再往前一步我就不客气了。\"",
                 "com_touch_hug_29": "$self$拍了拍刚才被碰到的地方，仿佛沾上了什么脏东西。\"真恶心。\"",
                 "com_touch_hug_30": "$self$冷笑一声，眼神里满是鄙夷。\"也不照照镜子，凭你也想碰我？\"",
-                "com_touch_hug_31": "$self$的呼吸变得绵长而均匀，整个人完全软在了$target$身上，似乎不想分开。",
-                "com_touch_hug_32": "$self$收紧了手臂的力度，贪婪地深吸了一口$target$身上的味道。\"再抱一会儿……就一会儿。\"",
-                "com_touch_hug_33": "$self$抬起头，眼神迷离地看着$target$，脸颊泛起淡淡的红晕。\"感觉好像充满了电一样。\"",
-                "com_touch_hug_34": "$self$把手伸进$target$的衣服里贴着温热的皮肤。\"好暖和……不想动了。\"",
+                "com_touch_hug_31": "$self$的呼吸变得绵长平稳，整个人放松地靠在$target$身上，没打算这么快松手。",
+                "com_touch_hug_32": "$self$收紧了环在$target$背上的手臂，小声嘀咕：\"再抱一会儿……就一会儿。\"",
+                "com_touch_hug_33": "$self$抬起头看向$target$，脸颊微热地笑了笑：\"感觉一下子轻松了不少。\"",
+                "com_touch_hug_34": "$self$把下巴轻轻搁在$target$肩上，语气带着点懒意：\"嗯……好暖和，不想动了。\"",
                 "com_touch_hug_35": "$self$在$target$耳边轻声呢喃，声音带着慵懒的鼻音。\"我不讨厌这样……\"",
                 "com_touch_hug_36": "$self$原本有些紧绷的肩膀彻底放松下来，把全身的重量都交给了$target$。",
-                "com_touch_hug_37": "$self$原本僵硬的身体慢慢软化，试探性地回抱了一下$target$。",
-                "com_touch_hug_38": "$self$眼中的惊慌逐渐褪去，取而代之的是一种莫名的安心感。\"……意外地不讨厌呢。\"",
-                "com_touch_hug_39": "$self$低着头，脸颊不知道什么时候变得通红，也没有再试图推开。",
-                "com_touch_hug_40": "$self$感觉到$target$的体温，$self$发出一声轻不可闻的叹息，似乎卸下了某种防备。",
+                "com_touch_hug_37": "$self$原本紧绷的肩膀慢慢松了下来，犹豫着抬手轻轻回抱了一下$target$。",
+                "com_touch_hug_38": "$self$眼里的慌乱退去不少，小声咕哝了一句：\"……倒也不算讨厌。\"",
+                "com_touch_hug_39": "$self$低着头，脸颊有些发红，没有再试图推开$target$。",
+                "com_touch_hug_40": "$self$试探性地抓住了$target$的衣角，声音轻了些：\"真拿你没办法……只能抱一下哦。\"",
                 "com_touch_hug_41": "$self$有些犹豫地抓住了$target$的衣角。\"如果是$target$的话……也许可以。\"",
                 "com_touch_hug_42": "$self$小声嘀咕着：\"明明是陌生人，为什么会觉得温暖呢……\"",
-                "com_touch_hug_43": "$self$开始不安分地扭动身体，试图挣脱怀抱。\"差不多了吧？我腿都麻了。\"",
-                "com_touch_hug_44": "$self$轻轻拍了拍$target$的背，语气里带着一丝催促。\"好了好了，放开我吧，很热。\"",
-                "com_touch_hug_45": "$self$叹了口气，视线开始游离向别处。\"虽然不讨厌，但一直这样抱着也很浪费时间啊。\"",
-                "com_touch_hug_46": "$self$有些不适地动了动脖子。\"你的扣子硌得我有点疼。\"",
+                "com_touch_hug_43": "$self$在怀里动了动，语气有些不耐烦：\"差不多了吧？我站得腿都酸了。\"",
+                "com_touch_hug_44": "$self$轻轻叹了口气，催促道：\"好啦好啦，怪热的，还要抱多久啊。\"",
+                "com_touch_hug_45": "$self$偏开视线，声音闷闷的：\"虽说不讨厌，可一直这样抱着也做不了别的事啊。\"",
+                "com_touch_hug_46": "$self$蹙了蹙眉，小声抱怨：\"你抱得太紧了，有点勒。\"",
                 "com_touch_hug_47": "$self$僵硬地垂下手臂，不再回应这个拥抱。\"……还要抱多久？\"",
                 "com_touch_hug_48": "$self$推开$target$，一边整理衣服一边皱着眉。\"以后还是少这样，感觉怪怪的。\"",
-                "com_touch_hug_49": "$self$忍耐到了极限，猛地挣脱开来，大口喘着粗气。\"够了！\"",
-                "com_touch_hug_50": "$self$用力擦着自己的手臂，眼眶泛红，那是生理性的厌恶反应。",
-                "com_touch_hug_51": "$self$趁$target$放松警惕的瞬间，狠狠地踩了对方一脚。\"去死吧变态！\"",
-                "com_touch_hug_52": "$self$脸色铁青，胃里一阵翻江倒海的恶心感涌上来。\"我要吐了……\"",
+                "com_touch_hug_49": "$self$忍耐到了头，沉下脸喘了口气：\"够了，松手！\"",
+                "com_touch_hug_50": "$self$眼圈发红，满脸反感地别过头去，不肯再看$target$一眼。",
+                "com_touch_hug_51": "$self$拉下脸瞪着$target$，声音冷硬：\"少趁机占便宜！\"",
+                "com_touch_hug_52": "$self$咬着嘴唇一言不发，神情厌烦到了极点，连敷衍都懒得做。",
                 "com_touch_hug_53": "$self$冰冷地盯着$target$，声音没有任何起伏。\"这种低劣的手段只会让我觉得恶心。\"",
                 "com_touch_hug_54": "$self$推开$target$，二话不说转身就走，连回头看一眼都觉得多余。",
-                "com_touch_hug_Begin_Sleep_1": "$target$把熟睡的$self$揽进怀里，她在梦里轻轻哼唧了一声，无意识地往热源的方向拱了拱，没醒。",
-                "com_touch_hug_Begin_Sleep_2": "手臂从背后环住她的腰慢慢收紧，$self$把脸埋进$target$的肩窝，呼吸依旧平稳，睡得反倒更香了。",
-                "com_touch_hug_Begin_Timestop_1": "$self$被拥进怀里，脸颊贴上肩窝，定格的身子被收紧的手臂勒出轻微的形变，手也没有抬起来回抱。",
-                "com_touch_hug_Begin_Timestop_2": "$target$从背后环住她定住的腰，下巴搁上她的发顶，$self$的重心被带得前倾半分又停在那里，房间里只剩两个人的呼吸声在响。"
+                "com_touch_hug_Begin_Sleep_1": "$target$把熟睡的$self$揽进怀里，她在梦里轻轻哼唧了一声，往暖和的地方靠了靠，没醒。",
+                "com_touch_hug_Begin_Sleep_2": "手臂环住她的腰慢慢收紧，$self$把脸埋进$target$肩窝，呼吸依旧平稳，睡得正沉。",
+                "com_touch_hug_Begin_Timestop_1": "$self$被拥进怀里，脸颊贴上$target$肩窝，定格的身子顺着收紧的手臂靠过去，手臂却一直垂在身侧。",
+                "com_touch_hug_Begin_Timestop_2": "$target$从背后环住她定住的腰，$self$的重心被带得前倾半分，随后停在原地，没有任何回应。",
+                "com_touch_hug_Begin_Sleep_3": "$self$被抱住时无意识地动了动肩膀，随后顺着力道贴紧了些，眼皮一直没抬。",
+                "com_touch_hug_Begin_Timestop_3": "双臂被拉起搭到$target$背上又被抱紧，$self$目光停在原处，连呼吸节奏都没有变化。"
             },
             "en-us": {
                 "com_touch_hug_Begin_1": "$self$ naturally opened her arms and buried her face deep in the crook of $target$'s neck, letting out a comfortable sigh.",

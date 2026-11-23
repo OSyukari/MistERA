@@ -19,7 +19,8 @@
                             "_comment": "开始摸头 施方 有允许",
                             "responses": [
                                 "com_touch_head_Begin_Doer_Permission_1",
-                                "com_touch_head_Begin_Doer_Permission_2"
+                                "com_touch_head_Begin_Doer_Permission_2",
+                                "com_touch_head_Begin_Doer_Permission_3"
                             ]
                         },
                         {
@@ -34,7 +35,8 @@
                             "_comment": "开始摸头 施方 未允许 好意",
                             "responses": [
                                 "com_touch_head_Begin_Doer_Like_1",
-                                "com_touch_head_Begin_Doer_Like_2"
+                                "com_touch_head_Begin_Doer_Like_2",
+                                "com_touch_head_Begin_Doer_Like_3"
                             ]
                         },
                         {
@@ -45,7 +47,8 @@
                             "_comment": "开始摸头 施方 通用",
                             "responses": [
                                 "com_touch_head_Begin_Doer_1",
-                                "com_touch_head_Begin_Doer_2"
+                                "com_touch_head_Begin_Doer_2",
+                                "com_touch_head_Begin_Doer_3"
                             ]
                         },
                         {
@@ -63,7 +66,8 @@
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_head_Begin_Sleep_1",
-                                "com_touch_head_Begin_Sleep_2"
+                                "com_touch_head_Begin_Sleep_2",
+                                "com_touch_head_Begin_Sleep_3"
                             ]
                         },
                         {
@@ -83,7 +87,8 @@
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_head_Begin_Timestop_1",
-                                "com_touch_head_Begin_Timestop_2"
+                                "com_touch_head_Begin_Timestop_2",
+                                "com_touch_head_Begin_Timestop_3"
                             ]
                         },
                         {
@@ -156,7 +161,8 @@
                             "_comment": "摸头结果 施方 正面",
                             "responses": [
                                 "com_touch_head_Doer_Success_1",
-                                "com_touch_head_Doer_Success_2"
+                                "com_touch_head_Doer_Success_2",
+                                "com_touch_head_Doer_Success_3"
                             ]
                         },
                         {
@@ -167,7 +173,8 @@
                             "_comment": "摸头结果 施方 已接受但未达正面结果",
                             "responses": [
                                 "com_touch_head_Doer_1",
-                                "com_touch_head_Doer_2"
+                                "com_touch_head_Doer_2",
+                                "com_touch_head_Doer_3"
                             ]
                         },
                         {
@@ -384,29 +391,29 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_touch_head_Begin_Doer_Permission_1": "$self$笑着把手搭上$target$的头顶，掌心顺着发丝轻轻捋下。",
-                "com_touch_head_Begin_Doer_Permission_2": "$self$伸手揉了揉$target$的发顶，又把翘起的几缕头发拨平。",
+                "com_touch_head_Begin_Doer_Permission_1": "$self$笑着把掌心贴在$target$的头顶，顺着发丝轻轻往下捋。",
+                "com_touch_head_Begin_Doer_Permission_2": "$self$低头看着$target$，把那几缕翘起来的头发拨平：\"今天头发挺软的嘛。\"",
                 "com_touch_head_Begin_Doer_Like_1": "$self$的手在$target$头顶停了停，才轻轻落下，嘴角带着一点笑。",
-                "com_touch_head_Begin_Doer_Like_2": "$self$抬手碰了碰$target$的发顶，指尖的动作放得很轻。",
-                "com_touch_head_Begin_Doer_1": "$self$抬起手，用掌心轻拍了两下$target$的头顶。",
-                "com_touch_head_Begin_Doer_2": "$self$伸手抚过$target$的头发，手指避开了缠结的发梢。",
+                "com_touch_head_Begin_Doer_Like_2": "$self$指尖放得很轻，生怕弄疼$target$似的，只浅浅地按了按发顶。",
+                "com_touch_head_Begin_Doer_1": "$self$抬起手，用掌心在$target$的头顶停了一会儿。",
+                "com_touch_head_Begin_Doer_2": "$self$指尖掠过$target$的头发，避开了缠结的发梢。",
                 "com_touch_head_Doer_Success_1": "$self$最后轻轻揉了一下$target$的发顶，带着笑收回手。",
                 "com_touch_head_Doer_Success_2": "$self$替$target$捋平被揉乱的头发，指尖在发梢稍作停留，才松开手。",
                 "com_touch_head_Doer_1": "$self$停下手，把掌心从$target$头顶移开。",
                 "com_touch_head_Doer_2": "$self$又轻拍了一下$target$的发顶，随后收回了手。",
-                "com_touch_head_Begin_A_1": "$self$仿佛有所感应，在你手掌落下的瞬间便主动迎了上来，发出一声满足的叹息。",
+                "com_touch_head_Begin_A_1": "$self$仿佛有所感应，在$target$手掌落下的瞬间便主动迎了上来，发出一声满足的叹息。",
                 "com_touch_head_Begin_A_2": "$self$微微眯起双眼，停下手中的动作，乖巧地将头轻靠在$target$的手心里。",
                 "com_touch_head_Begin_A_3": "$self$嘴角不自觉地上扬，全身放松下来，一副任由$target$摆布的模样。",
                 "com_touch_head_Begin_A_4": "$self$轻声嘟囔着“头发会乱的啦”，身体却丝毫没有躲闪的意思。",
-                "com_touch_head_Begin_B_1": "$self$浑身一僵，双眼瞬间睁大，愣愣地看着$target$，完全忘记了该怎么躲闪。",
-                "com_touch_head_Begin_B_2": "$self$的动作停滞了半拍，眼神中充满困惑，却也没有第一时间推开你。",
-                "com_touch_head_Begin_B_3": "$self$有些不知所措地眨了眨眼，身体僵硬，似乎正在努力判断$target$的意图。",
+                "com_touch_head_Begin_B_1": "$self$肩头一顿，双眼瞬间睁大，愣愣地看着$target$，一时忘了该怎么躲闪。",
+                "com_touch_head_Begin_B_2": "$self$的动作停滞了半拍，眼神中带着困惑，却也没有第一时间推开$target$。",
+                "com_touch_head_Begin_B_3": "$self$有些不知所措地眨了眨眼，身子没动，似乎正在试着判断$target$的意图。",
                 "com_touch_head_Begin_B_4": "$self$微张着嘴，惊讶得说不出话来，任由那只手停留在自己的头顶。",
-                "com_touch_head_Begin_C_1": "$self$触电般地瑟缩了一下，随即死死咬住下唇，不敢发出任何声响。",
-                "com_touch_head_Begin_C_2": "$self$的身体止不住地轻颤，眼神惊恐地游移，双手紧紧攥住衣角。",
-                "com_touch_head_Begin_C_3": "$self$低下头试图消除自己的存在感，活像一只等待审判的受惊小兽。",
+                "com_touch_head_Begin_C_1": "$self$猛地往后缩了一下，随即咬紧下唇，不敢发出任何声响。",
+                "com_touch_head_Begin_C_2": "$self$的身体止不住地发抖，眼神惊恐地游移，双手紧紧攥住衣角。",
+                "com_touch_head_Begin_C_3": "$self$低下头试图避开视线，整个人缩成一团，呼吸又急又乱。",
                 "com_touch_head_Begin_C_4": "$self$呼吸急促而紊乱，紧闭双眼，强迫自己忍耐头顶传来的触感。",
-                "com_touch_head_D_1": "$self$在睡梦中感觉到头顶的触感，无意识地蹭了蹭枕头，嘴角溢出一丝晶莹的口水。",
+                "com_touch_head_D_1": "$self$在睡梦中感觉到头顶的触感，无意识地蹭了蹭枕头，嘴角微微湿润。",
                 "com_touch_head_D_2": "$self$发出含混的梦呓，眉头舒展，似乎正沉浸在一个温暖的梦境中。",
                 "com_touch_head_D_3": "$self$翻了个身，像寻找热源的小动物般本能地向$target$的手掌拱去。",
                 "com_touch_head_D_4": "$self$并未醒来，只是呼吸变得愈发绵长平稳，这抚摸仿佛是最好的催眠曲。",
@@ -422,11 +429,11 @@
                 "com_touch_head_G_2": "$self$不动声色地后退半步，保持社交距离：\"抱歉，发型师叮嘱过不能乱碰的。\"",
                 "com_touch_head_G_3": "$self$抬手虚挡了一下，语气温和却带着疏离：\"请不要这样，这让我有点困扰。\"",
                 "com_touch_head_G_4": "$self$有些为难地歪了歪头：\"我们好像还没熟到这种程度吧？\"",
-                "com_touch_head_H_1": "$self$猛地拍开$target$的手，眼神瞬间冰冷：\"请你自重！\"",
+                "com_touch_head_H_1": "$self$猛地拍开$target$的手，拉下脸来：\"请你自重！\"",
                 "com_touch_head_H_2": "$self$像看脏东西一样后退两步，甚至拍了拍刚才差点被碰到的地方：\"别碰我！\"",
                 "com_touch_head_H_3": "$self$厌恶地皱眉，语气冰冷刺骨：\"你是有什么毛病吗？\"",
                 "com_touch_head_H_4": "$self$直接无视伸过来的手，转身就走，只留下一个充满敌意的背影。",
-                "com_touch_head_I_1": "$self$完全瘫软在椅子上，喉咙里发出类似小猫呼噜的声音，显然已经享受得不想动弹。",
+                "com_touch_head_I_1": "$self$肩背彻底放松下来，喉咙里发出惬意的轻哼，整个人懒洋洋地不想动弹。",
                 "com_touch_head_I_2": "$self$紧抓着$target$衣角的手指紧了紧，迷迷糊糊地低语：\"嗯……不要停，再摸一会儿……\"",
                 "com_touch_head_I_3": "$self$脸颊泛起淡淡红晕，眼神湿润柔和：\"奇怪……被你这样摸着，感觉什么烦恼都没了。\"",
                 "com_touch_head_I_4": "$self$主动调整姿势，让$target$的手指能更顺畅地穿梭于发丝之间。",
@@ -435,17 +442,24 @@
                 "com_touch_head_J_3": "$self$偷偷抬眼瞄了一下$target$，脸颊浮现一抹不自然的红晕：\"以前从来没人这样摸过我……\"",
                 "com_touch_head_J_4": "$self$低着头不再言语，原本抗拒的姿态已化作一种默许的顺从。",
                 "com_touch_head_K_1": "$self$僵硬地挺直脖子，终于忍不住抓住$target$的手腕：\"够了，我的脖子都要断了。\"",
-                "com_touch_head_K_2": "$self$皱眉整理被弄乱的刘海，语气里多了一丝烦躁：\"适可而止吧，这也太久了。\"",
+                "com_touch_head_K_2": "$self$抬手理了理被弄乱的头发，语气里透出几分烦躁：\"适可而止吧，这也太久了。\"",
                 "com_touch_head_K_3": "$self$不动声色地挪开身体，拉开与$target$的距离：\"好了，头皮都要被你搓掉一层皮了。\"",
                 "com_touch_head_K_4": "$self$叹了口气，眼神变得有些冷淡：\"你还要摸到什么时候？我也需要私人空间的。\"",
                 "com_touch_head_L_1": "$self$眼里的厌恶几乎满溢，身体紧绷如拉满的弓：\"你到底还要摸多久？变态吗？\"",
-                "com_touch_head_L_2": "$self$深吸一口气，强压怒火推开$target$的手：\"这就是你的职场骚扰方式吗？\"",
+                "com_touch_head_L_2": "$self$深吸一口气，强压怒火推开$target$的手：\"你平时就这么随便碰别人吗？\"",
                 "com_touch_head_L_3": "$self$冷笑一声，眼神满是鄙夷：\"摸够了吗？摸够了就给我滚远点。\"",
-                "com_touch_head_L_4": "$self$没有任何言语，只是用看垃圾般的眼神死死盯着$target$，直到对方感到不适停手。",
-                "com_touch_head_Begin_Sleep_1": "$target$的手掌覆上她熟睡的发顶轻轻揉摸，$self$在梦里无意识地往掌心拱了拱，没醒。",
-                "com_touch_head_Begin_Sleep_2": "指缝梳过发根慢慢按揉，$self$的眉头舒展开来，呼吸变得愈发绵长平稳。",
-                "com_touch_head_Begin_Timestop_1": "$target$的手掌覆上她定格的发顶揉摸，指缝梳过发根，被揉乱的头发停在半乱不乱的状态，$self$的脖子没有歪。",
-                "com_touch_head_Begin_Timestop_2": "发旋被指腹碾着按了按，头皮蹭得发热，$self$低垂的眼睫停在原来的位置，房间里只有发丝被捋动的沙沙声。"
+                "com_touch_head_L_4": "$self$一句话也没说，只是冷冷盯着$target$，直到对方感到不适才停手。",
+                "com_touch_head_Begin_Sleep_1": "掌心落在发顶时，$self$在睡梦里无意识地往暖处偏了偏头，没有醒来。",
+                "com_touch_head_Begin_Sleep_2": "发根传来轻缓的按压感，$self$的呼吸依然绵长平稳，只是含糊地哼了一声。",
+                "com_touch_head_Begin_Timestop_1": "停滞的时间里，$self$的发丝被拨弄得微微散开，脖颈与肩线却纹丝不动。",
+                "com_touch_head_Begin_Timestop_2": "$self$低垂的眼睫定格在原处，头顶传来的触碰没能在她脸上激起半点反应。",
+                "com_touch_head_Begin_Doer_Like_3": "\"没吓到你吧？\" $self$一边留意着$target$的脸色，一边试探着放稳手掌。",
+                "com_touch_head_Begin_Sleep_3": "$self$动了动肩膀调整姿势，任由那只手停在自己头顶，沉在梦里毫无察觉。",
+                "com_touch_head_Doer_3": "\"嗯，差不多就这样吧。\" $self$收回手，顺势往后退了半步。",
+                "com_touch_head_Doer_Success_3": "\"行了，头发都快被我揉乱了。\" $self$笑了一声，把手收了回去。",
+                "com_touch_head_Begin_Timestop_3": "房间里只有发丝摩擦的细微声响，$self$像被按下了暂停键般一动不动。",
+                "com_touch_head_Begin_Doer_Permission_3": "\"别乱动哦。\" $self$放轻了力道，指腹顺着$target$的头顶慢慢摩挲。",
+                "com_touch_head_Begin_Doer_3": "$self$面色如常，只是随手往$target$发顶按了两下：\"站好。\""
             },
             "en-us": {
                 "com_touch_head_Begin_Doer_Permission_1": "$self$ smiles and rests a hand on $target$'s head, gently smoothing their hair with her palm.",
