@@ -8,7 +8,53 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPFailure": true
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "extraSelfPortraitTags": [
+                                "thinking",
+                                "happy",
+                                "resting"
+                            ],
+                            "_comment": "2.5.3 成功（正面反馈）行动结束结果",
+                            "responses": [
+                                "com_furniture_takingBreak_25",
+                                "com_furniture_takingBreak_26",
+                                "com_furniture_takingBreak_27",
+                                "com_furniture_takingBreak_28",
+                                "com_furniture_takingBreak_29",
+                                "com_furniture_takingBreak_30"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "pouting",
+                                "doubt"
+                            ],
+                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
+                            "responses": [
+                                "com_furniture_takingBreak_31",
+                                "com_furniture_takingBreak_32",
+                                "com_furniture_takingBreak_33",
+                                "com_furniture_takingBreak_34",
+                                "com_furniture_takingBreak_35",
+                                "com_furniture_takingBreak_36"
+                            ]
+                        }
+                    ],
+                    "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_Refuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
                             },
                             "variants": [
                                 {
@@ -59,46 +105,9 @@
                                 "com_furniture_takingBreak_23",
                                 "com_furniture_takingBreak_24"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "extraSelfPortraitTags": [
-                                "thinking",
-                                "happy",
-                                "resting"
-                            ],
-                            "_comment": "2.5.3 成功（正面反馈）行动结束结果",
-                            "responses": [
-                                "com_furniture_takingBreak_25",
-                                "com_furniture_takingBreak_26",
-                                "com_furniture_takingBreak_27",
-                                "com_furniture_takingBreak_28",
-                                "com_furniture_takingBreak_29",
-                                "com_furniture_takingBreak_30"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "pouting",
-                                "doubt"
-                            ],
-                            "_comment": "2.5.4 成功（负面反馈）行动结束结果",
-                            "responses": [
-                                "com_furniture_takingBreak_31",
-                                "com_furniture_takingBreak_32",
-                                "com_furniture_takingBreak_33",
-                                "com_furniture_takingBreak_34",
-                                "com_furniture_takingBreak_35",
-                                "com_furniture_takingBreak_36"
-                            ]
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandRefuse"
                 }
             },
             {
@@ -236,47 +245,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Neutral"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "apology",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
-                                    "responses": [
-                                        "com_furniture_takingBreak_Join_1",
-                                        "com_furniture_takingBreak_Join_2",
-                                        "com_furniture_takingBreak_Join_3",
-                                        "com_furniture_takingBreak_Join_4",
-                                        "com_furniture_takingBreak_Join_5",
-                                        "com_furniture_takingBreak_Join_6"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "troubled",
-                                "angry",
-                                "disgust"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_furniture_takingBreak_Join_7",
-                                "com_furniture_takingBreak_Join_8",
-                                "com_furniture_takingBreak_Join_9",
-                                "com_furniture_takingBreak_Join_10",
-                                "com_furniture_takingBreak_Join_11",
-                                "com_furniture_takingBreak_Join_12"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
                             "extraSelfPortraitTags": [
@@ -332,6 +300,57 @@
                         }
                     ],
                     "template": "commandJoin"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_takingBreak_JoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
+                                    "responses": [
+                                        "com_furniture_takingBreak_Join_1",
+                                        "com_furniture_takingBreak_Join_2",
+                                        "com_furniture_takingBreak_Join_3",
+                                        "com_furniture_takingBreak_Join_4",
+                                        "com_furniture_takingBreak_Join_5",
+                                        "com_furniture_takingBreak_Join_6"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_furniture_takingBreak_Join_7",
+                                "com_furniture_takingBreak_Join_8",
+                                "com_furniture_takingBreak_Join_9",
+                                "com_furniture_takingBreak_Join_10",
+                                "com_furniture_takingBreak_Join_11",
+                                "com_furniture_takingBreak_Join_12"
+                            ]
+                        }
+                    ],
+                    "template": "commandJoinFailed"
                 }
             },
             {
@@ -454,7 +473,7 @@
                     "template": "interaction"
                 }
             },
-             {
+            {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "com_furniture_takingLongBreak",

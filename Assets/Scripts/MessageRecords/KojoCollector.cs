@@ -235,6 +235,7 @@ public class KojoCollector : I_ResultStorage, I_Records
         newinstance.receiverRef = receiverRef;
         newinstance.masterRef = masterRef;
         newinstance.response = response;
+        newinstance.refusalContext = refusalContext;
         newinstance.commandID = commandID;
         newinstance.comVariantID = comVariantID;
         newinstance.isRequestAccepted = isRequestAccepted;
@@ -291,6 +292,7 @@ public class KojoCollector : I_ResultStorage, I_Records
     public Memory_Attitude receiverAttitude = Memory_Attitude.None;
     public int masterRef = -1;
     public Memory_Response response = Memory_Response.Accept;
+    [JsonIgnore] public ResponseEntry.RefusalContext refusalContext;
 
     public string commandID = "";
 

@@ -13,7 +13,10 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_abdomen_Begin_Sleep_1",
@@ -27,7 +30,12 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_abdomen_Begin_Timestop_1",
@@ -138,75 +146,6 @@
                         },
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被抚摸腹部 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_abdomen_2_1_2_1",
-                                        "com_touch_abdomen_2_1_2_2",
-                                        "com_touch_abdomen_2_1_2_3",
-                                        "com_touch_abdomen_2_1_2_4",
-                                        "com_touch_abdomen_2_1_2_5"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被抚摸腹部 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_touch_abdomen_2_2_3_1",
-                                        "com_touch_abdomen_2_2_3_2",
-                                        "com_touch_abdomen_2_2_3_3",
-                                        "com_touch_abdomen_2_2_3_4",
-                                        "com_touch_abdomen_2_2_3_5"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被抚摸腹部 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_touch_abdomen_2_2_4_1",
-                                "com_touch_abdomen_2_2_4_2",
-                                "com_touch_abdomen_2_2_4_3",
-                                "com_touch_abdomen_2_2_4_4",
-                                "com_touch_abdomen_2_2_4_5"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -296,6 +235,84 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_abdomen_Refuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被抚摸腹部 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_1_2_1",
+                                        "com_touch_abdomen_2_1_2_2",
+                                        "com_touch_abdomen_2_1_2_3",
+                                        "com_touch_abdomen_2_1_2_4",
+                                        "com_touch_abdomen_2_1_2_5"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被抚摸腹部 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_2_2_3_1",
+                                        "com_touch_abdomen_2_2_3_2",
+                                        "com_touch_abdomen_2_2_3_3",
+                                        "com_touch_abdomen_2_2_3_4",
+                                        "com_touch_abdomen_2_2_3_5"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被抚摸腹部 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_abdomen_2_2_4_1",
+                                "com_touch_abdomen_2_2_4_2",
+                                "com_touch_abdomen_2_2_4_3",
+                                "com_touch_abdomen_2_2_4_4",
+                                "com_touch_abdomen_2_2_4_5"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

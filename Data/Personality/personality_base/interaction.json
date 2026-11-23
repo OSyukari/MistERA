@@ -9,28 +9,53 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
-                            "extraSelfPortraitTags": ["relaxed","leaning","confident","smug","excited","happy"],
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "relaxed",
+                                "leaning",
+                                "confident",
+                                "smug",
+                                "excited",
+                                "happy"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfForced": true },
-                            "extraSelfPortraitTags": ["fear","trembling","tearful","pain"],
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraSelfPortraitTags": ["blush"],
+                            "extraSelfPortraitTags": [
+                                "blush"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
-                            "extraSelfPortraitTags": ["focused","neutral","serious","thinking","calm","observation"],
+                            "extraSelfPortraitTags": [
+                                "focused",
+                                "neutral",
+                                "serious",
+                                "thinking",
+                                "calm",
+                                "observation"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         }
@@ -42,7 +67,11 @@
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Tryjoin",
-                    "variants": [{ "responses": [] }],
+                    "variants": [
+                        {
+                            "responses": []
+                        }
+                    ],
                     "template": "interaction"
                 }
             },
@@ -50,7 +79,11 @@
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Joined",
-                    "variants": [{ "responses": [] }],
+                    "variants": [
+                        {
+                            "responses": []
+                        }
+                    ],
                     "template": "interaction"
                 }
             },
@@ -58,7 +91,11 @@
                 "ID": "personality_base",
                 "Entry": {
                     "ID": "com_interaction_talk_Join_Refused",
-                    "variants": [{ "responses": [] }],
+                    "variants": [
+                        {
+                            "responses": []
+                        }
+                    ],
                     "template": "interaction"
                 }
             },
@@ -68,33 +105,33 @@
                     "ID": "com_interaction_talk_Join",
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
-                            "variants": [
-                                {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral" },
-                                    "extraSelfPortraitTags": ["apology","shy"],
-                                    "useActiveTags": false,
-                                    "responses": []
-                                }
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "affectionate"
                             ],
-                            "extraSelfPortraitTags": ["troubled","angry","disgust"],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
-                            "extraSelfPortraitTags": ["blush","affectionate"],
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
-                            "requirement": { "requireSelfForced": true },
-                            "extraSelfPortraitTags": ["fear","trembling","tearful","pain"],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "extraSelfPortraitTags": ["blush"],
+                            "extraSelfPortraitTags": [
+                                "blush"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         }
@@ -105,8 +142,47 @@
             {
                 "ID": "personality_base",
                 "Entry": {
+                    "ID": "com_interaction_talk_JoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "responses": []
+                        }
+                    ],
+                    "template": "commandJoinFailed"
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
                     "ID": "com_interaction_talk_Ongoing",
-                    "variants": [{ "responses": [] }],
+                    "variants": [
+                        {
+                            "responses": []
+                        }
+                    ],
                     "template": "commandAct"
                 }
             },
@@ -116,31 +192,53 @@
                     "ID": "com_interaction_talk_Interrupt",
                     "variants": [
                         {
-                            "extraSelfPortraitTags": ["fear","trembling"],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "useActiveTags": false,
-                            "requirement": { "requireSelfAttitudeKey": "Fear" },
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Fear"
+                            },
                             "responses": []
                         },
                         {
-                            "requirement": { "requireSelfAttitudeKey": "Badwill" },
-                            "extraSelfPortraitTags": ["disgusted","disappointed"],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "requirement": { "requireSelfAttitudeKey": "Goodwill" },
-                            "extraSelfPortraitTags": ["happy","excited","surprised"],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "requirement": { "requireSelfAttitudeKey": "Desire" },
-                            "extraSelfPortraitTags": ["shy"],
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Badwill"
+                            },
+                            "extraSelfPortraitTags": [
+                                "disgusted",
+                                "disappointed"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
-                            "extraSelfPortraitTags": ["focused"],
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Goodwill"
+                            },
+                            "extraSelfPortraitTags": [
+                                "happy",
+                                "excited",
+                                "surprised"
+                            ],
+                            "useActiveTags": false,
+                            "responses": []
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeKey": "Desire"
+                            },
+                            "extraSelfPortraitTags": [
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "responses": []
+                        },
+                        {
+                            "extraSelfPortraitTags": [
+                                "focused"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         }
@@ -155,48 +253,113 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
                             "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like", "requireEPSuccess": false },
-                                    "extraSelfPortraitTags": ["apology","shy","gentle"],
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised",
+                                        "intrigued",
+                                        "relaxed"
+                                    ],
                                     "useActiveTags": false,
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"],
+                            "extraSelfPortraitTags": [
+                                "frustrated",
+                                "pouting",
+                                "complaining",
+                                "glare",
+                                "teary",
+                                "doubt",
+                                "bored",
+                                "annoyed",
+                                "disappointed"
+                            ],
                             "useActiveTags": false,
                             "responses": []
                         },
                         {
-                            "requirement": { "requireEPSuccessGTE": "Success" },
                             "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["happy","excited","surprised","intrigued","relaxed"],
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised",
+                                        "intrigued",
+                                        "relaxed"
+                                    ],
                                     "useActiveTags": false,
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": { "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["happy","excited","surprised","intrigued","relaxed"],
-                                    "useActiveTags": false,
-                                    "responses": []
-                                }
+                            "extraSelfPortraitTags": [
+                                "frustrated",
+                                "pouting",
+                                "complaining",
+                                "glare",
+                                "teary",
+                                "doubt",
+                                "bored",
+                                "annoyed",
+                                "disappointed"
                             ],
-                            "extraSelfPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"],
                             "useActiveTags": false,
                             "responses": []
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "com_interaction_talk_Refuse",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy",
+                                        "gentle"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "apology",
+                                "awkward",
+                                "busy",
+                                "uninterested",
+                                "cold",
+                                "tired",
+                                "distant"
+                            ],
+                            "useActiveTags": false,
+                            "responses": []
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

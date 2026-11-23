@@ -5,8 +5,8 @@
 
   "_comment_bind": "Entries proposed for this template (T7): own entries whose key starts with one of these, without a template field yet.",
   "bind": ["OnFirstExperience_"],
-  "_comment_bindCommand": "Command kojo keys (a command's kojo key + suffix) proposed for this template: an outsider seeing the act, the joiner's own lines.",
-  "bindCommand": ["_Interrupt", "_Tryjoin", "_Joined", "_Join_Refused"],
+  "_comment_bindCommand": "Command kojo keys (a command's kojo key + suffix) proposed for this template: the joiner's own lines.",
+  "bindCommand": ["_Tryjoin", "_Joined", "_Join_Refused"],
 
   "_comment_fallback": "The mandatory last branch: these requirement fields, nothing else (role / master / strong flags off, no keepLooking). Engine defaults are not unconditional - requireSelfAction / requireTargetAction / requireEPSuccess default true, allowRecording false. A missing fallback gets a skeleton with the placeholder line.",
   "fallback": {

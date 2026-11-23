@@ -13,7 +13,10 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_ears_Begin_Sleep_1",
@@ -27,7 +30,12 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_ears_Begin_Timestop_1",
@@ -126,69 +134,6 @@
                         },
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被撫摸耳朵 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_ears_Fail_Allow_1",
-                                        "com_touch_ears_Fail_Allow_2",
-                                        "com_touch_ears_Fail_Allow_3"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被撫摸耳朵 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_touch_ears_Fail_NoAllow_Like_1",
-                                        "com_touch_ears_Fail_NoAllow_Like_2",
-                                        "com_touch_ears_Fail_NoAllow_Like_3"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被撫摸耳朵 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_touch_ears_Fail_NoAllow_Hate_1",
-                                "com_touch_ears_Fail_NoAllow_Hate_2",
-                                "com_touch_ears_Fail_NoAllow_Hate_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -270,6 +215,78 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_ears_Refuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被撫摸耳朵 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_ears_Fail_Allow_1",
+                                        "com_touch_ears_Fail_Allow_2",
+                                        "com_touch_ears_Fail_Allow_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被撫摸耳朵 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_ears_Fail_NoAllow_Like_1",
+                                        "com_touch_ears_Fail_NoAllow_Like_2",
+                                        "com_touch_ears_Fail_NoAllow_Like_3"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被撫摸耳朵 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_ears_Fail_NoAllow_Hate_1",
+                                "com_touch_ears_Fail_NoAllow_Hate_2",
+                                "com_touch_ears_Fail_NoAllow_Hate_3"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

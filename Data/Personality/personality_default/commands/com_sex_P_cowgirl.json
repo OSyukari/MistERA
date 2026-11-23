@@ -63,24 +63,50 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "sleeping", "pain"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "sleeping",
+                                "pain"
+                            ],
                             "_comment": "初体验 开始骑乘位V 睡眠中",
-                            "responses": ["com_sex_P_cowgirl_Begin_FE_Sleep_1", "com_sex_P_cowgirl_Begin_FE_Sleep_2"]
+                            "responses": [
+                                "com_sex_P_cowgirl_Begin_FE_Sleep_1",
+                                "com_sex_P_cowgirl_Begin_FE_Sleep_2"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "timestop"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 开始骑乘位V 时停中",
-                            "responses": ["com_sex_P_cowgirl_Begin_FE_Timestop_1", "com_sex_P_cowgirl_Begin_FE_Timestop_2"]
+                            "responses": [
+                                "com_sex_P_cowgirl_Begin_FE_Timestop_1",
+                                "com_sex_P_cowgirl_Begin_FE_Timestop_2"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_V"]
+                                "selfTags": [
+                                    "firstexp_V"
+                                ]
                             },
                             "variants": [
                                 {
@@ -88,38 +114,91 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "blush", "pain", "tearful", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "pain",
+                                        "tearful",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 开始骑乘位V 有允许",
-                                    "responses": ["com_sex_P_cowgirl_Begin_FE_Player_1", "com_sex_P_cowgirl_Begin_FE_Player_2"]
+                                    "responses": [
+                                        "com_sex_P_cowgirl_Begin_FE_Player_1",
+                                        "com_sex_P_cowgirl_Begin_FE_Player_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "blush", "pain", "tearful"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "pain",
+                                        "tearful"
+                                    ],
                                     "_comment": "初体验 开始骑乘位V 有允许",
-                                    "responses": ["com_sex_P_cowgirl_Begin_FE_1", "com_sex_P_cowgirl_Begin_FE_2"]
+                                    "responses": [
+                                        "com_sex_P_cowgirl_Begin_FE_1",
+                                        "com_sex_P_cowgirl_Begin_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "blush", "pain", "tearful", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "pain",
+                                        "tearful",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 开始骑乘位V 未允许 好意",
-                                    "responses": ["com_sex_P_cowgirl_Begin_FE_3", "com_sex_P_cowgirl_Begin_FE_4"]
+                                    "responses": [
+                                        "com_sex_P_cowgirl_Begin_FE_3",
+                                        "com_sex_P_cowgirl_Begin_FE_4"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "fear", "pain", "tearful", "trembling"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "fear",
+                                "pain",
+                                "tearful",
+                                "trembling"
+                            ],
                             "_comment": "初体验 开始骑乘位V 未允许 敌意",
-                            "responses": ["com_sex_P_cowgirl_Begin_FE_5", "com_sex_P_cowgirl_Begin_FE_6"]
+                            "responses": [
+                                "com_sex_P_cowgirl_Begin_FE_5",
+                                "com_sex_P_cowgirl_Begin_FE_6"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_V"]
+                                "selfTags": [
+                                    "firstexp_partner_V"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "cowgirl", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cowgirl",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 开始骑乘位V（被骑的一方）",
-                            "responses": ["com_sex_P_cowgirl_Begin_FE_Partner_1", "com_sex_P_cowgirl_Begin_FE_Partner_2"]
+                            "responses": [
+                                "com_sex_P_cowgirl_Begin_FE_Partner_1",
+                                "com_sex_P_cowgirl_Begin_FE_Partner_2"
+                            ]
                         },
                         {
                             "requirement": {
@@ -128,7 +207,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_P_cowgirl_Begin_Sleep_1",
@@ -142,7 +227,15 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_cowgirl_Begin_Timestop_1",
@@ -218,24 +311,48 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "sleeping", "pain"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "sleeping",
+                                "pain"
+                            ],
                             "_comment": "初体验 睡眠中 骑乘位V",
-                            "responses": ["com_sex_P_cowgirl_FE_Sleep_1"]
+                            "responses": [
+                                "com_sex_P_cowgirl_FE_Sleep_1"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "timestop"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 时停中 骑乘位V",
-                            "responses": ["com_sex_P_cowgirl_FE_Timestop_1"]
+                            "responses": [
+                                "com_sex_P_cowgirl_FE_Timestop_1"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_V"]
+                                "selfTags": [
+                                    "firstexp_V"
+                                ]
                             },
                             "variants": [
                                 {
@@ -243,38 +360,83 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "blush", "pain", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "pain",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 骑乘位V 有允许",
-                                    "responses": ["com_sex_P_cowgirl_FE_Player_1"]
+                                    "responses": [
+                                        "com_sex_P_cowgirl_FE_Player_1"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "blush", "pain"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "pain"
+                                    ],
                                     "_comment": "初体验 骑乘位V 有允许（还在适应）",
-                                    "responses": ["com_sex_P_cowgirl_FE_1", "com_sex_P_cowgirl_FE_2"]
+                                    "responses": [
+                                        "com_sex_P_cowgirl_FE_1",
+                                        "com_sex_P_cowgirl_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "blush", "pain", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "cowgirl",
+                                        "blush",
+                                        "pain",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 骑乘位V 未允许 好意（还在适应）",
-                                    "responses": ["com_sex_P_cowgirl_FE_3"]
+                                    "responses": [
+                                        "com_sex_P_cowgirl_FE_3"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "pain", "tearful", "cry"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "cowgirl",
+                                "pain",
+                                "tearful",
+                                "cry"
+                            ],
                             "_comment": "初体验 骑乘位V 未允许 敌意",
-                            "responses": ["com_sex_P_cowgirl_FE_4", "com_sex_P_cowgirl_FE_5"]
+                            "responses": [
+                                "com_sex_P_cowgirl_FE_4",
+                                "com_sex_P_cowgirl_FE_5"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_V"]
+                                "selfTags": [
+                                    "firstexp_partner_V"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "cowgirl"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "cowgirl"
+                            ],
                             "_comment": "对方初体验 骑乘位V（被骑的一方）",
-                            "responses": ["com_sex_P_cowgirl_FE_Partner_1"]
+                            "responses": [
+                                "com_sex_P_cowgirl_FE_Partner_1"
+                            ]
                         },
                         {
                             "requirement": {
@@ -316,113 +478,6 @@
                             "responses": [
                                 "com_sex_P_cowgirl_3",
                                 "com_sex_P_cowgirl_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireEPSuccess": false,
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 骑乘位V 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_P_cowgirl_5",
-                                                "com_sex_P_cowgirl_6"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 骑乘位V 口上文 无允许",
-                                    "responses": [
-                                        "com_sex_P_cowgirl_7",
-                                        "com_sex_P_cowgirl_8"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 骑乘位V 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_P_cowgirl_9",
-                                        "com_sex_P_cowgirl_10",
-                                        "com_sex_P_cowgirl_11"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 骑乘位V 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_P_cowgirl_12",
-                                        "com_sex_P_cowgirl_13"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 骑乘位V 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_P_cowgirl_14",
-                                "com_sex_P_cowgirl_15"
                             ]
                         },
                         {
@@ -582,6 +637,125 @@
                     ],
                     "template": "commandResult"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_cowgirl_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccess": false,
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 骑乘位V 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_P_cowgirl_5",
+                                                "com_sex_P_cowgirl_6"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 骑乘位V 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_7",
+                                        "com_sex_P_cowgirl_8"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 骑乘位V 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_9",
+                                        "com_sex_P_cowgirl_10",
+                                        "com_sex_P_cowgirl_11"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 骑乘位V 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_12",
+                                        "com_sex_P_cowgirl_13"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 骑乘位V 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_cowgirl_14",
+                                "com_sex_P_cowgirl_15"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
             }
         ]
     },
@@ -635,7 +809,6 @@
                 "com_sex_P_cowgirl_Begin_Sleep_2": "$target$托着她的腰慢慢放下，龟头撑开穴口没入时$self$在梦里溢出一声含糊的嘤咛，穴肉本能地收紧，呼吸却依旧平稳。",
                 "com_sex_P_cowgirl_Begin_Timestop_1": "$self$被扶正跨坐上去，肉棒顺着重心没进小穴，穴肉缓缓吞到根部自己收拢吮住，她垂着的眼睫停在半阖的位置。",
                 "com_sex_P_cowgirl_Begin_Timestop_2": "$target$按着她的腰抬起又放下，乳晃出弧度又定住，只剩交合处的水声在静止的空气里响着。",
-
                 "com_sex_P_cowgirl_Begin_FE_Sleep_1": "睡梦中的$self$皱起眉，含糊地哼了一声，一缕血丝顺着结合处淌了下来。",
                 "com_sex_P_cowgirl_Begin_FE_Sleep_2": "$self$的身子轻轻一抖，不安地动了动，呼吸很快又平稳下来，丝毫不知道自己的第一次已经没了。",
                 "com_sex_P_cowgirl_Begin_FE_Timestop_1": "处女膜在凝固的时间里无声地破开，鲜红顺着结合处渗出，$self$半阖的眼睫纹丝不动。",
@@ -650,7 +823,6 @@
                 "com_sex_P_cowgirl_Begin_FE_6": "\"……我不会原谅你的。\"\n\n$self$咬破了嘴唇，第一次的落红染在了$target$的身上。",
                 "com_sex_P_cowgirl_Begin_FE_Partner_1": "\"你……是第一次？\"\n\n感觉到顶端撕开了什么，$self$愣了一下。",
                 "com_sex_P_cowgirl_Begin_FE_Partner_2": "\"……为什么不早说。\"\n\n看到结合处渗出的血丝，$self$皱起了眉。",
-
                 "com_sex_P_cowgirl_FE_Sleep_1": "睡梦中的$self$眉头始终没有松开，初次被撑开的地方还在隐隐渗血。",
                 "com_sex_P_cowgirl_FE_Timestop_1": "血丝混着爱液从结合处溢出，定格的$self$表情没有丝毫变化。",
                 "com_sex_P_cowgirl_FE_Player_1": "\"我第一次……做得还好吗……？\"\n\n$self$抬眼看向$target$，眉头还因为疼痛微微皱着。",

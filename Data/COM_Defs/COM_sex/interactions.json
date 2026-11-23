@@ -7,6 +7,7 @@
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_interaction_initiateSex",
             "timeScale":2,
+            "allowJoining":false,
             "VariantDoNotReadRequirement":true,
             "HideWhenInvalid":true,
             "comTags":["action","interaction","initSex","unsafe","permission_intimacy_high"],

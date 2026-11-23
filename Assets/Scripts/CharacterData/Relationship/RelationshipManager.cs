@@ -930,7 +930,8 @@ public class RelationshipManager
     /// <param name="ep"></param>
     /// <param name="m"></param>
     /// <returns></returns>
-    public KojoCollector GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Trainable injectRel = null)
+    public KojoCollector GetKOJOMessage(bool isDoer, EvaluationPackage ep, MessageCollect m, Character_Trainable injectRel = null,
+        ResponseEntry.RefusalContext refusalContext = ResponseEntry.RefusalContext.None)
     {
         if (Owner.RefID == 0) return null;
 
@@ -950,6 +951,7 @@ public class RelationshipManager
         {
             var refuse = new KojoCollector(Owner, eventID, "_Refuse");
             refuse.LoadEP(ep, injectRel);
+            refuse.refusalContext = refusalContext;
             refuse.collect = Personality.GetKOJOMessage(refuse);
             if (refuse.isValid)
             {

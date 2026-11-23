@@ -100,52 +100,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "apology",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
-                                    "responses": [
-                                        "com_furniture_playVideoGames_1",
-                                        "com_furniture_playVideoGames_2",
-                                        "com_furniture_playVideoGames_3",
-                                        "com_furniture_playVideoGames_4",
-                                        "com_furniture_playVideoGames_5",
-                                        "com_furniture_playVideoGames_6",
-                                        "com_furniture_playVideoGames_7",
-                                        "com_furniture_playVideoGames_8"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
-                            "extraSelfPortraitTags": [
-                                "troubled",
-                                "angry",
-                                "disgust"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_furniture_playVideoGames_9",
-                                "com_furniture_playVideoGames_10",
-                                "com_furniture_playVideoGames_11",
-                                "com_furniture_playVideoGames_12",
-                                "com_furniture_playVideoGames_13",
-                                "com_furniture_playVideoGames_14",
-                                "com_furniture_playVideoGames_15",
-                                "com_furniture_playVideoGames_16"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "variants": [
@@ -226,6 +180,62 @@
             {
                 "ID": "personality_default",
                 "Entry": {
+                    "ID": "com_furniture_playVideoGames_Refuse",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_1",
+                                        "com_furniture_playVideoGames_2",
+                                        "com_furniture_playVideoGames_3",
+                                        "com_furniture_playVideoGames_4",
+                                        "com_furniture_playVideoGames_5",
+                                        "com_furniture_playVideoGames_6",
+                                        "com_furniture_playVideoGames_7",
+                                        "com_furniture_playVideoGames_8"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
+                            "extraSelfPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_furniture_playVideoGames_9",
+                                "com_furniture_playVideoGames_10",
+                                "com_furniture_playVideoGames_11",
+                                "com_furniture_playVideoGames_12",
+                                "com_furniture_playVideoGames_13",
+                                "com_furniture_playVideoGames_14",
+                                "com_furniture_playVideoGames_15",
+                                "com_furniture_playVideoGames_16"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
                     "ID": "com_furniture_playVideoGames_Tryjoin",
                     "variants": [
                         {
@@ -290,47 +300,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Neutral"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "apology",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
-                                    "responses": [
-                                        "com_furniture_playVideoGames_Join_1",
-                                        "com_furniture_playVideoGames_Join_2",
-                                        "com_furniture_playVideoGames_Join_3",
-                                        "com_furniture_playVideoGames_Join_4",
-                                        "com_furniture_playVideoGames_Join_5",
-                                        "com_furniture_playVideoGames_Join_6"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "troubled",
-                                "angry",
-                                "disgust"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_furniture_playVideoGames_Join_7",
-                                "com_furniture_playVideoGames_Join_8",
-                                "com_furniture_playVideoGames_Join_9",
-                                "com_furniture_playVideoGames_Join_10",
-                                "com_furniture_playVideoGames_Join_11",
-                                "com_furniture_playVideoGames_Join_12"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
                             "extraSelfPortraitTags": [
@@ -386,6 +355,57 @@
                         }
                     ],
                     "template": "commandJoin"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_playVideoGames_JoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_Join_1",
+                                        "com_furniture_playVideoGames_Join_2",
+                                        "com_furniture_playVideoGames_Join_3",
+                                        "com_furniture_playVideoGames_Join_4",
+                                        "com_furniture_playVideoGames_Join_5",
+                                        "com_furniture_playVideoGames_Join_6"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_furniture_playVideoGames_Join_7",
+                                "com_furniture_playVideoGames_Join_8",
+                                "com_furniture_playVideoGames_Join_9",
+                                "com_furniture_playVideoGames_Join_10",
+                                "com_furniture_playVideoGames_Join_11",
+                                "com_furniture_playVideoGames_Join_12"
+                            ]
+                        }
+                    ],
+                    "template": "commandJoinFailed"
                 }
             },
             {

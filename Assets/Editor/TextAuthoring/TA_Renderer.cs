@@ -284,6 +284,8 @@ public class TA_Renderer
             m["readOnly"] = readOnly;
             var shown = Pending(s, m, "", false, null, !readOnly);
             var text = shown.Count > 0 ? (string)shown[0] : "";
+            if (readOnly && m["baseRecord"] == null && !string.IsNullOrEmpty((string)s["resolvedText"]))
+                text = (string)s["resolvedText"];
             sb.AppendLine(readOnly ? $"  · {text}" : $"- {text}");
             if (placeholderOnly) sb.AppendLine(TA_Text.Get("doc.event.placeholderOnly"));
             else
@@ -598,18 +600,28 @@ public class TA_Renderer
             if (parent["requirement"] is JObject requirement)
             {
                 requirement.Remove("requireEPSuccessGTE");
+                requirement.Remove("requireEPSuccessLTE");
                 if (!requirement.HasValues) parent.Remove("requirement");
             }
             var pair = id.Substring(0, id.LastIndexOf('.'));
-            var child = new JObject { ["requirement"] = new JObject { ["requireEPSuccessGTE"] = "Success" } };
-            // Every variant is validated separately; a child of a self-target parent must also allow self-targets.
+            var childReq = new JObject
+            {
+                [outcome == "success" ? "requireEPSuccessGTE" : "requireEPSuccessLTE"] = outcome == "success" ? "Success" : "Failure"
+            };
+            // Every variant is validated separately; propagate non-inherited runtime flags from the parent.
+            if (parent["requirement"] is JObject pr)
+            {
+                if ((bool?)pr["requireSelfAction"] == false) childReq["requireSelfAction"] = false;
+                if ((bool?)pr["requireTargetAction"] == false) childReq["requireTargetAction"] = false;
+            }
+            var child = new JObject { ["requirement"] = childReq };
             if ((bool?)parent["requireSelfOnly"] == true) child["requireSelfOnly"] = true;
             placement = new JObject
             {
                 ["template"] = "commandResult", ["group"] = pair,
                 ["parentConditions"] = parent,
-                ["successChildConditions"] = child,
-                ["textDestination"] = outcome == "success" ? "successChild" : "parentFallback",
+                ["childConditions"] = child,
+                ["textDestination"] = outcome == "success" ? "successChild" : "failureChild",
                 ["otherCase"] = pair + (outcome == "success" ? ".failure" : ".success")
             };
         }

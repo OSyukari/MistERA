@@ -29,7 +29,7 @@ public static class TA_KojoShadow
     /// </summary>
     static readonly HashSet<string> explicitFields = new HashSet<string>
     {
-        "requireSelfAction", "requireTargetAction", "requireEPSuccess", "requireEPFailure", "requireEPSuccessGTE",
+        "requireSelfAction", "requireTargetAction", "requireEPSuccess", "requireEPFailure", "requireEPSuccessGTE", "requireEPSuccessLTE",
         "allowRecording", "requireSelfAttitudeGTE", "selfTags", "excludeSelfTags", "targetTags", "excludeTargetTags",
         "requireRelationshipTypes", "requireSelfStatValue"
     };
@@ -138,6 +138,7 @@ public static class TA_KojoShadow
         if (a.requireMaster && !b.requireMaster) return false;
         if (a.requireSelfMaster && !b.requireSelfMaster) return false;
         if (a.requireSelfNotMaster && !b.requireSelfNotMaster) return false;
+        if (a.requireRefusalContext != ResponseEntry.RefusalContext.None && a.requireRefusalContext != b.requireRefusalContext) return false;
         var ra = a.requirement ?? new ResponseEntry.Variant.Requirement();
         var rb = b.requirement ?? new ResponseEntry.Variant.Requirement();
 
@@ -177,6 +178,8 @@ public static class TA_KojoShadow
     {
         if (a.requireSelfOnly != b.requireSelfOnly) return true;
         if ((a.requireSelfMaster && b.requireSelfNotMaster) || (a.requireSelfNotMaster && b.requireSelfMaster)) return true;
+        if (a.requireRefusalContext != ResponseEntry.RefusalContext.None && b.requireRefusalContext != ResponseEntry.RefusalContext.None
+            && a.requireRefusalContext != b.requireRefusalContext) return true;
         var ra = a.requirement ?? new ResponseEntry.Variant.Requirement();
         var rb = b.requirement ?? new ResponseEntry.Variant.Requirement();
         if ((TA_Lint.OwnEP(ra) & TA_Lint.OwnEP(rb)) == 0) return true;

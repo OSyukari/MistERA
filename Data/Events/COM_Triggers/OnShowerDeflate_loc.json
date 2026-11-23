@@ -6,14 +6,19 @@
         "Entries": {
             "en-us": {
                 "com_furniture_takeShower_deflate_start": "$self.name$ washes more thoroughly than usual.",
-                "shower_bather_expel_question": "The shower is still running. $doer.firstname$ asks whether $bather.firstname$ wants to push out what's inside, too.",
-                "shower_expel_mouth": "Under the water, $bather.firstname$ spits out what was in the mouth and rinses. $deflateMsg1$.",
-                "shower_expel_womb": "$bather.firstname$ presses on the lower belly; what the womb can't hold runs out with the water. $deflateMsg2$.",
-                "shower_expel_vagina": "$bather.firstname$ spreads their legs and flushes the vagina clean with warm water. $deflateMsg3$.",
-                "shower_expel_anus": "$bather.firstname$ squats and relaxes, letting what had pooled inside wash away. $deflateMsg4$.",
-                "shower_expel_rest": "$bather.firstname$ pushes out whatever else the body couldn't hold. $deflateMsg5$.",
-                "shower_self_rinse_changed": "$bather.firstname$ washes off the residue on the body ($showerWashReport$), then rinses carefully.",
-                "shower_assisted_rinse_changed": "$doer.firstname$ helps wash the residue off $bather.firstname$ ($showerWashReport$), then rinses carefully."
+                "shower_bather_expel_question": "Warm water streams down their skin. $doer.firstname$ leans in close and asks whether $bather.firstname$ wants help spreading open and flushing out what is still trapped inside.",
+                "shower_self_expel_mouth": "Tilting up into the warm spray, $bather.firstname$ opens wide and spits out the thick, warm fluid pooled inside, parting their lips with their fingers to rinse out every slick trace as viscous strings wash down their chin and chest. $deflateMsg1$.",
+                "shower_assisted_expel_mouth": "$doer.firstname$ cups $bather.firstname$'s chin and tilts their face toward the spray, parting their wet lips with their fingers to help them spit out the thick fluid pooled inside and guiding warm water into their open mouth to rinse it clean, thumbing away the sticky strings from their chin. $deflateMsg1$.",
+                "shower_self_expel_womb": "Squatting low with legs spread wide under the hot water, $bather.firstname$ presses both hands hard against their tight, swollen lower belly and kneads downward while bearing down, forcing the excess fluid out of the womb in thick, warm gushes that string down between their thighs into the runoff. $deflateMsg2$.",
+                "shower_assisted_expel_womb": "$doer.firstname$ braces $bather.firstname$ by the hips and presses firmly into their swollen lower belly, kneading downward to coax the excess fluid out of the womb until thick, slick gushes ooze from between $bather.firstname$'s parted thighs into the hot runoff. $deflateMsg2$.",
+                "shower_self_expel_vagina": "$bather.firstname$ squats and spreads their legs wide, hooking their fingers into their wet labia to pull their vagina wide open toward the warm spray—scooping inside with slick fingers as thick, sticky fluid strings and drips out between their knuckles into the running water. $deflateMsg3$.",
+                "shower_assisted_expel_vagina": "Crouching before $bather.firstname$, $doer.firstname$ parts their thighs and hooks fingers into their wet labia, pulling their vagina wide open to expose the slick inner flesh to the warm shower stream and reaching in to scoop and flush out the thick fluid until it strings and pours freely down their legs. $deflateMsg3$.",
+                "shower_self_expel_anus": "Crouching low under the spray, $bather.firstname$ spreads their cheeks wide and works fingers into the tight rim to stretch their anus agape, bearing down as the pooled fluid squelches and gushes out between their fingers into the drain. $deflateMsg4$.",
+                "shower_assisted_expel_anus": "$doer.firstname$ spreads $bather.firstname$'s buttocks wide and works fingers into the tight rim, stretching and holding their anus agape under the warm stream while coaxing out the pooled fluid—thick, wet gushes squelching out over their fingers and down into the drain. $deflateMsg4$.",
+                "shower_self_expel_rest": "Pressing firmly on their belly while holding themselves spread open under the hot spray, $bather.firstname$ bears down repeatedly to work out the remaining excess fluid trapped deeper inside until it washes away. $deflateMsg5$.",
+                "shower_assisted_expel_rest": "Pressing along $bather.firstname$'s lower belly with one hand while holding them spread open under the hot spray with the other, $doer.firstname$ helps work out the remaining excess fluid trapped inside until it drains away with the water. $deflateMsg5$.",
+                "shower_self_rinse_changed": "Under the warm spray, $bather.firstname$ runs their palms slowly over slick skin and sensitive folds, rubbing away the sticky residue ($showerWashReport$) until the water runs clean.",
+                "shower_assisted_rinse_changed": "$doer.firstname$ guides the warm spray over $bather.firstname$'s body, running their palms across slick skin and intimate folds to wash away every trace of sticky residue ($showerWashReport$) until clean."
             }
         }
     }

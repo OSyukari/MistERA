@@ -121,7 +121,15 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "fingering", "spread_pussy", "spread_ass", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "spread_ass",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_finger_insert_A_Begin_Sleep_1",
@@ -136,7 +144,15 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "fingering", "spread_pussy", "spread_ass", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "fingering",
+                                "spread_pussy",
+                                "spread_ass",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.5.7 开始 睡眠中 独自A指入自慰 口上文（睡梦中自己开始）",
                             "responses": [
                                 "com_sex_finger_insert_A_Begin_Self_Sleep_1",
@@ -150,7 +166,17 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "fingering", "spread_pussy", "spread_ass", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "fingering",
+                                "spread_pussy",
+                                "spread_ass",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_finger_insert_A_Begin_Timestop_1",
@@ -331,132 +357,6 @@
                                 "com_sex_finger_insert_A_10",
                                 "com_sex_finger_insert_A_11",
                                 "com_sex_finger_insert_A_12"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ],
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true,
-                                                "requireEPSuccess": false
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被A指入 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_finger_insert_A_13",
-                                                "com_sex_finger_insert_A_14",
-                                                "com_sex_finger_insert_A_15",
-                                                "com_sex_finger_insert_A_16",
-                                                "com_sex_finger_insert_A_17",
-                                                "com_sex_finger_insert_A_18"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被A指入 口上文 无允许",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_19",
-                                        "com_sex_finger_insert_A_20",
-                                        "com_sex_finger_insert_A_21",
-                                        "com_sex_finger_insert_A_22",
-                                        "com_sex_finger_insert_A_23",
-                                        "com_sex_finger_insert_A_24"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被A指入 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_25",
-                                        "com_sex_finger_insert_A_26",
-                                        "com_sex_finger_insert_A_27",
-                                        "com_sex_finger_insert_A_28",
-                                        "com_sex_finger_insert_A_29",
-                                        "com_sex_finger_insert_A_30"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被A指入 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_31",
-                                        "com_sex_finger_insert_A_32",
-                                        "com_sex_finger_insert_A_33",
-                                        "com_sex_finger_insert_A_34",
-                                        "com_sex_finger_insert_A_35",
-                                        "com_sex_finger_insert_A_36"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被A指入 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_finger_insert_A_37",
-                                "com_sex_finger_insert_A_38",
-                                "com_sex_finger_insert_A_39",
-                                "com_sex_finger_insert_A_40",
-                                "com_sex_finger_insert_A_41",
-                                "com_sex_finger_insert_A_42"
                             ]
                         },
                         {
@@ -659,7 +559,15 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "fingering", "spread_pussy", "spread_ass", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "fingering",
+                                "spread_pussy",
+                                "spread_ass",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
                             "responses": [
                                 "com_sex_finger_insert_A_Self_1",
@@ -674,36 +582,19 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "fingering", "spread_pussy", "spread_ass", "doll", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "fingering",
+                                "spread_pussy",
+                                "spread_ass",
+                                "doll",
+                                "idle"
+                            ],
                             "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
                             "responses": [
                                 "com_sex_finger_insert_A_Self_3",
                                 "com_sex_finger_insert_A_Self_4"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPFailure": true,
-                                "requirePermission": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.7 拒绝独自A指入自慰的指令 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Self_5",
-                                "com_sex_finger_insert_A_Self_6"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.8 拒绝独自A指入自慰的指令 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Self_7",
-                                "com_sex_finger_insert_A_Self_8"
                             ]
                         },
                         {
@@ -800,6 +691,169 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_insert_A_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被A指入 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_13",
+                                                "com_sex_finger_insert_A_14",
+                                                "com_sex_finger_insert_A_15",
+                                                "com_sex_finger_insert_A_16",
+                                                "com_sex_finger_insert_A_17",
+                                                "com_sex_finger_insert_A_18"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被A指入 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_19",
+                                        "com_sex_finger_insert_A_20",
+                                        "com_sex_finger_insert_A_21",
+                                        "com_sex_finger_insert_A_22",
+                                        "com_sex_finger_insert_A_23",
+                                        "com_sex_finger_insert_A_24"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被A指入 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_25",
+                                        "com_sex_finger_insert_A_26",
+                                        "com_sex_finger_insert_A_27",
+                                        "com_sex_finger_insert_A_28",
+                                        "com_sex_finger_insert_A_29",
+                                        "com_sex_finger_insert_A_30"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被A指入 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_31",
+                                        "com_sex_finger_insert_A_32",
+                                        "com_sex_finger_insert_A_33",
+                                        "com_sex_finger_insert_A_34",
+                                        "com_sex_finger_insert_A_35",
+                                        "com_sex_finger_insert_A_36"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被A指入 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_insert_A_37",
+                                "com_sex_finger_insert_A_38",
+                                "com_sex_finger_insert_A_39",
+                                "com_sex_finger_insert_A_40",
+                                "com_sex_finger_insert_A_41",
+                                "com_sex_finger_insert_A_42"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 拒绝独自A指入自慰的指令 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_5",
+                                "com_sex_finger_insert_A_Self_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.8 拒绝独自A指入自慰的指令 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_7",
+                                "com_sex_finger_insert_A_Self_8"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

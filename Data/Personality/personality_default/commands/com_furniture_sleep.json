@@ -10,25 +10,54 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfForced": true },
-                            "extraSelfPortraitTags": ["troubled", "fear"],
-                            "responses": ["kojo_sleep_begin_forced_1", "kojo_sleep_begin_forced_2"]
+                            "requirement": {
+                                "requireSelfForced": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "troubled",
+                                "fear"
+                            ],
+                            "responses": [
+                                "kojo_sleep_begin_forced_1",
+                                "kojo_sleep_begin_forced_2"
+                            ]
                         },
                         {
-                            "requirement": { "variantID": 1 },
-                            "extraSelfPortraitTags": ["relaxed"],
-                            "responses": ["kojo_sleep_begin_together_1", "kojo_sleep_begin_together_2"]
+                            "requirement": {
+                                "variantID": 1
+                            },
+                            "extraSelfPortraitTags": [
+                                "relaxed"
+                            ],
+                            "responses": [
+                                "kojo_sleep_begin_together_1",
+                                "kojo_sleep_begin_together_2"
+                            ]
                         },
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": { "requireSelfAttitudeGTE": "Like" },
-                            "extraSelfPortraitTags": ["happy", "relaxed"],
-                            "responses": ["kojo_sleep_begin_like_1", "kojo_sleep_begin_like_2"]
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "happy",
+                                "relaxed"
+                            ],
+                            "responses": [
+                                "kojo_sleep_begin_like_1",
+                                "kojo_sleep_begin_like_2"
+                            ]
                         },
                         {
-                            "extraSelfPortraitTags": ["relaxed"],
-                            "responses": ["kojo_sleep_begin_1", "kojo_sleep_begin_2", "kojo_sleep_begin_3"]
+                            "extraSelfPortraitTags": [
+                                "relaxed"
+                            ],
+                            "responses": [
+                                "kojo_sleep_begin_1",
+                                "kojo_sleep_begin_2",
+                                "kojo_sleep_begin_3"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -37,88 +66,288 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_sleep",
+                    "ID": "com_furniture_sleep_Refuse",
                     "variants": [
                         {
-                            "requirement": { "requireEPFailure": true },
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
                             "variants": [
                                 {
-                                    "requirement": { "requireSelfAttitudeGTE": "Neutral", "requireEPSuccess": false },
-                                    "extraSelfPortraitTags": ["apology", "troubled"],
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Neutral",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "troubled"
+                                    ],
                                     "useActiveTags": false,
-                                    "responses": ["kojo_sleep_refuse_polite_1", "kojo_sleep_refuse_polite_2", "kojo_sleep_refuse_polite_3"]
+                                    "responses": [
+                                        "kojo_sleep_refuse_polite_1",
+                                        "kojo_sleep_refuse_polite_2",
+                                        "kojo_sleep_refuse_polite_3"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["angry", "troubled"],
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "troubled"
+                            ],
                             "useActiveTags": false,
-                            "responses": ["kojo_sleep_refuse_hostile_1", "kojo_sleep_refuse_hostile_2", "kojo_sleep_refuse_hostile_3"]
+                            "responses": [
+                                "kojo_sleep_refuse_hostile_1",
+                                "kojo_sleep_refuse_hostile_2",
+                                "kojo_sleep_refuse_hostile_3"
+                            ]
                         }
                     ],
-                    "template": "commandResult"
+                    "template": "commandRefuse"
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_Solo", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
-                    "variants": [{
-                        "requireSelfOnly": true,
-                        "hideWhenNotFocused": false,
-                        "displayType": "AlwaysDisplay",
-                        "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false },
-                        "responses": ["kojo_sleep_complete_1", "kojo_sleep_complete_2", "kojo_sleep_complete_3"]
-                    }]
-                }
-            },
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "OnSleepComplete_UndressSelf", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "OnSleepComplete_Solo",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
-                        { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_undress_self"] }
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_sleep_complete_1",
+                                "kojo_sleep_complete_2",
+                                "kojo_sleep_complete_3"
+                            ]
+                        }
                     ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_UndressTogether", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "OnSleepComplete_UndressSelf",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_undress_marriage"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_undress_close"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_undress_fallback"] }
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_sleep_undress_self"
+                            ]
+                        }
                     ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_LieDownTogether", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "OnSleepComplete_UndressTogether",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_lie_marriage"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_lie_close"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_lie_fallback"] }
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_undress_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple",
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_undress_close"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_sleep_undress_fallback"
+                            ]
+                        }
                     ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_JoinSleeper", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "OnSleepComplete_LieDownTogether",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage", "relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_join_close"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_join_fallback"] }
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_lie_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple",
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_lie_close"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_sleep_lie_fallback"
+                            ]
+                        }
                     ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "OnSleepComplete_GoodnightKiss", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "OnSleepComplete_JoinSleeper",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
                     "variants": [
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_sleep_kiss_marriage"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple", "relationship_fwb"] }, "responses": ["kojo_sleep_kiss_close"] },
-                        { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_sleep_kiss_fallback"] }
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage",
+                                    "relationship_couple",
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_join_close"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_sleep_join_fallback"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnSleepComplete_GoodnightKiss",
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_kiss_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple",
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_sleep_kiss_close"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_sleep_kiss_fallback"
+                            ]
+                        }
                     ]
                 }
             }

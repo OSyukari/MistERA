@@ -13,9 +13,17 @@
 
   "levels": [
     {
+      "id": "refusalContext", "label": "说话者为何拒绝",
+      "when": ["pair"],
+      "leaves": {
+        "receiverDeclined": { "label": "说话者拒绝了动作", "variant": { "requireRefusalContext": "ReceiverDeclined" } },
+        "declinedOrder": { "label": "说话者拒绝下令，并向下令者回应", "variant": { "requireRefusalContext": "DeclinedOrder" }, "requireSpecific": true }
+      }
+    },
+    {
       "id": "role", "label": "说话者角色",
       "leaves": {
-        "doer": { "label": "施方（拒绝下令者）", "variant": { "requireSelfDoer": true } },
+        "doer": { "label": "施方（不限定哪一方拒绝）", "variant": { "requireSelfDoer": true } },
         "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } },
         "self": { "label": "独自（对象是自己）", "variant": { "requireSelfOnly": true } }
       }

@@ -24,6 +24,14 @@ public static class TA_Lint
         return s;
     }
 
+    static int AtMost(Memory_Response r)
+    {
+        int start = r >= Memory_Response.CriticalFailure ? (int)Memory_Response.CriticalFailure : (int)Memory_Response.Refuse;
+        int s = 0;
+        for (int i = start; i <= (int)r; i++) s |= 1 << i;
+        return s;
+    }
+
     /// <summary>Outcomes a variant's own requirement lets through (ResponseEntryVariant.Requirement.Validate, EP part).</summary>
     internal static int OwnEP(ResponseEntry.Variant.Requirement r)
     {
@@ -32,6 +40,7 @@ public static class TA_Lint
         if (r.requireEPFailure) s &= Bit(Memory_Response.Refuse);
         else if (r.requireEPSuccess) s &= AtLeast(Memory_Response.Accept);
         if (r.requireEPSuccessGTE != Memory_Response.None) s &= AtLeast(r.requireEPSuccessGTE);
+        if (r.requireEPSuccessLTE != Memory_Response.None) s &= AtMost(r.requireEPSuccessLTE);
         return s;
     }
 
@@ -199,14 +208,16 @@ public static class TA_Lint
 
     /// <summary>
     /// L6 (command kojo, Plan_KojoTemplates.md §3.8): useActiveTags:false drops the ongoing act's tags from the portrait, so
-    /// it belongs on refuse paths (requireEPFailure on the node or an ancestor) and on lookups where the speaker isn't in
-    /// the act (_Interrupt bystander, _Tryjoin / _Join_Refused joiner). Elsewhere the act is accepted and its tags must
-    /// win. Only printing nodes (own responses) count: the engine reads the flag there. Fix = remove the field (default true).
+    /// it belongs on refuse keys (_Refuse / _JoinFailed), legacy refuse paths (requireEPFailure on the node or an ancestor),
+    /// and lookups where the speaker isn't in the act (_Interrupt bystander, _Tryjoin / _Join_Refused joiner). Elsewhere the
+    /// act is accepted and its tags must win. Only printing nodes (own responses) count: the engine reads the flag there.
+    /// Fix = remove the field (default true).
     /// </summary>
     public static void ActiveTags(ResponseEntry entry, string entryID, List<JObject> into)
     {
         if (entry?.variants == null || entryID == null) return;
-        if (entryID.EndsWith("_Interrupt") || entryID.EndsWith("_Tryjoin") || entryID.EndsWith("_Join_Refused")) return;
+        if (entryID.EndsWith("_Interrupt") || entryID.EndsWith("_Tryjoin") || entryID.EndsWith("_Join_Refused")
+            || entryID.EndsWith("_Refuse") || entryID.EndsWith("_JoinFailed")) return;
         for (int i = 0; i < entry.variants.Count; i++) ActiveTagsNode(entry.variants[i], $"variants[{i}]", into);
     }
 

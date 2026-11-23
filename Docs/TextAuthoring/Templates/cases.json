@@ -4,10 +4,10 @@
 
   "_comment_states": "Kojo-side states a speaker or listener can be in besides awake. sides: which roles can be in it. reachableIf: fields of that side's CharaRequirement (req_Doers / req_Receivers) that must have these values. canAct: Character_Trainable.canAct in that state (false = kojo needs requireSelfAction / requireTargetAction false). tags: the character's tags in that state (what kojo selfTags / targetTags see). refuses: whether a receiver in that state can refuse (EVP_Modifiers: time-stopped, climaxing, unconscious, restrained always accept).",
   "states": {
-    "sleeping":   { "sides": ["doer", "receiver"], "reachableIf": { "requireConscious": false }, "canAct": false, "tags": ["sleeping", "unconscious"], "refuses": false, "label": "睡眠中" },
-    "fainted":    { "sides": ["doer", "receiver"], "reachableIf": { "requireConscious": false }, "canAct": false, "tags": ["unconscious"], "refuses": false, "label": "昏迷（非睡眠）" },
-    "timestop":   { "sides": ["doer", "receiver"], "reachableIf": { "requireAction": false }, "canAct": false, "tags": ["timestop"], "refuses": false, "label": "时停中" },
-    "restrained": { "sides": ["receiver"], "reachableIf": { "requireUnrestrained": false }, "canAct": true, "tags": ["restrained"], "refuses": false, "label": "被束缚" }
+    "sleeping":   { "sides": ["doer", "receiver"], "reachableIf": { "requireConscious": false }, "canAct": false, "tags": ["sleeping", "unconscious"], "refuses": false, "result_success": "optional", "result_failure": "optional", "label": "睡眠中" },
+    "fainted":    { "sides": ["doer", "receiver"], "reachableIf": { "requireConscious": false }, "canAct": false, "tags": ["unconscious"], "refuses": false, "result_success": "optional", "result_failure": "optional", "label": "昏迷（非睡眠）" },
+    "timestop":   { "sides": ["doer", "receiver"], "reachableIf": { "requireAction": false }, "canAct": false, "tags": ["timestop"], "refuses": false, "result_success": "optional", "result_failure": "optional", "label": "时停中" },
+    "restrained": { "sides": ["receiver"], "reachableIf": { "requireUnrestrained": false }, "canAct": true, "tags": ["restrained"], "refuses": false, "result_success": "required", "result_failure": "required", "label": "被束缚" }
   },
 
   "_comment_narrationStates": "Narration-side states: narration conditions can only compare stats (COM_Descriptions Validator_Chara → Character_Trainable.CompareStatValue). condition = the validateChara a new entry for this state uses (target is filled in: doer / receiver). A stat the engine can't compare is reported as a template warning.",
@@ -38,11 +38,11 @@
       { "match": { "speaker": "self", "listener": "player", "outcome": "refuse" }, "who": { "self": "接到指令的 NPC", "target": "下令的玩家", "doer": "NPC（玩家下令）", "situation": "NPC 拒绝执行玩家的指令；玩家不参与动作。" } }
     ] },
     { "id": "woken",   "suffix": "",       "speakers": ["receiver"], "outcomes": ["accept", "refuse"], "requireState": "sleeping", "selfTags": ["justWokenUp"], "label": "被弄醒后" },
-    { "id": "ongoing", "suffix": "_Ongoing", "speakers": ["receiver", "doer", "self"], "listenersBySpeaker": { "self": ["player"] }, "outcomes": ["accept"], "when": ["ongoing"], "label": "进行中口上", "context": [
+    { "id": "ongoing", "suffix": "_Ongoing", "speakers": ["receiver", "doer", "self"], "listeners": ["player", "npc"], "listenersBySpeaker": { "self": ["player"] }, "outcomes": ["accept"], "whenByListener": { "player": ["ongoing"], "npc": ["partnerEnding"] }, "label": "进行中口上", "labelsByListener": { "npc": "结束口上（对另一方）" }, "_comment": "whenByListener requires these command facts for each listener. The player watches an action still in progress; the NPC partner hears a successful finish fallback, independent of duration and never for COM_Sex.", "context": [
       { "match": { "listener": "player" }, "who": { "target": "旁观的玩家", "situation": "动作还在进行；玩家在旁观看，不参与。" } },
       { "match": { "listener": "player", "speaker": "receiver" }, "who": { "doer": "施方 NPC" } },
       { "match": { "listener": "player", "speaker": "doer" }, "who": { "receiver": "受方 NPC" } },
-      { "match": { "listener": "npc" }, "who": { "situation": "NPC 对动作的另一方说话。" } }
+      { "match": { "listener": "npc" }, "who": { "situation": "动作成功结束；NPC 对动作的另一方说话。" } }
     ] },
     { "id": "climax",  "suffix": "_Climax", "speakers": ["receiver", "doer", "self"], "outcomes": ["accept"], "when": ["sex"], "label": "高潮口上" },
     { "id": "seen", "suffix": "_Interrupt", "fallback": "Interrupt", "speakers": ["receiver", "doer", "self"], "outcomes": ["accept"], "listeners": ["newcomer"], "category": true, "label": "被撞见", "scene": {}, "context": [
@@ -76,6 +76,8 @@
     { "match": { "speaker": "receiver" }, "who": { "self": "受方 NPC", "target": "施方 NPC", "doer": "施方 NPC", "receiver": "受方 NPC" } },
     { "match": { "speaker": "self" }, "who": { "self": "单独行动的 NPC", "target": "自己", "doer": "单独行动的 NPC" } },
     { "match": { "speaker": "joiner" }, "who": { "self": "加入者 NPC", "target": "玩家" } },
+    { "match": { "speaker": "doer", "listener": "partner" }, "who": { "target": "受方（玩家或 NPC）", "receiver": "受方（玩家或 NPC）" } },
+    { "match": { "speaker": "receiver", "listener": "partner" }, "who": { "target": "施方（玩家或 NPC）", "doer": "施方（玩家或 NPC）" } },
     { "match": { "speaker": "doer", "listener": "player" }, "who": { "target": "玩家", "receiver": "玩家" } },
     { "match": { "speaker": "receiver", "listener": "player" }, "who": { "target": "玩家", "doer": "玩家" } },
     { "match": { "speaker": "self", "listener": "player" }, "who": { "target": "一同活动的玩家（各做各的）" } },
@@ -93,6 +95,7 @@
     "sexTouch": { "omit": ["join", "joinReact", "joinFailedReact"], "assign": ["seen"] }
   },
   "commandProfiles": {
+    "com_interaction_initiateSex": "sexTouch",
     "com_sex_base": "sexTouch",
     "com_sex_service_base": "sexTouch",
     "com_touch_safe_base": "sexTouch",
@@ -110,11 +113,13 @@
 
   "_comment_words": "How the docs name a kojo case's listener, outcome and the ordered prefix (speaker names: roles.label, state names: states.label).",
   "words": {
-    "listeners": { "player": "玩家", "npc": "NPC", "self": "自己", "newcomer": "新来的人" },
+    "listeners": { "partner": "对方（玩家或 NPC）", "player": "玩家", "npc": "NPC", "self": "自己", "newcomer": "新来的人" },
     "outcomes": { "accept": "接受", "refuse": "拒绝", "success": "接受·判定成功", "failure": "接受·判定失败", "refuseOrder": "拒绝下令", "joinRefused": "未能加入", "event": "事件中" },
     "ordered": "〔第三方下令〕"
   },
 
   "_comment_overrides": "Per command ID or comTag: { \"drop\": [case id prefixes], \"optional\": [case id prefixes], \"require\": [case id prefixes] }. Case ids look like kojo.result.receiver.awake.player.success or narr.begin.",
-  "overrides": {}
+  "overrides": {
+    "com_interaction_initiateSex": { "require": ["kojo.orderedRefuse.doer.awake.player.refuseOrder"] }
+  }
 }

@@ -152,47 +152,92 @@
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt1",
                         "options": [
-                            { "option": "mouth full", "Results": [{ "Type": "DeflateInternal", "arguments": ["mouth", "true", "true", "deflateMsg1", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print1"] }] },
+                            { "option": "mouth full", "Results": [{ "Type": "DeflateInternal", "arguments": ["mouth", "true", "true", "deflateMsg1", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print1_mode"] }] },
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt2"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print1", "line": "shower_expel_mouth", "nextEntryLabel": "attempt2" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "print1_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print1_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print1_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print1_self", "line": "shower_self_expel_mouth", "nextEntryLabel": "attempt2" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print1_assisted", "line": "shower_assisted_expel_mouth", "nextEntryLabel": "attempt2" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt2",
                         "options": [
-                            { "option": "womb partial", "Results": [{ "Type": "DeflateInternal", "arguments": ["womb", "true", "false", "deflateMsg2", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print2"] }] },
+                            { "option": "womb partial", "Results": [{ "Type": "DeflateInternal", "arguments": ["womb", "true", "false", "deflateMsg2", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print2_mode"] }] },
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt3"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print2", "line": "shower_expel_womb", "nextEntryLabel": "attempt3" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "print2_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print2_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print2_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print2_self", "line": "shower_self_expel_womb", "nextEntryLabel": "attempt3" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print2_assisted", "line": "shower_assisted_expel_womb", "nextEntryLabel": "attempt3" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt3",
                         "options": [
-                            { "option": "vagina full", "Results": [{ "Type": "DeflateInternal", "arguments": ["vagina", "true", "true", "deflateMsg3", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print3"] }] },
+                            { "option": "vagina full", "Results": [{ "Type": "DeflateInternal", "arguments": ["vagina", "true", "true", "deflateMsg3", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print3_mode"] }] },
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt4"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print3", "line": "shower_expel_vagina", "nextEntryLabel": "attempt4" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "print3_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print3_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print3_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print3_self", "line": "shower_self_expel_vagina", "nextEntryLabel": "attempt4" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print3_assisted", "line": "shower_assisted_expel_vagina", "nextEntryLabel": "attempt4" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt4",
                         "options": [
-                            { "option": "anus full", "Results": [{ "Type": "DeflateInternal", "arguments": ["anus", "true", "true", "deflateMsg4", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print4"] }] },
+                            { "option": "anus full", "Results": [{ "Type": "DeflateInternal", "arguments": ["anus", "true", "true", "deflateMsg4", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print4_mode"] }] },
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "attempt5"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print4", "line": "shower_expel_anus", "nextEntryLabel": "attempt5" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "print4_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print4_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print4_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print4_self", "line": "shower_self_expel_anus", "nextEntryLabel": "attempt5" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print4_assisted", "line": "shower_assisted_expel_anus", "nextEntryLabel": "attempt5" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "attempt5",
                         "options": [
-                            { "option": "remaining partial", "Results": [{ "Type": "DeflateInternal", "arguments": ["", "true", "false", "deflateMsg5", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print5"] }] },
+                            { "option": "remaining partial", "Results": [{ "Type": "DeflateInternal", "arguments": ["", "true", "false", "deflateMsg5", "", "deflateMemory", "bather"] }, { "Type": "JumpToLabel", "arguments": ["", "print5_mode"] }] },
                             { "option": "unchanged", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "expel_result"] }] }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print5", "line": "shower_expel_rest", "nextEntryLabel": "expel_result" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "print5_mode",
+                        "options": [
+                            { "option": "assisted", "target_chara_conditions": { "receiver": [{ "parameters": ["exists"] }] }, "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print5_assisted"] }] },
+                            { "option": "solo", "Results": [{ "Type": "JumpToLabel", "arguments": ["", "print5_self"] }] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print5_self", "line": "shower_self_expel_rest", "nextEntryLabel": "expel_result" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "print5_assisted", "line": "shower_assisted_expel_rest", "nextEntryLabel": "expel_result" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "expel_result",
@@ -376,23 +421,28 @@
                 "shower_assisted_undress": "$bather.firstname$能脱下的衣物已被卸下，放在一旁避开水流，留出清洗的余地。",
                 "shower_self_begin": "$bather.firstname$打开淋浴，调好水温，让温水沿着身体流下，开始清洗。",
                 "shower_assisted_begin": "$doer.firstname$打开淋浴，调好水温，将水流移向$bather.firstname$，开始帮忙清洗。",
-                "shower_self_expel_question": "淋浴还在继续。是否让$bather.firstname$排出体内可排出的内容物？",
-                "shower_assisted_expel_question": "淋浴还在继续。是否让$doer.firstname$协助$bather.firstname$排出体内可排出的内容物？",
-                "shower_bather_expel_question": "淋浴还在继续。$doer.firstname$问$bather.firstname$，要不要顺便把体内的东西排出来？",
-                "shower_expel_mouth": "$bather.firstname$在水流下把嘴里的东西吐掉，漱了漱口。$deflateMsg1$。",
-                "shower_expel_womb": "$bather.firstname$按着小腹用力，子宫里装不下的部分顺着水流淌了出来。$deflateMsg2$。",
-                "shower_expel_vagina": "$bather.firstname$分开双腿，用温水把阴道里的东西冲洗干净。$deflateMsg3$。",
-                "shower_expel_anus": "$bather.firstname$蹲下放松后庭，让积在里面的东西随水流走。$deflateMsg4$。",
-                "shower_expel_rest": "$bather.firstname$又把体内其余装不下的东西排了出来。$deflateMsg5$。",
-                "shower_expel_yes": "排出可排出的内容物",
-                "shower_expel_help_yes": "协助排出可排出的内容物",
+                "shower_self_expel_question": "热气腾腾的水流不断冲刷着身体。要让$bather.firstname$顺便把体内积存的东西扒开排出来吗？",
+                "shower_assisted_expel_question": "热气腾腾的水流不断冲刷着身体。要让$doer.firstname$上手帮$bather.firstname$扒开穴口、排出体内积存的东西吗？",
+                "shower_bather_expel_question": "温热的水流顺着肌肤滑落。$doer.firstname$凑近$bather.firstname$，低声问要不要顺手帮忙把体内的东西清理排出来？",
+                "shower_self_expel_mouth": "$bather.firstname$迎着温热的水流张开嘴，将积在口腔里黏腻温热的液体大口吐出，随即用手指抵开唇瓣、伸出舌头把齿缝与颊内残余的滑腻一股脑漱进水流，拉丝的浊液顺着下巴和锁骨被冲刷流下。$deflateMsg1$。",
+                "shower_assisted_expel_mouth": "$doer.firstname$托住$bather.firstname$的下颌将脸抬向花洒，手指轻轻撬开濡湿的唇瓣，让积在口中的浓稠浊液顺着嘴角吐出，又引着温水灌入口腔替$bather.firstname$仔细漱净，指腹慢条斯理地抹去唇边与下巴拉出的黏丝。$deflateMsg1$。",
+                "shower_self_expel_womb": "$bather.firstname$在热水中缓缓蹲低、敞开双腿，双手重重压在紧绷鼓胀的小腹上反复向下推揉挤压，同时咬着唇用力下坠。子宫里再也盛不下的黏稠热液被一点点挤过宫口，顺着湿软的腿间大股涌出，带着温热的拉丝混入脚下的水流。$deflateMsg2$。",
+                "shower_assisted_expel_womb": "$doer.firstname$贴近扶住$bather.firstname$的腰胯，掌心紧贴在发胀的小腹上用力向下按压揉挤，逼着子宫深处装不下的浓稠液体顺着产道不断溢流。温热黏滑的浊液从$bather.firstname$敞开的腿间咕嘟咕嘟地涌出，沿着大腿内侧淌进脚下的温水。$deflateMsg2$。",
+                "shower_self_expel_vagina": "$bather.firstname$蹲下身将双腿大大敞开，双手探向腿间，指尖扣住湿滑的阴唇用力向两侧扒开，将粉嫩红润的内壁与洞口彻底暴露在花洒的温热细流下。手指顺势探入搅动抠挖，把积在深处的浓稠浊液一点点带出，黏腻的液体拉着丝从张开的肉口顺着指缝滴滴答答地流淌出来，被水流冲散。$deflateMsg3$。",
+                "shower_assisted_expel_vagina": "$doer.firstname$蹲到$bather.firstname$身前掰开双腿，双手手指直接扣住濡湿的阴唇向两侧大大撑开，将紧致湿软的嫩肉与阴道口完全扒开在眼前。$doer.firstname$一边引着温热的水流直冲入敞开的穴口，一边探入指节在温热的肉壁间反复抠弄引流，浓稠拉丝的浊液顿时沿着撑开的穴口与指缝大股溢出、顺着腿根淌落。$deflateMsg3$。",
+                "shower_self_expel_anus": "$bather.firstname$低低蹲伏在水流中，双手掰开浑圆的臀瓣，指尖抵住湿润紧缩的后庭褶皱用力向两侧扯开，硬生生将菊穴撑出合不拢的圆口。随着小腹发力与温水冲淋，积在肠壁内的黏稠浊液发出湿腻的噗嗤声，顺着张开的肛口与指缝大股涌出，沿着腿弯滑进排水口。$deflateMsg4$。",
+                "shower_assisted_expel_anus": "$doer.firstname$双手狠狠掰开$bather.firstname$的臀肉，几根手指抵住后庭褶皱缓缓探入、向四周撑扯，将紧致的菊穴扒得大开。温热的水流顺着被撑开的穴口灌入冲洗，积在肠腔里的黏滑浊液在$doer.firstname$手指的扩张与搅动下噗嗤咕嘟地不断涌出，糊满指节后顺着臀缝与腿根被水流冲走。$deflateMsg4$。",
+                "shower_self_expel_rest": "$bather.firstname$继续按压着小腹、手指将湿滑的穴口掰得大开，借着温热的水流一遍遍用力下推，把体内深处残余装不下的浊液尽数挤了出来，黏腻的丝缕顺着肌肤被冲进脚下的积水。$deflateMsg5$。",
+                "shower_assisted_expel_rest": "$doer.firstname$一手按揉着$bather.firstname$的小腹向下挤压，另一手稳稳撑开濡湿的穴口引着温水冲刷，将体内深处其余装不下的浊液一点点逼了出来，浓稠的液体顺着腿间淌落汇入水流。$deflateMsg5$。",
+                "shower_expel_yes": "扒开排出体内积存的东西",
+                "shower_expel_help_yes": "上手帮忙扒开排出",
                 "shower_expel_no": "不排出，继续清洗",
                 "shower_intimacy_question": "$doer.firstname$与$bather.firstname$仍在淋浴间。是否继续一段亲密互动？",
                 "shower_intimacy_yes": "继续亲密互动（尚未开放）",
                 "shower_intimacy_unavailable": "淋浴中的亲密互动尚未实装。",
                 "shower_intimacy_no": "只完成清洗",
-                "shower_self_rinse_changed": "$bather.firstname$借着水流洗去了身上的残留：$showerWashReport$，随后仔细冲洗。",
-                "shower_assisted_rinse_changed": "$doer.firstname$用水流帮$bather.firstname$洗去身上的残留：$showerWashReport$，随后仔细冲洗。",
+                "shower_self_rinse_changed": "$bather.firstname$迎着温热的水流，用掌心沿着湿滑的肌肤与敏感的褶皱仔细揉搓，将沾在身上的黏腻残留（$showerWashReport$）一点点冲刷干净。",
+                "shower_assisted_rinse_changed": "$doer.firstname$引着花洒的温水洒遍$bather.firstname$的身躯，温热的掌心贴着湿滑的肌肤与隐秘的褶皱反复揉洗，将沾附其上的黏腻残留（$showerWashReport$）彻底冲净。",
                 "shower_self_rinse_plain": "$bather.firstname$让温水再次流过身体，做最后的冲洗。",
                 "shower_assisted_rinse_plain": "$doer.firstname$将温水缓缓移过$bather.firstname$的身体，帮忙完成最后的冲洗。",
                 "shower_self_end": "$bather.firstname$关掉淋浴，水声渐渐停下。这次清洗结束了。",

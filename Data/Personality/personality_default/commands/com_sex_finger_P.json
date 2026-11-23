@@ -137,7 +137,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "handjob", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_finger_P_Begin_Sleep_1",
@@ -152,7 +158,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "handjob", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.5.7 开始 睡眠中 独自撸管 口上文（睡梦中自己开始）",
                             "responses": [
                                 "com_sex_finger_P_Begin_Self_Sleep_1",
@@ -166,7 +178,15 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "handjob", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_finger_P_Begin_Timestop_1",
@@ -346,116 +366,6 @@
                             "responses": [
                                 "com_sex_finger_P_3",
                                 "com_sex_finger_P_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ],
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true,
-                                                "requireEPSuccess": false
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 手淫 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_finger_P_5",
-                                                "com_sex_finger_P_6",
-                                                "com_sex_finger_P_7"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 手淫 口上文 无允许",
-                                    "responses": [
-                                        "com_sex_finger_P_8",
-                                        "com_sex_finger_P_9"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 手淫 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_P_10",
-                                        "com_sex_finger_P_11",
-                                        "com_sex_finger_P_12"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 手淫 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_finger_P_13",
-                                        "com_sex_finger_P_14",
-                                        "com_sex_finger_P_15"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 手淫 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_finger_P_16",
-                                "com_sex_finger_P_17",
-                                "com_sex_finger_P_18"
                             ]
                         },
                         {
@@ -658,45 +568,6 @@
                         {
                             "requireSelfOnly": true,
                             "requirement": {
-                                "requireEPFailure": true,
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "troubled",
-                                "tired"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.5.7 拒绝独自撸管的指令 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_P_Self_5",
-                                "com_sex_finger_P_Self_6"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "handjob",
-                                "angry",
-                                "resentful"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.5.8 拒绝独自撸管的指令 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_P_Self_7",
-                                "com_sex_finger_P_Self_8"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
                                 "requireEPSuccessGTE": "Success",
                                 "requirePermission": true
                             },
@@ -846,6 +717,167 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_P_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 手淫 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_finger_P_5",
+                                                "com_sex_finger_P_6",
+                                                "com_sex_finger_P_7"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 手淫 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_finger_P_8",
+                                        "com_sex_finger_P_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 手淫 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_10",
+                                        "com_sex_finger_P_11",
+                                        "com_sex_finger_P_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 手淫 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_P_13",
+                                        "com_sex_finger_P_14",
+                                        "com_sex_finger_P_15"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 手淫 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_P_16",
+                                "com_sex_finger_P_17",
+                                "com_sex_finger_P_18"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "troubled",
+                                "tired"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 拒绝独自撸管的指令 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_5",
+                                "com_sex_finger_P_Self_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "angry",
+                                "resentful"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.8 拒绝独自撸管的指令 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_7",
+                                "com_sex_finger_P_Self_8"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

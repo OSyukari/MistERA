@@ -379,7 +379,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Scenario("场景 2：玩家对 NPC 使用 · NPC 拒绝", "NPC 未通过接受检定。", "玩家", "NPC");
         System("[检定] 接受检定结果行（引擎生成）");
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」（所有指令共用，不在本档改）");
-        Kojo("", "受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true, accepted = false });
+        Kojo("", "受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true, accepted = false, refusalContext = ResponseEntry.RefusalContext.ReceiverDeclined });
         System("→ 之后开始事件 OnAPRefuse（玩家=请求者，NPC=拒绝者；事件文本另档）");
 
         // 3 NPC -> player
@@ -413,10 +413,14 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Climax(climax,
             ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false }),
             ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false }));
-        Section("结束段（成功时，结束旁白之后接施方/受方的 _Ongoing 口上，听者为对方）");
+        bool partnerEnding = KojoListenerAllowed(KojoPhase("ongoing"), "npc", Facts().Flags());
+        Section(partnerEnding ? "结束段（成功时，结束旁白之后接施方/受方的 _Ongoing 口上，听者为对方）" : "结束段");
         Narration("after");
-        TemplateKojo("ongoing", "_Ongoing", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
-        TemplateKojo("ongoing", "_Ongoing", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
+        if (partnerEnding)
+        {
+            TemplateKojo("ongoing", "_Ongoing", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
+            TemplateKojo("ongoing", "_Ongoing", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
+        }
 
         // 5 ordered by a third party (Plan_CommandCases.md K4)
         Scenario("场景 5：玩家下令 NPC 对 NPC 使用（第三方下令）",
@@ -425,20 +429,20 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         System("[检定] 接受检定结果行（引擎生成）");
         Section("开始段（旁白与口上合为同一段）");
         Narration("begin");
-        Kojo("_Begin", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true });
-        Kojo("_Begin", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true });
+        TemplateKojo("orderedBegin", "_Begin", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true }, true);
+        TemplateKojo("orderedBegin", "_Begin", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true }, true);
         Section("结果段" + Timing());
         if (com.baseD20Check > 0) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
-        Kojo("", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true });
-        Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true });
+        TemplateKojo("orderedResult", "", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true }, true);
+        TemplateKojo("orderedResult", "", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true }, true);
         Climax(climax,
-            ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true }),
-            ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true }));
+            ("施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, listenerIsPlayer = false }),
+            ("受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, listenerIsPlayer = false }));
         Section("结束段（仅接受时；在结果之后）");
         Narration("after");
         Section("受方拒绝");
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
-        Kojo("", "受方 NPC", "施方 NPC", new TA_KojoContext { speakerIsReceiver = true, accepted = false });
+        TemplateKojo("orderedResult", "", "receiver", "npc", "refuse", new TA_KojoContext { speakerIsReceiver = true, accepted = false }, true);
         Section("施方拒绝下令（口上对象是下令的玩家；施方自己发起时拒绝不出口上）");
         TemplateKojo("orderedRefuse", "", "doer", "player", "refuseOrder", new TA_KojoContext { speakerIsDoer = true, accepted = false }, true);
         System("→ 之后开始事件 OnAPRefuse（玩家=请求者，拒绝的施方 NPC=拒绝者）");
@@ -536,10 +540,12 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
 
     void TemplateKojo(string phaseId, string suffix, string speaker, string listener, string outcome, TA_KojoContext ctx, bool ordered = false)
     {
-        JToken phase = null;
-        foreach (var t in TA_CaseTemplate.Kojo)
-            if ((string)t["id"] == phaseId) { phase = t; break; }
-        var who = CaseCast(phase, new KojoCaseSpec { speaker = speaker, listener = listener, outcome = outcome, suffix = suffix, ordered = ordered });
+        var phase = KojoPhase(phaseId);
+        if (phase?["whenByListener"] != null && !KojoListenerAllowed(phase, listener, Facts().Flags())) return;
+        if (listener == "player" || listener == "npc") ctx.listenerIsPlayer = listener == "player";
+        var spec = new KojoCaseSpec { speaker = speaker, listener = listener, outcome = outcome, suffix = suffix, ordered = ordered };
+        ctx.refusalContext = spec.RefusalContext;
+        var who = CaseCast(phase, spec);
         Kojo(suffix, (string)who["self"], (string)who["target"], ctx, who);
     }
 
@@ -674,12 +680,14 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
                 }, consumer, TA_KojoSeverity.Optional, who);
             }
         }
+        var orderedLevel = t?.FindLevel("ordered");
         foreach (var speaker in phase["speakers"] as JArray ?? new JArray())
         {
             var role = (string)speaker;
             if (role == "self" && !solo || (role == "doer" || role == "receiver") && !pair) continue;
             Block(role);
-            if (role == "doer" || role == "self") Block(role, true);
+            if (orderedLevel != null && (orderedLevel.forRoles.Count > 0 ? orderedLevel.forRoles.Contains(role) : (role == "doer" || role == "self")))
+                Block(role, true);
         }
     }
 

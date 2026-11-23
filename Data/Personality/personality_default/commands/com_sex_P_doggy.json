@@ -63,24 +63,50 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "sleeping", "pain"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "sleeping",
+                                "pain"
+                            ],
                             "_comment": "初体验 开始后背位V 睡眠中",
-                            "responses": ["com_sex_P_doggy_Begin_FE_Sleep_1", "com_sex_P_doggy_Begin_FE_Sleep_2"]
+                            "responses": [
+                                "com_sex_P_doggy_Begin_FE_Sleep_1",
+                                "com_sex_P_doggy_Begin_FE_Sleep_2"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "timestop"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 开始后背位V 时停中",
-                            "responses": ["com_sex_P_doggy_Begin_FE_Timestop_1", "com_sex_P_doggy_Begin_FE_Timestop_2"]
+                            "responses": [
+                                "com_sex_P_doggy_Begin_FE_Timestop_1",
+                                "com_sex_P_doggy_Begin_FE_Timestop_2"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_V"]
+                                "selfTags": [
+                                    "firstexp_V"
+                                ]
                             },
                             "variants": [
                                 {
@@ -88,38 +114,91 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "tearful", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "pain",
+                                        "tearful",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 开始后背位V 有允许",
-                                    "responses": ["com_sex_P_doggy_Begin_FE_Player_1", "com_sex_P_doggy_Begin_FE_Player_2"]
+                                    "responses": [
+                                        "com_sex_P_doggy_Begin_FE_Player_1",
+                                        "com_sex_P_doggy_Begin_FE_Player_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "tearful"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "pain",
+                                        "tearful"
+                                    ],
                                     "_comment": "初体验 开始后背位V 有允许",
-                                    "responses": ["com_sex_P_doggy_Begin_FE_1", "com_sex_P_doggy_Begin_FE_2"]
+                                    "responses": [
+                                        "com_sex_P_doggy_Begin_FE_1",
+                                        "com_sex_P_doggy_Begin_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "tearful", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "pain",
+                                        "tearful",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 开始后背位V 未允许 好意",
-                                    "responses": ["com_sex_P_doggy_Begin_FE_3", "com_sex_P_doggy_Begin_FE_4"]
+                                    "responses": [
+                                        "com_sex_P_doggy_Begin_FE_3",
+                                        "com_sex_P_doggy_Begin_FE_4"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "fear", "pain", "tearful", "trembling"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "fear",
+                                "pain",
+                                "tearful",
+                                "trembling"
+                            ],
                             "_comment": "初体验 开始后背位V 未允许 敌意",
-                            "responses": ["com_sex_P_doggy_Begin_FE_5", "com_sex_P_doggy_Begin_FE_6"]
+                            "responses": [
+                                "com_sex_P_doggy_Begin_FE_5",
+                                "com_sex_P_doggy_Begin_FE_6"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_V"]
+                                "selfTags": [
+                                    "firstexp_partner_V"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "doggy", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "doggy",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 开始后背位V（插入的一方）",
-                            "responses": ["com_sex_P_doggy_Begin_FE_Partner_1", "com_sex_P_doggy_Begin_FE_Partner_2"]
+                            "responses": [
+                                "com_sex_P_doggy_Begin_FE_Partner_1",
+                                "com_sex_P_doggy_Begin_FE_Partner_2"
+                            ]
                         },
                         {
                             "requirement": {
@@ -128,7 +207,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_P_doggy_Begin_Sleep_1",
@@ -142,7 +227,15 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_P_doggy_Begin_Timestop_1",
@@ -214,24 +307,48 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "sleeping", "pain"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "sleeping",
+                                "pain"
+                            ],
                             "_comment": "初体验 睡眠中 后背位V",
-                            "responses": ["com_sex_P_doggy_FE_Sleep_1"]
+                            "responses": [
+                                "com_sex_P_doggy_FE_Sleep_1"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_V", "timestop"]
+                                "selfTags": [
+                                    "firstexp_V",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 时停中 后背位V",
-                            "responses": ["com_sex_P_doggy_FE_Timestop_1"]
+                            "responses": [
+                                "com_sex_P_doggy_FE_Timestop_1"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_V"]
+                                "selfTags": [
+                                    "firstexp_V"
+                                ]
                             },
                             "variants": [
                                 {
@@ -239,38 +356,83 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "pain",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 后背位V 有允许",
-                                    "responses": ["com_sex_P_doggy_FE_Player_1"]
+                                    "responses": [
+                                        "com_sex_P_doggy_FE_Player_1"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "pain"
+                                    ],
                                     "_comment": "初体验 后背位V 有允许（还在适应）",
-                                    "responses": ["com_sex_P_doggy_FE_1", "com_sex_P_doggy_FE_2"]
+                                    "responses": [
+                                        "com_sex_P_doggy_FE_1",
+                                        "com_sex_P_doggy_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doggy",
+                                        "blush",
+                                        "pain",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 后背位V 未允许 好意（还在适应）",
-                                    "responses": ["com_sex_P_doggy_FE_3"]
+                                    "responses": [
+                                        "com_sex_P_doggy_FE_3"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "pain", "tearful", "cry"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "doggy",
+                                "pain",
+                                "tearful",
+                                "cry"
+                            ],
                             "_comment": "初体验 后背位V 未允许 敌意",
-                            "responses": ["com_sex_P_doggy_FE_4", "com_sex_P_doggy_FE_5"]
+                            "responses": [
+                                "com_sex_P_doggy_FE_4",
+                                "com_sex_P_doggy_FE_5"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_V"]
+                                "selfTags": [
+                                    "firstexp_partner_V"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "doggy"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "doggy"
+                            ],
                             "_comment": "对方初体验 后背位V（插入的一方）",
-                            "responses": ["com_sex_P_doggy_FE_Partner_1"]
+                            "responses": [
+                                "com_sex_P_doggy_FE_Partner_1"
+                            ]
                         },
                         {
                             "requirement": {
@@ -316,112 +478,6 @@
                                 "com_sex_P_doggy_6",
                                 "com_sex_P_doggy_7",
                                 "com_sex_P_doggy_8"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ],
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true,
-                                                "requireEPSuccess": false
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被后背位V 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_P_doggy_9",
-                                                "com_sex_P_doggy_10"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被后背位V 口上文 无允许",
-                                    "responses": [
-                                        "com_sex_P_doggy_11",
-                                        "com_sex_P_doggy_12"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被后背位V 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_P_doggy_13",
-                                        "com_sex_P_doggy_14"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被后背位V 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_P_doggy_15",
-                                        "com_sex_P_doggy_16"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被后背位V 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_P_doggy_17",
-                                "com_sex_P_doggy_18"
                             ]
                         },
                         {
@@ -577,6 +633,124 @@
                     ],
                     "template": "commandResult"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_P_doggy_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被后背位V 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_P_doggy_9",
+                                                "com_sex_P_doggy_10"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被后背位V 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_P_doggy_11",
+                                        "com_sex_P_doggy_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被后背位V 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_doggy_13",
+                                        "com_sex_P_doggy_14"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被后背位V 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_P_doggy_15",
+                                        "com_sex_P_doggy_16"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被后背位V 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_P_doggy_17",
+                                "com_sex_P_doggy_18"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
             }
         ]
     },
@@ -630,7 +804,6 @@
                 "com_sex_P_doggy_Begin_Sleep_2": "肉棒整根没入时$self$在梦里皱了皱眉，喉咙里哼出一声含糊的鼻音，穴肉本能地裹紧入侵者，呼吸却始终平稳。",
                 "com_sex_P_doggy_Begin_Timestop_1": "$target$掰开她定格的臀瓣从后方抵入，穴口被龟头缓缓撑开，含住的软肉不受控地收缩吮紧，$self$的眼神停在半空没动。",
                 "com_sex_P_doggy_Begin_Timestop_2": "肉棒整根没入时，$self$垂在身侧的手还悬在离地半寸的地方，定格的房间里只剩穴肉吞吐的水声在响。",
-
                 "com_sex_P_doggy_Begin_FE_Sleep_1": "睡梦中的$self$身子猛地一颤，含糊地哼了声，血丝顺着身后的结合处淌了下来。",
                 "com_sex_P_doggy_Begin_FE_Sleep_2": "$self$不安地往前缩了缩腰，无意识地并紧了腿，呼吸很快又平稳下来，浑然不知自己的第一次已经没了。",
                 "com_sex_P_doggy_Begin_FE_Timestop_1": "处女膜在凝固的时间里无声地破开，$self$保持着趴伏的姿势纹丝不动，鲜血从身后缓缓渗出。",
@@ -645,7 +818,6 @@
                 "com_sex_P_doggy_Begin_FE_6": "\"……我记住你了。\"\n\n落红顺着腿根淌下来，$self$一声不吭地攥紧了床单。",
                 "com_sex_P_doggy_Begin_FE_Partner_1": "\"你……是第一次？\"\n\n身后的紧致紧得发疼，$self$愣了一下。",
                 "com_sex_P_doggy_Begin_FE_Partner_2": "\"……为什么不早说。\"\n\n看到结合处渗出的血丝，$self$停下了腰。",
-
                 "com_sex_P_doggy_FE_Sleep_1": "睡梦中的$self$眉头紧皱着，初次被撑开的地方还在隐隐渗血。",
                 "com_sex_P_doggy_FE_Timestop_1": "血丝混着爱液从身后的结合处溢出，定格的$self$没有任何反应。",
                 "com_sex_P_doggy_FE_Player_1": "\"还是有点疼……但是，好像慢慢可以了……\"\n\n$self$回过头看了$target$一眼，红着脸小声说。",

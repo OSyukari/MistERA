@@ -102,7 +102,14 @@ public abstract partial class TA_DocBuilderBase
     /// 31: shared case/scene profiles, deferred scene text, and dedicated authoring coverage.
     /// 32: writing assignments carry speaker, listener and command cast context.
     /// 33: command scene and case casts use shared template metadata.
-    public const int ExtractorVersion = 33;
+    /// 34: command kojo eligibility varies by listener; newcomer headings use the resolved self role.
+    /// 35: lint L6 activeTagsOff exempts _Refuse and _JoinFailed keys.
+    /// 37: partner-agnostic default listeners, per-state result_success/result_failure + requireEPSuccessLTE,
+    ///     commandInterrupt template, template-driven ordered scene blocks and refusalContext, Scene 5 NPC listener context.
+    /// 38: per-event kojo template configs (Templates/events/<id>.json), event template axes, self-target & partner fixes.
+    /// 39: resolve %%key%% in read-only event text (E4), collapse pure-routing event branches onto text entries (E5).
+    /// 40: group parallel OR-branches per gate and drop redundant suffix-covered prefix chains in FlowView.
+    public const int ExtractorVersion = 40;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();
@@ -846,6 +853,32 @@ public abstract partial class TA_DocBuilderBase
         var entries = LocalizeDictionary.Instance?.Index?.Entries;
         if (entries == null) return false;
         return (entries.TryGetValue("zh-cn", out var zh) && zh.ContainsKey(key)) || (entries.TryGetValue("default", out var def) && def.ContainsKey(key));
+    }
+
+    static readonly System.Text.RegularExpressions.Regex embeddedKeyPattern = new System.Text.RegularExpressions.Regex(@"%%(\S+?)%%");
+
+    /// <summary>
+    /// Expands embedded `%%key%%` dictionary references (mirroring LocalizeDictionary.Parse, up to 20 passes)
+    /// until no further resolvable keys match. Used for read-only display so editable text keeps its raw tokens.
+    /// </summary>
+    public static string ResolveEmbeddedKeys(string text)
+    {
+        if (string.IsNullOrEmpty(text) || text.IndexOf("%%", StringComparison.Ordinal) < 0) return text ?? "";
+        var current = text;
+        for (int pass = 0; pass < 20; pass++)
+        {
+            bool changed = false;
+            var next = embeddedKeyPattern.Replace(current, m =>
+            {
+                var k = m.Groups[1].Value;
+                if (!IsDictKey(k)) return m.Value;
+                changed = true;
+                return ZH(k);
+            });
+            current = next;
+            if (!changed) break;
+        }
+        return current;
     }
 
     public static string OneLine(string s) { return (s ?? "").Replace("\r", "").Replace("\n", "\\n"); }

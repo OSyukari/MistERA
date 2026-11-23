@@ -1,0 +1,26 @@
+{
+  "_comment": "Command `<COM>_Interrupt` kojo: the act's participants react when someone walks in on the act (MapUtility.CheckReverseInterrupt; listener = the newcomer). Accepted acts only; a refuse branch can never pass here.",
+  "id": "commandInterrupt",
+  "label": "被撞见口上",
+  "inner": "interaction",
+  "bindCommand": ["_Interrupt"],
+
+  "fallback": {
+    "label": "兜底（被撞见）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "allowRecording": true }
+  },
+
+  "levels": [
+    {
+      "id": "role", "label": "说话者角色",
+      "leaves": {
+        "doer": { "label": "施方", "variant": { "requireSelfDoer": true } },
+        "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } }
+      }
+    }
+  ],
+
+  "misplaced": [
+    { "requirement": { "requireEPFailure": true }, "label": "拒绝分支（被撞见口上不会在拒绝时取）" }
+  ]
+}

@@ -69,24 +69,54 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "sleeping", "pain"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "sleeping",
+                                "pain"
+                            ],
                             "_comment": "初体验 开始被强制口交 睡眠中",
-                            "responses": ["com_sex_oral_P_Force_Begin_FE_Sleep_1", "com_sex_oral_P_Force_Begin_FE_Sleep_2"]
+                            "responses": [
+                                "com_sex_oral_P_Force_Begin_FE_Sleep_1",
+                                "com_sex_oral_P_Force_Begin_FE_Sleep_2"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "timestop"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 开始被强制口交 时停中",
-                            "responses": ["com_sex_oral_P_Force_Begin_FE_Timestop_1", "com_sex_oral_P_Force_Begin_FE_Timestop_2"]
+                            "responses": [
+                                "com_sex_oral_P_Force_Begin_FE_Timestop_1",
+                                "com_sex_oral_P_Force_Begin_FE_Timestop_2"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_M"]
+                                "selfTags": [
+                                    "firstexp_M"
+                                ]
                             },
                             "variants": [
                                 {
@@ -94,38 +124,99 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "blush", "pain", "tearful"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "pain",
+                                        "tearful"
+                                    ],
                                     "_comment": "初体验 玩家专用 开始被强制口交 有允许",
-                                    "responses": ["com_sex_oral_P_Force_Begin_FE_Player_1", "com_sex_oral_P_Force_Begin_FE_Player_2"]
+                                    "responses": [
+                                        "com_sex_oral_P_Force_Begin_FE_Player_1",
+                                        "com_sex_oral_P_Force_Begin_FE_Player_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "blush", "pain", "tearful"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "pain",
+                                        "tearful"
+                                    ],
                                     "_comment": "初体验 开始被强制口交 有允许",
-                                    "responses": ["com_sex_oral_P_Force_Begin_FE_1", "com_sex_oral_P_Force_Begin_FE_2"]
+                                    "responses": [
+                                        "com_sex_oral_P_Force_Begin_FE_1",
+                                        "com_sex_oral_P_Force_Begin_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "blush", "pain", "trembling"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "pain",
+                                        "trembling"
+                                    ],
                                     "_comment": "初体验 开始被强制口交 未允许 好意",
-                                    "responses": ["com_sex_oral_P_Force_Begin_FE_3", "com_sex_oral_P_Force_Begin_FE_4"]
+                                    "responses": [
+                                        "com_sex_oral_P_Force_Begin_FE_3",
+                                        "com_sex_oral_P_Force_Begin_FE_4"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "fear", "pain", "tearful", "trembling"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "fear",
+                                "pain",
+                                "tearful",
+                                "trembling"
+                            ],
                             "_comment": "初体验 开始被强制口交 未允许 敌意",
-                            "responses": ["com_sex_oral_P_Force_Begin_FE_5", "com_sex_oral_P_Force_Begin_FE_6"]
+                            "responses": [
+                                "com_sex_oral_P_Force_Begin_FE_5",
+                                "com_sex_oral_P_Force_Begin_FE_6"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_M"]
+                                "selfTags": [
+                                    "firstexp_partner_M"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "irrumatio", "blowjob", "forced", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 开始被强制口交（使用对方嘴的一方）",
-                            "responses": ["com_sex_oral_P_Force_Begin_FE_Partner_1", "com_sex_oral_P_Force_Begin_FE_Partner_2"]
+                            "responses": [
+                                "com_sex_oral_P_Force_Begin_FE_Partner_1",
+                                "com_sex_oral_P_Force_Begin_FE_Partner_2"
+                            ]
                         },
                         {
                             "requirement": {
@@ -134,7 +225,15 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_P_Force_Begin_Sleep_1",
@@ -148,7 +247,17 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_P_Force_Begin_Timestop_1",
@@ -229,24 +338,52 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "sleeping", "pain"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "sleeping",
+                                "pain"
+                            ],
                             "_comment": "初体验 睡眠中 被强制口交",
-                            "responses": ["com_sex_oral_P_Force_FE_Sleep_1"]
+                            "responses": [
+                                "com_sex_oral_P_Force_FE_Sleep_1"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "timestop"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 时停中 被强制口交",
-                            "responses": ["com_sex_oral_P_Force_FE_Timestop_1"]
+                            "responses": [
+                                "com_sex_oral_P_Force_FE_Timestop_1"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_M"]
+                                "selfTags": [
+                                    "firstexp_M"
+                                ]
                             },
                             "variants": [
                                 {
@@ -254,38 +391,93 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "blush", "pain", "tearful"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "pain",
+                                        "tearful"
+                                    ],
                                     "_comment": "初体验 玩家专用 被强制口交 有允许",
-                                    "responses": ["com_sex_oral_P_Force_FE_Player_1"]
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_Player_1"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "blush", "pain"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "pain"
+                                    ],
                                     "_comment": "初体验 被强制口交 有允许（还不习惯）",
-                                    "responses": ["com_sex_oral_P_Force_FE_1", "com_sex_oral_P_Force_FE_2"]
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_1",
+                                        "com_sex_oral_P_Force_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "blush", "pain", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced",
+                                        "blush",
+                                        "pain",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 被强制口交 未允许 好意（还不习惯）",
-                                    "responses": ["com_sex_oral_P_Force_FE_3"]
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_3"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "receiver", "irrumatio", "blowjob", "forced", "pain", "tearful", "cry"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "irrumatio",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "tearful",
+                                "cry"
+                            ],
                             "_comment": "初体验 被强制口交 未允许 敌意",
-                            "responses": ["com_sex_oral_P_Force_FE_4", "com_sex_oral_P_Force_FE_5"]
+                            "responses": [
+                                "com_sex_oral_P_Force_FE_4",
+                                "com_sex_oral_P_Force_FE_5"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_M"]
+                                "selfTags": [
+                                    "firstexp_partner_M"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "irrumatio", "blowjob", "forced"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "irrumatio",
+                                "blowjob",
+                                "forced"
+                            ],
                             "_comment": "对方初体验 被强制口交（使用对方嘴的一方）",
-                            "responses": ["com_sex_oral_P_Force_FE_Partner_1"]
+                            "responses": [
+                                "com_sex_oral_P_Force_FE_Partner_1"
+                            ]
                         },
                         {
                             "requirement": {
@@ -333,117 +525,6 @@
                                 "com_sex_oral_P_Force_4",
                                 "com_sex_oral_P_Force_5",
                                 "com_sex_oral_P_Force_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ],
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true,
-                                                "requireEPSuccess": false
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被强制口交 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_oral_P_Force_7",
-                                                "com_sex_oral_P_Force_8",
-                                                "com_sex_oral_P_Force_9"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被强制口交 口上文 无允许",
-                                    "responses": [
-                                        "com_sex_oral_P_Force_10",
-                                        "com_sex_oral_P_Force_11",
-                                        "com_sex_oral_P_Force_12"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被强制口交 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_P_Force_13",
-                                        "com_sex_oral_P_Force_14",
-                                        "com_sex_oral_P_Force_15"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被强制口交 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_oral_P_Force_16",
-                                        "com_sex_oral_P_Force_17",
-                                        "com_sex_oral_P_Force_18"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被强制口交 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_oral_P_Force_19",
-                                "com_sex_oral_P_Force_20",
-                                "com_sex_oral_P_Force_21"
                             ]
                         },
                         {
@@ -620,6 +701,129 @@
                     ],
                     "template": "commandResult"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_Force_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被强制口交 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_7",
+                                                "com_sex_oral_P_Force_8",
+                                                "com_sex_oral_P_Force_9"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被强制口交 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_10",
+                                        "com_sex_oral_P_Force_11",
+                                        "com_sex_oral_P_Force_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被强制口交 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_13",
+                                        "com_sex_oral_P_Force_14",
+                                        "com_sex_oral_P_Force_15"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被强制口交 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_16",
+                                        "com_sex_oral_P_Force_17",
+                                        "com_sex_oral_P_Force_18"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被强制口交 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_Force_19",
+                                "com_sex_oral_P_Force_20",
+                                "com_sex_oral_P_Force_21"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
             }
         ]
     },
@@ -688,7 +892,6 @@
                 "com_sex_oral_P_Force_Begin_Sleep_2": "喉咙被龟头撑开碾转，$self$的眉头紧紧皱起，口水顺着撑开的嘴角淌下，睡梦里只本能地吞咽着。",
                 "com_sex_oral_P_Force_Begin_Timestop_1": "肉棒从$self$张着的嘴里顶进来，直抵喉咙碾转，定格的软腭被龟头蹭得发红，喉咙深处的痉挛缩到中途就停在了那里。",
                 "com_sex_oral_P_Force_Begin_Timestop_2": "$self$的眼皮定在半阖的位置，睫毛上挂着将落未落的泪，口水顺着撑开的嘴角淌成线，悬在静止的空气里不落。",
-
                 "com_sex_oral_P_Force_Begin_FE_Sleep_1": "睡梦中的$self$喉咙里挤出难受的呜咽，被撑开的嘴角淌下涎水，人却醒不过来。",
                 "com_sex_oral_P_Force_Begin_FE_Sleep_2": "$self$在睡梦中不安地挣了挣，喉咙深处发出含糊的哽咽，浑然不知自己的第一次正被这样夺走。",
                 "com_sex_oral_P_Force_Begin_FE_Timestop_1": "肉棒在凝固的时间里顶开$self$的唇，初次的侵犯在静止的口腔里进行，她连睫毛都没颤。",
@@ -703,7 +906,6 @@
                 "com_sex_oral_P_Force_Begin_FE_6": "\"我会杀了你的……唔……！\"\n\n$self$含着那根东西，指甲掐进了掌心。",
                 "com_sex_oral_P_Force_Begin_FE_Partner_1": "\"喉咙这么紧……你是第一次？\"\n\n感觉到紧裹的软肉，$self$愣了一下。",
                 "com_sex_oral_P_Force_Begin_FE_Partner_2": "\"……第一次就被我这样用，委屈你了。\"\n\n$self$低头看着满脸泪水的对方，放缓了顶弄。",
-
                 "com_sex_oral_P_Force_FE_Sleep_1": "睡梦中的$self$喉咙发出细小的哽咽，初次被占用的嘴角还挂着涎水。",
                 "com_sex_oral_P_Force_FE_Timestop_1": "初次领教的喉咙深处的异物感还在，定格的$self$没有任何反应。",
                 "com_sex_oral_P_Force_FE_Player_1": "\"唔……我第一次……做得还行吗……\"\n\n$self$含混地抬头看向$target$，眼眶红红的。",

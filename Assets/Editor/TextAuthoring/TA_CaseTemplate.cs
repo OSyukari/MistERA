@@ -21,40 +21,68 @@ public static class TA_CaseTemplate
     };
 
     public static string Dir { get { return Path.Combine(Path.GetDirectoryName(Application.dataPath), "Docs", "TextAuthoring", "Templates"); } }
+    public static string EventDir { get { return Path.Combine(Dir, "events"); } }
 
     static JObject cases, tiers, eventKojo;
+    static Dictionary<string, JObject> eventFiles = new Dictionary<string, JObject>();
     static DateTime casesStamp, tiersStamp, eventKojoStamp;
+    static string eventDirStamp = "";
     static string error;
     /// <summary>Template problems found on load (unsupported narration stats, unknown tier sets); shown in the extraction log.</summary>
     public static readonly List<string> warnings = new List<string>();
 
-    /// <summary>Loads (or re-loads when changed) both files. Null = ok, else the error.</summary>
+    static string ComputeEventDirStamp()
+    {
+        if (!Directory.Exists(EventDir)) return "";
+        var files = Directory.GetFiles(EventDir, "*.json");
+        Array.Sort(files, StringComparer.Ordinal);
+        var sb = new System.Text.StringBuilder();
+        for (int i = 0; i < files.Length; i++)
+            sb.Append(Path.GetFileName(files[i])).Append(':').Append(File.GetLastWriteTimeUtc(files[i]).Ticks).Append(';');
+        return sb.ToString();
+    }
+
+    /// <summary>Loads (or re-loads when changed) all template files. Null = ok, else the error.</summary>
     public static string Load()
     {
         var cp = Path.Combine(Dir, "cases.json");
         var tp = Path.Combine(Dir, "tiers.json");
         if (!File.Exists(cp)) return error = "Missing case template " + cp;
         if (!File.Exists(tp)) return error = "Missing tier template " + tp;
-        // event kojo lookup specs (§6.1): optional
+        // legacy shared eventKojo.json + per-event Templates/events/<eventID>.json: both optional
         var ep = Path.Combine(Dir, "eventKojo.json");
         var cs = File.GetLastWriteTimeUtc(cp);
         var ts = File.GetLastWriteTimeUtc(tp);
         var es = File.Exists(ep) ? File.GetLastWriteTimeUtc(ep) : DateTime.MinValue;
-        if (cases != null && tiers != null && cs == casesStamp && ts == tiersStamp && es == eventKojoStamp) return error;
+        var eds = ComputeEventDirStamp();
+        if (cases != null && tiers != null && cs == casesStamp && ts == tiersStamp && es == eventKojoStamp && eds == eventDirStamp) return error;
         try
         {
             cases = JObject.Parse(File.ReadAllText(cp));
             tiers = JObject.Parse(File.ReadAllText(tp));
             eventKojo = File.Exists(ep) ? JObject.Parse(File.ReadAllText(ep)) : new JObject();
+            eventFiles = new Dictionary<string, JObject>();
+            if (Directory.Exists(EventDir))
+            {
+                var files = Directory.GetFiles(EventDir, "*.json");
+                Array.Sort(files, StringComparer.Ordinal);
+                for (int i = 0; i < files.Length; i++)
+                {
+                    var id = Path.GetFileNameWithoutExtension(files[i]);
+                    eventFiles[id] = JObject.Parse(File.ReadAllText(files[i]));
+                }
+            }
         }
         catch (Exception e)
         {
             cases = tiers = eventKojo = null;
+            eventFiles = new Dictionary<string, JObject>();
             return error = "Case template unreadable: " + e.Message;
         }
         casesStamp = cs;
         tiersStamp = ts;
         eventKojoStamp = es;
+        eventDirStamp = eds;
         error = null;
         Check();
         return null;
@@ -85,24 +113,47 @@ public static class TA_CaseTemplate
             }
         if (eventKojo?["events"] is JObject evs)
             foreach (var ev in evs.Properties())
-            {
-                if (!(ev.Value is JObject lookups)) continue;
-                foreach (var lk in lookups.Properties())
-                {
-                    var t = (string)lk.Value["tiers"];
-                    if (t != null && Tiers(t) == null) warnings.Add($"eventKojo {ev.Name}/{lk.Name}: tier set `{t}` is not in tiers.json");
-                    if (lk.Value["states"] is JArray sts)
-                        for (int i = 0; i < sts.Count; i++)
-                            if (States[(string)sts[i]] == null) warnings.Add($"eventKojo {ev.Name}/{lk.Name}: state `{(string)sts[i]}` is not in cases.json states");
-                }
-            }
+                CheckEventLookups(ev.Name, ev.Value as JObject);
+        foreach (var kv in eventFiles)
+            CheckEventLookups(kv.Key, kv.Value?["lookups"] as JObject ?? kv.Value);
+    }
+
+    static void CheckEventLookups(string eventID, JObject lookups)
+    {
+        if (lookups == null) return;
+        foreach (var lk in lookups.Properties())
+        {
+            if (lk.Name == "roles" || lk.Name == "version" || lk.Name.StartsWith("_", StringComparison.Ordinal)) continue;
+            if (!(lk.Value is JObject spec)) continue;
+            var t = (string)spec["tiers"];
+            if (!string.IsNullOrEmpty(t) && Tiers(t) == null) warnings.Add($"event {eventID}/{lk.Name}: tier set `{t}` is not in tiers.json");
+            if (spec["states"] is JArray sts)
+                for (int i = 0; i < sts.Count; i++)
+                    if (States[(string)sts[i]] == null) warnings.Add($"event {eventID}/{lk.Name}: state `{(string)sts[i]}` is not in cases.json states");
+            if (spec["targetStates"] is JArray tsts)
+                for (int i = 0; i < tsts.Count; i++)
+                    if (States[(string)tsts[i]] == null) warnings.Add($"event {eventID}/{lk.Name}: targetState `{(string)tsts[i]}` is not in cases.json states");
+        }
     }
 
     /// <summary>
-    /// Kojo lookup specs of an event (eventKojo.json `events.&lt;eventID&gt;`: { "&lt;kojo key or $storeKey$ name&gt;": spec });
-    /// null when it has none (its lookups keep the plain rule: some kojo).
+    /// Standalone per-event config (`Templates/events/&lt;eventID&gt;.json`: { roles, lookups }), falling back to legacy
+    /// `eventKojo.json` (`events.&lt;eventID&gt;`). Null when neither exists.
     /// </summary>
-    public static JObject EventSpecs(string eventID) { return eventKojo?["events"]?[eventID] as JObject; }
+    public static JObject EventConfig(string eventID)
+    {
+        if (eventFiles.TryGetValue(eventID, out var file)) return file;
+        var legacy = eventKojo?["events"]?[eventID] as JObject;
+        return legacy != null ? new JObject { ["lookups"] = legacy } : null;
+    }
+
+    /// <summary>Kojo lookup specs of an event ({ "&lt;kojo key or $storeKey$ name&gt;": spec }); null when it has none.</summary>
+    public static JObject EventSpecs(string eventID)
+    {
+        var cfg = EventConfig(eventID);
+        if (cfg == null) return null;
+        return cfg["lookups"] as JObject ?? cfg;
+    }
 
     public static JObject Cases { get { return cases; } }
     public static JObject States { get { return cases?["states"] as JObject ?? new JObject(); } }
@@ -165,8 +216,15 @@ public static class TA_CaseTemplate
         get
         {
             if (cases == null || tiers == null) return "";
-            return TA_DocBuilderBase.Sha1Hex(cases.ToString(Newtonsoft.Json.Formatting.None) + tiers.ToString(Newtonsoft.Json.Formatting.None)
-                + (eventKojo?.ToString(Newtonsoft.Json.Formatting.None) ?? "")).Substring(0, 8);
+            var sb = new System.Text.StringBuilder();
+            sb.Append(cases.ToString(Newtonsoft.Json.Formatting.None))
+              .Append(tiers.ToString(Newtonsoft.Json.Formatting.None))
+              .Append(eventKojo?.ToString(Newtonsoft.Json.Formatting.None) ?? "");
+            var keys = new List<string>(eventFiles.Keys);
+            keys.Sort(StringComparer.Ordinal);
+            for (int i = 0; i < keys.Count; i++)
+                sb.Append(keys[i]).Append('=').Append(eventFiles[keys[i]].ToString(Newtonsoft.Json.Formatting.None));
+            return TA_DocBuilderBase.Sha1Hex(sb.ToString()).Substring(0, 8);
         }
     }
 }

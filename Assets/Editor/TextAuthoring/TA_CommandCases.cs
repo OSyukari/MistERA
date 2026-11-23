@@ -21,13 +21,14 @@ public partial class TA_CommandDocBuilder
         /// pair = acted on a receiver (doer / receiver cases), solo = acted alone (self cases); both for a command that can
         /// do either (COM.kojoParticipants via TA_KojoParticipants.DocShapes, Plan_KojoTemplates.md §7.12).
         /// </summary>
-        public bool pair, solo, ongoing, sex, d20, joinable, strong, group, itemExec;
+        public bool pair, solo, ongoing, partnerEnding, sex, d20, joinable, strong, group, itemExec;
         public HashSet<string> Flags()
         {
             var f = new HashSet<string>();
             if (pair) f.Add("pair");
             if (solo) f.Add("solo");
             if (ongoing) f.Add("ongoing");
+            if (partnerEnding) f.Add("partnerEnding");
             if (sex) f.Add("sex");
             if (d20) f.Add("d20");
             if (joinable) f.Add("joinable");
@@ -46,6 +47,8 @@ public partial class TA_CommandDocBuilder
             pair = pair,
             solo = solo,
             ongoing = com.TimeScale > 1,
+            // LogMessage_After requires Success (not merely Accept) and skips COM_Sex.
+            partnerEnding = pair && !(com is COM_Sex) && com.baseD20Check > 0,
             sex = com.comTags.Contains("sex"),
             d20 = com.baseD20Check > 0,
             joinable = com.allowJoining,
@@ -102,10 +105,12 @@ public partial class TA_CommandDocBuilder
         return false;
     }
 
-    static bool When(JToken item, HashSet<string> flags)
+    static bool When(JToken item, HashSet<string> flags) => HasFlags(item["when"] as JArray, flags);
+
+    static bool HasFlags(JArray required, HashSet<string> flags)
     {
-        if (!(item["when"] is JArray w)) return true;
-        for (int i = 0; i < w.Count; i++) if (!flags.Contains((string)w[i])) return false;
+        if (required == null) return true;
+        for (int i = 0; i < required.Count; i++) if (!flags.Contains((string)required[i])) return false;
         return true;
     }
 
@@ -318,6 +323,16 @@ public partial class TA_CommandDocBuilder
 
     // ---------------------------------------------------------------- kojo
 
+    static JToken KojoPhase(string id)
+    {
+        foreach (var phase in TA_CaseTemplate.Kojo)
+            if ((string)phase["id"] == id) return phase;
+        return null;
+    }
+
+    static bool KojoListenerAllowed(JToken phase, string listener, HashSet<string> flags) =>
+        HasFlags(phase?["whenByListener"]?[listener] as JArray, flags);
+
     static List<string> CaseListeners(JToken template, string speaker)
     {
         var listeners = new List<string>();
@@ -325,7 +340,7 @@ public partial class TA_CommandDocBuilder
         if (explicitListeners != null)
             for (int i = 0; i < explicitListeners.Count; i++) listeners.Add((string)explicitListeners[i]);
         else if (speaker == "joiner") listeners.Add("player");
-        else if (speaker != "self") { listeners.Add("player"); listeners.Add("npc"); }
+        else if (speaker != "self") listeners.Add("partner");
         else { listeners.Add("self"); listeners.Add("player"); }
         return listeners;
     }
@@ -438,6 +453,7 @@ public partial class TA_CommandDocBuilder
                     for (int li = 0; li < listeners.Count; li++)
                     {
                         var listener = listeners[li];
+                        if (!KojoListenerAllowed(t, listener, flags)) continue;
                         for (int ls = 0; ls < listenerStates.Count; ls++)
                         {
                             var lState = listener == "self" ? sState : listenerStates[ls];
@@ -449,25 +465,43 @@ public partial class TA_CommandDocBuilder
                                 if (outcome == "refuse" && !CanRefuse(receiverState, listener, requireState, speaker == "self")) continue;
                                 // the doer refusing its master's order (EvaluationPackage.LogMessage_Kojo: kojo to the master)
                                 if (outcome == "refuseOrder" && (!ordered || speaker != "doer" || sState != "awake")) continue;
-                                var results = outcome == "accept" && d20 ? new[] { "success", "failure" } : new[] { outcome };
-                                for (int r = 0; r < results.Length; r++)
+                                var outcomesList = new List<(string result, bool? reqOverride)>();
+                                if (outcome == "accept" && d20)
+                                {
+                                    var sDef = StateDef(sState);
+                                    var sucMode = (string)sDef?["result_success"] ?? "required";
+                                    var failMode = (string)sDef?["result_failure"] ?? "required";
+                                    if (sucMode != "required" || failMode != "required") outcomesList.Add(("accept", null));
+                                    if (sucMode != "omit") outcomesList.Add(("success", sucMode == "required" ? (bool?)null : false));
+                                    if (failMode != "omit") outcomesList.Add(("failure", failMode == "required" ? (bool?)null : false));
+                                }
+                                else outcomesList.Add((outcome, null));
+                                for (int r = 0; r < outcomesList.Count; r++)
                                     for (int s = 0; s < suffixes.Count; s++)
                                     {
+                                        var res = outcomesList[r].result;
+                                        bool baseRequired = assign || required && (lState == "awake" || listener == "self");
                                         var spec = new KojoCaseSpec
                                         {
-                                            phase = id, label = label, suffix = suffixes[s], fallback = (string)t["fallback"],
+                                            phase = id, label = (string)t["labelsByListener"]?[listener] ?? label, suffix = suffixes[s], fallback = (string)t["fallback"],
                                             speaker = speaker, speakerState = sState, listener = listener, listenerState = lState,
-                                            outcome = results[r], outcomeLabel = (string)t["suffixLabels"]?[suffixes[s]],
-                                            tierSet = IsRefusal(results[r]) || IsJoinRefused(results[r]) ? null : (string)t["tiers"], ordered = ordered,
+                                            outcome = res, outcomeLabel = (string)t["suffixLabels"]?[suffixes[s]],
+                                            tierSet = IsRefusal(res) || IsJoinRefused(res) ? null : (string)t["tiers"], ordered = ordered,
                                             // join lookups run without an action package (Job.JoinPackage)
                                             noEP = speaker == "joiner",
                                             // only the reacting side's own situation is required; the other side's states are optional
-                                            required = assign || required && (lState == "awake" || listener == "self")
+                                            required = outcomesList[r].reqOverride ?? baseRequired,
+                                            lookupSuffix = suffixes[s] == "" && IsRefusal(res) ? "_Refuse" : suffixes[s],
+                                            commandFlags = flags
                                         };
                                         spec.who = CaseCast(t, spec);
-                                        if (listener == "newcomer") spec.listenerLabel = (string)spec.who["target"];
+                                        if (listener == "newcomer")
+                                        {
+                                            spec.listenerLabel = (string)spec.who["target"];
+                                            if (speaker == "self") spec.speakerLabel = (string)spec.who["self"];
+                                        }
                                         spec.phaseSelfTags.AddRange(phaseTags);
-                                        spec.id = $"kojo.{id}{(suffixes.Count > 1 ? suffixes[s] : "")}.{speaker}.{sState}{(lState != "awake" && listener != "self" ? "." + lState : "")}.{listener}.{results[r]}";
+                                        spec.id = $"kojo.{id}{(suffixes.Count > 1 ? suffixes[s] : "")}.{speaker}.{sState}{(lState != "awake" && listener != "self" ? "." + lState : "")}.{listener}.{res}";
                                         // a refused result speaks from <COM>_Refuse first, then <COM> (RelationshipManager.GetKOJOMessage)
                                         if (spec.suffix == "" && IsRefusal(spec.outcome))
                                             into.Add(KojoCase(spec, KojoBase() + "_Refuse", ThenResolver("_Refuse", "", spec.fallback)));

@@ -13,7 +13,10 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_back_Begin_Sleep_1",
@@ -27,7 +30,12 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_back_Begin_Timestop_1",
@@ -140,78 +148,6 @@
                         },
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被抚摸背部 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_back_13",
-                                        "com_touch_back_14",
-                                        "com_touch_back_15",
-                                        "com_touch_back_16",
-                                        "com_touch_back_17",
-                                        "com_touch_back_18"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被抚摸背部 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_touch_back_19",
-                                        "com_touch_back_20",
-                                        "com_touch_back_21",
-                                        "com_touch_back_22",
-                                        "com_touch_back_23",
-                                        "com_touch_back_24"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被抚摸背部 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_touch_back_25",
-                                "com_touch_back_26",
-                                "com_touch_back_27",
-                                "com_touch_back_28",
-                                "com_touch_back_29",
-                                "com_touch_back_30"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "_player only version": {
@@ -305,6 +241,87 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_back_Refuse",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被抚摸背部 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_back_13",
+                                        "com_touch_back_14",
+                                        "com_touch_back_15",
+                                        "com_touch_back_16",
+                                        "com_touch_back_17",
+                                        "com_touch_back_18"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被抚摸背部 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_back_19",
+                                        "com_touch_back_20",
+                                        "com_touch_back_21",
+                                        "com_touch_back_22",
+                                        "com_touch_back_23",
+                                        "com_touch_back_24"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被抚摸背部 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_back_25",
+                                "com_touch_back_26",
+                                "com_touch_back_27",
+                                "com_touch_back_28",
+                                "com_touch_back_29",
+                                "com_touch_back_30"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

@@ -73,24 +73,52 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "初体验 开始舔睾丸 睡眠中",
-                            "responses": ["com_sex_oral_P_balls_Begin_FE_Sleep_1", "com_sex_oral_P_balls_Begin_FE_Sleep_2"]
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_FE_Sleep_1",
+                                "com_sex_oral_P_balls_Begin_FE_Sleep_2"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "timestop"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 开始舔睾丸 时停中",
-                            "responses": ["com_sex_oral_P_balls_Begin_FE_Timestop_1", "com_sex_oral_P_balls_Begin_FE_Timestop_2"]
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_FE_Timestop_1",
+                                "com_sex_oral_P_balls_Begin_FE_Timestop_2"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_M"]
+                                "selfTags": [
+                                    "firstexp_M"
+                                ]
                             },
                             "variants": [
                                 {
@@ -98,38 +126,92 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "blush", "shy", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "blush",
+                                        "shy",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 开始舔睾丸 有允许",
-                                    "responses": ["com_sex_oral_P_balls_Begin_FE_Player_1", "com_sex_oral_P_balls_Begin_FE_Player_2"]
+                                    "responses": [
+                                        "com_sex_oral_P_balls_Begin_FE_Player_1",
+                                        "com_sex_oral_P_balls_Begin_FE_Player_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "blush", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "blush",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 开始舔睾丸 有允许",
-                                    "responses": ["com_sex_oral_P_balls_Begin_FE_1", "com_sex_oral_P_balls_Begin_FE_2"]
+                                    "responses": [
+                                        "com_sex_oral_P_balls_Begin_FE_1",
+                                        "com_sex_oral_P_balls_Begin_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "blush", "shy", "trembling"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "blush",
+                                        "shy",
+                                        "trembling"
+                                    ],
                                     "_comment": "初体验 开始舔睾丸 未允许 好意",
-                                    "responses": ["com_sex_oral_P_balls_Begin_FE_3", "com_sex_oral_P_balls_Begin_FE_4"]
+                                    "responses": [
+                                        "com_sex_oral_P_balls_Begin_FE_3",
+                                        "com_sex_oral_P_balls_Begin_FE_4"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "fear", "trembling", "tearful"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "fear",
+                                "trembling",
+                                "tearful"
+                            ],
                             "_comment": "初体验 开始舔睾丸 未允许 敌意",
-                            "responses": ["com_sex_oral_P_balls_Begin_FE_5", "com_sex_oral_P_balls_Begin_FE_6"]
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_FE_5",
+                                "com_sex_oral_P_balls_Begin_FE_6"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_M"]
+                                "selfTags": [
+                                    "firstexp_partner_M"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "blowjob", "balls", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "balls",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 开始舔睾丸（被侍奉的一方）",
-                            "responses": ["com_sex_oral_P_balls_Begin_FE_Partner_1", "com_sex_oral_P_balls_Begin_FE_Partner_2"]
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_FE_Partner_1",
+                                "com_sex_oral_P_balls_Begin_FE_Partner_2"
+                            ]
                         },
                         {
                             "requirement": {
@@ -138,7 +220,14 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_P_balls_Begin_Sleep_1",
@@ -152,7 +241,16 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_P_balls_Begin_Timestop_1",
@@ -239,24 +337,50 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "初体验 睡眠中 舔睾丸",
-                            "responses": ["com_sex_oral_P_balls_FE_Sleep_1"]
+                            "responses": [
+                                "com_sex_oral_P_balls_FE_Sleep_1"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "timestop"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 时停中 舔睾丸",
-                            "responses": ["com_sex_oral_P_balls_FE_Timestop_1"]
+                            "responses": [
+                                "com_sex_oral_P_balls_FE_Timestop_1"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_M"]
+                                "selfTags": [
+                                    "firstexp_M"
+                                ]
                             },
                             "variants": [
                                 {
@@ -264,38 +388,89 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "blush", "shy", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "blush",
+                                        "shy",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 舔睾丸 有允许",
-                                    "responses": ["com_sex_oral_P_balls_FE_Player_1"]
+                                    "responses": [
+                                        "com_sex_oral_P_balls_FE_Player_1"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "blush", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "blush",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 舔睾丸 有允许（还不熟练）",
-                                    "responses": ["com_sex_oral_P_balls_FE_1", "com_sex_oral_P_balls_FE_2"]
+                                    "responses": [
+                                        "com_sex_oral_P_balls_FE_1",
+                                        "com_sex_oral_P_balls_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "blush", "shy", "trembling"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "balls",
+                                        "blush",
+                                        "shy",
+                                        "trembling"
+                                    ],
                                     "_comment": "初体验 舔睾丸 未允许 好意（还不熟练）",
-                                    "responses": ["com_sex_oral_P_balls_FE_3"]
+                                    "responses": [
+                                        "com_sex_oral_P_balls_FE_3"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "balls", "fear", "trembling", "tearful"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "blowjob",
+                                "balls",
+                                "fear",
+                                "trembling",
+                                "tearful"
+                            ],
                             "_comment": "初体验 舔睾丸 未允许 敌意",
-                            "responses": ["com_sex_oral_P_balls_FE_4", "com_sex_oral_P_balls_FE_5"]
+                            "responses": [
+                                "com_sex_oral_P_balls_FE_4",
+                                "com_sex_oral_P_balls_FE_5"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_M"]
+                                "selfTags": [
+                                    "firstexp_partner_M"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "blowjob", "balls", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "balls",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 舔睾丸（被侍奉的一方）",
-                            "responses": ["com_sex_oral_P_balls_FE_Partner_1"]
+                            "responses": [
+                                "com_sex_oral_P_balls_FE_Partner_1"
+                            ]
                         },
                         {
                             "requirement": {
@@ -347,132 +522,6 @@
                                 "com_sex_oral_P_balls_10",
                                 "com_sex_oral_P_balls_11",
                                 "com_sex_oral_P_balls_12"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ],
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true,
-                                                "requireEPSuccess": false
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_oral_P_balls_13",
-                                                "com_sex_oral_P_balls_14",
-                                                "com_sex_oral_P_balls_15",
-                                                "com_sex_oral_P_balls_16",
-                                                "com_sex_oral_P_balls_17",
-                                                "com_sex_oral_P_balls_18"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 无允许",
-                                    "responses": [
-                                        "com_sex_oral_P_balls_19",
-                                        "com_sex_oral_P_balls_20",
-                                        "com_sex_oral_P_balls_21",
-                                        "com_sex_oral_P_balls_22",
-                                        "com_sex_oral_P_balls_23",
-                                        "com_sex_oral_P_balls_24"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 舔睾丸 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_P_balls_25",
-                                        "com_sex_oral_P_balls_26",
-                                        "com_sex_oral_P_balls_27",
-                                        "com_sex_oral_P_balls_28",
-                                        "com_sex_oral_P_balls_29",
-                                        "com_sex_oral_P_balls_30"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 舔睾丸 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_oral_P_balls_31",
-                                        "com_sex_oral_P_balls_32",
-                                        "com_sex_oral_P_balls_33",
-                                        "com_sex_oral_P_balls_34",
-                                        "com_sex_oral_P_balls_35",
-                                        "com_sex_oral_P_balls_36"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 舔睾丸 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_oral_P_balls_37",
-                                "com_sex_oral_P_balls_38",
-                                "com_sex_oral_P_balls_39",
-                                "com_sex_oral_P_balls_40",
-                                "com_sex_oral_P_balls_41",
-                                "com_sex_oral_P_balls_42"
                             ]
                         },
                         {
@@ -663,6 +712,144 @@
                     ],
                     "template": "commandResult"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_P_balls_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_P_balls_13",
+                                                "com_sex_oral_P_balls_14",
+                                                "com_sex_oral_P_balls_15",
+                                                "com_sex_oral_P_balls_16",
+                                                "com_sex_oral_P_balls_17",
+                                                "com_sex_oral_P_balls_18"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 舔睾丸 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_19",
+                                        "com_sex_oral_P_balls_20",
+                                        "com_sex_oral_P_balls_21",
+                                        "com_sex_oral_P_balls_22",
+                                        "com_sex_oral_P_balls_23",
+                                        "com_sex_oral_P_balls_24"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 舔睾丸 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_25",
+                                        "com_sex_oral_P_balls_26",
+                                        "com_sex_oral_P_balls_27",
+                                        "com_sex_oral_P_balls_28",
+                                        "com_sex_oral_P_balls_29",
+                                        "com_sex_oral_P_balls_30"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 舔睾丸 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_P_balls_31",
+                                        "com_sex_oral_P_balls_32",
+                                        "com_sex_oral_P_balls_33",
+                                        "com_sex_oral_P_balls_34",
+                                        "com_sex_oral_P_balls_35",
+                                        "com_sex_oral_P_balls_36"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 舔睾丸 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_P_balls_37",
+                                "com_sex_oral_P_balls_38",
+                                "com_sex_oral_P_balls_39",
+                                "com_sex_oral_P_balls_40",
+                                "com_sex_oral_P_balls_41",
+                                "com_sex_oral_P_balls_42"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
+                }
             }
         ]
     },
@@ -788,7 +975,6 @@
                 "com_sex_oral_P_balls_Begin_Sleep_2": "卵袋蹭过$self$的唇缝和鼻尖，腥热的气味让她在梦里皱了皱眉，嘴角却流出津液，呼吸依旧平稳。",
                 "com_sex_oral_P_balls_Begin_Timestop_1": "沉甸甸的阴囊抵上她微张的唇来回碾压，唇面被蹭得发热，$self$的下巴抬着的角度纹丝没变。",
                 "com_sex_oral_P_balls_Begin_Timestop_2": "卵袋滚过$self$的唇缝碾过鼻尖，蹭上来的腥气她也没皱眉，口水积满下唇溢出来，悬着不落。",
-
                 "com_sex_oral_P_balls_Begin_FE_Sleep_1": "睡梦中的$self$的唇被抵着，无意识地轻张了张，对蹭上来的重量只是哼了声。",
                 "com_sex_oral_P_balls_Begin_FE_Sleep_2": "$self$沉在梦乡里，浑然不知自己的第一次口侍就要在这样的睡颜里开始。",
                 "com_sex_oral_P_balls_Begin_FE_Timestop_1": "凝固的世界里，$self$微张的唇被动地含住了那处，初次的侍奉毫无知觉地进行着。",
@@ -803,7 +989,6 @@
                 "com_sex_oral_P_balls_Begin_FE_6": "\"按着我的头也没用……我记住了……\"\n\n$self$含着屈辱张开了嘴，眼泪大颗地往下掉。",
                 "com_sex_oral_P_balls_Begin_FE_Partner_1": "\"舌尖这么生涩……第一次侍奉这里？\"\n\n感觉到小心翼翼的舔弄，$self$愣了一下。",
                 "com_sex_oral_P_balls_Begin_FE_Partner_2": "\"……不用紧张，轻一点就好。\"\n\n$self$看出了对方的生涩，放软了声音。",
-
                 "com_sex_oral_P_balls_FE_Sleep_1": "睡梦中的$self$的唇边还贴着那处，眉头轻轻皱着，睡得依旧沉。",
                 "com_sex_oral_P_balls_FE_Timestop_1": "初次含过的唇还保持着微张的形状，定格的$self$没有任何反应。",
                 "com_sex_oral_P_balls_FE_Player_1": "\"我第一次侍奉……做得还行吗……\"\n\n$self$抬起头，红着脸紧张地问。",

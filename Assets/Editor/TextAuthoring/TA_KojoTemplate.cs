@@ -27,6 +27,12 @@ public static class TA_KojoTemplate
         public HashSet<string> tags = new HashSet<string>();
         /// <summary>Lookup-specific self tags that mean this axis (first experience: firstexp_unaware = speaker status) - recognition only.</summary>
         public HashSet<string> aliasSelfTags = new HashSet<string>();
+        /// <summary>Later axis IDs this axis is also allowed to nest inside (e.g. `result` inside `speakerStatus`).</summary>
+        public HashSet<string> allowInside = new HashSet<string>();
+        /// <summary>Optional speaker roles this EP level applies to in scene blocks (empty = default roles).</summary>
+        public HashSet<string> forRoles = new HashSet<string>();
+        /// <summary>Command facts required for this EP level to apply (empty = always).</summary>
+        public List<string> when = new List<string>();
         /// <summary>kind "ep" (a command template level): the leaves, matched by their own fields.</summary>
         public List<Leaf> leaves = new List<Leaf>();
         /// <summary>Suggested branches as written in the template (viewer: template tab, empty slots).</summary>
@@ -39,6 +45,7 @@ public static class TA_KojoTemplate
         public string id, label;
         public JObject variant;         // Variant fields (requireSelfDoer …)
         public JObject requirement;     // the requirement fields it names, normalised (enums as numbers)
+        public bool requireSpecific;    // case coverage requires a branch on the path to explicitly set this leaf
     }
 
     /// <summary>
@@ -84,6 +91,30 @@ public static class TA_KojoTemplate
         public List<Required> required = new List<Required>();
         public string stamp;
         public JObject raw;
+
+        public Axis FindLevel(string levelId)
+        {
+            for (int i = 0; i < epCount; i++) if (axes[i].id == levelId) return axes[i];
+            return null;
+        }
+
+        public bool LevelApplies(string levelId, HashSet<string> flags)
+        {
+            var level = FindLevel(levelId);
+            if (level == null) return false;
+            if (level.when.Count == 0) return true;
+            if (flags == null) return false;
+            for (int i = 0; i < level.when.Count; i++) if (!flags.Contains(level.when[i])) return false;
+            return true;
+        }
+
+        public Leaf FindLevelLeaf(string levelId, string leafId)
+        {
+            var level = FindLevel(levelId);
+            if (level == null) return null;
+            for (int i = 0; i < level.leaves.Count; i++) if (level.leaves[i].id == leafId) return level.leaves[i];
+            return null;
+        }
     }
 
     /// <summary>What the entry's key is, when it is a command kojo key: the command's kojo key, the suffix, the commands' facts.</summary>
@@ -160,10 +191,18 @@ public static class TA_KojoTemplate
                     for (int k = 0; k < levels.Count; k++)
                     {
                         var a = new Axis { id = (string)levels[k]["id"], kind = "ep", label = (string)levels[k]["label"] ?? "" };
+                        if (levels[k]["allowInside"] is JArray ai) for (int g = 0; g < ai.Count; g++) a.allowInside.Add((string)ai[g]);
+                        if (levels[k]["forRoles"] is JArray fr) for (int g = 0; g < fr.Count; g++) a.forRoles.Add((string)fr[g]);
+                        if (levels[k]["when"] is JArray lw) for (int g = 0; g < lw.Count; g++) a.when.Add((string)lw[g]);
                         if (levels[k]["leaves"] is JObject leaves)
                             foreach (var lp in leaves.Properties())
                             {
-                                var leaf = new Leaf { id = lp.Name, label = (string)lp.Value["label"] ?? lp.Name, variant = lp.Value["variant"] as JObject };
+                                var leaf = new Leaf
+                                {
+                                    id = lp.Name, label = (string)lp.Value["label"] ?? lp.Name,
+                                    variant = lp.Value["variant"] as JObject,
+                                    requireSpecific = (bool?)lp.Value["requireSpecific"] ?? false
+                                };
                                 if (lp.Value["requirement"] is JObject lr) leaf.requirement = NormaliseRequirement(lr);
                                 a.leaves.Add(leaf);
                             }
@@ -229,6 +268,18 @@ public static class TA_KojoTemplate
         if (templates == null) Load();
         if (templates == null) return null;
         foreach (var t in templates.Values) if (t.bindCommand.Contains(suffix)) return t.id;
+        return null;
+    }
+
+    /// <summary>The template that claims an entry ID by prefix via `bind` (e.g. `permission_` → `response`); null = none.</summary>
+    public static string ClaimedByPrefix(string entryID)
+    {
+        if (string.IsNullOrEmpty(entryID)) return null;
+        if (templates == null) Load();
+        if (templates == null) return null;
+        foreach (var t in templates.Values)
+            for (int i = 0; i < t.bind.Count; i++)
+                if (entryID.StartsWith(t.bind[i], StringComparison.Ordinal)) return t.id;
         return null;
     }
 
@@ -535,7 +586,7 @@ public static class TA_KojoTemplate
                     if (extra != null) names.Add("扩展分支「" + extra.label + "」");
                     into.Add(Finding("templateMixed", provider, entryID, path, "axes", string.Join("、", names), "template", tpl.id));
                 }
-                if (parentAxis >= 0 && axis <= parentAxis)
+                if (parentAxis >= 0 && axis <= parentAxis && !tpl.axes[axis].allowInside.Contains(tpl.axes[parentAxis].id))
                     into.Add(Finding("templateDepth", provider, entryID, path, "axis", tpl.axes[axis].label,
                         "parent", prefix, "parentAxis", tpl.axes[parentAxis].label, "template", tpl.id));
                 if (axis < highest)
@@ -598,7 +649,9 @@ public static class TA_KojoTemplate
             foreach (var p in leaf.variant.Properties())
             {
                 if (!variantFields.TryGetValue(p.Name, out var fi)) { fi = typeof(ResponseEntry.Variant).GetField(p.Name, BindingFlags.Public | BindingFlags.Instance); variantFields[p.Name] = fi; }
-                if (fi == null || !JToken.DeepEquals(JToken.FromObject(fi.GetValue(v)), p.Value)) return false;
+                if (fi == null) return false;
+                var value = fi.GetValue(v);
+                if (value is Enum && p.Value.Type == JTokenType.String ? value.ToString() != (string)p.Value : !JToken.DeepEquals(JToken.FromObject(value), p.Value)) return false;
             }
         if (leaf.requirement != null && leaf.requirement.Count > 0)
         {
@@ -676,6 +729,9 @@ public static class TA_KojoTemplate
                 labels.Add(leaf.label);
             }
             if (leaves == null || FindPath(c.tpl, top, leaves, 0)) continue;
+            // Shipped refusal entries can still satisfy the legacy receiver requirement by role.
+            if (c.tpl.id == "commandRefuse" && r.path.Count == 1 && r.path[0] == "receiver"
+                && FindPath(c.tpl, top, new List<Leaf> { FindLeaf(c.tpl, "receiverDeclined") }, 0)) continue;
             c.into.Add(Finding("templateRequiredLeaf", c.provider, c.entryID, null, "template", c.tpl.id,
                 "leaf", string.Join(" › ", labels), "when", string.Join("、", r.when)));
         }
@@ -838,7 +894,8 @@ public static class TA_KojoTemplate
     /// </summary>
     static bool FallbackShape(Template tpl, ResponseEntry.Variant v, string role)
     {
-        if (!HasOwnLines(v) || v.keepLooking || v.requireMaster || v.requireSelfMaster || v.requireSelfNotMaster || v.requireCOMStrongVariant) return false;
+        if (!HasOwnLines(v) || v.keepLooking || v.requireMaster || v.requireSelfMaster || v.requireSelfNotMaster || v.requireCOMStrongVariant
+            || v.requireRefusalContext != ResponseEntry.RefusalContext.None) return false;
         if (v.requireSelfDoer != (role == "doer") || v.requireSelfReceiver != (role == "receiver") || v.requireSelfOnly != (role == "self")) return false;
         if (defaultRequirement == null) defaultRequirement = JObject.FromObject(new ResponseEntry.Variant.Requirement(), serializer);
         foreach (var p in Req(v).Properties())

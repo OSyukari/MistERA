@@ -1585,7 +1585,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 // decline with no one to target, so nothing is shown.
                 if (Master != null && Master != Doer)
                 {
-                    var refuseMasterMessage = Doer.Relationships.GetKOJOMessage(true, this, m, Master);
+                    var refuseMasterMessage = Doer.Relationships.GetKOJOMessage(true, this, m, Master, ResponseEntry.RefusalContext.DeclinedOrder);
                     if (refuseMasterMessage != null) responses.Add(refuseMasterMessage);
                 }
             }
@@ -1609,7 +1609,9 @@ public partial class EvaluationPackage : I_ResultStorage
         }
         if (Receiver != null && Receiver.RefID != 0)
         {
-            var message = Receiver.Relationships.GetKOJOMessage(false, this, m, injectRel == null ? null : injectRel.Target);
+            var refusalContext = response == Memory_Response.Refuse && !RefusalCausedByDoer && Receiver != Doer
+                ? ResponseEntry.RefusalContext.ReceiverDeclined : ResponseEntry.RefusalContext.None;
+            var message = Receiver.Relationships.GetKOJOMessage(false, this, m, injectRel == null ? null : injectRel.Target, refusalContext);
             if (message != null) responses.Add(message);
             if (Receiver.isSleeping)
             {

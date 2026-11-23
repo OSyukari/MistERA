@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public partial class ResponseEntry
 {
+    public enum RefusalContext { None, ReceiverDeclined, DeclinedOrder }
 
     public enum ResponseDisplayType
     {
@@ -20,6 +21,8 @@ public partial class ResponseEntry
         public ResponseDisplayType displayType = ResponseDisplayType.DisplayWhenRelated;
         public bool requireSelfDoer = false;
         public bool requireSelfReceiver = false;
+        [JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public RefusalContext requireRefusalContext = RefusalContext.None;
 
         public bool requireSelfOnly = false;
 
@@ -286,6 +289,7 @@ public partial class ResponseEntry
 
         protected bool isValid(KojoCollector kol)
         {
+            if (requireRefusalContext != RefusalContext.None && requireRefusalContext != kol.refusalContext) return false;
             if (requireSelfOnly && kol.targetRef != -1 && kol.targetRef != kol.selfRef) return false;
             if (!requireSelfOnly && kol.targetRef != -1 && kol.targetRef == kol.selfRef) return false;
             if (requireCOMStrongVariant && (!kol.hasPackageData || !kol.isStrongP)) return false;
@@ -325,6 +329,8 @@ public partial class ResponseEntry
 
         protected bool isValid(Character_Relationship rel, List<string> selfTags, List<string> targetTags, EvaluationPackage ep)
         {
+            // This lookup doesn't carry the dispatch context of a refusal line.
+            if (requireRefusalContext != RefusalContext.None) return false;
             if (rel != null)
             {
                 if (requireSelfOnly && rel.Owner != rel.Target) return false;
@@ -375,6 +381,7 @@ public partial class ResponseEntry
             /// </summary>
             public bool requireEPFailure = false;
             public Memory_Response requireEPSuccessGTE = Memory_Response.None;
+            public Memory_Response requireEPSuccessLTE = Memory_Response.None;
             public Memory_Attitude requireSelfAttitudeGTE = Memory_Attitude.None;
             public AP_Status requireAPStatus = AP_Status.none;
             public bool requirePermission = false;
@@ -464,6 +471,11 @@ public partial class ResponseEntry
                     if (requireEPSuccessGTE != Memory_Response.None && ep.Response < requireEPSuccessGTE)
                     {
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireEPSuccessGTE {requireEPSuccessGTE}, ep {ep.Response}, {ep.Response < requireEPSuccessGTE}");
+                        return false;
+                    }
+                    if (requireEPSuccessLTE != Memory_Response.None && (ep.Response > requireEPSuccessLTE || (requireEPSuccessLTE >= Memory_Response.CriticalFailure && ep.Response < Memory_Response.CriticalFailure)))
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireEPSuccessLTE {requireEPSuccessLTE}, ep {ep.Response}");
                         return false;
                     }
                     if (requireSelfAttitudeGTE != Memory_Attitude.None && ep.GetActorAttitude(self.RefID) < requireSelfAttitudeGTE)

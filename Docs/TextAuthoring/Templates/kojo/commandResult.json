@@ -30,9 +30,11 @@
     },
     {
       "id": "result", "label": "判定结果",
+      "allowInside": ["speakerStatus"],
       "leaves": {
         "success": { "label": "判定成功", "requirement": { "requireEPSuccessGTE": "Success" } },
-        "critical": { "label": "大成功", "requirement": { "requireEPSuccessGTE": "CriticalSuccess" } }
+        "critical": { "label": "大成功", "requirement": { "requireEPSuccessGTE": "CriticalSuccess" } },
+        "failure": { "label": "判定失败", "requirement": { "requireEPSuccessLTE": "Failure" } }
       }
     }
   ],

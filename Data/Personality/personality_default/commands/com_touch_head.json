@@ -12,7 +12,10 @@
                                 "requireTargetAction": false,
                                 "requirePermission": true
                             },
-                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "smile",
+                                "relaxed"
+                            ],
                             "_comment": "开始摸头 施方 有允许",
                             "responses": [
                                 "com_touch_head_Begin_Doer_Permission_1",
@@ -25,7 +28,9 @@
                                 "requireTargetAction": false,
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraSelfPortraitTags": ["smile"],
+                            "extraSelfPortraitTags": [
+                                "smile"
+                            ],
                             "_comment": "开始摸头 施方 未允许 好意",
                             "responses": [
                                 "com_touch_head_Begin_Doer_Like_1",
@@ -51,7 +56,10 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_touch_head_Begin_Sleep_1",
@@ -66,7 +74,12 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_touch_head_Begin_Timestop_1",
@@ -136,7 +149,10 @@
                                 "requireTargetAction": false,
                                 "requireEPSuccessGTE": "Success"
                             },
-                            "extraSelfPortraitTags": ["smile", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "smile",
+                                "relaxed"
+                            ],
                             "_comment": "摸头结果 施方 正面",
                             "responses": [
                                 "com_touch_head_Doer_Success_1",
@@ -194,73 +210,6 @@
                                 "com_touch_head_E_2",
                                 "com_touch_head_E_3",
                                 "com_touch_head_E_4"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被摸头 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_head_F_1",
-                                        "com_touch_head_F_2",
-                                        "com_touch_head_F_3",
-                                        "com_touch_head_F_4"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被摸头 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_touch_head_G_1",
-                                        "com_touch_head_G_2",
-                                        "com_touch_head_G_3",
-                                        "com_touch_head_G_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被摸头 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_touch_head_H_1",
-                                "com_touch_head_H_2",
-                                "com_touch_head_H_3",
-                                "com_touch_head_H_4"
                             ]
                         },
                         {
@@ -352,6 +301,82 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_touch_head_Refuse",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被摸头 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_head_F_1",
+                                        "com_touch_head_F_2",
+                                        "com_touch_head_F_3",
+                                        "com_touch_head_F_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被摸头 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_touch_head_G_1",
+                                        "com_touch_head_G_2",
+                                        "com_touch_head_G_3",
+                                        "com_touch_head_G_4"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被摸头 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_touch_head_H_1",
+                                "com_touch_head_H_2",
+                                "com_touch_head_H_3",
+                                "com_touch_head_H_4"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

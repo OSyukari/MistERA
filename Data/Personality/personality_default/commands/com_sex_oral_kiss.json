@@ -71,24 +71,48 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "初体验 开始接吻 睡眠中",
-                            "responses": ["com_sex_oral_kiss_Begin_FE_Sleep_1", "com_sex_oral_kiss_Begin_FE_Sleep_2"]
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_FE_Sleep_1",
+                                "com_sex_oral_kiss_Begin_FE_Sleep_2"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "timestop"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 开始接吻 时停中",
-                            "responses": ["com_sex_oral_kiss_Begin_FE_Timestop_1", "com_sex_oral_kiss_Begin_FE_Timestop_2"]
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_FE_Timestop_1",
+                                "com_sex_oral_kiss_Begin_FE_Timestop_2"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_M"]
+                                "selfTags": [
+                                    "firstexp_M"
+                                ]
                             },
                             "variants": [
                                 {
@@ -96,38 +120,82 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "blush",
+                                        "shy",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 开始接吻 有允许",
-                                    "responses": ["com_sex_oral_kiss_Begin_FE_Player_1", "com_sex_oral_kiss_Begin_FE_Player_2"]
+                                    "responses": [
+                                        "com_sex_oral_kiss_Begin_FE_Player_1",
+                                        "com_sex_oral_kiss_Begin_FE_Player_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "blush",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 开始接吻 有允许",
-                                    "responses": ["com_sex_oral_kiss_Begin_FE_1", "com_sex_oral_kiss_Begin_FE_2"]
+                                    "responses": [
+                                        "com_sex_oral_kiss_Begin_FE_1",
+                                        "com_sex_oral_kiss_Begin_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "trembling"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "blush",
+                                        "shy",
+                                        "trembling"
+                                    ],
                                     "_comment": "初体验 开始接吻 未允许 好意",
-                                    "responses": ["com_sex_oral_kiss_Begin_FE_3", "com_sex_oral_kiss_Begin_FE_4"]
+                                    "responses": [
+                                        "com_sex_oral_kiss_Begin_FE_3",
+                                        "com_sex_oral_kiss_Begin_FE_4"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "kiss", "fear", "trembling", "tearful"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "fear",
+                                "trembling",
+                                "tearful"
+                            ],
                             "_comment": "初体验 开始接吻 未允许 敌意",
-                            "responses": ["com_sex_oral_kiss_Begin_FE_5", "com_sex_oral_kiss_Begin_FE_6"]
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_FE_5",
+                                "com_sex_oral_kiss_Begin_FE_6"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_M"]
+                                "selfTags": [
+                                    "firstexp_partner_M"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 开始接吻",
-                            "responses": ["com_sex_oral_kiss_Begin_FE_Partner_1", "com_sex_oral_kiss_Begin_FE_Partner_2"]
+                            "responses": [
+                                "com_sex_oral_kiss_Begin_FE_Partner_1",
+                                "com_sex_oral_kiss_Begin_FE_Partner_2"
+                            ]
                         },
                         {
                             "requirement": {
@@ -136,7 +204,14 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "sleeping", "relaxed", "slightly_frowning", "unconscious"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "sleeping",
+                                "relaxed",
+                                "slightly_frowning",
+                                "unconscious"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_oral_kiss_Begin_Sleep_1",
@@ -150,7 +225,17 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "doll", "empty", "silence", "idle", "frozen_mid_motion", "unaware", "still"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle",
+                                "frozen_mid_motion",
+                                "unaware",
+                                "still"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_oral_kiss_Begin_Timestop_1",
@@ -273,24 +358,46 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "sleeping"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "sleeping"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "初体验 睡眠中 接吻",
-                            "responses": ["com_sex_oral_kiss_FE_Sleep_1"]
+                            "responses": [
+                                "com_sex_oral_kiss_FE_Sleep_1"
+                            ]
                         },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
-                                "selfTags": ["firstexp_M", "timestop"]
+                                "selfTags": [
+                                    "firstexp_M",
+                                    "timestop"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "doll", "empty"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "doll",
+                                "empty"
+                            ],
                             "_comment": "初体验 时停中 接吻",
-                            "responses": ["com_sex_oral_kiss_FE_Timestop_1"]
+                            "responses": [
+                                "com_sex_oral_kiss_FE_Timestop_1"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_M"]
+                                "selfTags": [
+                                    "firstexp_M"
+                                ]
                             },
                             "variants": [
                                 {
@@ -298,38 +405,79 @@
                                         "targetBaseID": "PLAYER",
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "love"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "blush",
+                                        "shy",
+                                        "love"
+                                    ],
                                     "_comment": "初体验 玩家专用 接吻 有允许",
-                                    "responses": ["com_sex_oral_kiss_FE_Player_1"]
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_Player_1"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "blush",
+                                        "shy"
+                                    ],
                                     "_comment": "初体验 接吻 有允许（还不熟练）",
-                                    "responses": ["com_sex_oral_kiss_FE_1", "com_sex_oral_kiss_FE_2"]
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_1",
+                                        "com_sex_oral_kiss_FE_2"
+                                    ]
                                 },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "trembling"],
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "kiss",
+                                        "blush",
+                                        "shy",
+                                        "trembling"
+                                    ],
                                     "_comment": "初体验 接吻 未允许 好意（还不熟练）",
-                                    "responses": ["com_sex_oral_kiss_FE_3"]
+                                    "responses": [
+                                        "com_sex_oral_kiss_FE_3"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["sex", "kiss", "angry", "cry", "tearful"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "angry",
+                                "cry",
+                                "tearful"
+                            ],
                             "_comment": "初体验 接吻 未允许 敌意",
-                            "responses": ["com_sex_oral_kiss_FE_4", "com_sex_oral_kiss_FE_5"]
+                            "responses": [
+                                "com_sex_oral_kiss_FE_4",
+                                "com_sex_oral_kiss_FE_5"
+                            ]
                         },
                         {
                             "requirement": {
-                                "selfTags": ["firstexp_partner_M"]
+                                "selfTags": [
+                                    "firstexp_partner_M"
+                                ]
                             },
-                            "extraSelfPortraitTags": ["sex", "kiss", "surprised"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "kiss",
+                                "surprised"
+                            ],
                             "_comment": "对方初体验 接吻",
-                            "responses": ["com_sex_oral_kiss_FE_Partner_1"]
+                            "responses": [
+                                "com_sex_oral_kiss_FE_Partner_1"
+                            ]
                         },
                         {
                             "requirement": {
@@ -414,141 +562,6 @@
                                 "com_sex_oral_kiss_42",
                                 "com_sex_oral_kiss_43",
                                 "com_sex_oral_kiss_44"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ],
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true,
-                                                "requireEPSuccess": false
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的指令失败拒绝口上文 有允许",
-                                            "responses": [
-                                                "com_sex_oral_kiss_45",
-                                                "com_sex_oral_kiss_46"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的指令失败拒绝口上文 无允许",
-                                    "responses": [
-                                        "com_sex_oral_kiss_47",
-                                        "com_sex_oral_kiss_48",
-                                        "com_sex_oral_kiss_49",
-                                        "com_sex_oral_kiss_50",
-                                        "com_sex_oral_kiss_51",
-                                        "com_sex_oral_kiss_52",
-                                        "com_sex_oral_kiss_53",
-                                        "com_sex_oral_kiss_54",
-                                        "com_sex_oral_kiss_55",
-                                        "com_sex_oral_kiss_56",
-                                        "com_sex_oral_kiss_57",
-                                        "com_sex_oral_kiss_58",
-                                        "com_sex_oral_kiss_59",
-                                        "com_sex_oral_kiss_60"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requirePermission": true,
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_kiss_61",
-                                        "com_sex_oral_kiss_62",
-                                        "com_sex_oral_kiss_63",
-                                        "com_sex_oral_kiss_64",
-                                        "com_sex_oral_kiss_65",
-                                        "com_sex_oral_kiss_66",
-                                        "com_sex_oral_kiss_67",
-                                        "com_sex_oral_kiss_68",
-                                        "com_sex_oral_kiss_69",
-                                        "com_sex_oral_kiss_70",
-                                        "com_sex_oral_kiss_71",
-                                        "com_sex_oral_kiss_72",
-                                        "com_sex_oral_kiss_73",
-                                        "com_sex_oral_kiss_74"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_oral_kiss_75",
-                                        "com_sex_oral_kiss_76",
-                                        "com_sex_oral_kiss_77",
-                                        "com_sex_oral_kiss_78"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_oral_kiss_79",
-                                "com_sex_oral_kiss_80",
-                                "com_sex_oral_kiss_81",
-                                "com_sex_oral_kiss_82",
-                                "com_sex_oral_kiss_83",
-                                "com_sex_oral_kiss_84"
                             ]
                         },
                         {
@@ -777,6 +790,153 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_oral_kiss_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true,
+                                                "requireEPSuccess": false
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的指令失败拒绝口上文 有允许",
+                                            "responses": [
+                                                "com_sex_oral_kiss_45",
+                                                "com_sex_oral_kiss_46"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的指令失败拒绝口上文 无允许",
+                                    "responses": [
+                                        "com_sex_oral_kiss_47",
+                                        "com_sex_oral_kiss_48",
+                                        "com_sex_oral_kiss_49",
+                                        "com_sex_oral_kiss_50",
+                                        "com_sex_oral_kiss_51",
+                                        "com_sex_oral_kiss_52",
+                                        "com_sex_oral_kiss_53",
+                                        "com_sex_oral_kiss_54",
+                                        "com_sex_oral_kiss_55",
+                                        "com_sex_oral_kiss_56",
+                                        "com_sex_oral_kiss_57",
+                                        "com_sex_oral_kiss_58",
+                                        "com_sex_oral_kiss_59",
+                                        "com_sex_oral_kiss_60"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true,
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_61",
+                                        "com_sex_oral_kiss_62",
+                                        "com_sex_oral_kiss_63",
+                                        "com_sex_oral_kiss_64",
+                                        "com_sex_oral_kiss_65",
+                                        "com_sex_oral_kiss_66",
+                                        "com_sex_oral_kiss_67",
+                                        "com_sex_oral_kiss_68",
+                                        "com_sex_oral_kiss_69",
+                                        "com_sex_oral_kiss_70",
+                                        "com_sex_oral_kiss_71",
+                                        "com_sex_oral_kiss_72",
+                                        "com_sex_oral_kiss_73",
+                                        "com_sex_oral_kiss_74"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_kiss_75",
+                                        "com_sex_oral_kiss_76",
+                                        "com_sex_oral_kiss_77",
+                                        "com_sex_oral_kiss_78"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_oral_kiss_79",
+                                "com_sex_oral_kiss_80",
+                                "com_sex_oral_kiss_81",
+                                "com_sex_oral_kiss_82",
+                                "com_sex_oral_kiss_83",
+                                "com_sex_oral_kiss_84"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]
@@ -1044,7 +1204,6 @@
                 "com_sex_oral_kiss_Begin_Sleep_2": "舌尖撬开她松软的齿关探进去，$self$从喉咙里哼出一声含糊的鼻音，头往$target$那边偏了偏，仍沉在梦乡。",
                 "com_sex_oral_kiss_Begin_Timestop_1": "$target$捏着她的下巴贴上唇，舌尖撬开齿关探进去搅弄，渡进来的津液满到从$self$的嘴角溢出，也不见她咽。",
                 "com_sex_oral_kiss_Begin_Timestop_2": "$self$的眼睛还睁着，瞳孔停在原来的位置，软舌被含住拽出唇外，垂着不动。",
-
                 "com_sex_oral_kiss_Begin_FE_Sleep_1": "睡梦中的$self$睫毛颤了颤，唇上的触感让她无意识地咂了咂嘴，没有醒来。",
                 "com_sex_oral_kiss_Begin_FE_Sleep_2": "$self$的呼吸轻轻乱了半拍，唇被含住时哼出细小的鼻音，还是没醒。",
                 "com_sex_oral_kiss_Begin_FE_Timestop_1": "初吻在凝固的时间里被夺走，$self$的唇保持着微抿的形状，眼神停在原地。",
@@ -1059,7 +1218,6 @@
                 "com_sex_oral_kiss_Begin_FE_6": "\"初吻……就这样毁了……\"\n\n唇被夺走的屈辱让$self$攥紧了拳头，指甲掐进掌心。",
                 "com_sex_oral_kiss_Begin_FE_Partner_1": "\"你……初吻还在？\"\n\n感觉到对方唇上笨拙的生涩，$self$愣了一下。",
                 "com_sex_oral_kiss_Begin_FE_Partner_2": "\"……原来这是你的第一次接吻。\"\n\n$self$放轻了力道，唇上多了分温柔。",
-
                 "com_sex_oral_kiss_FE_Sleep_1": "睡梦中的$self$的唇微微翕动着，像是在回应梦里什么东西。",
                 "com_sex_oral_kiss_FE_Timestop_1": "初吻残留的触感还留在唇上，定格的$self$没有任何表情变化。",
                 "com_sex_oral_kiss_FE_Player_1": "\"我的初吻……味道还好吗……？\"\n\n$self$红着脸看向$target$，紧张得舔了舔唇。",

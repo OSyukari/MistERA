@@ -9,6 +9,7 @@ public class TA_KojoContext
     public bool speakerIsReceiver;
     public bool listenerIsSelf;      // self-targeted lookup (solo EP)
     public bool accepted = true;     // false = refusal block
+    public ResponseEntry.RefusalContext refusalContext;
     /// <summary>
     /// The speaker is the act's master as kojo sees it (KojoCollector.LoadEP: masterRef = Package.Master, else the doer):
     /// a doer acting on its own initiative. False for a receiver, and for a doer ordered by someone else (the player in
@@ -27,6 +28,8 @@ public class TA_KojoContext
     public bool? selfCanAct, targetCanAct;
     /// <summary>The listener is the player (targetBaseID PLAYER).</summary>
     public bool? listenerIsPlayer;
+    /// <summary>Partner-agnostic case: any targetBaseID-specific override (PLAYER or a specific NPC) does not cover it.</summary>
+    public bool listenerAgnostic;
     /// <summary>D20 result of an accepted act (Success / Failure …); null = no result split.</summary>
     public Memory_Response? result;
     /// <summary>The act is the strong (setForce) variant.</summary>
@@ -129,6 +132,8 @@ public static class TA_Conditions
         if (v.requireMaster) parts.Add("有下令者");
         if (v.requireSelfMaster) parts.Add("说话者是下令者");
         if (v.requireSelfNotMaster) parts.Add("说话者不是下令者");
+        if (v.requireRefusalContext == ResponseEntry.RefusalContext.ReceiverDeclined) parts.Add("说话者拒绝了动作");
+        if (v.requireRefusalContext == ResponseEntry.RefusalContext.DeclinedOrder) parts.Add("说话者拒绝下令，并向下令者回应");
         if (v.requireCOMStrongVariant) parts.Add("强力变体");
 
         var r = v.requirement;
@@ -138,6 +143,7 @@ public static class TA_Conditions
             {
                 if (r.requireEPFailure) parts.Add("请求被拒绝");
                 if (r.requireEPSuccessGTE != Memory_Response.None) parts.Add($"结果 ≥ {Response(r.requireEPSuccessGTE)}");
+                if (r.requireEPSuccessLTE != Memory_Response.None) parts.Add($"结果 ≤ {Response(r.requireEPSuccessLTE)}");
                 if (!r.requireEPFailure && !r.requireEPSuccess) parts.Add("不论是否接受");
             }
             if (r.requirePermission) parts.Add("有允许");
@@ -181,7 +187,7 @@ public static class TA_Conditions
             if (knownFields != null) return knownFields;
             knownFields = new HashSet<string>()
             {
-                "requireEPFailure", "requireEPSuccess", "requireEPSuccessGTE", "requirePermission", "requireSelfAttitudeGTE",
+                "requireEPFailure", "requireEPSuccess", "requireEPSuccessGTE", "requireEPSuccessLTE", "requirePermission", "requireSelfAttitudeGTE",
                 "requireSelfAttitudeKey", "selfTags", "excludeSelfTags", "targetTags", "excludeTargetTags", "requireSelfForced",
                 "targetBaseID", "requireRelationshipTypes", "variantID", "requireAPStatus", "requireInCooldownID",
                 "requireNotInCooldownID", "requireSelfAction", "requireTargetAction"
@@ -206,7 +212,7 @@ public static class TA_Conditions
     /// <summary>The variant limits who speaks it (doer / receiver / solo) - otherwise both roles draw it (§9.1 4).</summary>
     public static bool RoleLocked(ResponseEntry.Variant v)
     {
-        return v.requireSelfDoer || v.requireSelfReceiver || v.requireSelfOnly;
+        return v.requireSelfDoer || v.requireSelfReceiver || v.requireSelfOnly || v.requireRefusalContext != ResponseEntry.RefusalContext.None;
     }
 
     /// <summary>
@@ -229,6 +235,7 @@ public static class TA_Conditions
     /// </summary>
     public static bool Applies(ResponseEntry.Variant v, TA_KojoContext ctx)
     {
+        if (v.requireRefusalContext != ResponseEntry.RefusalContext.None && v.requireRefusalContext != ctx.refusalContext) return false;
         if (v.requireSelfOnly && !ctx.listenerIsSelf) return false;
         if (!v.requireSelfOnly && ctx.listenerIsSelf) return false;
         if (v.requireSelfDoer && !ctx.speakerIsDoer) return false;
@@ -244,15 +251,18 @@ public static class TA_Conditions
             // no action package: the KojoCollector still runs the EP checks and reads as accepted with result Accept
             if (r.requireEPFailure) return false;
             if (r.requireEPSuccessGTE > Memory_Response.Accept) return false;
+            if (r.requireEPSuccessLTE != Memory_Response.None && (Memory_Response.Accept > r.requireEPSuccessLTE || r.requireEPSuccessLTE >= Memory_Response.CriticalFailure)) return false;
         }
         if (r != null && !ctx.noEP)
         {
             if (r.requireEPFailure && ctx.accepted) return false;
             if (!r.requireEPFailure && r.requireEPSuccess && !ctx.accepted) return false;
             if (r.requireEPSuccessGTE != Memory_Response.None && !ctx.accepted) return false;
-            if (!string.IsNullOrEmpty(r.targetBaseID) && r.targetBaseID == "PLAYER" && !ctx.playerInvolved) return false;
+            if (r.requireEPSuccessLTE != Memory_Response.None && !ctx.accepted) return false;
+            if (r.targetBaseID == "PLAYER" && !(ctx.listenerIsPlayer ?? ctx.playerInvolved)) return false;
             // case mode: the D20 result level (Memory_Response order: Failure < Success < CriticalSuccess)
             if (ctx.result.HasValue && r.requireEPSuccessGTE > Memory_Response.Accept && ctx.result.Value < r.requireEPSuccessGTE) return false;
+            if (ctx.result.HasValue && r.requireEPSuccessLTE != Memory_Response.None && (ctx.result.Value > r.requireEPSuccessLTE || (r.requireEPSuccessLTE >= Memory_Response.CriticalFailure && ctx.result.Value < Memory_Response.CriticalFailure))) return false;
         }
         return AppliesCase(v, r, ctx);
     }
@@ -270,6 +280,7 @@ public static class TA_Conditions
         if (ctx.selfCanAct.HasValue && requireSelfAction && !ctx.selfCanAct.Value) return false;
         if (ctx.targetCanAct.HasValue && requireTargetAction && !ctx.targetCanAct.Value) return false;
         if (r == null) return true;
+        if (ctx.listenerAgnostic && !string.IsNullOrEmpty(r.targetBaseID)) return false;
         if (ctx.listenerIsPlayer.HasValue && r.targetBaseID == "PLAYER" && !ctx.listenerIsPlayer.Value) return false;
         if (ctx.selfTags != null)
         {

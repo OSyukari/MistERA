@@ -108,7 +108,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "breasts", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）",
                             "responses": [
                                 "com_sex_finger_caress_B_Begin_Sleep_1",
@@ -123,7 +129,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "breasts", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.5.7 开始 睡眠中 独自B自慰 口上文（睡梦中自己开始）",
                             "responses": [
                                 "com_sex_finger_caress_B_Begin_Self_Sleep_1",
@@ -138,7 +150,15 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "receiver", "breasts", "doll", "empty", "silence", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "breasts",
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
                             "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
                             "responses": [
                                 "com_sex_finger_caress_B_Begin_Timestop_1",
@@ -296,108 +316,6 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sorry",
-                                        "disgusted",
-                                        "disappointed",
-                                        "surprised",
-                                        "scared",
-                                        "angry",
-                                        "confused"
-                                    ],
-                                    "useActiveTags": false,
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requireEPSuccess": false,
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sorry",
-                                                "disgusted",
-                                                "disappointed",
-                                                "surprised",
-                                                "scared",
-                                                "angry",
-                                                "confused"
-                                            ],
-                                            "useActiveTags": false,
-                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 有允许",
-                                            "responses": [
-                                                "com_sex_finger_caress_B_5"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 无允许",
-                                    "responses": [
-                                "com_sex_finger_caress_B_6"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy",
-                                        "tired"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.1.2 指令失败拒绝 被B抚摸 有允许 口上文",
-                                    "responses": [
-                                "com_sex_finger_caress_B_7"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "troubled",
-                                        "sigh",
-                                        "smile",
-                                        "surprised",
-                                        "troubled",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.2.3 指令失败拒绝 被B抚摸 无允许 善意 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_B_8"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被B抚摸 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_finger_caress_B_9"
-                            ]
-                        },
-                        {
-                            "requireSelfReceiver": true,
-                            "requirement": {
                                 "targetBaseID": "PLAYER",
                                 "selfTags": [
                                     "justWokenUp"
@@ -549,7 +467,13 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "breasts", "sleeping", "relaxed"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "breasts",
+                                "sleeping",
+                                "relaxed"
+                            ],
                             "_comment": "2.5.5 睡眠中 独自B自慰 口上文",
                             "responses": [
                                 "com_sex_finger_caress_B_Self_1",
@@ -564,36 +488,17 @@
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": ["sex", "doer", "breasts", "doll", "idle"],
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "breasts",
+                                "doll",
+                                "idle"
+                            ],
                             "_comment": "2.5.6 时停中 独自B自慰 口上文",
                             "responses": [
                                 "com_sex_finger_caress_B_Self_3",
                                 "com_sex_finger_caress_B_Self_4"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPFailure": true,
-                                "requirePermission": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.7 拒绝独自B自慰的指令 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_5",
-                                "com_sex_finger_caress_B_Self_6"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "useActiveTags": false,
-                            "_comment": "2.5.8 拒绝独自B自慰的指令 无允许 口上文",
-                            "responses": [
-                                "com_sex_finger_caress_B_Self_7",
-                                "com_sex_finger_caress_B_Self_8"
                             ]
                         },
                         {
@@ -690,6 +595,145 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_sex_finger_caress_B_Refuse",
+                    "tags": [
+                        "nsfw"
+                    ],
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sorry",
+                                        "disgusted",
+                                        "disappointed",
+                                        "surprised",
+                                        "scared",
+                                        "angry",
+                                        "confused"
+                                    ],
+                                    "useActiveTags": false,
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccess": false,
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sorry",
+                                                "disgusted",
+                                                "disappointed",
+                                                "surprised",
+                                                "scared",
+                                                "angry",
+                                                "confused"
+                                            ],
+                                            "useActiveTags": false,
+                                            "_comment": "2.1.6 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 有允许",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_5"
+                                            ]
+                                        }
+                                    ],
+                                    "_comment": "2.2.9 刚睡醒时的 指令失败拒绝 被B抚摸 口上文 无允许",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy",
+                                        "tired"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.1.2 指令失败拒绝 被B抚摸 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_7"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "sigh",
+                                        "smile",
+                                        "surprised",
+                                        "troubled",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.2.3 指令失败拒绝 被B抚摸 无允许 善意 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_8"
+                                    ]
+                                }
+                            ],
+                            "_comment": "2.2.4 指令失败拒绝 被B抚摸 无允许 敌意 口上文",
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "responses": [
+                                "com_sex_finger_caress_B_9"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 拒绝独自B自慰的指令 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_B_Self_5",
+                                "com_sex_finger_caress_B_Self_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.8 拒绝独自B自慰的指令 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_B_Self_7",
+                                "com_sex_finger_caress_B_Self_8"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

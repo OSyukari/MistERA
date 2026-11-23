@@ -133,39 +133,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Neutral"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "apology",
-                                        "shy"
-                                    ],
-                                    "useActiveTags": false,
-                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
-                                    "responses": [
-                                        "com_job_farm_cultivate_crop_Join_1",
-                                        "com_job_farm_cultivate_crop_Join_2"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "troubled",
-                                "angry",
-                                "disgust"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
-                            "responses": [
-                                "com_job_farm_cultivate_crop_Join_3",
-                                "com_job_farm_cultivate_crop_Join_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
                             "extraSelfPortraitTags": [
@@ -209,6 +176,49 @@
                         }
                     ],
                     "template": "commandJoin"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_crop_JoinFailed",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAttitudeGTE": "Neutral"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy"
+                                    ],
+                                    "useActiveTags": false,
+                                    "_comment": "2.4.1 友好拒绝 NPC正在执行行为时，他人请求加入…",
+                                    "responses": [
+                                        "com_job_farm_cultivate_crop_Join_1",
+                                        "com_job_farm_cultivate_crop_Join_2"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "troubled",
+                                "angry",
+                                "disgust"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.4.2 不友好拒绝 NPC正在执行行为时，他人请求加入…",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_Join_3",
+                                "com_job_farm_cultivate_crop_Join_4"
+                            ]
+                        }
+                    ],
+                    "template": "commandJoinFailed"
                 }
             },
             {
@@ -323,47 +333,6 @@
                     "variants": [
                         {
                             "requirement": {
-                                "requireEPFailure": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like",
-                                        "requireEPSuccess": false
-                                    },
-                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
-                                    "extraSelfPortraitTags": [
-                                        "apology",
-                                        "shy",
-                                        "gentle"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": [
-                                        "kojo_default_com_job_farm_cultivate_crop_refuse_1",
-                                        "kojo_default_com_job_farm_cultivate_crop_refuse_2",
-                                        "com_job_farm_cultivate_crop_1",
-                                        "com_job_farm_cultivate_crop_2"
-                                    ]
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "apology",
-                                "awkward",
-                                "busy",
-                                "uninterested",
-                                "cold",
-                                "tired",
-                                "distant"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
-                            "responses": [
-                                "com_job_farm_cultivate_crop_3",
-                                "com_job_farm_cultivate_crop_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
                                 "requireEPSuccessGTE": "Success"
                             },
                             "variants": [
@@ -443,6 +412,57 @@
                         }
                     ],
                     "template": "commandResult"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_job_farm_cultivate_crop_Refuse",
+                    "interruptSelfJob": true,
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like",
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
+                                    "extraSelfPortraitTags": [
+                                        "apology",
+                                        "shy",
+                                        "gentle"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "kojo_default_com_job_farm_cultivate_crop_refuse_1",
+                                        "kojo_default_com_job_farm_cultivate_crop_refuse_2",
+                                        "com_job_farm_cultivate_crop_1",
+                                        "com_job_farm_cultivate_crop_2"
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "apology",
+                                "awkward",
+                                "busy",
+                                "uninterested",
+                                "cold",
+                                "tired",
+                                "distant"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
+                            "responses": [
+                                "com_job_farm_cultivate_crop_3",
+                                "com_job_farm_cultivate_crop_4"
+                            ]
+                        }
+                    ],
+                    "template": "commandRefuse"
                 }
             }
         ]

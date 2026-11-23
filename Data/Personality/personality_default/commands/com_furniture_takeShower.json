@@ -5,39 +5,139 @@
             {
                 "ID": "personality_default",
                 "Entry": {
-                    "ID": "com_furniture_takeShower",
+                    "ID": "com_furniture_takeShower_Refuse",
                     "useEPPartnerAsTarget": true,
                     "variants": [
                         {
                             "requireSelfOnly": true,
                             "requireSelfDoer": true,
-                            "requirement": { "variantID": 0, "requireEPFailure": true, "requireSelfAction": false, "requireTargetAction": false },
-                            "responses": ["kojo_shower_refuse_self"]
+                            "requirement": {
+                                "variantID": 0,
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "kojo_shower_refuse_self"
+                            ]
                         },
                         {
                             "requireSelfDoer": true,
-                            "requirement": { "variantID": 0, "requireEPFailure": true, "requireSelfAction": false, "requireTargetAction": false },
-                            "responses": ["kojo_shower_refuse_self"]
+                            "requirement": {
+                                "variantID": 0,
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "responses": [
+                                "kojo_shower_refuse_self"
+                            ]
                         },
                         {
                             "requireSelfDoer": true,
-                            "requirement": { "variantID": 1, "requireEPFailure": true, "requireSelfAction": false, "requireTargetAction": false },
+                            "requirement": {
+                                "variantID": 1,
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
                             "variants": [
-                                { "requirement": { "requireEPSuccess": false, "requireSelfAction": false, "requireTargetAction": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_refuse_helper_marriage"] },
-                                { "requirement": { "requireEPSuccess": false, "requireSelfAction": false, "requireTargetAction": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_refuse_helper_couple"] },
-                                { "requirement": { "requireEPSuccess": false, "requireSelfAction": false, "requireTargetAction": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_refuse_helper_fwb"] }
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "requireRelationshipTypes": [
+                                            "relationship_marriage"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_refuse_helper_marriage"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "requireRelationshipTypes": [
+                                            "relationship_couple"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_refuse_helper_couple"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "requireRelationshipTypes": [
+                                            "relationship_fwb"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_refuse_helper_fwb"
+                                    ]
+                                }
                             ],
-                            "responses": ["kojo_shower_refuse_helper_fallback"]
+                            "responses": [
+                                "kojo_shower_refuse_helper_fallback"
+                            ]
                         },
                         {
                             "requireSelfReceiver": true,
-                            "requirement": { "variantID": 1, "requireEPFailure": true, "requireSelfAction": false, "requireTargetAction": false },
+                            "requirement": {
+                                "variantID": 1,
+                                "requireEPSuccess": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
                             "variants": [
-                                { "requirement": { "requireEPSuccess": false, "requireSelfAction": false, "requireTargetAction": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_refuse_receiver_marriage"] },
-                                { "requirement": { "requireEPSuccess": false, "requireSelfAction": false, "requireTargetAction": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_refuse_receiver_couple"] },
-                                { "requirement": { "requireEPSuccess": false, "requireSelfAction": false, "requireTargetAction": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_refuse_receiver_fwb"] }
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "requireRelationshipTypes": [
+                                            "relationship_marriage"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_refuse_receiver_marriage"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "requireRelationshipTypes": [
+                                            "relationship_couple"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_refuse_receiver_couple"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireSelfAction": false,
+                                        "requireTargetAction": false,
+                                        "requireRelationshipTypes": [
+                                            "relationship_fwb"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_refuse_receiver_fwb"
+                                    ]
+                                }
                             ],
-                            "responses": ["kojo_shower_refuse_receiver_fallback"]
+                            "responses": [
+                                "kojo_shower_refuse_receiver_fallback"
+                            ]
                         }
                     ],
                     "template": "none",
@@ -50,27 +150,106 @@
                     "ID": "com_furniture_takeShower_Begin",
                     "useEPPartnerAsTarget": true,
                     "variants": [
-                        { "requireSelfOnly": true, "requireSelfDoer": true, "requirement": { "variantID": 0 }, "responses": ["kojo_shower_accept_self"] },
-                        { "requireSelfDoer": true, "requirement": { "variantID": 0 }, "responses": ["kojo_shower_accept_self"] },
+                        {
+                            "requireSelfOnly": true,
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "variantID": 0
+                            },
+                            "responses": [
+                                "kojo_shower_accept_self"
+                            ]
+                        },
                         {
                             "requireSelfDoer": true,
-                            "requirement": { "variantID": 1 },
+                            "requirement": {
+                                "variantID": 0
+                            },
+                            "responses": [
+                                "kojo_shower_accept_self"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "variantID": 1
+                            },
                             "variants": [
-                                { "requirement": { "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_accept_helper_marriage"] },
-                                { "requirement": { "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_accept_helper_couple"] },
-                                { "requirement": { "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_accept_helper_fwb"] }
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_marriage"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_helper_marriage"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_couple"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_helper_couple"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_fwb"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_helper_fwb"
+                                    ]
+                                }
                             ],
-                            "responses": ["kojo_shower_accept_helper_fallback"]
+                            "responses": [
+                                "kojo_shower_accept_helper_fallback"
+                            ]
                         },
                         {
                             "requireSelfReceiver": true,
-                            "requirement": { "variantID": 1 },
+                            "requirement": {
+                                "variantID": 1
+                            },
                             "variants": [
-                                { "requirement": { "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_accept_receiver_marriage"] },
-                                { "requirement": { "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_accept_receiver_couple"] },
-                                { "requirement": { "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_accept_receiver_fwb"] }
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_marriage"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_receiver_marriage"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_couple"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_receiver_couple"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireRelationshipTypes": [
+                                            "relationship_fwb"
+                                        ]
+                                    },
+                                    "responses": [
+                                        "kojo_shower_accept_receiver_fwb"
+                                    ]
+                                }
                             ],
-                            "responses": ["kojo_shower_accept_receiver_fallback"]
+                            "responses": [
+                                "kojo_shower_accept_receiver_fallback"
+                            ]
                         }
                     ],
                     "template": "none",
@@ -79,114 +258,721 @@
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Self_Undress", "variants": [
-                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_self_undress"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Self_Undress",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_self_undress"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_Undress", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_undress_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_undress_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_undress_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_undress_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_Undress",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_undress_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_undress_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_undress_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_undress_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Self_BeginWash", "variants": [
-                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_self_beginwash"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Self_BeginWash",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_self_beginwash"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_BeginWash", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_beginwash_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_beginwash_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_beginwash_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_beginwash_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_BeginWash",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_beginwash_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_beginwash_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_beginwash_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_beginwash_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_HelperBegin", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_helperbegin_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_helperbegin_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_helperbegin_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_helperbegin_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_HelperBegin",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperbegin_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperbegin_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperbegin_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_helperbegin_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Self_Expel", "variants": [
-                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_self_expel"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Self_Expel",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_self_expel"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_Expel", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_expel_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_expel_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_expel_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_expel_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_Expel",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_expel_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_expel_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_expel_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_expel_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_HelperExpel", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_helperexpel_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_helperexpel_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_helperexpel_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_helperexpel_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_HelperExpel",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperexpel_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperexpel_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperexpel_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_helperexpel_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Self_Rinse", "variants": [
-                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_self_rinse"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Self_Rinse",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_self_rinse"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_Rinse", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_rinse_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_rinse_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_rinse_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_rinse_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_Rinse",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_rinse_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_rinse_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_rinse_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_rinse_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_HelperRinse", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_helperrinse_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_helperrinse_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_helperrinse_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_helperrinse_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_HelperRinse",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperrinse_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperrinse_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperrinse_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_helperrinse_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Self_End", "variants": [
-                    { "requireSelfOnly": true, "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_self_end"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Self_End",
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_self_end"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_End", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_end_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_end_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_end_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_end_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_End",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_end_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_end_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_end_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_end_fallback"
+                            ]
+                        }
+                    ]
+                }
             },
             {
                 "ID": "personality_default",
-                "Entry": { "template": "none", "templateNote": "code-fetched kojo; dedicated template later", "ID":"Shower_Assisted_HelperEnd", "variants": [
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_marriage"] }, "responses": ["kojo_shower_helperend_marriage"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_couple"] }, "responses": ["kojo_shower_helperend_couple"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false, "requireRelationshipTypes": ["relationship_fwb"] }, "responses": ["kojo_shower_helperend_fwb"] },
-                    { "hideWhenNotFocused": false, "displayType": "AlwaysDisplay", "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }, "responses": ["kojo_shower_helperend_fallback"] }
-                ] }
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Assisted_HelperEnd",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperend_marriage"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperend_couple"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "requireRelationshipTypes": [
+                                    "relationship_fwb"
+                                ]
+                            },
+                            "responses": [
+                                "kojo_shower_helperend_fwb"
+                            ]
+                        },
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_helperend_fallback"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },

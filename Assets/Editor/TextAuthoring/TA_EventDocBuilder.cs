@@ -12,6 +12,8 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
     const int MaxSteps = 200;
 
     Event ev;
+    JObject eventConfig;
+    JObject eventLookupsSpec;
 
     class Step
     {
@@ -49,6 +51,9 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         skipReason = null;
         if (target == null) { skipReason = "找不到事件"; return null; }
         ev = target;
+        TA_CaseTemplate.Load();
+        eventConfig = TA_CaseTemplate.EventConfig(ev.ID);
+        eventLookupsSpec = TA_CaseTemplate.EventSpecs(ev.ID);
 
         paths = new List<PathResult>();
         Walk(0, new PathResult(), new HashSet<string>());
@@ -61,9 +66,11 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         if (flow) WriteFlowView();
         else for (int i = 0; i < paths.Count; i++) WritePath(i, paths[i]);
         var snap = FinishDoc();
-        // kojo lookups with a case spec (Docs/TextAuthoring/Plan_CommandCases.md §6.1): what each must handle
+        // kojo lookups with a case spec (Templates/events/<eventID>.json or eventKojo.json) + lookup inventory for store_viewer
         if (snap != null && !countOnly)
         {
+            var lookups = EventLookupsMetadata();
+            if (lookups.Count > 0) snap.shared["eventLookups"] = lookups;
             var cases = EventCases();
             if (cases != null) snap.shared["cases"] = cases;
         }
@@ -78,14 +85,30 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
     /// listener as is), with the spec's tier set. Covered like command kojo cases, resolved as a plain key (no action
     /// package). Null when no lookup has a spec.
     /// </summary>
-    JArray EventCases()
+    JObject LookupSpec(KojoFetch f)
     {
-        var err = TA_CaseTemplate.Load();
-        if (err != null) { AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = err }); return null; }
-        var specs = TA_CaseTemplate.EventSpecs(ev.ID);
-        if (specs == null || specs.Count == 0) return null;
+        if (eventLookupsSpec == null || f == null) return null;
+        if (eventLookupsSpec[f.kojoID] is JObject byId) return byId;
+        if (eventLookupsSpec[f.storeKey] is JObject byStore) return byStore;
+        return null;
+    }
 
-        // every fetch of the event, whichever path runs it
+    string ResolveEventTemplate(string kojoID, JObject spec)
+    {
+        var explicitTpl = (string)spec?["template"];
+        if (!string.IsNullOrEmpty(explicitTpl) && explicitTpl != "none") return explicitTpl;
+        for (int pi = 0; pi < personalities.Count; pi++)
+        {
+            var p = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(personalities[pi]);
+            if (p == null) continue;
+            var found = ResolvePlainEntry(p, kojoID, out _, out _);
+            if (found != null && !string.IsNullOrEmpty(found.template) && found.template != "none") return found.template;
+        }
+        return TA_KojoTemplate.ClaimedByPrefix(kojoID) ?? "interaction";
+    }
+
+    PathResult AllEventFetches()
+    {
         var all = new PathResult();
         for (int i = 0; i < ev.events.Count; i++)
         {
@@ -95,6 +118,40 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             var opts = OptionsOf(e);
             if (opts != null) for (int o = 0; o < opts.Count; o++) CollectFetches(opts[o]?.Results, all, ConsumerOf(e, true), SeverityOf(e, o), true);
         }
+        return all;
+    }
+
+    JArray EventLookupsMetadata()
+    {
+        var arr = new JArray();
+        var seen = new HashSet<string>();
+        var all = AllEventFetches();
+        foreach (var kv in all.fetches)
+            for (int i = 0; i < kv.Value.Count; i++)
+            {
+                var f = kv.Value[i];
+                if (f.fromAppendStrings || !seen.Add($"{f.kojoID}|{f.speakerKey}|{f.listenerKey}")) continue;
+                arr.Add(new JObject
+                {
+                    ["key"] = f.kojoID,
+                    ["storeKey"] = f.storeKey,
+                    ["speakerKey"] = f.speakerKey,
+                    ["listenerKey"] = f.listenerKey,
+                    ["self"] = f.speakerKey == f.listenerKey,
+                    ["defaultTemplate"] = ResolveEventTemplate(f.kojoID, null)
+                });
+            }
+        return arr;
+    }
+
+    JArray EventCases()
+    {
+        var err = TA_CaseTemplate.Load();
+        if (err != null) { AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = err }); return null; }
+        var specs = eventLookupsSpec;
+        if (specs == null || specs.Count == 0) return null;
+
+        var all = AllEventFetches();
 
         var cases = new JArray();
         var done = new HashSet<string>();
@@ -104,43 +161,101 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             {
                 var f = kv.Value[i];
                 if (f.fromAppendStrings) continue;
-                var specKey = specs[f.kojoID] != null ? f.kojoID : specs[f.storeKey] != null ? f.storeKey : null;
+                var specKey = specs[f.kojoID] is JObject ? f.kojoID : specs[f.storeKey] is JObject ? f.storeKey : null;
                 if (specKey == null || !done.Add($"{f.kojoID}|{f.speakerKey}|{f.listenerKey}")) continue;
                 used.Add(specKey);
                 LookupCases(f, (JObject)specs[specKey], cases);
             }
         // a spec naming no lookup of this event: probably a renamed key
         foreach (var p in specs.Properties())
-            if (!used.Contains(p.Name)) AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = $"eventKojo.json {ev.ID}: `{p.Name}` matches no kojo lookup of the event" });
+        {
+            if (p.Name == "roles" || p.Name == "version" || p.Name.StartsWith("_", System.StringComparison.Ordinal)) continue;
+            if (!used.Contains(p.Name)) AddFinding(new JObject { ["type"] = "caseTemplate", ["problem"] = $"event {ev.ID}: `{p.Name}` matches no kojo lookup of the event" });
+        }
         return cases;
     }
 
     void LookupCases(KojoFetch f, JObject spec, JArray into)
     {
         bool self = f.speakerKey == f.listenerKey;
+        var tplId = ResolveEventTemplate(f.kojoID, spec);
+        var tpl = TA_KojoTemplate.Find(tplId);
         var states = new List<string> { "awake" };
         if (spec["states"] is JArray sa) for (int i = 0; i < sa.Count; i++) if (TA_CaseTemplate.States[(string)sa[i]] != null) states.Add((string)sa[i]);
+        var targetStates = new List<string> { "awake" };
+        if (!self && spec["targetStates"] is JArray tsa) for (int i = 0; i < tsa.Count; i++) if (TA_CaseTemplate.States[(string)tsa[i]] != null) targetStates.Add((string)tsa[i]);
         var listeners = new List<string>();
         if (!self && spec["listeners"] is JArray la) for (int i = 0; i < la.Count; i++) listeners.Add((string)la[i]);
-        if (listeners.Count == 0) listeners.Add(self ? "self" : "any");
+        if (listeners.Count == 0) listeners.Add(self ? "self" : "partner");
         bool required = (bool?)spec["required"] ?? true;
         var label = (string)spec["label"] ?? f.kojoID;
+        var situation = (string)spec["situation"];
         var kojoID = f.kojoID;
+        var speakerName = KeyName(f.speakerKey);
+        var listenerName = KeyName(f.listenerKey);
         EntryResolver resolve = (Character_Personality p, out string provider, out string entryID) => ResolvePlainEntry(p, kojoID, out provider, out entryID);
+
+        JObject MakeWho(string targetDisplay, string sit)
+        {
+            var w = new JObject { ["self"] = speakerName, ["target"] = targetDisplay };
+            if (!string.IsNullOrEmpty(sit)) w["situation"] = sit;
+            return w;
+        }
+
         for (int s = 0; s < states.Count; s++)
             for (int l = 0; l < listeners.Count; l++)
             {
                 var listener = listeners[l];
-                var c = new KojoCaseSpec
+                var lStates = s == 0 && !self ? targetStates : new List<string> { "awake" };
+                for (int ts = 0; ts < lStates.Count; ts++)
                 {
-                    phase = kojoID, label = label, suffix = "", speaker = "event", speakerState = states[s],
-                    listener = listener, listenerState = "awake", outcome = "event", tierSet = (string)spec["tiers"],
-                    noEP = true, required = required,
-                    speakerLabel = KeyName(f.speakerKey),
-                    listenerLabel = listener == "any" || listener == "self" ? KeyName(f.listenerKey) : null
+                    var tState = self ? states[s] : lStates[ts];
+                    var targetDisplay = listener == "partner" || listener == "self" ? listenerName : (string)TA_CaseTemplate.Words["listeners"]?[listener] ?? listener;
+                    var c = new KojoCaseSpec
+                    {
+                        phase = kojoID, label = label, suffix = "", speaker = "event", speakerState = states[s],
+                        listener = listener, listenerState = tState, outcome = "event", tierSet = (string)spec["tiers"],
+                        noEP = true, required = required && tState == "awake", templateId = tplId,
+                        speakerLabel = speakerName,
+                        listenerLabel = listener == "partner" || listener == "self" ? listenerName : null,
+                        who = MakeWho(targetDisplay, situation)
+                    };
+                    c.id = $"kojo.{kojoID}.{f.speakerKey}.{states[s]}{(tState != "awake" && !self ? "." + tState : "")}.{(listener == "partner" ? f.listenerKey : listener)}";
+                    into.Add(KojoCase(c, kojoID, resolve));
+                }
+            }
+
+        // Optional per-branch extra cases (relationship group, targetBaseID, targetTags, selfTags …)
+        if (spec["branches"] is JArray branches)
+            for (int bi = 0; bi < branches.Count; bi++)
+            {
+                if (!(branches[bi] is JObject br)) continue;
+                var bid = (string)br["id"] ?? $"branch{bi}";
+                var bLabel = (string)br["label"] ?? bid;
+                var bSit = (string)br["situation"] ?? situation;
+                var bListener = self ? "self" : ((string)br["listener"] ?? "partner");
+                var bSpec = new KojoCaseSpec
+                {
+                    phase = kojoID, label = $"{label}（{bLabel}）", suffix = "", speaker = "event",
+                    speakerState = (string)br["speakerState"] ?? "awake",
+                    listener = bListener, listenerState = (string)br["targetState"] ?? "awake",
+                    outcome = "event", tierSet = null, noEP = true,
+                    required = (bool?)br["required"] ?? false, templateId = tplId,
+                    speakerLabel = speakerName,
+                    listenerLabel = bListener == "partner" || bListener == "self" ? listenerName : null,
+                    phaseTargetBaseID = (string)br["targetBaseID"],
+                    who = MakeWho(bListener == "partner" || bListener == "self" ? listenerName : (string)TA_CaseTemplate.Words["listeners"]?[bListener] ?? bListener, bSit)
                 };
-                c.id = $"kojo.{kojoID}.{f.speakerKey}.{states[s]}.{(listener == "any" ? f.listenerKey : listener)}";
-                into.Add(KojoCase(c, kojoID, resolve));
+                if (br["selfTags"] is JArray bst) for (int k = 0; k < bst.Count; k++) bSpec.phaseSelfTags.Add((string)bst[k]);
+                if (br["targetTags"] is JArray btt) for (int k = 0; k < btt.Count; k++) bSpec.phaseTargetTags.Add((string)btt[k]);
+                if (br["excludeSelfTags"] is JArray best) for (int k = 0; k < best.Count; k++) bSpec.phaseExcludeSelfTags.Add((string)best[k]);
+                if (br["excludeTargetTags"] is JArray bett) for (int k = 0; k < bett.Count; k++) bSpec.phaseExcludeTargetTags.Add((string)bett[k]);
+                if (br["requireRelationshipTypes"] is JArray brt) for (int k = 0; k < brt.Count; k++) bSpec.phaseRelationshipTypes.Add((string)brt[k]);
+                var grp = (string)br["group"];
+                if (!string.IsNullOrEmpty(grp) && tpl?.raw?["relationshipGroups"]?[grp] is JArray gTypes)
+                    for (int k = 0; k < gTypes.Count; k++) bSpec.phaseRelationshipTypes.Add((string)gTypes[k]);
+                bSpec.id = $"kojo.{kojoID}.{f.speakerKey}.branch.{bid}";
+                into.Add(KojoCase(bSpec, kojoID, resolve));
             }
     }
 
@@ -405,17 +520,27 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         sb.AppendLine($"▶ 条件：{(conds.Count > 0 ? string.Join("；", conds) : "无")}");
         sb.AppendLine($"▶ 结尾：{p.end}");
         sb.AppendLine();
+        var pendingConds = new List<string>();
+        void FlushPendingConds()
+        {
+            if (pendingConds.Count == 0) return;
+            sb.AppendLine($"  · 条件：{string.Join(" → ", pendingConds)}");
+            pendingConds.Clear();
+        }
         for (int i = 0; i < p.steps.Count; i++)
         {
             var s = p.steps[i];
             var e = s.entry;
             if (e is Event.EventEntry.EventEntry_Line line)
             {
+                if (string.IsNullOrEmpty(line.line) && string.IsNullOrEmpty(line.tooltip)) continue;
+                FlushPendingConds();
                 TextSlot(s, "line", line.line, "正文", p);
                 if (!string.IsNullOrEmpty(line.tooltip)) TextSlot(s, "tooltip", line.tooltip, "悬停提示", p);
             }
             else if (e is Event.EventEntry.EventEntry_Question q)
             {
+                FlushPendingConds();
                 if (i == 0 || p.steps[i - 1].entry != e) TextSlot(s, "question", q.question, "提问", p);
                 if (!string.IsNullOrEmpty(q.loadOptionsKey)) sb.Text("doc.event.loadOptions", "key", q.loadOptionsKey);
                 if (s.option != null)
@@ -426,13 +551,23 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
             }
             else if (e is Event.EventEntry.EventEntry_InputField f)
             {
+                FlushPendingConds();
                 TextSlot(s, "question", f.question, "输入框提示", p);
             }
             else if (e is Event.EventEntry.EventEntry_Branch && s.option != null)
             {
                 var c = OptionConditions(s.option, e, s.optionIndex);
-                sb.AppendLine($"  · （自动分支 `{s.option.option}`：{(c == "" ? "无额外检查" : c)}）");
-                if (!string.IsNullOrEmpty(s.option.line)) TextSlot(s, "optionLine", s.option.line, "分支正文", p);
+                var tag = $"`{s.option.option}`" + (c == "" ? "" : $"（{c}）");
+                if (string.IsNullOrEmpty(s.option.line))
+                {
+                    pendingConds.Add(tag);
+                }
+                else
+                {
+                    pendingConds.Add(tag);
+                    FlushPendingConds();
+                    TextSlot(s, "optionLine", s.option.line, "分支正文", p);
+                }
             }
         }
         sb.AppendLine($"  · {p.end}");
@@ -441,24 +576,172 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
 
     // ---------------------------------------------------------------- flow view (too many paths)
 
-    void WriteFlowView()
+    bool IsPureRoutingEntry(Event.EventEntry e)
     {
-        var all = new PathResult();
+        if (e == null) return true;
+        if (e is Event.EventEntry.EventEntry_Line line)
+            return string.IsNullOrEmpty(line.line) && string.IsNullOrEmpty(line.tooltip);
+        if (e is Event.EventEntry.EventEntry_Branch b)
+        {
+            if (b.options == null) return true;
+            for (int o = 0; o < b.options.Count; o++)
+                if (b.options[o] != null && !string.IsNullOrEmpty(b.options[o].line)) return false;
+            return true;
+        }
+        return false;
+    }
+
+    int NextLocalTarget(int idx, Event.EventEntry e, string[] jump)
+    {
+        jump = NavigationJump(e, jump);
+        if (jump != null)
+        {
+            if (jump[0] != "" && jump[0] != ev.ID) return -1;
+            return LabelIndex(jump[1]);
+        }
+        if (e.isLast || idx + 1 >= ev.events.Count) return -1;
+        return idx + 1;
+    }
+
+    /// <summary>
+    /// Collapses consecutive pure-routing branch/empty entries into compact per-gate condition chains attached to the
+    /// text/kojo entries they lead into, grouping parallel OR-branches at the same gate and dropping redundant prefix chains.
+    /// </summary>
+    Dictionary<int, List<string>> CollapsedEntryConditions()
+    {
+        var rawChains = new Dictionary<int, List<List<(int gate, string step)>>>();
+        var incoming = new Dictionary<int, List<int>>();
         for (int i = 0; i < ev.events.Count; i++)
         {
             var e = ev.events[i];
             if (e == null) continue;
-            CollectFetches(ResultsOf(e), all, ConsumerOf(e, false), SeverityOf(e, -1), true);
-            var opts = OptionsOf(e);
-            if (opts != null) for (int o = 0; o < opts.Count; o++) CollectFetches(opts[o]?.Results, all, ConsumerOf(e, true), SeverityOf(e, o), true);
+            if (e is Event.EventEntry.EventEntry_Line line)
+            {
+                int t = NextLocalTarget(i, e, FindJump(line.Results));
+                if (t >= 0) { if (!incoming.ContainsKey(t)) incoming[t] = new List<int>(); incoming[t].Add(i); }
+            }
+            else
+            {
+                var opts = OptionsOf(e);
+                if (opts == null) continue;
+                for (int o = 0; o < opts.Count; o++)
+                {
+                    if (opts[o] == null) continue;
+                    var j = FindJump(opts[o].Results);
+                    if (j == null && e is Event.EventEntry.EventEntry_Question q) j = FindJump(q.loadOptionsResults);
+                    int t = NextLocalTarget(i, e, j);
+                    if (t >= 0) { if (!incoming.ContainsKey(t)) incoming[t] = new List<int>(); incoming[t].Add(i); }
+                }
+            }
         }
+
+        void TraceRouting(int idx, List<(int gate, string step)> chain, HashSet<int> visited)
+        {
+            if (idx < 0 || idx >= ev.events.Count || !visited.Add(idx)) return;
+            var e = ev.events[idx];
+            if (!IsPureRoutingEntry(e))
+            {
+                if (chain.Count > 0)
+                {
+                    if (!rawChains.TryGetValue(idx, out var list)) { list = new List<List<(int, string)>>(); rawChains[idx] = list; }
+                    list.Add(new List<(int, string)>(chain));
+                }
+                return;
+            }
+            if (e is Event.EventEntry.EventEntry_Line l)
+            {
+                TraceRouting(NextLocalTarget(idx, e, FindJump(l.Results)), chain, new HashSet<int>(visited));
+                return;
+            }
+            if (e is Event.EventEntry.EventEntry_Branch b && b.options != null)
+            {
+                for (int o = 0; o < b.options.Count; o++)
+                {
+                    var opt = b.options[o];
+                    if (opt == null) continue;
+                    var cond = OptionConditions(opt, e, o);
+                    var step = $"`{opt.option}`" + (cond == "" ? "" : $"（{cond}）");
+                    var nextChain = new List<(int, string)>(chain) { (idx, step) };
+                    TraceRouting(NextLocalTarget(idx, e, FindJump(opt.Results)), nextChain, new HashSet<int>(visited));
+                }
+            }
+        }
+
+        // Start from entry 0 (if routing) and from any pure-routing entry immediately following a non-routing entry
+        if (ev.events.Count > 0 && IsPureRoutingEntry(ev.events[0]))
+            TraceRouting(0, new List<(int, string)>(), new HashSet<int>());
+        for (int i = 0; i < ev.events.Count; i++)
+        {
+            if (!IsPureRoutingEntry(ev.events[i])) continue;
+            if (!incoming.TryGetValue(i, out var preds)) continue;
+            bool afterContent = false;
+            for (int p = 0; p < preds.Count; p++) if (!IsPureRoutingEntry(ev.events[preds[p]])) { afterContent = true; break; }
+            if (afterContent) TraceRouting(i, new List<(int, string)>(), new HashSet<int>());
+        }
+
+        // Group chains sharing the same gate sequence and drop chains that are strict extensions of a shorter suffix chain
+        var result = new Dictionary<int, List<string>>();
+        foreach (var kv in rawChains)
+        {
+            var groups = new Dictionary<string, List<List<(int gate, string step)>>>();
+            var groupKeys = new List<string>();
+            for (int c = 0; c < kv.Value.Count; c++)
+            {
+                var ch = kv.Value[c];
+                var gk = string.Join("|", ch.ConvertAll(x => x.gate.ToString()));
+                if (!groups.TryGetValue(gk, out var gl)) { gl = new List<List<(int, string)>>(); groups[gk] = gl; groupKeys.Add(gk); }
+                gl.Add(ch);
+            }
+            // Drop any gate-sequence group whose trailing gates match a shorter group's full gate sequence
+            var kept = new List<string>();
+            for (int i = 0; i < groupKeys.Count; i++)
+            {
+                bool shadowedBySuffix = false;
+                for (int j = 0; j < groupKeys.Count && !shadowedBySuffix; j++)
+                    if (i != j && groupKeys[i].Length > groupKeys[j].Length && groupKeys[i].EndsWith("|" + groupKeys[j], System.StringComparison.Ordinal))
+                        shadowedBySuffix = true;
+                if (!shadowedBySuffix) kept.Add(groupKeys[i]);
+            }
+            var lines = new List<string>();
+            for (int i = 0; i < kept.Count; i++)
+            {
+                var gl = groups[kept[i]];
+                int len = gl[0].Count;
+                var parts = new List<string>();
+                for (int pos = 0; pos < len; pos++)
+                {
+                    var distinct = new List<string>();
+                    for (int g = 0; g < gl.Count; g++)
+                    {
+                        var st = gl[g][pos].step;
+                        if (!distinct.Contains(st)) distinct.Add(st);
+                    }
+                    parts.Add(distinct.Count == 1 ? distinct[0] : "（" + string.Join(" / ", distinct) + "）");
+                }
+                var line = string.Join(" → ", parts);
+                if (!lines.Contains(line)) lines.Add(line);
+            }
+            if (lines.Count > 0) result[kv.Key] = lines;
+        }
+        return result;
+    }
+
+    void WriteFlowView()
+    {
+        var all = AllEventFetches();
+        var collapsed = CollapsedEntryConditions();
 
         for (int i = 0; i < ev.events.Count; i++)
         {
             var e = ev.events[i];
-            if (e == null) continue;
+            if (e == null || IsPureRoutingEntry(e)) continue;
             sb.AppendLine("---");
             sb.AppendLine($"### 条目 {i}{(e.label != "" ? $"「{e.label}」" : "")}（{KindName(e)}）");
+            if (collapsed.TryGetValue(i, out var condLines) && condLines.Count > 0)
+            {
+                for (int c = 0; c < condLines.Count; c++)
+                    sb.AppendLine($"  · 条件：{condLines[c]}");
+            }
             sb.AppendLine();
             var step = new Step { entryIndex = i, entry = e };
 
@@ -531,7 +814,8 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         if (first)
         {
             bool isKey = IsDictKey(keyOrText);
-            AddSharedSlot(h, new JObject
+            var resolved = ResolveEmbeddedKeys(text);
+            var slotObj = new JObject
             {
                 ["kind"] = "event_text",
                 // button labels never take random lines; other event text is single-line until the engine supports variants
@@ -548,7 +832,9 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
                 ["isDictKey"] = isKey,
                 ["eventSources"] = SourcesOf(index.events, ev.ID, ev.ID),
                 ["keySources"] = isKey ? KeySources(new List<string> { keyOrText }) : new JObject()
-            });
+            };
+            if (resolved != text) slotObj["resolvedText"] = resolved;
+            AddSharedSlot(h, slotObj);
 
             // $x$ placeholders this event never fills itself: injected by the code that starts the event (noted once per slot)
             var matches = placeholder.Matches(text);
@@ -579,10 +865,21 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
                     continue;
                 }
                 sb.Text("doc.event.kojoAt", "key", kv.Key);
+                var lSpec = LookupSpec(f);
+                var tplId = ResolveEventTemplate(f.kojoID, lSpec);
+                var tpl = TA_KojoTemplate.Find(tplId);
+                if (tpl != null)
+                {
+                    var labels = new List<string>();
+                    for (int a = 0; a < tpl.axes.Count; a++) if (tpl.axes[a].label != "") labels.Add(tpl.axes[a].label);
+                    if (labels.Count > 0) sb.Text("doc.kojo.templateAxes", "template", tplId, "axes", string.Join(" → ", labels));
+                }
                 var ctx = new TA_KojoContext { noEP = true, listenerIsSelf = f.speakerKey == f.listenerKey, playerInvolved = true };
                 var kojoID = f.kojoID;
+                var sit = (string)lSpec?["situation"];
+                var templateWho = string.IsNullOrEmpty(sit) ? null : new JObject { ["situation"] = sit };
                 KojoBlock(kojoID, (Character_Personality per, out string provider, out string entryID) =>
-                    ResolvePlainEntry(per, kojoID, out provider, out entryID), KeyName(f.speakerKey), KeyName(f.listenerKey), ctx, f.consumer, f.severity);
+                    ResolvePlainEntry(per, kojoID, out provider, out entryID), KeyName(f.speakerKey), KeyName(f.listenerKey), ctx, f.consumer, f.severity, templateWho);
             }
         }
     }
@@ -601,7 +898,12 @@ public class TA_EventDocBuilder : TA_DocBuilderBase
         return sbx.ToString();
     }
 
-    static string KeyName(string key) { return key == "self" ? "事件主体(self)" : key; }
+    string KeyName(string key)
+    {
+        var custom = (string)eventConfig?["roles"]?[key];
+        if (!string.IsNullOrEmpty(custom)) return custom;
+        return key == "self" ? "事件发起方" : key;
+    }
 
     string OptionConditions(Event.EventEntry.Options o, Event.EventEntry entry, int optionIndex)
     {
