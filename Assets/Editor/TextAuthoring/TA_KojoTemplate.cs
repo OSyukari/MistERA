@@ -56,7 +56,8 @@ public static class TA_KojoTemplate
     /// </summary>
     public class Extra
     {
-        public string id, label;
+        public string id, label, before, after;
+        public double pos = -1;     // >= 0 when positioned via before/after; < 0 = unpositioned (inside axis or fallback only)
         public JObject block;       // the requirement as written in the template (what the agent copies)
         public JObject expected;    // the full requirement it means (defaults + block), for the exact comparison
         public HashSet<string> selfKeys = new HashSet<string>(), targetKeys = new HashSet<string>();
@@ -347,7 +348,13 @@ public static class TA_KojoTemplate
                 axes.Add(ax);
             }
             var extras = new JArray();
-            for (int k = 0; k < t.extras.Count; k++) extras.Add(new JObject { ["id"] = t.extras[k].id, ["label"] = t.extras[k].label, ["block"] = new JObject { ["requirement"] = t.extras[k].block.DeepClone() } });
+            for (int k = 0; k < t.extras.Count; k++)
+            {
+                var xo = new JObject { ["id"] = t.extras[k].id, ["label"] = t.extras[k].label, ["block"] = new JObject { ["requirement"] = t.extras[k].block.DeepClone() } };
+                if (!string.IsNullOrEmpty(t.extras[k].before)) xo["before"] = t.extras[k].before;
+                if (!string.IsNullOrEmpty(t.extras[k].after)) xo["after"] = t.extras[k].after;
+                extras.Add(xo);
+            }
             var required = new JArray();
             for (int k = 0; k < t.required.Count; k++)
             {
@@ -373,6 +380,13 @@ public static class TA_KojoTemplate
         return list;
     }
 
+    static int FindAxisIndex(Template t, string axisId)
+    {
+        if (string.IsNullOrEmpty(axisId)) return -1;
+        for (int i = 0; i < t.axes.Count; i++) if (t.axes[i].id == axisId) return i;
+        return -1;
+    }
+
     static void LoadExtras(Template t, JObject extras)
     {
         if (extras == null) return;
@@ -381,7 +395,26 @@ public static class TA_KojoTemplate
             if (FindExtra(t, p.Name) != null) continue;
             var block = p.Value["requirement"] as JObject ?? new JObject();
             var req = block.ToObject<ResponseEntry.Variant.Requirement>(serializer);
-            var x = new Extra { id = p.Name, label = (string)p.Value["label"] ?? p.Name, block = block, expected = JObject.FromObject(req, serializer) };
+            var x = new Extra
+            {
+                id = p.Name, label = (string)p.Value["label"] ?? p.Name,
+                before = (string)p.Value["before"], after = (string)p.Value["after"],
+                block = block, expected = JObject.FromObject(req, serializer)
+            };
+            if (!string.IsNullOrEmpty(x.before) && !string.IsNullOrEmpty(x.after))
+                warnings.Add($"{t.id} extra {p.Name}: both `before` and `after` set");
+            else if (!string.IsNullOrEmpty(x.before))
+            {
+                int idx = FindAxisIndex(t, x.before);
+                if (idx < 0) warnings.Add($"{t.id} extra {p.Name}: unknown `before` axis `{x.before}`");
+                else x.pos = idx - 0.5 + (t.extras.Count + 1) * 0.001;
+            }
+            else if (!string.IsNullOrEmpty(x.after))
+            {
+                int idx = FindAxisIndex(t, x.after);
+                if (idx < 0) warnings.Add($"{t.id} extra {p.Name}: unknown `after` axis `{x.after}`");
+                else x.pos = idx + (t.extras.Count + 1) * 0.001;
+            }
             if (req.selfTags != null) for (int g = 0; g < req.selfTags.Count; g++) x.selfKeys.Add(req.selfTags[g]);
             if (req.targetTags != null) for (int g = 0; g < req.targetTags.Count; g++) x.targetKeys.Add(req.targetTags[g]);
             // an extra is customization: a block with axis fields would be an axis, one without tags can't be recognised
@@ -555,12 +588,13 @@ public static class TA_KojoTemplate
     /// a branch of no axis is the writer's customization (T-D5) and stays in its parent's slot. Disabled branches (no
     /// possible output, E2) are skipped like the engine skips them.
     /// </summary>
-    static void Level(Ctx c, List<ResponseEntry.Variant> list, string prefix, int parentAxis, bool ancestorNoSelfAction = false, bool ancestorNoTargetAction = false)
+    static void Level(Ctx c, List<ResponseEntry.Variant> list, string prefix, int parentAxis, bool ancestorNoSelfAction = false, bool ancestorNoTargetAction = false,
+        double parentPos = -1, string parentLabel = null)
     {
         if (list == null) return;
         var tpl = c.tpl; var provider = c.provider; var entryID = c.entryID; var into = c.into; var map = c.map; var counts = c.counts;
-        int highest = -1;
-        string highestPath = null;
+        double highest = -1;
+        string highestPath = null, highestLabel = null;
         for (int i = 0; i < list.Count; i++)
         {
             var v = list[i];
@@ -581,13 +615,27 @@ public static class TA_KojoTemplate
             var axes = Classify(tpl, v);
             int axis = axes.Count > 0 ? axes[0] : -1;
             var extra = MatchExtra(tpl, v);
+            double childPos = parentPos;
+            string childLabel = parentLabel;
             if (prefix == "" && i == c.fallbackIndex && axis < 0 && extra == null) map[path] = "fallback";
             else if (axis < 0 && extra != null)
             {
-                // an extra: inside an axis branch or the fallback, enabled on the entry, exactly its block
+                // an extra: positioned extras slot into the axis order (valid at top level); unpositioned ones sit inside an axis or fallback
                 map[path] = "extra:" + extra.label;
                 if (!c.written.ContainsKey(extra.id)) c.written[extra.id] = path;
-                if (prefix == "") into.Add(Finding("templateExtraOutside", provider, entryID, path, "template", tpl.id, "extra", extra.label));
+                if (extra.pos >= 0)
+                {
+                    if (parentPos >= 0 && extra.pos <= parentPos)
+                        into.Add(Finding("templateDepth", provider, entryID, path, "axis", extra.label,
+                            "parent", prefix, "parentAxis", parentLabel ?? "", "template", tpl.id));
+                    if (extra.pos < highest)
+                        into.Add(Finding("templateOrder", provider, entryID, path, "axis", extra.label,
+                            "after", highestPath, "afterAxis", highestLabel ?? "", "template", tpl.id));
+                    else if (extra.pos > highest) { highest = extra.pos; highestPath = path; highestLabel = extra.label; }
+                    childPos = extra.pos;
+                    childLabel = extra.label;
+                }
+                else if (prefix == "") into.Add(Finding("templateExtraOutside", provider, entryID, path, "template", tpl.id, "extra", extra.label));
                 if (!c.enabled.Contains(extra.id)) into.Add(Finding("templateExtraNotEnabled", provider, entryID, path, "template", tpl.id, "extra", extra.label, "extraID", extra.id));
                 var diff = DiffExtra(extra, v, ancestorNoSelfAction, ancestorNoTargetAction);
                 if (diff.Count > 0) into.Add(Finding("templateExtraFields", provider, entryID, path, "template", tpl.id, "extra", extra.label,
@@ -611,16 +659,18 @@ public static class TA_KojoTemplate
                 bool canActSelfStatus = parentAxis >= 0 && tpl.axes[axis].kind == "selfStatus" && tpl.axes[parentAxis].kind == "ep"
                     && (v.requirement == null || v.requirement.requireSelfAction)
                     && !Any(v.requirement?.selfTags, UnawareSelfStatusTags);
-                if (parentAxis >= 0 && axis <= parentAxis && !tpl.axes[axis].allowInside.Contains(tpl.axes[parentAxis].id) && !canActSelfStatus)
+                if (parentPos >= 0 && axis <= parentPos && (parentAxis < 0 || !tpl.axes[axis].allowInside.Contains(tpl.axes[parentAxis].id)) && !canActSelfStatus)
                     into.Add(Finding("templateDepth", provider, entryID, path, "axis", tpl.axes[axis].label,
-                        "parent", prefix, "parentAxis", tpl.axes[parentAxis].label, "template", tpl.id));
+                        "parent", prefix, "parentAxis", parentLabel ?? "", "template", tpl.id));
                 if (axis < highest)
                     into.Add(Finding("templateOrder", provider, entryID, path, "axis", tpl.axes[axis].label,
-                        "after", highestPath, "afterAxis", tpl.axes[highest].label, "template", tpl.id));
-                else if (axis > highest) { highest = axis; highestPath = path; }
+                        "after", highestPath, "afterAxis", highestLabel ?? "", "template", tpl.id));
+                else if (axis > highest) { highest = axis; highestPath = path; highestLabel = tpl.axes[axis].label; }
                 // an EP branch is a full inner tree: its own lines are that tree's fallback
                 if (tpl.axes[axis].kind == "ep" && v.variants != null && v.variants.Count > 0 && !HasOwnLines(v))
                     into.Add(Finding("templateLeafNoFallback", provider, entryID, path, "axis", tpl.axes[axis].label, "template", tpl.id));
+                childPos = axis;
+                childLabel = tpl.axes[axis].label;
             }
             else if (prefix == "")
             {
@@ -630,7 +680,7 @@ public static class TA_KojoTemplate
             else map[path] = "custom";
             bool nextNoSelf = ancestorNoSelfAction || (v.requirement != null && !v.requirement.requireSelfAction);
             bool nextNoTarget = ancestorNoTargetAction || (v.requirement != null && !v.requirement.requireTargetAction);
-            Level(c, v.variants, path, axis >= 0 ? axis : parentAxis, nextNoSelf, nextNoTarget);
+            Level(c, v.variants, path, axis >= 0 ? axis : parentAxis, nextNoSelf, nextNoTarget, childPos, childLabel);
         }
     }
 

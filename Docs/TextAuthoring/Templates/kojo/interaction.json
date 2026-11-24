@@ -4,7 +4,7 @@
   "label": "通用互动",
 
   "_comment_bind": "Entries proposed for this template (T7): own entries whose key starts with one of these, without a template field yet.",
-  "bind": ["OnFirstExperience_"],
+  "bind": [],
   "_comment_bindCommand": "Command kojo keys (a command's kojo key + suffix) proposed for this template: the joiner's own lines.",
   "bindCommand": ["_Tryjoin", "_Joined", "_Join_Refused"],
 
@@ -82,34 +82,6 @@
       ]
     }
   ],
-
-  "_comment_extras": "Extras: custom variants with pre-written conditions, enabled per entry by its `templateExtras` list. Copy `requirement` exactly - children don't inherit their parent's fields, so the block carries the loosened defaults the lookup needs. Recognised by the tags in the block; a recognised branch must have exactly this requirement, must be enabled on the entry, and must sit inside an axis branch or the fallback (never top level). Optional: an enabled extra that isn't written is listed as available, not an error. No axis fields here. First experience: the partner part's tags (EvaluationPackage.GetFirstExperienceKojo → the source BodyInternal part's Base.tags); a tongue acts through the mouth part (no tongue part exists).",
-  "extras": {
-    "afterUnaware": {
-      "label": "曾在无意识中失去（现在清醒）",
-      "requirement": { "selfTags": ["firstexp_after_unaware"], "requireTargetAction": false, "requireEPSuccess": false }
-    },
-    "partnerPenis": {
-      "label": "对方部位：阴茎",
-      "requirement": { "targetTags": ["penis"], "requireTargetAction": false, "requireEPSuccess": false }
-    },
-    "partnerMouth": {
-      "label": "对方部位：嘴（含舌头）",
-      "requirement": { "targetTags": ["mouth"], "requireTargetAction": false, "requireEPSuccess": false }
-    },
-    "partnerAnus": {
-      "label": "对方部位：肛门",
-      "requirement": { "targetTags": ["anus"], "requireTargetAction": false, "requireEPSuccess": false }
-    },
-    "partnerVagina": {
-      "label": "对方部位：阴道",
-      "requirement": { "targetTags": ["vagina"], "requireTargetAction": false, "requireEPSuccess": false }
-    },
-    "partnerClit": {
-      "label": "对方部位：阴蒂",
-      "requirement": { "targetTags": ["clit"], "requireTargetAction": false, "requireEPSuccess": false }
-    }
-  },
 
   "_comment_relationshipGroups": "Suggested relationship branches (requireRelationshipTypes lists). Any set of types is a valid relationship branch - edit or add groups freely. `<type>:A` / `<type>:B` = the speaker is that side of a one-sided type (Character_Relationship.HasRelationshipType); a plain type = either side.",
   "relationshipGroups": {

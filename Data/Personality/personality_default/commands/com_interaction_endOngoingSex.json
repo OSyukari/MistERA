@@ -305,7 +305,9 @@
                         },
                         {
                             "requirement": {
-                                "requirePermission": false
+                                "requirePermission": false,
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {

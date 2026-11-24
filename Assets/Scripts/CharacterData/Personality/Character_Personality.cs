@@ -363,7 +363,7 @@ public class Character_Personality
         if (com != null)
         {
             kojoKeyBuffer.Clear();
-            com.GetKojoKeys(kojoKeyBuffer);
+            com.GetKojoKeys(kojoKeyBuffer, kol.VariantID);
             for (int i = 0; i < kojoKeyBuffer.Count && key == null; i++)
             {
                 var k = kojoKeyBuffer[i] + kol.suffix;

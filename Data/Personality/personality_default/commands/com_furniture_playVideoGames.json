@@ -10,51 +10,6 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.3.3 主动接受",
-                            "responses": [
-                                "com_furniture_playVideoGames_Begin_1",
-                                "com_furniture_playVideoGames_Begin_2",
-                                "com_furniture_playVideoGames_Begin_3",
-                                "com_furniture_playVideoGames_Begin_4",
-                                "com_furniture_playVideoGames_Begin_5",
-                                "com_furniture_playVideoGames_Begin_6",
-                                "com_furniture_playVideoGames_Begin_7",
-                                "com_furniture_playVideoGames_Begin_8"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
-                            ],
-                            "_comment": "2.3.5 被动接受（屈服）",
-                            "responses": [
-                                "com_furniture_playVideoGames_Begin_9",
-                                "com_furniture_playVideoGames_Begin_10",
-                                "com_furniture_playVideoGames_Begin_11",
-                                "com_furniture_playVideoGames_Begin_12",
-                                "com_furniture_playVideoGames_Begin_13",
-                                "com_furniture_playVideoGames_Begin_14",
-                                "com_furniture_playVideoGames_Begin_15",
-                                "com_furniture_playVideoGames_Begin_16"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -68,6 +23,49 @@
                                 "com_furniture_playVideoGames_Begin_22",
                                 "com_furniture_playVideoGames_Begin_23",
                                 "com_furniture_playVideoGames_Begin_24"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful",
+                                        "pain"
+                                    ],
+                                    "_comment": "2.3.5 被动接受（屈服）",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_Begin_9",
+                                        "com_furniture_playVideoGames_Begin_10",
+                                        "com_furniture_playVideoGames_Begin_11",
+                                        "com_furniture_playVideoGames_Begin_12",
+                                        "com_furniture_playVideoGames_Begin_13",
+                                        "com_furniture_playVideoGames_Begin_14",
+                                        "com_furniture_playVideoGames_Begin_15",
+                                        "com_furniture_playVideoGames_Begin_16"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.3.3 主动接受",
+                                    "responses": [
+                                        "com_furniture_playVideoGames_Begin_1",
+                                        "com_furniture_playVideoGames_Begin_2",
+                                        "com_furniture_playVideoGames_Begin_3",
+                                        "com_furniture_playVideoGames_Begin_4",
+                                        "com_furniture_playVideoGames_Begin_5",
+                                        "com_furniture_playVideoGames_Begin_6",
+                                        "com_furniture_playVideoGames_Begin_7",
+                                        "com_furniture_playVideoGames_Begin_8"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -271,7 +269,10 @@
                                 "com_furniture_playVideoGames_Tryjoin_4",
                                 "com_furniture_playVideoGames_Tryjoin_5",
                                 "com_furniture_playVideoGames_Tryjoin_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -291,7 +292,10 @@
                                 "com_furniture_playVideoGames_Joined_4",
                                 "com_furniture_playVideoGames_Joined_5",
                                 "com_furniture_playVideoGames_Joined_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -311,7 +315,10 @@
                                 "com_furniture_playVideoGames_Join_Refused_4",
                                 "com_furniture_playVideoGames_Join_Refused_5",
                                 "com_furniture_playVideoGames_Join_Refused_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -557,7 +564,10 @@
                                 "com_furniture_playVideoGames_Interrupt_36",
                                 "com_furniture_playVideoGames_Interrupt_37",
                                 "com_furniture_playVideoGames_Interrupt_38"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"

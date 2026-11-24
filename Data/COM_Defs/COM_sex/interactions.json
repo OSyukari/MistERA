@@ -282,7 +282,7 @@
         },
         {
             "ID":"com_interaction_endOngoingSex",
-            "kojoParticipants":"PairDistinct",
+            "kojoParticipants":"SoloOrGroupMutual",
             "ActionPackageClass":"ActionPackage_Interaction",
             "displayName":"com_interaction_endOngoingSex",
             "timeScale":1,

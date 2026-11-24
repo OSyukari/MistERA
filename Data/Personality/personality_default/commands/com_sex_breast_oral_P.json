@@ -10,13 +10,71 @@
                     ],
                     "variants": [
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_sex_breast_oral_P_Climax_timestop_1",
+                                "com_sex_breast_oral_P_Climax_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_sex_breast_oral_P_Climax_sleeping_1",
+                                "com_sex_breast_oral_P_Climax_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_sex_breast_oral_P_Climax_unconscious_1",
+                                "com_sex_breast_oral_P_Climax_unconscious_2"
+                            ]
+                        },
+                        {
                             "requireSelfReceiver": true,
                             "_comment": "受方 被乳交口交 高潮",
                             "responses": [
                                 "com_sex_breast_oral_P_Climax_1",
                                 "com_sex_breast_oral_P_Climax_8",
                                 "com_sex_breast_oral_P_Climax_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -52,7 +110,10 @@
                                 "com_sex_breast_oral_P_Climax_4",
                                 "com_sex_breast_oral_P_Climax_5",
                                 "com_sex_breast_oral_P_Climax_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandClimax"
@@ -432,53 +493,7 @@
                             "responses": [
                                 "com_sex_breast_oral_P_11",
                                 "com_sex_breast_oral_P_12",
-                                "com_sex_breast_oral_P_52"
-                            ],
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "doll",
-                                        "empty"
-                                    ],
-                                    "_comment": "初体验 时停中 乳交口交",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_Timestop_1",
-                                        "com_sex_breast_oral_P_FE_Timestop_2",
-                                        "com_sex_breast_oral_P_FE_Timestop_3"
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 乳交口交 口上文",
-                            "responses": [
-                                "com_sex_breast_oral_P_11",
-                                "com_sex_breast_oral_P_12",
+                                "com_sex_breast_oral_P_52",
                                 "com_sex_breast_oral_P_43"
                             ],
                             "variants": [
@@ -499,6 +514,8 @@
                                     "_comment": "初体验 时停中 乳交口交",
                                     "responses": [
                                         "com_sex_breast_oral_P_FE_Timestop_1",
+                                        "com_sex_breast_oral_P_FE_Timestop_2",
+                                        "com_sex_breast_oral_P_FE_Timestop_3",
                                         "com_sex_breast_oral_P_FE_Timestop_4",
                                         "com_sex_breast_oral_P_FE_Timestop_5"
                                     ]
@@ -524,7 +541,8 @@
                             "responses": [
                                 "com_sex_breast_oral_P_9",
                                 "com_sex_breast_oral_P_10",
-                                "com_sex_breast_oral_P_51"
+                                "com_sex_breast_oral_P_51",
+                                "com_sex_breast_oral_P_47"
                             ],
                             "variants": [
                                 {
@@ -545,53 +563,10 @@
                                     "responses": [
                                         "com_sex_breast_oral_P_FE_Sleep_1",
                                         "com_sex_breast_oral_P_59",
-                                        "com_sex_breast_oral_P_60"
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "boobjob",
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 乳交口交 口上文",
-                            "responses": [
-                                "com_sex_breast_oral_P_9",
-                                "com_sex_breast_oral_P_10",
-                                "com_sex_breast_oral_P_47"
-                            ],
-                            "variants": [
-                                {
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "blowjob",
-                                        "boobjob",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "初体验 睡眠中 乳交口交",
-                                    "responses": [
-                                        "com_sex_breast_oral_P_FE_Sleep_1",
+                                        "com_sex_breast_oral_P_60",
                                         "com_sex_breast_oral_P_FE_Sleep_2",
                                         "com_sex_breast_oral_P_FE_Sleep_3"
-                                    ],
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_M"
-                                        ]
-                                    }
+                                    ]
                                 }
                             ]
                         },
@@ -1548,7 +1523,21 @@
                 "com_sex_breast_oral_P_82": "$self$微眯起眼迎合着$target$的动作，嗓音带着甜腻的颤意：“啊……再多弄一会儿……”",
                 "com_sex_breast_oral_P_83": "$self$微微喘息着，一边用胸口夹紧肉棒并用唇舌舔吮顶端，一边留意着$target$的反应。",
                 "com_sex_breast_oral_P_84": "空气渐渐升温，$self$放缓了节奏继续用胸口夹紧肉棒并用唇舌舔吮顶端：“……感觉怎么样？”",
-                "com_sex_breast_oral_P_85": "$self$轻吐出一口气，顺从着眼前的状态继续用胸口夹紧肉棒并用唇舌舔吮顶端。"
+                "com_sex_breast_oral_P_85": "$self$轻吐出一口气，顺从着眼前的状态继续用胸口夹紧肉棒并用唇舌舔吮顶端。",
+                "com_sex_breast_oral_P_Climax_timestop_1": "$self$被定格在凝固的时间里，身体在毫无知觉的状态下迎来了剧烈的痉挛与高潮，眼神却依旧空洞静止。",
+                "com_sex_breast_oral_P_Climax_timestop_2": "时间静止之中，$self$的表情没有丝毫波动，唯有失控颤抖的躯体诚实地承受着攀上顶峰的快感。",
+                "com_sex_breast_oral_P_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
+                "com_sex_breast_oral_P_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
+                "com_sex_breast_oral_P_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
+                "com_sex_breast_oral_P_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+            },
+            "en-us": {
+                "com_sex_breast_oral_P_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",
+                "com_sex_breast_oral_P_Climax_timestop_2": "In the stillness of stopped time, $self$'s expression does not flicker as her body involuntarily trembles through the peak of pleasure.",
+                "com_sex_breast_oral_P_Climax_sleeping_1": "Fast asleep, $self$'s body suddenly tenses as she shudders through a climax with a soft, muffled gasp, her brow furrowing without waking.",
+                "com_sex_breast_oral_P_Climax_sleeping_2": "$self$ lets out a quiet whimper in her sleep as her body trembles involuntarily through orgasm before going limp again.",
+                "com_sex_breast_oral_P_Climax_unconscious_1": "Unconscious, $self$ gives no conscious response as her body instinctively arches and shudders through a climax.",
+                "com_sex_breast_oral_P_Climax_unconscious_2": "Eyes shut in unconsciousness, $self$ lies unresponsive while her trembling body betrays the peak washing over her."
             }
         }
     }

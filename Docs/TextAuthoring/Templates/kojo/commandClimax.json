@@ -3,6 +3,7 @@
   "id": "commandClimax",
   "label": "指令高潮口上",
   "inner": "interaction",
+  "beforeLevels": ["speakerStatus"],
   "bindCommand": ["_Climax"],
 
   "fallback": {

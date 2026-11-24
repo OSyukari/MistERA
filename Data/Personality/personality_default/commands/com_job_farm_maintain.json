@@ -9,46 +9,6 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "relaxed",
-                                "leaning",
-                                "confident",
-                                "smug",
-                                "excited",
-                                "happy"
-                            ],
-                            "_comment": "2.3.3 主动接受",
-                            "responses": [
-                                "com_job_farm_maintain_Begin_1",
-                                "com_job_farm_maintain_Begin_2",
-                                "com_job_farm_maintain_Begin_13"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
-                            ],
-                            "_comment": "2.3.5 被动接受（屈服）",
-                            "responses": [
-                                "com_job_farm_maintain_Begin_3",
-                                "com_job_farm_maintain_Begin_4",
-                                "com_job_farm_maintain_Begin_12"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -57,6 +17,44 @@
                                 "com_job_farm_maintain_Begin_5",
                                 "com_job_farm_maintain_Begin_6",
                                 "com_job_farm_maintain_Begin_11"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful",
+                                        "pain"
+                                    ],
+                                    "_comment": "2.3.5 被动接受（屈服）",
+                                    "responses": [
+                                        "com_job_farm_maintain_Begin_3",
+                                        "com_job_farm_maintain_Begin_4",
+                                        "com_job_farm_maintain_Begin_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "relaxed",
+                                        "leaning",
+                                        "confident",
+                                        "smug",
+                                        "excited",
+                                        "happy"
+                                    ],
+                                    "_comment": "2.3.3 主动接受",
+                                    "responses": [
+                                        "com_job_farm_maintain_Begin_1",
+                                        "com_job_farm_maintain_Begin_2",
+                                        "com_job_farm_maintain_Begin_13"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -91,7 +89,10 @@
                                 "com_job_farm_maintain_Tryjoin_1",
                                 "com_job_farm_maintain_Tryjoin_2",
                                 "com_job_farm_maintain_Tryjoin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -108,7 +109,10 @@
                                 "com_job_farm_maintain_Joined_1",
                                 "com_job_farm_maintain_Joined_2",
                                 "com_job_farm_maintain_Joined_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -125,7 +129,10 @@
                                 "com_job_farm_maintain_Join_Refused_1",
                                 "com_job_farm_maintain_Join_Refused_2",
                                 "com_job_farm_maintain_Join_Refused_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -330,7 +337,10 @@
                                 "com_job_farm_maintain_Interrupt_9",
                                 "com_job_farm_maintain_Interrupt_10",
                                 "com_job_farm_maintain_Interrupt_11"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"

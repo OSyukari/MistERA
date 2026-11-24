@@ -10,13 +10,71 @@
                     ],
                     "variants": [
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_sex_finger_insert_A_Climax_timestop_1",
+                                "com_sex_finger_insert_A_Climax_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_sex_finger_insert_A_Climax_sleeping_1",
+                                "com_sex_finger_insert_A_Climax_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_sex_finger_insert_A_Climax_unconscious_1",
+                                "com_sex_finger_insert_A_Climax_unconscious_2"
+                            ]
+                        },
+                        {
                             "requireSelfDoer": true,
                             "_comment": "攻方 A指入 高潮",
                             "responses": [
                                 "com_sex_finger_insert_A_Climax_1",
                                 "com_sex_finger_insert_A_Climax_14",
                                 "com_sex_finger_insert_A_Climax_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -60,41 +118,10 @@
                                 "com_sex_finger_insert_A_Climax_11",
                                 "com_sex_finger_insert_A_Climax_12",
                                 "com_sex_finger_insert_A_Climax_13"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.1 独自A指入自慰 高潮 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Climax_Self_M_1",
-                                "com_sex_finger_insert_A_Climax_Self_M_2"
                             ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
-                        },
-                        {
-                            "requireSelfOnly": true,
                             "requirement": {
-                                "requirePermission": true
-                            },
-                            "_comment": "2.5.1 独自A指入自慰 高潮 有允许 口上文",
-                            "responses": [
-                                "com_sex_finger_insert_A_Climax_Self_1",
-                                "com_sex_finger_insert_A_Climax_Self_2"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "_comment": "2.5.2 独自A指入自慰 高潮 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
-                            "responses": [
-                                "com_sex_finger_insert_A_Climax_Self_M_3",
-                                "com_sex_finger_insert_A_Climax_Self_M_4"
-                            ],
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true
+                                "requireSelfAction": false
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -102,6 +129,38 @@
                             "responses": [
                                 "com_sex_finger_insert_A_Climax_Self_3",
                                 "com_sex_finger_insert_A_Climax_Self_4"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "_comment": "2.5.1 独自A指入自慰 高潮 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Climax_Self_1",
+                                        "com_sex_finger_insert_A_Climax_Self_2"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "_comment": "2.5.1 独自A指入自慰 高潮 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_Climax_Self_M_1",
+                                                "com_sex_finger_insert_A_Climax_Self_M_2"
+                                            ],
+                                            "requireMaster": true,
+                                            "requireSelfNotMaster": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "_comment": "2.5.2 独自A指入自慰 高潮 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_Climax_Self_M_3",
+                                        "com_sex_finger_insert_A_Climax_Self_M_4"
+                                    ],
+                                    "requireMaster": true,
+                                    "requireSelfNotMaster": true
+                                }
                             ]
                         }
                     ],
@@ -404,52 +463,6 @@
                                     ]
                                 },
                                 {
-                                    "requireSelfOnly": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_Self_3",
-                                        "com_sex_finger_insert_A_Self_4"
-                                    ]
-                                },
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被A指入 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_7",
-                                        "com_sex_finger_insert_A_8",
-                                        "com_sex_finger_insert_A_9",
-                                        "com_sex_finger_insert_A_10",
-                                        "com_sex_finger_insert_A_11",
-                                        "com_sex_finger_insert_A_12"
-                                    ]
-                                },
-                                {
                                     "requireSelfReceiver": true,
                                     "requirement": {
                                         "requireSelfAction": false
@@ -503,50 +516,6 @@
                                     "responses": [
                                         "com_sex_finger_insert_A_Self_1",
                                         "com_sex_finger_insert_A_Self_2"
-                                    ]
-                                },
-                                {
-                                    "requireSelfOnly": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_Self_1",
-                                        "com_sex_finger_insert_A_Self_2"
-                                    ]
-                                },
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被A指入 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_1",
-                                        "com_sex_finger_insert_A_2",
-                                        "com_sex_finger_insert_A_3",
-                                        "com_sex_finger_insert_A_4",
-                                        "com_sex_finger_insert_A_5",
-                                        "com_sex_finger_insert_A_6"
                                     ]
                                 },
                                 {
@@ -1479,7 +1448,21 @@
                 "com_sex_finger_insert_A_Ongoing_6": "深处被不断顶弄的触感让$self$耳根发烫，只能死死咬住嘴唇。",
                 "com_sex_finger_insert_A_Ongoing_7": "动作仍在继续，$self$保持着此刻的姿势没有多动。",
                 "com_sex_finger_insert_A_Ongoing_8": "$self$微微垂下视线，顺着当前的节奏安静地待在原地。",
-                "com_sex_finger_insert_A_Ongoing_9": "指间的抽插没有停下，$self$一时间没有发出别的声响。"
+                "com_sex_finger_insert_A_Ongoing_9": "指间的抽插没有停下，$self$一时间没有发出别的声响。",
+                "com_sex_finger_insert_A_Climax_timestop_1": "$self$被定格在凝固的时间里，身体在毫无知觉的状态下迎来了剧烈的痉挛与高潮，眼神却依旧空洞静止。",
+                "com_sex_finger_insert_A_Climax_timestop_2": "时间静止之中，$self$的表情没有丝毫波动，唯有失控颤抖的躯体诚实地承受着攀上顶峰的快感。",
+                "com_sex_finger_insert_A_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
+                "com_sex_finger_insert_A_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
+                "com_sex_finger_insert_A_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
+                "com_sex_finger_insert_A_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+            },
+            "en-us": {
+                "com_sex_finger_insert_A_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",
+                "com_sex_finger_insert_A_Climax_timestop_2": "In the stillness of stopped time, $self$'s expression does not flicker as her body involuntarily trembles through the peak of pleasure.",
+                "com_sex_finger_insert_A_Climax_sleeping_1": "Fast asleep, $self$'s body suddenly tenses as she shudders through a climax with a soft, muffled gasp, her brow furrowing without waking.",
+                "com_sex_finger_insert_A_Climax_sleeping_2": "$self$ lets out a quiet whimper in her sleep as her body trembles involuntarily through orgasm before going limp again.",
+                "com_sex_finger_insert_A_Climax_unconscious_1": "Unconscious, $self$ gives no conscious response as her body instinctively arches and shudders through a climax.",
+                "com_sex_finger_insert_A_Climax_unconscious_2": "Eyes shut in unconsciousness, $self$ lies unresponsive while her trembling body betrays the peak washing over her."
             }
         }
     }

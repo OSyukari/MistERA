@@ -117,42 +117,6 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.3.3 主动接受",
-                            "responses": [
-                                "com_furniture_takingBreak_Begin_1",
-                                "com_furniture_takingBreak_Begin_2",
-                                "com_furniture_takingBreak_Begin_3"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
-                            ],
-                            "_comment": "2.3.5 被动接受（屈服）",
-                            "responses": [
-                                "com_furniture_takingBreak_Begin_7",
-                                "com_furniture_takingBreak_Begin_8",
-                                "com_furniture_takingBreak_Begin_9"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -161,6 +125,40 @@
                                 "com_furniture_takingBreak_Begin_13",
                                 "com_furniture_takingBreak_Begin_14",
                                 "com_furniture_takingBreak_Begin_15"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful",
+                                        "pain"
+                                    ],
+                                    "_comment": "2.3.5 被动接受（屈服）",
+                                    "responses": [
+                                        "com_furniture_takingBreak_Begin_7",
+                                        "com_furniture_takingBreak_Begin_8",
+                                        "com_furniture_takingBreak_Begin_9"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.3.3 主动接受",
+                                    "responses": [
+                                        "com_furniture_takingBreak_Begin_1",
+                                        "com_furniture_takingBreak_Begin_2",
+                                        "com_furniture_takingBreak_Begin_3"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -192,7 +190,10 @@
                                 "com_furniture_takingBreak_Tryjoin_4",
                                 "com_furniture_takingBreak_Tryjoin_5",
                                 "com_furniture_takingBreak_Tryjoin_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -216,7 +217,13 @@
                         },
                         {
                             "_comment": "2.3.7 NPC的请求被同意后，NPC的反应",
-                            "responses": []
+                            "responses": [
+                                "com_furniture_takingBreak_Joined_1",
+                                "com_furniture_takingBreak_Joined_2"
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -240,7 +247,13 @@
                         },
                         {
                             "_comment": "2.3.8 NPC的请求被拒绝后，NPC的反应",
-                            "responses": []
+                            "responses": [
+                                "com_furniture_takingBreak_Join_Refused_1",
+                                "com_furniture_takingBreak_Join_Refused_2"
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -443,7 +456,10 @@
                                 "com_furniture_takingBreak_Interrupt_25",
                                 "com_furniture_takingBreak_Interrupt_26",
                                 "com_furniture_takingBreak_Interrupt_27"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -943,7 +959,11 @@
                 "com_furniture_takingLongBreak_Tryjoin_Fallback_1": "$self$走过来问：“我也一起歇一阵，介意吗？”",
                 "com_furniture_takingLongBreak_Joined_Fallback_1": "$self$在旁坐了下来，一起享受难得的空闲。",
                 "com_furniture_takingLongBreak_Refuse_Fallback_1": "$self$摆手道：“现在还有事，没法长歇。”",
-                "com_furniture_takingLongBreak_Join_Refused_Fallback_1": "$self$笑了笑：“行，那你先忙着，我等会儿再来。”"
+                "com_furniture_takingLongBreak_Join_Refused_Fallback_1": "$self$笑了笑：“行，那你先忙着，我等会儿再来。”",
+                "com_furniture_takingBreak_Joined_1": "“谢啦，正好歇口气。”$self$在$target$身旁坐了下来。",
+                "com_furniture_takingBreak_Joined_2": "$self$松了口气，顺势在旁边找了个舒服的位置歇息。",
+                "com_furniture_takingBreak_Join_Refused_1": "“这样啊，那我不打扰了。”$self$点点头，转身去找别的地方歇着。",
+                "com_furniture_takingBreak_Join_Refused_2": "$self$收回脚步，客气地应了一声，“没事，那我自己待会儿。”"
             },
             "en-us": {
                 "com_furniture_takingBreak_1": "$self$ waves a hand apologetically. \"Umm... I just want to be alone for a bit, maybe another time?\"",
@@ -1077,7 +1097,11 @@
                 "com_furniture_takingBreak_Interrupt_27": "$self$ continues playing with the phone, changing nothing because of $target$'s appearance.",
                 "com_furniture_takingBreak_Interrupt_28": "$self$ moves aside a little, considering it a greeting.",
                 "com_furniture_takingBreak_Interrupt_29": "$self$ yawns, eyes still somewhat blurred.",
-                "com_furniture_takingBreak_Interrupt_30": "$self$ has no big reaction, continuing to maintain the original posture."
+                "com_furniture_takingBreak_Interrupt_30": "$self$ has no big reaction, continuing to maintain the original posture.",
+                "com_furniture_takingBreak_Joined_1": "\"Thanks, I could really use a breather.\" $self$ takes a seat next to $target$.",
+                "com_furniture_takingBreak_Joined_2": "$self$ lets out a small sigh of relief and settles into a comfortable spot nearby.",
+                "com_furniture_takingBreak_Join_Refused_1": "\"I see, I won't bother you then.\" $self$ nods and turns to find somewhere else to rest.",
+                "com_furniture_takingBreak_Join_Refused_2": "$self$ steps back with a polite reply. \"No problem, I'll take a break on my own.\""
             }
         }
     }

@@ -8,6 +8,61 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_F_timestop_1",
+                                "com_interaction_endOngoingSex_erAV_F_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_F_sleeping_1",
+                                "com_interaction_endOngoingSex_erAV_F_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_F_unconscious_1",
+                                "com_interaction_endOngoingSex_erAV_F_unconscious_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
                             "extraSelfPortraitTags": [
@@ -40,7 +95,10 @@
                                 "com_interaction_endOngoingSex_erAV_F_Dutiful_2",
                                 "com_interaction_endOngoingSex_erAV_F_Dutiful_3",
                                 "com_interaction_endOngoingSex_erAV_F_Dutiful_4"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         }
                     ]
                 }
@@ -57,7 +115,13 @@
                 "com_interaction_endOngoingSex_erAV_F_Dutiful_1": "$self$喘匀了气，立刻直起身整理凌乱的衣物，神情重新变得职业化。\n\n「辛苦了，监督。」她低声说了句，便转身去补妆，尽量不让自己的窘迫表现出来。",
                 "com_interaction_endOngoingSex_erAV_F_Dutiful_2": "$self$飞快地扣好扣子，对上$target$的视线时只是礼貌地点点头。\n\n「这场应该达到要求了吧？」她的语气刻意维持平稳，转身便去找工作人员确认下一场的安排。",
                 "com_interaction_endOngoingSex_erAV_F_Dutiful_3": "$self$长舒一口气，从刚才的状态里抽离出来，恢复了平日干练的样子。\n\n「监督对这条还满意吗？」她一边理顺呼吸一边问，语气里听不出太多情绪，纯粹只是职业性的确认。",
-                "com_interaction_endOngoingSex_erAV_F_Dutiful_4": "$self$对$target$微微颔首，随即拉过浴袍裹住自己，动作利落。\n\n「那我先去休息室了，监督。」她客气地说了句，脚步却比语气快了几分，明显还没完全从刚才的紧张里缓过来。"
+                "com_interaction_endOngoingSex_erAV_F_Dutiful_4": "$self$对$target$微微颔首，随即拉过浴袍裹住自己，动作利落。\n\n「那我先去休息室了，监督。」她客气地说了句，脚步却比语气快了几分，明显还没完全从刚才的紧张里缓过来。",
+                "com_interaction_endOngoingSex_erAV_F_timestop_1": "时间依旧静止着，$self$保持着结束时的姿态凝固在原地，对刚才发生的一切毫无知觉。",
+                "com_interaction_endOngoingSex_erAV_F_timestop_2": "定格中的$self$眼神空洞静止，直到$target$停下动作也未曾有过一丝反应。",
+                "com_interaction_endOngoingSex_erAV_F_sleeping_1": "熟睡中的$self$呼吸渐渐平复，在梦里微微蜷了蜷身子，对刚才的事毫无记忆。",
+                "com_interaction_endOngoingSex_erAV_F_sleeping_2": "$self$依旧沉沉睡着，只是无意识地发出一声含糊的呓语，并未醒来。",
+                "com_interaction_endOngoingSex_erAV_F_unconscious_1": "昏迷中的$self$毫无动静，只是软软地躺在原地，完全不知道刚刚发生了什么。",
+                "com_interaction_endOngoingSex_erAV_F_unconscious_2": "失去意识的$self$双目紧闭，在一切结束后依旧没有任何回应。"
             },
             "en-us": {
                 "com_interaction_endOngoingSex_erAV_F_Warm_1": "$self$ still lingers in Director $target$'s arms, refusing to get up, her fingers idly tracing the director's chest.\n\n\"Done already?\" she mock-pouts, then breaks into a smile. \"If the director ever wants an extra take... I'm always available.\"",
@@ -67,7 +131,13 @@
                 "com_interaction_endOngoingSex_erAV_F_Dutiful_1": "$self$ catches her breath and immediately straightens up, tidying her rumpled clothes, her expression turning professional again.\n\n\"Thank you for your work, Director.\" She says it low, then turns to fix her makeup, trying not to let the awkwardness show.",
                 "com_interaction_endOngoingSex_erAV_F_Dutiful_2": "$self$ does up her buttons quickly, giving only a polite nod when she meets $target$'s eyes.\n\n\"That take should've met the requirements, right?\" She keeps her tone deliberately even, then turns to check with the crew about the next scene.",
                 "com_interaction_endOngoingSex_erAV_F_Dutiful_3": "$self$ lets out a long breath, stepping out of the moment and back into her usual brisk composure.\n\n\"Were you satisfied with that take, Director?\" she asks while evening out her breathing, her tone giving away little more than routine professionalism.",
-                "com_interaction_endOngoingSex_erAV_F_Dutiful_4": "$self$ gives $target$ a small nod, then briskly wraps herself in a robe.\n\n\"I'll head to the green room, then, Director.\" She says it courteously, but her steps are a touch faster than her tone, clearly not quite over the nerves yet."
+                "com_interaction_endOngoingSex_erAV_F_Dutiful_4": "$self$ gives $target$ a small nod, then briskly wraps herself in a robe.\n\n\"I'll head to the green room, then, Director.\" She says it courteously, but her steps are a touch faster than her tone, clearly not quite over the nerves yet.",
+                "com_interaction_endOngoingSex_erAV_F_timestop_1": "Still frozen in stopped time, $self$ holds the exact pose she was left in, unaware of everything that just happened.",
+                "com_interaction_endOngoingSex_erAV_F_timestop_2": "Motionless with a blank stare, $self$ gives not the slightest reaction even as $target$ finishes.",
+                "com_interaction_endOngoingSex_erAV_F_sleeping_1": "Still fast asleep, $self$'s breathing slowly evens out as she curls slightly, retaining no memory of what just happened.",
+                "com_interaction_endOngoingSex_erAV_F_sleeping_2": "$self$ sleeps on undisturbed, letting out only a faint murmur without waking.",
+                "com_interaction_endOngoingSex_erAV_F_unconscious_1": "Unconscious, $self$ lies limp and silent, completely unaware of what just took place.",
+                "com_interaction_endOngoingSex_erAV_F_unconscious_2": "Eyes shut in unconsciousness, $self$ gives no response even after everything ends."
             }
         }
     }

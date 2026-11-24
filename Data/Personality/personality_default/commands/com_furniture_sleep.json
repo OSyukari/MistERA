@@ -10,23 +10,87 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "fear"
+                                    ],
+                                    "responses": [
+                                        "kojo_sleep_begin_forced_1",
+                                        "kojo_sleep_begin_forced_2",
+                                        "kojo_sleep_begin_forced_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "happy",
+                                        "relaxed"
+                                    ],
+                                    "responses": [
+                                        "kojo_sleep_begin_like_1",
+                                        "kojo_sleep_begin_like_2",
+                                        "kojo_sleep_begin_like_3"
+                                    ]
+                                }
+                            ],
                             "extraSelfPortraitTags": [
-                                "troubled",
-                                "fear"
+                                "relaxed"
                             ],
                             "responses": [
-                                "kojo_sleep_begin_forced_1",
-                                "kojo_sleep_begin_forced_2",
-                                "kojo_sleep_begin_forced_3"
+                                "kojo_sleep_begin_1",
+                                "kojo_sleep_begin_2",
+                                "kojo_sleep_begin_3"
                             ]
                         },
                         {
                             "requirement": {
-                                "variantID": 1
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
                             },
+                            "extraSelfPortraitTags": [
+                                "relaxed"
+                            ],
+                            "responses": [
+                                "kojo_sleep_begin_1",
+                                "kojo_sleep_begin_2",
+                                "kojo_sleep_begin_3"
+                            ]
+                        }
+                    ],
+                    "template": "commandAct"
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_sleep_together_Begin",
+                    "interruptSelfJob": false,
+                    "variants": [
+                        {
+                            "requireSelfNotMaster": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "troubled",
+                                        "fear"
+                                    ],
+                                    "responses": [
+                                        "kojo_sleep_begin_forced_1",
+                                        "kojo_sleep_begin_forced_2",
+                                        "kojo_sleep_begin_forced_3"
+                                    ]
+                                }
+                            ],
                             "extraSelfPortraitTags": [
                                 "relaxed"
                             ],
@@ -37,29 +101,17 @@
                             ]
                         },
                         {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
                             },
                             "extraSelfPortraitTags": [
-                                "happy",
                                 "relaxed"
                             ],
                             "responses": [
-                                "kojo_sleep_begin_like_1",
-                                "kojo_sleep_begin_like_2",
-                                "kojo_sleep_begin_like_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "relaxed"
-                            ],
-                            "responses": [
-                                "kojo_sleep_begin_1",
-                                "kojo_sleep_begin_2",
-                                "kojo_sleep_begin_3"
+                                "kojo_sleep_begin_together_1",
+                                "kojo_sleep_begin_together_2",
+                                "kojo_sleep_begin_together_3"
                             ]
                         }
                     ],

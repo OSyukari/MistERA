@@ -165,46 +165,8 @@
                                 "com_touch_foot_toes_TimeStop_01",
                                 "com_touch_foot_toes_TimeStop_02",
                                 "com_touch_foot_toes_TimeStop_03"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "timestop"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle"
-                            ],
-                            "_comment": "2.3.1 时停中 被撫摸脚趾 口上文",
-                            "responses": [
-                                "com_touch_foot_toes_TimeStop_01",
-                                "com_touch_foot_toes_TimeStop_02",
-                                "com_touch_foot_toes_TimeStop_03"
                             ],
                             "variants": [
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 被撫摸脚趾 口上文",
-                                    "responses": [
-                                        "com_touch_foot_toes_TimeStop_01",
-                                        "com_touch_foot_toes_TimeStop_02",
-                                        "com_touch_foot_toes_TimeStop_03"
-                                    ]
-                                },
                                 {
                                     "requireSelfReceiver": true,
                                     "requirement": {
@@ -241,42 +203,8 @@
                                 "com_touch_foot_toes_Sleep_01",
                                 "com_touch_foot_toes_Sleep_02",
                                 "com_touch_foot_toes_Sleep_03"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "selfTags": [
-                                    "sleeping"
-                                ]
-                            },
-                            "extraSelfPortraitTags": [
-                                "sleeping",
-                                "relaxed"
-                            ],
-                            "_comment": "2.3.2 睡眠中 被撫摸脚趾 口上文",
-                            "responses": [
-                                "com_touch_foot_toes_Sleep_01",
-                                "com_touch_foot_toes_Sleep_02",
-                                "com_touch_foot_toes_Sleep_03"
                             ],
                             "variants": [
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 被撫摸脚趾 口上文",
-                                    "responses": [
-                                        "com_touch_foot_toes_Sleep_01",
-                                        "com_touch_foot_toes_Sleep_02",
-                                        "com_touch_foot_toes_Sleep_03"
-                                    ]
-                                },
                                 {
                                     "requireSelfReceiver": true,
                                     "requirement": {
@@ -306,17 +234,6 @@
                                 ]
                             },
                             "variants": [
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "responses": [
-                                        "com_touch_foot_toes_fainted_1",
-                                        "com_touch_foot_toes_fainted_2",
-                                        "com_touch_foot_toes_fainted_3"
-                                    ]
-                                },
                                 {
                                     "requireSelfReceiver": true,
                                     "requirement": {

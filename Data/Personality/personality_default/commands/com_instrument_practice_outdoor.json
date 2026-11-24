@@ -287,7 +287,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true

@@ -9,46 +9,6 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "relaxed",
-                                "leaning",
-                                "confident",
-                                "smug",
-                                "excited",
-                                "happy"
-                            ],
-                            "_comment": "2.3.3 主动接受",
-                            "responses": [
-                                "com_job_cleaning_Begin_1",
-                                "com_job_cleaning_Begin_2",
-                                "com_job_cleaning_Begin_10"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
-                            ],
-                            "_comment": "2.3.5 被动接受（屈服）",
-                            "responses": [
-                                "com_job_cleaning_Begin_3",
-                                "com_job_cleaning_Begin_4",
-                                "com_job_cleaning_Begin_11"
-                            ]
-                        },
-                        {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "extraSelfPortraitTags": [
                                 "blush"
                             ],
@@ -57,6 +17,44 @@
                                 "com_job_cleaning_Begin_5",
                                 "com_job_cleaning_Begin_6",
                                 "com_job_cleaning_Begin_12"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful",
+                                        "pain"
+                                    ],
+                                    "_comment": "2.3.5 被动接受（屈服）",
+                                    "responses": [
+                                        "com_job_cleaning_Begin_3",
+                                        "com_job_cleaning_Begin_4",
+                                        "com_job_cleaning_Begin_11"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "relaxed",
+                                        "leaning",
+                                        "confident",
+                                        "smug",
+                                        "excited",
+                                        "happy"
+                                    ],
+                                    "_comment": "2.3.3 主动接受",
+                                    "responses": [
+                                        "com_job_cleaning_Begin_1",
+                                        "com_job_cleaning_Begin_2",
+                                        "com_job_cleaning_Begin_10"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -90,7 +88,10 @@
                                 "com_job_cleaning_Tryjoin_1",
                                 "com_job_cleaning_Tryjoin_2",
                                 "com_job_cleaning_Tryjoin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -107,7 +108,10 @@
                                 "com_job_cleaning_Joined_1",
                                 "com_job_cleaning_Joined_2",
                                 "com_job_cleaning_Joined_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -124,7 +128,10 @@
                                 "com_job_cleaning_Join_Refused_1",
                                 "com_job_cleaning_Join_Refused_2",
                                 "com_job_cleaning_Join_Refused_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"
@@ -327,7 +334,10 @@
                                 "com_job_cleaning_Interrupt_13",
                                 "com_job_cleaning_Interrupt_14",
                                 "com_job_cleaning_Interrupt_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireEPSuccess": false
+                            }
                         }
                     ],
                     "template": "interaction"

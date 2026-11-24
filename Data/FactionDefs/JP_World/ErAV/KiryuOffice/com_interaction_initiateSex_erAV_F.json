@@ -8,6 +8,61 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_F_timestop_1",
+                                "com_interaction_initiateSex_erAV_F_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_F_sleeping_1",
+                                "com_interaction_initiateSex_erAV_F_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_F_unconscious_1",
+                                "com_interaction_initiateSex_erAV_F_unconscious_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
                             "extraSelfPortraitTags": [
@@ -42,7 +97,10 @@
                                 "com_interaction_initiateSex_erAV_F_Dutiful_2",
                                 "com_interaction_initiateSex_erAV_F_Dutiful_3",
                                 "com_interaction_initiateSex_erAV_F_Dutiful_4"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         }
                     ]
                 }
@@ -59,7 +117,13 @@
                 "com_interaction_initiateSex_erAV_F_Dutiful_1": "$self$微微一怔，随即收起表情，礼貌地点了点头。\n\n「好的，监督。」她把剧本放到一边，开始配合地解开衣扣，神情间还带着几分生涩的紧张。",
                 "com_interaction_initiateSex_erAV_F_Dutiful_2": "$self$深吸一口气，把即将脱口而出的犹豫咽了回去。\n\n「我明白，这是工作的一部分。」她挺直背脊，尽量让声音听起来平稳，尽管耳根已经悄悄红了。",
                 "com_interaction_initiateSex_erAV_F_Dutiful_3": "$self$对上监督的视线，只是很职业地应了一声「是」，便转身开始按流程准备。\n\n心里其实还没适应这种事，但既然签了合同，她告诉自己，这就只是拍摄的一环而已。",
-                "com_interaction_initiateSex_erAV_F_Dutiful_4": "$self$捏了捏衣角，勉强稳住语气看向$target$监督。\n\n「我、我会好好配合的……」她轻声说着，动作却比语气僵硬得多，显然还没能完全放松下来。"
+                "com_interaction_initiateSex_erAV_F_Dutiful_4": "$self$捏了捏衣角，勉强稳住语气看向$target$监督。\n\n「我、我会好好配合的……」她轻声说着，动作却比语气僵硬得多，显然还没能完全放松下来。",
+                "com_interaction_initiateSex_erAV_F_timestop_1": "$self$被定格在镜头前的姿势里，对$target$的接近与接下来的动作毫无察觉。",
+                "com_interaction_initiateSex_erAV_F_timestop_2": "凝固的时间中，$self$像被定格的画面般一动不动，完全没有意识到发生了什么。",
+                "com_interaction_initiateSex_erAV_F_sleeping_1": "沉睡中的$self$没有醒来，呼吸平稳地躺在原地，对$target$的靠近毫无防备。",
+                "com_interaction_initiateSex_erAV_F_sleeping_2": "$self$在睡梦中轻轻动了动睫毛，并未察觉$target$已经靠近身旁。",
+                "com_interaction_initiateSex_erAV_F_unconscious_1": "失去意识的$self$双目紧闭，对$target$的举动没有任何反应。",
+                "com_interaction_initiateSex_erAV_F_unconscious_2": "昏迷中的$self$毫无动静，完全无法察觉周围正在发生的一切。"
             },
             "en-us": {
                 "com_interaction_initiateSex_erAV_F_Warm_1": "$self$'s cheeks flush as she leans in on her own, hooking a fingertip into Director $target$'s collar.\n\n\"Checking things personally again today, Director?\" Her eyes glint with amusement, voice dropping soft and low. \"Then I'd better perform well for you.\"",
@@ -69,7 +133,13 @@
                 "com_interaction_initiateSex_erAV_F_Dutiful_1": "$self$ blinks in mild surprise, then composes her expression and nods politely.\n\n\"Understood, Director.\" She sets the script aside and begins undoing her buttons in cooperation, a trace of stiff nervousness still showing through.",
                 "com_interaction_initiateSex_erAV_F_Dutiful_2": "$self$ takes a slow breath, swallowing the hesitation that almost slipped out.\n\n\"I understand, it's part of the job.\" She straightens her back, trying to keep her voice level, even as the tips of her ears quietly redden.",
                 "com_interaction_initiateSex_erAV_F_Dutiful_3": "$self$ meets the director's eyes and gives a crisp, professional \"Yes, sir,\" before turning to prepare per procedure.\n\nShe still hasn't quite gotten used to this part of the job, but she signed the contract—so she tells herself it's just another part of the shoot.",
-                "com_interaction_initiateSex_erAV_F_Dutiful_4": "$self$ pinches the hem of her clothes and forces her voice steady as she looks at Director $target$.\n\n\"I—I'll cooperate properly...\" she says quietly, though her movements are far stiffer than her tone, clearly not fully at ease yet."
+                "com_interaction_initiateSex_erAV_F_Dutiful_4": "$self$ pinches the hem of her clothes and forces her voice steady as she looks at Director $target$.\n\n\"I—I'll cooperate properly...\" she says quietly, though her movements are far stiffer than her tone, clearly not fully at ease yet.",
+                "com_interaction_initiateSex_erAV_F_timestop_1": "$self$ stays frozen in pose before the camera, completely unaware of $target$ closing in.",
+                "com_interaction_initiateSex_erAV_F_timestop_2": "Held motionless in stopped time, $self$ remains like a still frame with no awareness of what is beginning.",
+                "com_interaction_initiateSex_erAV_F_sleeping_1": "Fast asleep, $self$ breathes evenly where she lies, completely unguarded as $target$ approaches.",
+                "com_interaction_initiateSex_erAV_F_sleeping_2": "$self$'s lashes flutter faintly in sleep, unaware that $target$ has moved in.",
+                "com_interaction_initiateSex_erAV_F_unconscious_1": "Unconscious with eyes shut, $self$ gives no reaction to $target$'s approach.",
+                "com_interaction_initiateSex_erAV_F_unconscious_2": "Out cold, $self$ lies completely still, unaware of anything happening around her."
             }
         }
     }

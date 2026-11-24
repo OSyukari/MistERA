@@ -13,424 +13,1481 @@
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnFirstExperience_V",
-                    "tags": ["nsfw"],
+                    "tags": [
+                        "nsfw"
+                    ],
                     "variants": [
                         {
                             "_comment": "unaware - timestop",
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
-                            "extraSelfPortraitTags": ["sex", "timestop"],
-                            "responses": ["OnFirstExperience_V_unawareTS_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware",
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "timestop"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_unawareTS_1"
+                            ]
                         },
                         {
                             "_comment": "unaware - sleeping/unconscious",
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
-                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
-                            "responses": ["OnFirstExperience_V_unaware_1", "OnFirstExperience_V_unaware_2"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "sleeping",
+                                "closed_eyes"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_unaware_1",
+                                "OnFirstExperience_V_unaware_2"
+                            ]
                         },
                         {
                             "_comment": "no permission",
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_nonconsent"
+                                ]
+                            },
                             "variants": [
                                 {
                                     "_comment": "no permission but likes the partner - consensual scores",
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["blush", "tearful", "confused"],
-                                    "responses": ["OnFirstExperience_V_nonconsentLike_1", "OnFirstExperience_V_nonconsentLike_2"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                        { "type": "Desire", "value": 3, "reverse": true }
-                                    ] }]
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "tearful",
+                                        "confused"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_V_nonconsentLike_1",
+                                        "OnFirstExperience_V_nonconsentLike_2"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Goodwill",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3,
+                                                    "reverse": true
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["angry", "tearful", "glare"],
-                            "responses": ["OnFirstExperience_V_nonconsent_1", "OnFirstExperience_V_nonconsent_2", "OnFirstExperience_V_nonconsent_3"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
-                            ] }]
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "tearful",
+                                "glare"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_nonconsent_1",
+                                "OnFirstExperience_V_nonconsent_2",
+                                "OnFirstExperience_V_nonconsent_3"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Badwill",
+                                            "value": 15
+                                        },
+                                        {
+                                            "type": "Fear",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": -15
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
-                            "extraSelfPortraitTags": ["blush", "love", "smile"],
-                            "responses": ["OnFirstExperience_V_player_1", "OnFirstExperience_V_player_2", "OnFirstExperience_V_player_3"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love",
+                                "smile"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_player_1",
+                                "OnFirstExperience_V_player_2",
+                                "OnFirstExperience_V_player_3"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_after_unaware"] },
-                            "extraSelfPortraitTags": ["blush", "happy"],
-                            "responses": ["OnFirstExperience_V_afterUnaware_1", "OnFirstExperience_V_afterUnaware_2"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_after_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "happy"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_afterUnaware_1",
+                                "OnFirstExperience_V_afterUnaware_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
-                            "extraSelfPortraitTags": ["blush", "love", "tearful", "happy"],
-                            "responses": ["OnFirstExperience_V_marriage_1", "OnFirstExperience_V_marriage_2"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love",
+                                "tearful",
+                                "happy"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_marriage_1",
+                                "OnFirstExperience_V_marriage_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
-                            "extraSelfPortraitTags": ["blush", "love", "shy"],
-                            "responses": ["OnFirstExperience_V_couple_1", "OnFirstExperience_V_couple_2"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love",
+                                "shy"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_couple_1",
+                                "OnFirstExperience_V_couple_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
-                            "extraSelfPortraitTags": ["blush", "thinking"],
-                            "responses": ["OnFirstExperience_V_generic_1", "OnFirstExperience_V_generic_2", "OnFirstExperience_V_generic_3"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "thinking"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_V_generic_1",
+                                "OnFirstExperience_V_generic_2",
+                                "OnFirstExperience_V_generic_3"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
-                    "template": "interaction",
-                    "templateExtras": ["afterUnaware", "partnerPenis", "partnerMouth"]
+                    "template": "firstExperience",
+                    "templateExtras": [
+                        "afterUnaware",
+                        "partnerPenis",
+                        "partnerMouth"
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnFirstExperience_A",
-                    "tags": ["nsfw"],
+                    "tags": [
+                        "nsfw"
+                    ],
                     "variants": [
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
-                            "extraSelfPortraitTags": ["sex", "timestop"],
-                            "responses": ["OnFirstExperience_A_unawareTS_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware",
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "timestop"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_unawareTS_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
-                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
-                            "responses": ["OnFirstExperience_A_unaware_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "sleeping",
+                                "closed_eyes"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_unaware_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_nonconsent"
+                                ]
+                            },
                             "variants": [
                                 {
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["blush", "embarrassed"],
-                                    "responses": ["OnFirstExperience_A_nonconsentLike_1"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                        { "type": "Desire", "value": 3, "reverse": true }
-                                    ] }]
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "embarrassed"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_A_nonconsentLike_1"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Goodwill",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3,
+                                                    "reverse": true
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["angry", "tearful", "disgust"],
-                            "responses": ["OnFirstExperience_A_nonconsent_1", "OnFirstExperience_A_nonconsent_2"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
-                            ] }]
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "tearful",
+                                "disgust"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_nonconsent_1",
+                                "OnFirstExperience_A_nonconsent_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Badwill",
+                                            "value": 15
+                                        },
+                                        {
+                                            "type": "Fear",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": -15
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
-                            "extraSelfPortraitTags": ["blush", "embarrassed", "love"],
-                            "responses": ["OnFirstExperience_A_player_1", "OnFirstExperience_A_player_2"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "embarrassed",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_player_1",
+                                "OnFirstExperience_A_player_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_after_unaware"] },
-                            "extraSelfPortraitTags": ["blush", "thinking"],
-                            "responses": ["OnFirstExperience_A_afterUnaware_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_after_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "thinking"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_afterUnaware_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
-                            "extraSelfPortraitTags": ["blush", "love"],
-                            "responses": ["OnFirstExperience_A_marriage_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_marriage_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
-                            "extraSelfPortraitTags": ["blush", "embarrassed", "love"],
-                            "responses": ["OnFirstExperience_A_couple_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "embarrassed",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_couple_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
-                            "extraSelfPortraitTags": ["blush", "embarrassed"],
-                            "responses": ["OnFirstExperience_A_generic_1", "OnFirstExperience_A_generic_2"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "embarrassed"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_A_generic_1",
+                                "OnFirstExperience_A_generic_2"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
-                    "template": "interaction",
-                    "templateExtras": ["afterUnaware", "partnerPenis", "partnerMouth"]
+                    "template": "firstExperience",
+                    "templateExtras": [
+                        "afterUnaware",
+                        "partnerPenis",
+                        "partnerMouth"
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnFirstExperience_W",
-                    "tags": ["nsfw"],
+                    "tags": [
+                        "nsfw"
+                    ],
                     "_comment": "no score changes - womb is lost in the same act as V, which already scores it",
                     "variants": [
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
-                            "extraSelfPortraitTags": ["sex", "timestop"],
-                            "responses": ["OnFirstExperience_W_unawareTS_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware",
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "timestop"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_unawareTS_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
-                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
-                            "responses": ["OnFirstExperience_W_unaware_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "sleeping",
+                                "closed_eyes"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_unaware_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_nonconsent"
+                                ]
+                            },
                             "variants": [
                                 {
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["blush", "surprised"],
-                                    "responses": ["OnFirstExperience_W_generic_1"]
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "surprised"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_W_generic_1"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["scared", "tearful"],
-                            "responses": ["OnFirstExperience_W_nonconsent_1"]
+                            "extraSelfPortraitTags": [
+                                "scared",
+                                "tearful"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_nonconsent_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
-                            "extraSelfPortraitTags": ["blush", "love", "ahegao"],
-                            "responses": ["OnFirstExperience_W_player_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love",
+                                "ahegao"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_player_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
-                            "extraSelfPortraitTags": ["blush", "love"],
-                            "responses": ["OnFirstExperience_W_lover_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_lover_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
-                            "extraSelfPortraitTags": ["blush", "love"],
-                            "responses": ["OnFirstExperience_W_lover_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_lover_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
-                            "extraSelfPortraitTags": ["surprised", "blush"],
-                            "responses": ["OnFirstExperience_W_generic_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "surprised",
+                                "blush"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_W_generic_1"
+                            ]
                         }
                     ],
-                    "template": "interaction",
-                    "templateExtras": ["afterUnaware", "partnerPenis", "partnerMouth"]
+                    "template": "firstExperience",
+                    "templateExtras": [
+                        "afterUnaware",
+                        "partnerPenis",
+                        "partnerMouth"
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnFirstExperience_M",
-                    "tags": ["nsfw"],
+                    "tags": [
+                        "nsfw"
+                    ],
                     "variants": [
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
-                            "extraSelfPortraitTags": ["timestop"],
-                            "responses": ["OnFirstExperience_M_unawareTS_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware",
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "timestop"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_M_unawareTS_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
-                            "extraSelfPortraitTags": ["sleeping", "closed_eyes"],
-                            "responses": ["OnFirstExperience_M_unaware_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "closed_eyes"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_M_unaware_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_nonconsent"
+                                ]
+                            },
                             "variants": [
-                                {
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["blush", "surprised"],
-                                    "responses": ["OnFirstExperience_M_nonconsentLike_1"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                        { "type": "Desire", "value": 3, "reverse": true }
-                                    ] }]
-                                },
                                 {
                                     "_comment": "stolen first kiss",
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["mouth"] },
-                                    "extraSelfPortraitTags": ["angry", "tearful"],
-                                    "responses": ["OnFirstExperience_M_nonconsentKiss_1"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
-                                    ] }]
-                                }
-                            ],
-                            "extraSelfPortraitTags": ["tearful", "disgust"],
-                            "responses": ["OnFirstExperience_M_nonconsent_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
-                            ] }]
-                        },
-                        {
-                            "_comment": "kiss - partner part is mouth",
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["mouth"] },
-                            "variants": [
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "targetTags": [
+                                            "mouth"
+                                        ]
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireEPSuccess": false,
+                                                "requireTargetAction": false,
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "blush",
+                                                "surprised"
+                                            ],
+                                            "responses": [
+                                                "OnFirstExperience_M_nonconsentLike_1"
+                                            ],
+                                            "results": [
+                                                {
+                                                    "modifyRelationship": [
+                                                        {
+                                                            "type": "Goodwill",
+                                                            "value": 5
+                                                        },
+                                                        {
+                                                            "type": "Desire",
+                                                            "value": 3
+                                                        },
+                                                        {
+                                                            "type": "Desire",
+                                                            "value": 3,
+                                                            "reverse": true
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "angry",
+                                        "tearful"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_M_nonconsentKiss_1"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Badwill",
+                                                    "value": 15
+                                                },
+                                                {
+                                                    "type": "Fear",
+                                                    "value": 10
+                                                },
+                                                {
+                                                    "type": "Trust",
+                                                    "value": -15
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
                                 {
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
-                                    "extraSelfPortraitTags": ["blush", "shy", "love"],
-                                    "responses": ["OnFirstExperience_M_kissPlayer_1"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                        { "type": "Desire", "value": 3, "reverse": true }
-                                    ] }]
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "surprised"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_M_nonconsentLike_1"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Goodwill",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3,
+                                                    "reverse": true
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["blush", "surprised"],
-                            "responses": ["OnFirstExperience_M_kiss_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "extraSelfPortraitTags": [
+                                "tearful",
+                                "disgust"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_M_nonconsent_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Badwill",
+                                            "value": 15
+                                        },
+                                        {
+                                            "type": "Fear",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": -15
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
                             "_comment": "oral - partner part is penis",
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["penis"] },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "penis"
+                                ]
+                            },
                             "variants": [
                                 {
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
-                                    "extraSelfPortraitTags": ["blush", "embarrassed"],
-                                    "responses": ["OnFirstExperience_M_oralPlayer_1"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                        { "type": "Desire", "value": 3, "reverse": true }
-                                    ] }]
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "embarrassed"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_M_oralPlayer_1"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Goodwill",
+                                                    "value": 10
+                                                },
+                                                {
+                                                    "type": "Trust",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3,
+                                                    "reverse": true
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["blush", "disgust"],
-                            "responses": ["OnFirstExperience_M_oral_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "disgust"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_M_oral_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
-                            "extraSelfPortraitTags": ["blush", "embarrassed"],
-                            "responses": ["OnFirstExperience_M_generic_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "_comment": "kiss - partner part is mouth",
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "mouth"
+                                ]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "love"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_M_kissPlayer_1"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Goodwill",
+                                                    "value": 10
+                                                },
+                                                {
+                                                    "type": "Trust",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3,
+                                                    "reverse": true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "surprised"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_M_kiss_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "embarrassed"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_M_generic_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
-                    "template": "interaction",
-                    "templateExtras": ["afterUnaware", "partnerMouth", "partnerPenis", "partnerAnus", "partnerVagina", "partnerClit"]
+                    "template": "firstExperience",
+                    "templateExtras": [
+                        "afterUnaware",
+                        "partnerMouth",
+                        "partnerPenis",
+                        "partnerAnus",
+                        "partnerVagina",
+                        "partnerClit"
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnFirstExperience_C",
-                    "tags": ["nsfw"],
+                    "tags": [
+                        "nsfw"
+                    ],
                     "variants": [
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
-                            "extraSelfPortraitTags": ["sex", "timestop"],
-                            "responses": ["OnFirstExperience_C_unawareTS_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware",
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "timestop"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_unawareTS_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
-                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
-                            "responses": ["OnFirstExperience_C_unaware_1"]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "firstexp_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "sleeping",
+                                "closed_eyes"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_unaware_1"
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_nonconsent"
+                                ]
+                            },
                             "variants": [
                                 {
-                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
-                                    "extraSelfPortraitTags": ["blush", "awkward"],
-                                    "responses": ["OnFirstExperience_C_nonconsentLike_1"],
-                                    "results": [{ "modifyRelationship": [
-                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                        { "type": "Desire", "value": 3, "reverse": true }
-                                    ] }]
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requireTargetAction": false,
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "awkward"
+                                    ],
+                                    "responses": [
+                                        "OnFirstExperience_C_nonconsentLike_1"
+                                    ],
+                                    "results": [
+                                        {
+                                            "modifyRelationship": [
+                                                {
+                                                    "type": "Goodwill",
+                                                    "value": 5
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3
+                                                },
+                                                {
+                                                    "type": "Desire",
+                                                    "value": 3,
+                                                    "reverse": true
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": ["angry", "disgust"],
-                            "responses": ["OnFirstExperience_C_nonconsent_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
-                            ] }]
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_nonconsent_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Badwill",
+                                            "value": 15
+                                        },
+                                        {
+                                            "type": "Fear",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": -15
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
-                            "extraSelfPortraitTags": ["blush", "happy"],
-                            "responses": ["OnFirstExperience_C_player_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetBaseID": "PLAYER"
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "happy"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_player_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_after_unaware"] },
-                            "extraSelfPortraitTags": ["relaxed", "happy"],
-                            "responses": ["OnFirstExperience_C_afterUnaware_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "selfTags": [
+                                    "firstexp_after_unaware"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "relaxed",
+                                "happy"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_afterUnaware_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
-                            "extraSelfPortraitTags": ["blush", "love"],
-                            "responses": ["OnFirstExperience_C_lover_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_marriage"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_lover_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
-                            "extraSelfPortraitTags": ["blush", "love"],
-                            "responses": ["OnFirstExperience_C_lover_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "targetTags": [
+                                    "relationship_couple"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "love"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_lover_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 10
+                                        },
+                                        {
+                                            "type": "Trust",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         },
                         {
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
-                            "extraSelfPortraitTags": ["blush", "surprised"],
-                            "responses": ["OnFirstExperience_C_generic_1"],
-                            "results": [{ "modifyRelationship": [
-                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
-                                { "type": "Desire", "value": 3, "reverse": true }
-                            ] }]
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false
+                            },
+                            "extraSelfPortraitTags": [
+                                "blush",
+                                "surprised"
+                            ],
+                            "responses": [
+                                "OnFirstExperience_C_generic_1"
+                            ],
+                            "results": [
+                                {
+                                    "modifyRelationship": [
+                                        {
+                                            "type": "Goodwill",
+                                            "value": 5
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3
+                                        },
+                                        {
+                                            "type": "Desire",
+                                            "value": 3,
+                                            "reverse": true
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ],
-                    "template": "interaction",
-                    "templateExtras": ["afterUnaware"]
+                    "template": "firstExperience",
+                    "templateExtras": [
+                        "afterUnaware"
+                    ]
                 }
             },
             {
                 "ID": "personality_default",
                 "Entry": {
                     "ID": "OnFirstExperience_B",
-                    "tags": ["nsfw"],
+                    "tags": [
+                        "nsfw"
+                    ],
                     "variants": [
                         {
                             "_comment": "intentionally empty - breast first experience has no kojo yet",
-                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false },
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false,
+                                "requireSelfAction": false
+                            },
                             "responses": []
                         }
                     ],
@@ -463,7 +1520,6 @@
                 "OnFirstExperience_V_generic_1": "\"……这就是，第一次啊。\"\n\n$self$望着天花板出神，心里空落落的，又好像多了点什么。",
                 "OnFirstExperience_V_generic_2": "\"没想到……会是和你。\"\n\n$self$看了$target$一眼，表情说不清是羞涩还是复杂。",
                 "OnFirstExperience_V_generic_3": "\"……也没什么大不了的嘛。\"\n\n$self$嘴上这么说，声音却有点发虚。",
-
                 "OnFirstExperience_A_unawareTS_1": "凝固的时间里，$self$身后残留着被撑开的痕迹，她对此毫无所觉。",
                 "OnFirstExperience_A_unaware_1": "睡梦中的$self$不舒服地哼了一声，翻了个身，对身后刚刚失去的第一次毫无知觉。",
                 "OnFirstExperience_A_nonconsentLike_1": "\"后面……居然就这样……\"\n\n$self$羞得满脸通红，却也说不出责怪的话。",
@@ -476,14 +1532,12 @@
                 "OnFirstExperience_A_couple_1": "\"只、只给你一个人哦……这种地方的第一次。\"\n\n$self$羞得不敢抬头。",
                 "OnFirstExperience_A_generic_1": "\"……后面的第一次，就这样没了。\"\n\n$self$神情复杂，半天没说话。",
                 "OnFirstExperience_A_generic_2": "\"好奇怪的感觉……\"\n\n$self$不自在地动了动，脸一直红到了耳根。",
-
                 "OnFirstExperience_W_unawareTS_1": "最深处被叩开的余韵停留在凝固的时间里，$self$毫无知觉。",
                 "OnFirstExperience_W_unaware_1": "$self$在梦里蜷了蜷身子，小腹深处被撑开过的感觉，并不会留在她的记忆里。",
                 "OnFirstExperience_W_nonconsent_1": "\"连最里面……都被……\"\n\n$self$按着小腹，脸色惨白。",
                 "OnFirstExperience_W_player_1": "\"最里面……也被你占满了……\"\n\n$self$按着小腹，失神地笑了笑。",
                 "OnFirstExperience_W_lover_1": "\"连最深的地方……都只属于你了。\"\n\n$self$把$target$抱得更紧了一些。",
                 "OnFirstExperience_W_generic_1": "\"刚才……碰到了最里面……\"\n\n$self$按着小腹，脸上满是不可思议。",
-
                 "OnFirstExperience_M_unawareTS_1": "凝固的时间里，$self$的唇上还残留着不属于自己的温度。",
                 "OnFirstExperience_M_unaware_1": "睡梦中的$self$咂了咂嘴，并不知道自己的唇已经被人夺走了。",
                 "OnFirstExperience_M_nonconsentLike_1": "\"……嘴巴的第一次，就这么被拿走了。\"\n\n$self$捂着嘴，脸红得发烫，却没有生气。",
@@ -494,7 +1548,6 @@
                 "OnFirstExperience_M_oralPlayer_1": "\"嘴巴的第一次……也是你的了。\"\n\n$self$擦了擦嘴角，红着脸不敢看$target$。",
                 "OnFirstExperience_M_oral_1": "\"……好奇怪的味道。\"\n\n$self$皱着眉擦了擦嘴，脸却红透了。",
                 "OnFirstExperience_M_generic_1": "\"嘴巴……第一次做这种事……\"\n\n$self$羞得捂住了脸。",
-
                 "OnFirstExperience_C_unawareTS_1": "凝固的时间里，$self$对自己刚刚失去的第一次一无所知。",
                 "OnFirstExperience_C_unaware_1": "睡梦中的$self$呼吸渐渐平复，对刚才发生的一切毫无记忆。",
                 "OnFirstExperience_C_nonconsentLike_1": "\"……还没准备好的说。\"\n\n$self$红着脸挠了挠头，倒也没有生气。",

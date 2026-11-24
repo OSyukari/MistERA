@@ -263,17 +263,6 @@
                                         "com_touch_head_fainted_2",
                                         "com_touch_head_fainted_3"
                                     ]
-                                },
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "responses": [
-                                        "com_touch_head_fainted_1",
-                                        "com_touch_head_fainted_2",
-                                        "com_touch_head_fainted_3"
-                                    ]
                                 }
                             ]
                         },

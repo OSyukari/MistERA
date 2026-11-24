@@ -7,56 +7,70 @@
                     "ID": "com_interaction_initiateSex",
                     "variants": [
                         {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "sleeping"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "sleeping",
-                                "relaxed",
-                                "unaware"
-                            ],
-                            "_comment": "2.1.1 睡眠中 口上文",
-                            "responses": [
-                                "com_interaction_initiateSex_Sleeping_1",
-                                "com_interaction_initiateSex_Sleeping_2",
-                                "com_interaction_initiateSex_Sleeping_3",
-                                "com_interaction_initiateSex_Sleeping_4",
-                                "com_interaction_initiateSex_Sleeping_5"
+                            "variants": [
+                                {
+                                    "requireMaster": true,
+                                    "requireSelfNotMaster": true,
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "sleeping",
+                                        "relaxed",
+                                        "unaware"
+                                    ],
+                                    "_comment": "2.1.1 睡眠中 口上文",
+                                    "responses": [
+                                        "com_interaction_initiateSex_Sleeping_1",
+                                        "com_interaction_initiateSex_Sleeping_2",
+                                        "com_interaction_initiateSex_Sleeping_3",
+                                        "com_interaction_initiateSex_Sleeping_4",
+                                        "com_interaction_initiateSex_Sleeping_5"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    }
+                                }
                             ]
                         },
                         {
-                            "requireMaster": true,
-                            "requireSelfNotMaster": true,
                             "requirement": {
                                 "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
                                 ]
                             },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "doll",
-                                "empty",
-                                "silence",
-                                "idle",
-                                "still",
-                                "relaxed"
-                            ],
-                            "_comment": "2.1.2 时停中 口上文",
-                            "responses": [
-                                "com_interaction_initiateSex_TimeStop_1",
-                                "com_interaction_initiateSex_TimeStop_2",
-                                "com_interaction_initiateSex_TimeStop_3",
-                                "com_interaction_initiateSex_TimeStop_4",
-                                "com_interaction_initiateSex_TimeStop_5"
+                            "variants": [
+                                {
+                                    "requireMaster": true,
+                                    "requireSelfNotMaster": true,
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "doll",
+                                        "empty",
+                                        "silence",
+                                        "idle",
+                                        "still",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "2.1.2 时停中 口上文",
+                                    "responses": [
+                                        "com_interaction_initiateSex_TimeStop_1",
+                                        "com_interaction_initiateSex_TimeStop_2",
+                                        "com_interaction_initiateSex_TimeStop_3",
+                                        "com_interaction_initiateSex_TimeStop_4",
+                                        "com_interaction_initiateSex_TimeStop_5"
+                                    ],
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    }
+                                }
                             ]
                         },
                         {
@@ -87,7 +101,10 @@
                             "responses": [
                                 "com_interaction_initiateSex_Doer_1",
                                 "com_interaction_initiateSex_Doer_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,

@@ -153,14 +153,19 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public static void ExitTextSource() { textSourceDepth--; }
 
     /// <summary>
-    /// Kojo IDs tried for this command, in order (Plan_GeneratedCommands.md §4.3): own ID unless useOwnKojo is off, then
-    /// the kojo source's list. The caller adds the suffix.
+    /// Kojo IDs tried for this command, in order (Plan_GeneratedCommands.md §4.3): variant kojoID override (when set for
+    /// variantID), own ID unless useOwnKojo is off, then the kojo source's list. The caller adds the suffix.
     /// </summary>
-    public void GetKojoKeys(List<string> into)
+    public void GetKojoKeys(List<string> into, int variantID = -1)
     {
         int depth = 0;
         for (var c = this; c != null && depth <= MaxSourceDepth; c = c.KojoSource, depth++)
-            if (c.useOwnKojo || c.KojoSource == null) into.Add(c.ID);
+            if (c.useOwnKojo || c.KojoSource == null)
+            {
+                if (variantID >= 0 && c.variants != null && variantID < c.variants.Count && !string.IsNullOrEmpty(c.variants[variantID]?.kojoID))
+                    into.Add(c.variants[variantID].kojoID);
+                into.Add(c.ID);
+            }
     }
 
     /// <summary>
@@ -1439,6 +1444,8 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
         public COM_Requirements requirements = new COM_Requirements();
         public bool setForce = false;
+        /// <summary>Optional kojo ID override for this variant (tried before COM.ID in GetKojoKeys).</summary>
+        public string kojoID = "";
 
         // per-variant override/addition to the COM-level result_event (see COM.results_AP/results_EP).
         // The variant's own override, if set, always fires in addition to the COM-level default — the

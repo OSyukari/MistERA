@@ -1639,6 +1639,61 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_redress_Begin_timestop_1",
+                                "com_redress_Begin_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_redress_Begin_sleeping_1",
+                                "com_redress_Begin_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_redress_Begin_unconscious_1",
+                                "com_redress_Begin_unconscious_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -1664,7 +1719,11 @@
                                 "com_redress_Begin_B_1",
                                 "com_redress_Begin_B_2",
                                 "com_redress_Begin_B_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         }
                     ]
                 }
@@ -1741,7 +1800,11 @@
                                 "com_redress_K_1",
                                 "com_redress_K_2",
                                 "com_redress_K_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
                         }
                     ]
                 }
@@ -2930,7 +2993,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
@@ -3211,7 +3273,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
@@ -3285,7 +3346,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
@@ -4409,7 +4469,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
@@ -4695,7 +4754,6 @@
                         },
                         {
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
@@ -5813,7 +5871,13 @@
                 "com_undress_all_Join_Refused_4": "\"那好吧，我先去忙别的了。\" $self$点点头转身离开。",
                 "com_undress_all_Join_Refused_5": "$self$收回伸出的手：\"行，那你们先弄着，有需要再叫我。\"",
                 "com_redress_outer_Joined_4": "$self$走过来站定，顺手帮忙理了理一旁的衣物。",
-                "com_redress_outer_Joined_5": "\"我来帮忙了。\" $self$说着加入到了当前的整理中。"
+                "com_redress_outer_Joined_5": "\"我来帮忙了。\" $self$说着加入到了当前的整理中。",
+                "com_redress_Begin_timestop_1": "$self$凝固在原地毫无反应，任由$target$替自己整理并穿回衣物。",
+                "com_redress_Begin_timestop_2": "时间静止之中，$self$宛如人偶般一动不动，对$target$替她穿衣的动作毫无察觉。",
+                "com_redress_Begin_sleeping_1": "熟睡中的$self$呼吸平稳，只是在衣物拂过皮肤时微微偏了偏头，任由$target$替自己穿好衣服。",
+                "com_redress_Begin_sleeping_2": "$self$沉浸在睡梦里没有醒来，软软地任由$target$帮她整理好衣物。",
+                "com_redress_Begin_unconscious_1": "昏迷中的$self$毫无动静，任由$target$替自己把衣物一件件穿回身上。",
+                "com_redress_Begin_unconscious_2": "失去意识的$self$软绵绵地躺着，对$target$为她整理衣物的举动毫无知觉。"
             },
             "en-us": {
                 "com_undress_outer_Begin_A_1": "$self$ lifts her arms to help $target$, a small smile on her lips.",
@@ -5903,7 +5967,13 @@
                 "com_redress_I_3": "$self$ smooths down her hem and curves her lips into a smile at $target$. \"All dressed—much warmer now.\"",
                 "com_redress_K_1": "$self$ lets out a breath of relief and straightens her clothes.",
                 "com_redress_K_2": "\"...Th-thanks.\" $self$ mumbles awkwardly.",
-                "com_redress_K_3": "$self$ looks down and tugs her hem straight, a faint blush still on her cheeks. \"There, all dressed.\""
+                "com_redress_K_3": "$self$ looks down and tugs her hem straight, a faint blush still on her cheeks. \"There, all dressed.\"",
+                "com_redress_Begin_timestop_1": "$self$ remains frozen in place without reacting as $target$ arranges and puts her clothes back on.",
+                "com_redress_Begin_timestop_2": "Still as a doll in stopped time, $self$ shows no awareness as $target$ dresses her.",
+                "com_redress_Begin_sleeping_1": "Fast asleep, $self$ breathes steadily and only shifts slightly as $target$ puts her clothes back on.",
+                "com_redress_Begin_sleeping_2": "Lost in sleep, $self$ remains limp and unaware while $target$ dresses her.",
+                "com_redress_Begin_unconscious_1": "Unconscious and limp, $self$ does not stir as $target$ puts her clothes back on.",
+                "com_redress_Begin_unconscious_2": "Out cold, $self$ shows no reaction while $target$ tidies and redresses her."
             }
         }
     }

@@ -10,13 +10,71 @@
                     ],
                     "variants": [
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Climax_timestop_1",
+                                "com_sex_P_cowgirl_A_Climax_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Climax_sleeping_1",
+                                "com_sex_P_cowgirl_A_Climax_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Climax_unconscious_1",
+                                "com_sex_P_cowgirl_A_Climax_unconscious_2"
+                            ]
+                        },
+                        {
                             "requireSelfReceiver": true,
                             "_comment": "受方 被骑乘位A 高潮",
                             "responses": [
                                 "com_sex_P_cowgirl_A_Climax_1",
                                 "com_sex_P_cowgirl_A_Climax_12",
                                 "com_sex_P_cowgirl_A_Climax_13"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
                             "requireSelfDoer": true,
@@ -52,7 +110,10 @@
                                 "com_sex_P_cowgirl_A_Climax_7",
                                 "com_sex_P_cowgirl_A_Climax_8",
                                 "com_sex_P_cowgirl_A_Climax_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandClimax"
@@ -487,49 +548,6 @@
                                             ],
                                             "_comment": "初体验 时停中 骑乘位A",
                                             "responses": [
-                                                "com_sex_P_cowgirl_A_FE_Timestop_1"
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "requireSelfDoer": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cowgirl",
-                                        "anal",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 时停中 骑乘位A 口上文",
-                                    "responses": [
-                                        "com_sex_P_cowgirl_A_6",
-                                        "com_sex_P_cowgirl_A_7",
-                                        "com_sex_P_cowgirl_A_8"
-                                    ],
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
-                                                    "firstexp_A"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cowgirl",
-                                                "anal",
-                                                "doll",
-                                                "empty"
-                                            ],
-                                            "_comment": "初体验 时停中 骑乘位A",
-                                            "responses": [
                                                 "com_sex_P_cowgirl_A_FE_Timestop_1",
                                                 "com_sex_P_cowgirl_A_FE_Timestop_2",
                                                 "com_sex_P_cowgirl_A_FE_Timestop_3"
@@ -587,15 +605,7 @@
                                             "responses": [
                                                 "com_sex_P_cowgirl_A_FE_Sleep_1"
                                             ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "requireSelfDoer": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "variants": [
+                                        },
                                         {
                                             "requirement": {
                                                 "selfTags": [
@@ -618,21 +628,7 @@
                                                 "com_sex_P_cowgirl_A_FE_Sleep_3"
                                             ]
                                         }
-                                    ],
-                                    "responses": [
-                                        "com_sex_P_cowgirl_A_1",
-                                        "com_sex_P_cowgirl_A_2",
-                                        "com_sex_P_cowgirl_A_3"
-                                    ],
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "cowgirl",
-                                        "anal",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 睡眠中 骑乘位A 口上文"
+                                    ]
                                 }
                             ]
                         },
@@ -1641,7 +1637,21 @@
                 "com_sex_P_cowgirl_A_JustWoken_4": "$self$揉了揉惺忪的睡眼，还没完全清醒便感受到了动作。",
                 "com_sex_P_cowgirl_A_Begin_FE_Player_4": "$self$感受到身下传来的陌生压迫感，不安地抓住了$target$的衣袖：……第一次弄后面，别、别太用力……",
                 "com_sex_P_cowgirl_A_ReceiverSucc_1": "$self$仰躺着稳住腰胯，顺着$target$在上方起伏的节奏配合着顶弄，后穴紧致地吮吸着。",
-                "com_sex_P_cowgirl_A_ReceiverSucc_2": "$self$双手托住$target$的臀部协助对方上下套弄，在紧凑的节奏中发出满足的低吟。"
+                "com_sex_P_cowgirl_A_ReceiverSucc_2": "$self$双手托住$target$的臀部协助对方上下套弄，在紧凑的节奏中发出满足的低吟。",
+                "com_sex_P_cowgirl_A_Climax_timestop_1": "$self$被定格在凝固的时间里，身体在毫无知觉的状态下迎来了剧烈的痉挛与高潮，眼神却依旧空洞静止。",
+                "com_sex_P_cowgirl_A_Climax_timestop_2": "时间静止之中，$self$的表情没有丝毫波动，唯有失控颤抖的躯体诚实地承受着攀上顶峰的快感。",
+                "com_sex_P_cowgirl_A_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
+                "com_sex_P_cowgirl_A_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
+                "com_sex_P_cowgirl_A_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
+                "com_sex_P_cowgirl_A_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+            },
+            "en-us": {
+                "com_sex_P_cowgirl_A_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",
+                "com_sex_P_cowgirl_A_Climax_timestop_2": "In the stillness of stopped time, $self$'s expression does not flicker as her body involuntarily trembles through the peak of pleasure.",
+                "com_sex_P_cowgirl_A_Climax_sleeping_1": "Fast asleep, $self$'s body suddenly tenses as she shudders through a climax with a soft, muffled gasp, her brow furrowing without waking.",
+                "com_sex_P_cowgirl_A_Climax_sleeping_2": "$self$ lets out a quiet whimper in her sleep as her body trembles involuntarily through orgasm before going limp again.",
+                "com_sex_P_cowgirl_A_Climax_unconscious_1": "Unconscious, $self$ gives no conscious response as her body instinctively arches and shudders through a climax.",
+                "com_sex_P_cowgirl_A_Climax_unconscious_2": "Eyes shut in unconsciousness, $self$ lies unresponsive while her trembling body betrays the peak washing over her."
             }
         }
     }

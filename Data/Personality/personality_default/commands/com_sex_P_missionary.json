@@ -10,12 +10,70 @@
                     ],
                     "variants": [
                         {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "doll",
+                                "empty",
+                                "silence",
+                                "idle"
+                            ],
+                            "_comment": "时停中",
+                            "responses": [
+                                "com_sex_P_missionary_Climax_timestop_1",
+                                "com_sex_P_missionary_Climax_timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "_comment": "睡眠中",
+                            "responses": [
+                                "com_sex_P_missionary_Climax_sleeping_1",
+                                "com_sex_P_missionary_Climax_sleeping_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "unconscious"
+                                ],
+                                "excludeSelfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "unconscious"
+                            ],
+                            "_comment": "昏迷（非睡眠）",
+                            "responses": [
+                                "com_sex_P_missionary_Climax_unconscious_1",
+                                "com_sex_P_missionary_Climax_unconscious_2"
+                            ]
+                        },
+                        {
                             "requireSelfDoer": true,
                             "responses": [
                                 "com_sex_P_missionary_Climax_1",
                                 "com_sex_P_missionary_Climax_7",
                                 "com_sex_P_missionary_Climax_8"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -49,7 +107,10 @@
                                 "com_sex_P_missionary_Climax_4",
                                 "com_sex_P_missionary_Climax_5",
                                 "com_sex_P_missionary_Climax_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         }
                     ],
                     "template": "commandClimax"
@@ -468,47 +529,6 @@
                                             ],
                                             "_comment": "初体验 时停中 正面位V",
                                             "responses": [
-                                                "com_sex_P_missionary_FE_Timestop_1"
-                                            ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "missionary",
-                                        "doll",
-                                        "empty",
-                                        "silence",
-                                        "idle"
-                                    ],
-                                    "_comment": "2.3.1 ($self$) 时停中 被正面位V口上文",
-                                    "responses": [
-                                        "com_sex_P_missionary_5",
-                                        "com_sex_P_missionary_6",
-                                        "com_sex_P_missionary_7"
-                                    ],
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
-                                                    "firstexp_V"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "receiver",
-                                                "missionary",
-                                                "doll",
-                                                "empty"
-                                            ],
-                                            "_comment": "初体验 时停中 正面位V",
-                                            "responses": [
                                                 "com_sex_P_missionary_FE_Timestop_1",
                                                 "com_sex_P_missionary_FE_Timestop_2",
                                                 "com_sex_P_missionary_FE_Timestop_3"
@@ -563,15 +583,7 @@
                                             "responses": [
                                                 "com_sex_P_missionary_FE_Sleep_1"
                                             ]
-                                        }
-                                    ]
-                                },
-                                {
-                                    "requireSelfReceiver": true,
-                                    "requirement": {
-                                        "requireSelfAction": false
-                                    },
-                                    "variants": [
+                                        },
                                         {
                                             "requirement": {
                                                 "selfTags": [
@@ -593,20 +605,7 @@
                                                 "com_sex_P_missionary_FE_Sleep_3"
                                             ]
                                         }
-                                    ],
-                                    "responses": [
-                                        "com_sex_P_missionary_1",
-                                        "com_sex_P_missionary_2",
-                                        "com_sex_P_missionary_3"
-                                    ],
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "missionary",
-                                        "sleeping",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.3.2 ($self$) 睡眠中 正面位V口上文"
+                                    ]
                                 }
                             ]
                         },
@@ -1516,7 +1515,13 @@
                 "com_sex_P_missionary_Refuse_Fallback_2": "$self$拉紧衣襟往后退去，神色淡漠地回绝了对方。",
                 "com_sex_P_missionary_JustWoken_1": "$self$刚从睡梦中醒来，迷迷糊糊地察觉到$target$正贴在身侧。",
                 "com_sex_P_missionary_JustWoken_2": "$self$揉了揉惺忪的睡眼，还没完全清醒便感受到了动作。",
-                "com_sex_P_missionary_Begin_FE_Player_4": "$self$仰面看着压近的$target$，心跳飞快，双手无措地抵在对方胸前：……第一次的话，稍微温柔一点好不好……"
+                "com_sex_P_missionary_Begin_FE_Player_4": "$self$仰面看着压近的$target$，心跳飞快，双手无措地抵在对方胸前：……第一次的话，稍微温柔一点好不好……",
+                "com_sex_P_missionary_Climax_timestop_1": "$self$被定格在凝固的时间里，身体在毫无知觉的状态下迎来了剧烈的痉挛与高潮，眼神却依旧空洞静止。",
+                "com_sex_P_missionary_Climax_timestop_2": "时间静止之中，$self$的表情没有丝毫波动，唯有失控颤抖的躯体诚实地承受着攀上顶峰的快感。",
+                "com_sex_P_missionary_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
+                "com_sex_P_missionary_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
+                "com_sex_P_missionary_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
+                "com_sex_P_missionary_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
             },
             "en-us": {
                 "com_sex_P_missionary_Climax_1": "$self$ thrusts his hips deep to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",
@@ -1579,7 +1584,13 @@
                 "com_sex_P_missionary_39": "$self$ frowns and turns her face away, her body swaying passively with the impacts, yet not a shred of pleasure.\n\n\"...Don't go so deep...\"\n\nHer dry pussy chafes raw; she bites her lip through the discomfort, wishing this stretch would just pass.",
                 "com_sex_P_missionary_40": "$self$ grips the sheets tight, no enjoyment on her face—only endurance.\n\n\"...Could you... go gentler...\"\n\nShe never got into it this round; the dry friction brings only pain, her pussy clenched tight, which only makes it worse.",
                 "com_sex_P_missionary_41": "$self$ turns her head aside, eyes full of disdain, letting her body be jolted back and forth.\n\n\"...Just get on with it...\"\n\nThis round is pure ordeal for her, her dry pussy ground repeatedly; she stays unresponsive the whole time, just wishing this stretch would pass.",
-                "com_sex_P_missionary_42": "$self$ takes the pounding expressionlessly, eyes ice-cold.\n\n\"...If you're gonna do it, hurry up.\"\n\nShe can't even be bothered to moan this round, her pussy chafing uncomfortably; she lets her body be jolted, her mind already somewhere else."
+                "com_sex_P_missionary_42": "$self$ takes the pounding expressionlessly, eyes ice-cold.\n\n\"...If you're gonna do it, hurry up.\"\n\nShe can't even be bothered to moan this round, her pussy chafing uncomfortably; she lets her body be jolted, her mind already somewhere else.",
+                "com_sex_P_missionary_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",
+                "com_sex_P_missionary_Climax_timestop_2": "In the stillness of stopped time, $self$'s expression does not flicker as her body involuntarily trembles through the peak of pleasure.",
+                "com_sex_P_missionary_Climax_sleeping_1": "Fast asleep, $self$'s body suddenly tenses as she shudders through a climax with a soft, muffled gasp, her brow furrowing without waking.",
+                "com_sex_P_missionary_Climax_sleeping_2": "$self$ lets out a quiet whimper in her sleep as her body trembles involuntarily through orgasm before going limp again.",
+                "com_sex_P_missionary_Climax_unconscious_1": "Unconscious, $self$ gives no conscious response as her body instinctively arches and shudders through a climax.",
+                "com_sex_P_missionary_Climax_unconscious_2": "Eyes shut in unconsciousness, $self$ lies unresponsive while her trembling body betrays the peak washing over her."
             }
         }
     }

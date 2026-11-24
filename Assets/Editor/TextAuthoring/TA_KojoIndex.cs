@@ -308,6 +308,10 @@ public class TA_KojoIndex : TA_DocBuilderBase
             if (com == null) continue;
             keys.Clear();
             com.GetKojoKeys(keys);
+            if (com.variants != null)
+                for (int vi = 0; vi < com.variants.Count; vi++)
+                    if (!string.IsNullOrEmpty(com.variants[vi]?.kojoID) && !keys.Contains(com.variants[vi].kojoID))
+                        keys.Add(com.variants[vi].kojoID);
             for (int k = 0; k < keys.Count; k++)
             {
                 if (string.IsNullOrEmpty(keys[k])) continue;

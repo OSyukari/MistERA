@@ -1,0 +1,104 @@
+{
+  "_comment": "Kojo template `firstExperience` (OnFirstExperience_* aftermath kojo). Puts consent (`firstexp_nonconsent`) before partner part / target (`PLAYER`) so non-consensual first experiences override consensual target/part lines, and positions `afterUnaware` before `relationship`.",
+  "id": "firstExperience",
+  "label": "初次体验后日谈",
+
+  "bind": ["OnFirstExperience_"],
+
+  "fallback": {
+    "label": "兜底（任何人、任何状态）",
+    "requirement": { "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false }
+  },
+  "placeholder": "(unimplemented: firstExperience fallback)",
+
+  "axes": [
+    {
+      "id": "speakerStatus", "kind": "selfStatus", "label": "说话者状态",
+      "tags": ["timestop", "timestopped", "sleeping", "unconscious", "restrained", "carried"],
+      "aliasSelfTags": ["firstexp_unaware"],
+      "examples": [
+        { "label": "时停中", "requirement": { "selfTags": ["firstexp_unaware", "timestop"], "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false } },
+        { "label": "无意识（睡眠/昏迷）", "requirement": { "selfTags": ["firstexp_unaware"], "requireSelfAction": false, "requireTargetAction": false, "requireEPSuccess": false } }
+      ]
+    },
+    {
+      "id": "targetStatus", "kind": "targetStatus", "label": "对方状态",
+      "tags": ["timestop", "timestopped", "sleeping", "unconscious", "restrained", "carried"]
+    },
+    {
+      "id": "consent", "kind": "consent", "label": "同意",
+      "aliasSelfTags": ["firstexp_consent", "firstexp_nonconsent"],
+      "examples": [
+        { "label": "无许可", "requirement": { "selfTags": ["firstexp_nonconsent"], "requireTargetAction": false, "requireEPSuccess": false } }
+      ]
+    },
+    {
+      "id": "target", "kind": "target", "label": "对方是谁",
+      "tags": ["male", "female", "ambi", "human", "animal", "creature", "insect", "corpse", "pov",
+               "humanrace", "playableRace", "humanoid", "large_animal", "dog", "horse", "pig", "bear", "goblin", "android", "child", "corrupted", "BlueArchive", "NIKKE"],
+      "examples": [
+        { "label": "玩家", "requirement": { "targetBaseID": "PLAYER", "requireTargetAction": false, "requireEPSuccess": false } }
+      ]
+    },
+    {
+      "id": "relationship", "kind": "relationship", "label": "关系",
+      "examples": [
+        { "label": "亲密", "group": "intimate" },
+        { "label": "友好", "group": "friendly" },
+        { "label": "敌对", "group": "hostile" }
+      ]
+    },
+    {
+      "id": "attitude", "kind": "attitude", "label": "态度",
+      "examples": [
+        { "label": "爱", "requirement": { "requireSelfAttitudeGTE": "Love" } },
+        { "label": "喜欢", "requirement": { "requireSelfAttitudeGTE": "Like" } }
+      ]
+    }
+  ],
+
+  "extras": {
+    "afterUnaware": {
+      "label": "曾在无意识中失去（现在清醒）",
+      "before": "relationship",
+      "requirement": { "selfTags": ["firstexp_after_unaware"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerPenis": {
+      "label": "对方部位：阴茎",
+      "before": "target",
+      "requirement": { "targetTags": ["penis"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerMouth": {
+      "label": "对方部位：嘴（含舌头）",
+      "before": "target",
+      "requirement": { "targetTags": ["mouth"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerAnus": {
+      "label": "对方部位：肛门",
+      "before": "target",
+      "requirement": { "targetTags": ["anus"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerVagina": {
+      "label": "对方部位：阴道",
+      "before": "target",
+      "requirement": { "targetTags": ["vagina"], "requireTargetAction": false, "requireEPSuccess": false }
+    },
+    "partnerClit": {
+      "label": "对方部位：阴蒂",
+      "before": "target",
+      "requirement": { "targetTags": ["clit"], "requireTargetAction": false, "requireEPSuccess": false }
+    }
+  },
+
+  "relationshipGroups": {
+    "intimate": ["relationship_couple", "relationship_marriage", "relationship_fwb"],
+    "friendly": ["relationship_friend", "relationship_bff", "relationship_housemate"],
+    "hostile": ["relationship_enemy", "relationship_rival", "relationship_bully:A"],
+    "victim": ["relationship_bully:B", "relationship_prisoner:B", "relationship_slave:B"],
+    "authorityOver": ["relationship_parent:A", "relationship_stepparent:A", "relationship_family_guardian:A", "relationship_slave:A", "relationship_servant:A", "relationship_subordinate:A", "relationship_prisoner:A", "relationship_mentor:A", "relationship_ba_teacher_student:A", "relationship_erav_filmstudio_director_actor:A"],
+    "underAuthority": ["relationship_parent:B", "relationship_stepparent:B", "relationship_family_guardian:B", "relationship_servant:B", "relationship_subordinate:B", "relationship_mentor:B", "relationship_ba_teacher_student:B", "relationship_erav_filmstudio_director_actor:B"],
+    "family": ["relationship_parent", "relationship_sibling", "relationship_stepparent", "relationship_family", "relationship_family_guardian"],
+    "peers": ["relationship_colleague", "relationship_ba_studentmates", "relationship_erav_filmstudio_actor_actor", "relationship_sibling"],
+    "distant": ["relationship_stranger", "relationship_acquaintance"]
+  }
+}
