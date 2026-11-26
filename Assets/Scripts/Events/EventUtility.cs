@@ -3,6 +3,27 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+/// <summary>
+/// A visible line's text, tooltip and portrait targets, resolved right after the entry's own Results ran. Its log
+/// callback only runs once the event next waits, and entries in between may reassign the same target / append keys.
+/// </summary>
+public class EventLineSnapshot
+{
+    public string content = "";
+    public string tooltip = "";
+    /// <summary>copy of Targets[UISpec.PortraitRefKey]; null when the key was missing</summary>
+    public List<Character_Trainable> portraitTargets;
+
+    public static EventLineSnapshot Take(EventInstance owner, string rawLine, string rawTooltip, string portraitRefKey)
+    {
+        var snap = new EventLineSnapshot();
+        snap.content = UtilityEX.ParseEventEntry(owner, rawLine);
+        snap.tooltip = string.IsNullOrEmpty(rawTooltip) ? "" : UtilityEX.ParseEventEntry(owner, rawTooltip);
+        if (portraitRefKey != null && owner.Targets.TryGetValue(portraitRefKey, out var targets) && targets != null)
+            snap.portraitTargets = new List<Character_Trainable>(targets);
+        return snap;
+    }
+}
 
 public static class EventUtility
 {
@@ -683,6 +704,23 @@ public static class EventUtility
                     }
                     return RequestLeaveUtility.CanRequestLeave(requester, c, out _);
                 }
+            case "canJoinPrivacyAction":
+                // [ownerKey, optional bool atThreshold] - c = joiner; owner is self, or the first chara in ownerKey
+                // (RequestLeaveUtility.TryGetJoinablePrivacyAction). atThreshold: the join's check rate (JoinCheckRate) must also
+                // reach DeterministicThreshold, whether deterministic rolls are on (the join then always passes) or not (it may
+                // still fail) - an NPC only tries a join that is likely to pass
+                {
+                    var privacyOwner = ev.Self;
+                    if (r.parameters.Count >= 2 && r.parameters[1] != "" && r.parameters[1] != "self")
+                    {
+                        if (!ev.Targets.TryGetValue(r.parameters[1], out var owners) || owners.Count < 1) return false;
+                        privacyOwner = owners[0];
+                    }
+                    if (!RequestLeaveUtility.TryGetJoinablePrivacyAction(privacyOwner, c, out var joinSource, out var joinCopy)) return false;
+                    if (r.parameters.Count >= 3 && bool.TryParse(r.parameters[2], out bool atThreshold) && atThreshold)
+                        return JoinCheckRate(joinSource, joinCopy) >= scr_System_CampaignManager.current.DeterministicThreshold;
+                    return true;
+                }
             case "isOnEventCooldownWithSelf":
                 // [eventID, bool] - c = target; a cooldown of eventID registered with ev.Self as self and c among its targets is active (EventManager.hasCooldownWith)
                 if (r.parameters.Count >= 3 && bool.TryParse(r.parameters[2], out bool onCooldown))
@@ -1053,6 +1091,40 @@ public static class EventUtility
                 }
                 return false;
             }
+            case "canAct":
+                return c.canAct;
+            case "isTimeStopped":
+                return c.isTimeStopped;
+            case "wouldDeflateAny":
+                return HasShowerExpellableContents(c);
+            case "canExecuteCOM":
+            {
+                // canExecuteCOM [comID, receiverKey ("" or "none" for solo)]
+                if (r.parameters.Count < 2 || string.IsNullOrEmpty(r.parameters[1])) return false;
+                var comDef = scr_System_Serializer.current?.MasterList?.COMs?.GetByID(r.parameters[1]);
+                if (comDef == null) return false;
+                string recvKey = r.parameters.Count >= 3 ? r.parameters[2] : "";
+                bool solo = string.IsNullOrEmpty(recvKey) || recvKey == "none";
+                List<int> recvRefs;
+                Job checkJob;
+                if (solo)
+                {
+                    recvRefs = new List<int>();
+                    checkJob = c.InteractionJob;
+                }
+                else
+                {
+                    if (!TryResolveExecTargets(ev, recvKey, out var recvList) || recvList == null || recvList.Count != 1 || recvList[0] == null || recvList[0] == c)
+                        return false;
+                    recvRefs = new List<int>() { recvList[0].RefID };
+                    checkJob = recvList[0].InteractionJob;
+                }
+                if (checkJob == null || checkJob.ParentRoom == null) return false;
+                var pkg = comDef.MakePackage(checkJob, new List<int>() { c.RefID }, recvRefs, -1);
+                if (pkg == null) return false;
+                pkg.IgnoreStatCost = true;
+                return pkg.Validate();
+            }
             default:
                 return true;
         }
@@ -1366,11 +1438,16 @@ public static class EventUtility
 
     public static bool isValid(Event.EventEntry.Options op, EventInstance owner)
     {
-        if (!string.IsNullOrEmpty(op.disabledReasonKey)) return false;
+        if (op.IsDisabled) return false;
         foreach (var c in op.conditions) if (!c.isValid()) return false;
         foreach (var cond in op.self_chara_conditions) if (!isValid(cond, owner, owner.Self)) return false;
         foreach (var kvp in op.target_chara_conditions)
         {
+            if (op.boundTarget != null && !string.IsNullOrEmpty(op.bindTargetKey) && kvp.Key == op.bindTargetKey)
+            {
+                foreach (var cond in kvp.Value) if (!isValid(cond, owner, op.boundTarget)) return false;
+                continue;
+            }
             if (!owner.Targets.ContainsKey(kvp.Key) || owner.Targets[kvp.Key].Count < 1)
             {
                 //Debug.LogError($"EventInstance {owner.Name} does not contain scoped target Key [{kvp.Key}] or count < 1, isGenerated? {owner.generated}");
@@ -1402,23 +1479,27 @@ public static class EventUtility
         // display line
 
 
+        EventLineSnapshot parsed = null;
+        UISpec snap = null;
         if (owner.isVisible && block.line != "")
         {
             bool rA = !owner.isPlayerRelated;
 
             // snapshot before this entry's own Results run, so a SetBGImage attached here only affects entries printed after it
-            var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
+            snap = owner.CurrentUISpec.Overwrite(block.UISpec);
             // sticky fields (e.g. bgImagePath) this entry overrides become the new running default for entries after it
             block.UISpec.PersistInto(owner.CurrentUISpec);
 
-            // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
-            // but on execute they are consistent
+            // queued before Results so the line still displays ahead of anything they log; its text is resolved
+            // right after them (parsed, below) - by display time later entries may have reassigned targets/append strings
             owner.QueueEventHeader(block.line);
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, block, rA, false, snap));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, block, rA, false, snap, parsed));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 
         foreach(var i in block.Results) Execute(owner, i);
+
+        if (snap != null) parsed = EventLineSnapshot.Take(owner, block.line, block.tooltip, snap.PortraitRefKey);
 
         // silent: the line goes into the expedition log entry - parsed after its Results, as the visible path parses at display time
         if (owner.silent && block.line != "") owner.SilentSink?.AddLine(UtilityEX.ParseEventEntry(owner, block.line));
@@ -1476,8 +1557,8 @@ public static class EventUtility
     static void NpcDecide(EventInstance owner, Event.EventEntry.EventEntry_Question block)
     {
         var all = ExpandOptions(owner, block.options, block.loadOptionsKey, block.loadOptionsResults);
-        var accepts = all.FindAll(x => x.isDefaultAccept && string.IsNullOrEmpty(x.disabledReasonKey));
-        var pick = accepts.Count > 0 ? Utility.GetRandomElement(accepts) : all.Find(x => x.isDefaultCancel);
+        var accepts = all.FindAll(x => x.isDefaultAccept && !x.IsDisabled && isValid(x, owner));
+        var pick = accepts.Count > 0 ? Utility.GetRandomElement(accepts) : all.Find(x => x.isDefaultCancel && !x.IsDisabled);
         if (pick == null)
         {
             owner.Terminate($"npcDecides question {block.Name}: no default accept or default cancel option");
@@ -1687,11 +1768,42 @@ public static class EventUtility
         }
         foreach (var op in options)
         {
-            if (string.IsNullOrEmpty(op.forEachTargetKey)) { result.Add(op); continue; }
+            if (string.IsNullOrEmpty(op.forEachTargetKey))
+            {
+                if (!op.hideIfInvalid || isValid(op, owner)) result.Add(op);
+                continue;
+            }
             if (owner == null || !owner.Targets.TryGetValue(op.forEachTargetKey, out var charas)) continue;
-            foreach (var chara in charas) if (chara != null) result.Add(op.CloneForTarget(chara));
+            foreach (var chara in charas)
+            {
+                if (chara == null) continue;
+                var copy = op.CloneForTarget(chara);
+                if (!copy.hideIfInvalid || isValid(copy, owner)) result.Add(copy);
+            }
+        }
+
+        // an option whose previewed acts cannot be performed, or (deterministic rolls) would be refused, stays visible but
+        // disabled. A copy carries the reason - the authored option is shared and must not be changed.
+        for (int i = 0; i < result.Count; i++)
+        {
+            var op = result[i];
+            if (op == null || op.IsDisabled) continue;
+            var reason = AppendedDisabledReason(owner, op);
+            if (reason.Length == 0) reason = PreviewBlockReason(owner, op);
+            if (reason.Length == 0) continue;
+            var blocked = op.CloneForTarget(op.boundTarget);
+            blocked.disabledReasonText = reason;
+            result[i] = blocked;
         }
         return result;
+    }
+
+    /// <summary>Options.disabledReasonAppendKey's stored text (joined), or "" when unset / empty.</summary>
+    static string AppendedDisabledReason(EventInstance owner, Event.EventEntry.Options op)
+    {
+        if (owner == null || string.IsNullOrEmpty(op.disabledReasonAppendKey)) return "";
+        if (!owner.AppendStrings.TryGetValue(op.disabledReasonAppendKey, out var texts) || texts == null) return "";
+        return string.Join("\n", texts).Trim('\n');
     }
 
     /// <summary>Display text of an option, with full/short name tokens resolved for per-target copies.</summary>
@@ -1703,6 +1815,406 @@ public static class EventUtility
                 .Replace("$callname$", op.boundTarget.CallName)
                 .Replace("$firstname$", op.boundTarget.FirstName);
         return text;
+    }
+
+    /// <summary>
+    /// Tooltip lines for Options.apPreviews: each package is built and validated the way ExecuteAPOnSingleChara will run
+    /// it (receiver's interaction job, stat cost ignored), then described like a command button (ui_ap_onHoverTooltip),
+    /// plus the forced-acceptance note and the missing-permission consequence (CheckRelationshipChange: without
+    /// permission, a Dislike attitude costs that side's trust) - or, per the preview's permission mode, what "grant" will
+    /// grant and for how long (GrantMissingPermissions), or the "skip" note. Empty when the option has no previews.
+    /// </summary>
+    public static string BuildAPPreviewTooltip(EventInstance owner, Event.EventEntry.Options op)
+    {
+        if (owner == null || op == null) return "";
+        var lines = new List<string>();
+        AddPermissionPreviewLines(owner, op, lines);
+        if (op.apPreviews == null || op.apPreviews.Count == 0) return string.Join("\n", lines);
+        // orPrevious chains mirror a branch that tries its APs in order: only the first valid one is shown
+        bool previousShownValid = false;
+        for (int pi = 0; pi < op.apPreviews.Count; pi++)
+        {
+            var preview = op.apPreviews[pi];
+            if (preview == null) continue;
+            if (preview.orPrevious && previousShownValid) continue;
+            previousShownValid = false;
+            var ap = BuildPreviewPackage(owner, op, preview);
+            if (ap == null) continue;
+            bool grant = preview.permissions == PermissionModeGrant;
+            bool request = preview.permissions == PermissionModeRequest;
+            // as the run does: set before Validate so the shown rates carry no permission penalties
+            ap.SkipPermissions = preview.permissions == PermissionModeSkip;
+
+            bool valid = ap.Validate();
+            // an invalid act with an alternative after it: the branch just tries the next one
+            bool hasAlternative = pi + 1 < op.apPreviews.Count && op.apPreviews[pi + 1] != null && op.apPreviews[pi + 1].orPrevious;
+            if (!valid && hasAlternative) continue;
+
+            if (lines.Count > 0) lines.Add("");
+            lines.Add($"[{ap.DisplayName}]");
+            if (!valid)
+            {
+                ap.tooltip.RemoveAll(x => string.IsNullOrEmpty(x));
+                lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_invalid"));
+                if (ap.tooltip.Count > 0) lines.Add(string.Join("\n", ap.tooltip));
+                continue;
+            }
+            previousShownValid = true;
+            AddValidAPPreviewLines(ap, grant, request, preview.forceAccept, lines);
+        }
+        return string.Join("\n", lines);
+    }
+
+    /// <summary>
+    /// A validated package described like a command button (ui_ap_onHoverTooltip), plus its evaluation notes, the
+    /// forced-acceptance note and the missing-permission consequence - or, when grant / request, what will be granted or
+    /// asked (BuildAPPreviewTooltip, BuildJoinPreviewTooltip).
+    /// </summary>
+    static void AddValidAPPreviewLines(ActionPackage ap, bool grant, bool request, bool forceAccept, List<string> lines)
+    {
+        lines.Add(ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip")).Trim('\n'));
+        // the evaluation's own notes (personality / membertype acceptance mods), as the forced-retry option lists them
+        foreach (var note in ap.tooltip) if (!string.IsNullOrEmpty(note)) lines.Add(note);
+        if (forceAccept) lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_forceAccept"));
+        if (ap.SkipPermissions)
+        {
+            // no rules checked: nothing missing, nothing granted, no trust consequence
+            lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_skipPermission"));
+            return;
+        }
+
+        // Validate() leaves ListEP unbuilt: evaluate the real EPs (no roll) to read their missing permissions
+        foreach (var ep in ap.EvaluatePackagesWithoutRoll())
+        {
+            if (ep == null) continue;
+            bool allGranted = true;
+            foreach (var missing in ep.MissingPermissions)
+            {
+                if (missing == null || missing.Definition == null) continue;
+                if (grant && CanGrantMissingPermission(missing))
+                {
+                    var type = PermissionService.ResolveGrantType(missing.Query, PermissionGrantSource.Event);
+                    lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_grantPermission")
+                        .Replace("$permission$", LocalizeDictionary.QueryThenParse(missing.Definition.displayName))
+                        .Replace("$granter$", missing.Granter.FirstName)
+                        .Replace("$holder$", missing.Holder.FirstName)
+                        .Replace("$type$", PermissionService.GrantTypeLabel(type)));
+                    continue;
+                }
+                if (missing.Unaware) continue;
+                if (request && missing.Granter != null && missing.Holder != null)
+                {
+                    // asked in the act's own request phase, decided as in the dialogue menu (no roll)
+                    lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_requestPermission")
+                        .Replace("$permission$", LocalizeDictionary.QueryThenParse(missing.Definition.displayName))
+                        .Replace("$granter$", missing.Granter.FirstName)
+                        .Replace("$holder$", missing.Holder.FirstName));
+                    lines.Add(PermissionService.RequestTooltip(missing.Granter, missing.Holder, missing.Query));
+                    if (PermissionService.AcceptsRequest(missing.Granter, missing.Holder, missing.Query)) continue;
+                    allGranted = false;
+                    continue;
+                }
+                allGranted = false;
+                lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_missingPermission")
+                    .Replace("$permission$", LocalizeDictionary.QueryThenParse(missing.Definition.displayName))
+                    .Replace("$granter$", missing.Granter == null ? "-" : missing.Granter.FirstName)
+                    .Replace("$holder$", missing.Holder == null ? "-" : missing.Holder.FirstName));
+            }
+            // every missing permission is granted (on pick, or by an accepted request): the act runs with permission,
+            // no trust consequence (unless the COM's legacy permissionBonus list also cleared hasPermission - not granted here)
+            bool legacyBonus = ep.targetCOM?.AcceptanceCheck != null && ep.targetCOM.AcceptanceCheck.permissionBonus.Count > 0;
+            if (ep.hasPermission || ((grant || request) && allGranted && !legacyBonus)) continue;
+            // CheckRelationshipChange runs for each side; the player has no attitude roll worth showing
+            if (ep.Receiver != null && ep.Receiver != ep.Doer && ep.Receiver.RefID != 0 && ep.Doer != null)
+                lines.Add(PreviewTrustLossLine(ep.Receiver, ep.Doer, ep.AttitudeRateNegReceiver));
+            if (ep.Doer != null && ep.Doer.RefID != 0 && ep.Receiver != null && ep.Receiver != ep.Doer)
+                lines.Add(PreviewTrustLossLine(ep.Doer, ep.Receiver, ep.AttitudeRateNegDoer));
+        }
+    }
+
+    /// <summary>
+    /// Hover tooltip of joining source: joined = the validated copy with the joiner added (RequestLeaveUtility.
+    /// TryGetJoinablePrivacyAction), described like a command button. Joining rolls the package's own request
+    /// (ActionPackage.JoinAP, no forced response), so missing permissions show as asked in its request phase.<br/>
+    /// blockReason: with deterministic rolls, the join's check rate (JoinCheckRate) below DeterministicThreshold refuses it
+    /// for sure - the option is shown disabled (ui_event_apPreview_deterministicBlocked, as PreviewBlockReason). Else "".
+    /// </summary>
+    public static string BuildJoinPreviewTooltip(ActionPackage source, ActionPackage joined, out string blockReason)
+    {
+        blockReason = "";
+        if (source == null || joined == null) return "";
+        var lines = new List<string>();
+        AddValidAPPreviewLines(joined, false, true, false, lines);
+
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign != null && campaign.DeterministicRolls)
+        {
+            int rate = JoinCheckRate(source, joined);
+            if (rate < 100 && rate < campaign.DeterministicThreshold)
+                blockReason = LocalizeDictionary.QueryThenParse("ui_event_apPreview_deterministicBlocked")
+                    .Replace("$rate$", $"{rate}%")
+                    .Replace("$threshold$", $"{campaign.DeterministicThreshold}%");
+        }
+        return string.Join("\n", lines);
+    }
+
+    /// <summary>
+    /// PreviewCheckRate for a join: the joined package's (validated copy of source with the joiner added) proposal (doers)
+    /// and acceptance (receivers) rates, minus the player's own side, which is never refused. The join runs its request
+    /// phase, so when every missing permission would be granted (PermissionService.AcceptsRequest) the rate is read with
+    /// them held (re-validated with permissions skipped). Under deterministic rolls, at or above DeterministicThreshold the
+    /// join is sure to pass (EvaluationPackage.RollRequest / RollResponse).
+    /// </summary>
+    static int JoinCheckRate(ActionPackage source, ActionPackage joined)
+    {
+        var doers = new List<int>(joined.DoerRefs);
+        var receivers = new List<int>(joined.ReceiverRefs);
+        var rated = joined;
+        bool anyMissing = false, allAccepted = true;
+        foreach (var ep in joined.EvaluatePackagesWithoutRoll())
+        {
+            if (ep == null) continue;
+            foreach (var missing in ep.MissingPermissions)
+            {
+                if (missing == null || missing.Unaware || missing.Definition == null) continue;
+                anyMissing = true;
+                if (!PermissionService.AcceptsRequest(missing.Granter, missing.Holder, missing.Query)) allAccepted = false;
+            }
+        }
+        if (anyMissing && allAccepted)
+        {
+            var granted = source.Copy();
+            granted.ResetRequest(doers, receivers, source.masterRef);
+            granted.SkipPermissions = true;
+            if (granted.Validate()) rated = granted;
+        }
+
+        int playerRef = scr_System_CampaignManager.current.Player.RefID;
+        int rate = 100;
+        bool playerOnlyDoer = doers.Count == 1 && doers[0] == playerRef;
+        if (!playerOnlyDoer) rate = Math.Min(rate, rated.RequestRate);
+        bool anyNPCReceiver = false;
+        foreach (var r in receivers) if (r != playerRef && !doers.Contains(r)) { anyNPCReceiver = true; break; }
+        if (anyNPCReceiver) rate = Math.Min(rate, rated.ResponseRate);
+        return rate;
+    }
+
+    /// <summary>
+    /// Options.permissionPreviews: "already held", else the request decision as the dialogue menu explains it
+    /// (PermissionService.RequestTooltip: pass/fail - requests are decided by the relationship, no roll - unmet
+    /// requirements and the lifetime a grant would get).
+    /// </summary>
+    static void AddPermissionPreviewLines(EventInstance owner, Event.EventEntry.Options op, List<string> lines)
+    {
+        if (op.permissionPreviews == null) return;
+        foreach (var preview in op.permissionPreviews)
+        {
+            if (preview == null || string.IsNullOrEmpty(preview.permission)) continue;
+            var granter = ResolvePreviewActor(owner, op, preview.granter);
+            var holder = ResolvePreviewActor(owner, op, preview.holder);
+            if (granter == null || holder == null) continue;
+            var query = PermissionService.Query(granter, holder, preview.permission);
+            var name = query?.Definition == null ? preview.permission : LocalizeDictionary.QueryThenParse(query.Definition.displayName);
+
+            if (lines.Count > 0) lines.Add("");
+            if (query != null && query.Error.Length == 0 && query.HasPermission)
+            {
+                lines.Add(LocalizeDictionary.QueryThenParse("ui_event_permissionPreview_held")
+                    .Replace("$granter$", granter.FirstName).Replace("$holder$", holder.FirstName).Replace("$permission$", name));
+                continue;
+            }
+            lines.Add(LocalizeDictionary.QueryThenParse("ui_event_permissionPreview_request")
+                .Replace("$granter$", granter.FirstName).Replace("$holder$", holder.FirstName).Replace("$permission$", name));
+            lines.Add(PermissionService.RequestTooltip(granter, holder, query));
+        }
+    }
+
+    /// <summary>
+    /// The preview's package, built the way ExecuteAPOnSingleChara runs it (receiver's interaction job, stat cost
+    /// ignored), not yet validated. Null when an actor / COM / job is missing or the receiver fails receiver_conditions
+    /// (the act will not run).
+    /// </summary>
+    static ActionPackage BuildPreviewPackage(EventInstance owner, Event.EventEntry.Options op, EventAPPreview preview)
+    {
+        if (preview == null) return null;
+        var doer = ResolvePreviewActor(owner, op, preview.doer);
+        var receiver = ResolvePreviewActor(owner, op, preview.receiver);
+        if (doer == null) return null;
+        if (receiver != null)
+            foreach (var cond in preview.receiver_conditions)
+                if (!isValid(cond, owner, receiver)) return null;
+
+        var com = scr_System_Serializer.current?.MasterList?.COMs?.GetByID(preview.com);
+        var job = receiver == null ? doer.InteractionJob : receiver.InteractionJob;
+        if (com == null || job == null || job.ParentRoom == null) return null;
+        var ap = com.MakePackage(job, new List<int>() { doer.RefID }, receiver == null ? new List<int>() : new List<int>() { receiver.RefID }, -1);
+        if (ap != null) ap.IgnoreStatCost = true;
+        return ap;
+    }
+
+    /// <summary>A low-consciousness granter (Unaware) is never granted for - same rule as RequestMissingPermissions.</summary>
+    static bool CanGrantMissingPermission(MissingPermission missing)
+    {
+        return missing != null && !missing.Unaware && missing.Definition != null && missing.Granter != null && missing.Holder != null;
+    }
+
+    /// <summary>
+    /// Why an option's previewed acts make it unselectable (disabled reason text), or "" when they don't:
+    /// - none of its acts can be performed (every built preview fails Validate - orPrevious alternatives included): the
+    ///   option would do nothing; the reason lists the first act's validation messages;
+    /// - deterministic rolls (scr_System_CampaignManager.DeterministicRolls): an acceptance check passes only at a rate of
+    ///   at least DeterministicThreshold (EvaluationPackage.RollRequest / RollResponse; 100 always passes), so an act that
+    ///   would run below it is refused. Force-accepted acts never block.
+    /// Previews whose actors / receiver_conditions rule them out (BuildPreviewPackage null) are not counted.
+    /// </summary>
+    static string PreviewBlockReason(EventInstance owner, Event.EventEntry.Options op)
+    {
+        if (op?.apPreviews == null || op.apPreviews.Count == 0) return "";
+        var campaign = scr_System_CampaignManager.current;
+        bool deterministic = campaign != null && campaign.DeterministicRolls;
+        int built = 0, runnable = 0;
+        int lowestRate = 100;
+        bool refused = false;
+        List<string> firstInvalidReasons = null;
+        bool previousShownValid = false;
+        for (int pi = 0; pi < op.apPreviews.Count; pi++)
+        {
+            var preview = op.apPreviews[pi];
+            if (preview == null) continue;
+            if (preview.orPrevious && previousShownValid) continue;
+            previousShownValid = false;
+            var ap = BuildPreviewPackage(owner, op, preview);
+            if (ap == null) continue;
+            built++;
+            ap.SkipPermissions = preview.permissions == PermissionModeSkip;
+            if (!ap.Validate())
+            {
+                if (firstInvalidReasons == null)
+                {
+                    firstInvalidReasons = new List<string>() { $"[{ap.DisplayName}]" };
+                    foreach (var line in ap.tooltip) if (!string.IsNullOrEmpty(line)) firstInvalidReasons.Add(line);
+                }
+                continue;
+            }
+            previousShownValid = true;
+            runnable++;
+            if (!deterministic || preview.forceAccept) continue;
+
+            int rate = PreviewCheckRate(owner, op, preview, ap);
+            if (rate < 100 && rate < campaign.DeterministicThreshold)
+            {
+                refused = true;
+                lowestRate = Math.Min(lowestRate, rate);
+            }
+        }
+
+        if (built > 0 && runnable == 0)
+        {
+            var reason = LocalizeDictionary.QueryThenParse("ui_event_apPreview_invalidBlocked");
+            return firstInvalidReasons == null ? reason : reason + "\n" + string.Join("\n", firstInvalidReasons);
+        }
+        if (refused)
+            return LocalizeDictionary.QueryThenParse("ui_event_apPreview_deterministicBlocked")
+                .Replace("$rate$", $"{lowestRate}%")
+                .Replace("$threshold$", $"{campaign.DeterministicThreshold}%");
+        return "";
+    }
+
+    /// <summary>
+    /// The rate the act's acceptance checks are decided on: the doer's proposal and the receiver's acceptance - minus the
+    /// player's own side, which is never refused. In "request" mode, when every missing permission would be granted
+    /// (PermissionService.AcceptsRequest), the act is judged with them held: re-evaluated with permissions skipped.
+    /// </summary>
+    static int PreviewCheckRate(EventInstance owner, Event.EventEntry.Options op, EventAPPreview preview, ActionPackage ap)
+    {
+        var rated = ap;
+        if (preview.permissions == PermissionModeRequest)
+        {
+            bool anyMissing = false, allAccepted = true;
+            foreach (var ep in ap.EvaluatePackagesWithoutRoll())
+            {
+                if (ep == null) continue;
+                foreach (var missing in ep.MissingPermissions)
+                {
+                    if (missing == null || missing.Unaware || missing.Definition == null) continue;
+                    anyMissing = true;
+                    if (!PermissionService.AcceptsRequest(missing.Granter, missing.Holder, missing.Query)) allAccepted = false;
+                }
+            }
+            if (anyMissing && allAccepted)
+            {
+                var granted = BuildPreviewPackage(owner, op, preview);
+                if (granted != null)
+                {
+                    granted.SkipPermissions = true;
+                    if (granted.Validate()) rated = granted;
+                }
+            }
+        }
+
+        var player = scr_System_CampaignManager.current.Player;
+        var doer = ResolvePreviewActor(owner, op, preview.doer);
+        var receiver = ResolvePreviewActor(owner, op, preview.receiver);
+        int rate = 100;
+        if (doer != player) rate = Math.Min(rate, rated.RequestRate);
+        if (receiver != null && receiver != doer && receiver != player) rate = Math.Min(rate, rated.ResponseRate);
+        return rate;
+    }
+
+    /// <summary>
+    /// ExecuteAPOnSingleChara permission mode "grant": grants every permission the validated package is missing
+    /// (PermissionGrantSource.Event) before it runs. PermissionService.ResolveGrantType keeps the relationship's say:
+    /// Normal when the pair meets the definition's prerequisites and normal-grant tags, else today's Temporary.
+    /// Each new grant prints ui_event_permissionGranted - logged directly, so it shows even inside an
+    /// EntryResultsSilent batch that hides the AP's own output.
+    /// </summary>
+    static void GrantMissingPermissions(EventInstance owner, ActionPackage ap)
+    {
+        // Validate() leaves ListEP unbuilt: evaluate the real EPs (no roll) to read their missing permissions
+        foreach (var ep in ap.EvaluatePackagesWithoutRoll())
+        {
+            if (ep == null) continue;
+            foreach (var missing in ep.MissingPermissions)
+            {
+                if (!CanGrantMissingPermission(missing)) continue;
+                var type = PermissionService.ResolveGrantType(missing.Query, PermissionGrantSource.Event);
+                if (!PermissionService.TryGrant(missing.Granter, missing.Holder, missing.Definition.ID, PermissionGrantSource.Event, out var changed)
+                    || !changed) continue;
+                LogEventSystemLine(owner, LocalizeDictionary.QueryThenParse("ui_event_permissionGranted")
+                    .Replace("$granter$", missing.Granter.FirstName)
+                    .Replace("$holder$", missing.Holder.FirstName)
+                    .Replace("$permission$", LocalizeDictionary.QueryThenParse(missing.Definition.displayName))
+                    .Replace("$type$", PermissionService.GrantTypeLabel(type)));
+            }
+        }
+    }
+
+    /// <summary>A room-visible system line queued in event order (RevealFaction's path); silent runs: the log entry's tooltip.</summary>
+    static void LogEventSystemLine(EventInstance owner, string message)
+    {
+        if (owner == null || string.IsNullOrEmpty(message)) return;
+        if (owner.silent) { owner.SilentSink?.AddTooltip(message); return; }
+        var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
+        if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
+        var snap = owner.CurrentUISpec.Clone();
+        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
+    }
+
+    static string PreviewTrustLossLine(Character_Trainable loser, Character_Trainable toward, int dislikeRate)
+    {
+        return LocalizeDictionary.QueryThenParse("ui_event_apPreview_trustLoss")
+            .Replace("$name$", loser.FirstName)
+            .Replace("$target$", toward.FirstName)
+            .Replace("$rate$", $"{dislikeRate}%");
+    }
+
+    /// <summary>Preview actor key: the option's bindTargetKey is its bound character; otherwise "self" or a single bound target.</summary>
+    static Character_Trainable ResolvePreviewActor(EventInstance owner, Event.EventEntry.Options op, string key)
+    {
+        if (string.IsNullOrEmpty(key) || key == "none") return null;
+        if (op.boundTarget != null && key == op.bindTargetKey) return op.boundTarget;
+        if (!TryResolveExecTargets(owner, key, out var list) || list == null || list.Count != 1) return null;
+        return list[0];
     }
 
     public static bool Execute(EventInstance owner, Event.EventEntry.Options ops, bool sendNotify = false)
@@ -1733,17 +2245,20 @@ public static class EventUtility
         using (owner.EntryResultsSilentActive ? MessageCollect.SuppressPresentation(owner.message) : null)
             ops.onSelect?.Invoke(owner);
 
+        EventLineSnapshot parsed = null;
+        UISpec snap = null;
         if (!owner.EntryResultsSilentActive && owner.isVisible && ops.line != "")
         {
             bool rA = !owner.isPlayerRelated;
 
             // snapshot before this option's own Results run, so a SetBGImage attached here only affects entries printed after it
-            var snap = owner.CurrentUISpec.Overwrite(ops.UISpec);
+            snap = owner.CurrentUISpec.Overwrite(ops.UISpec);
             // sticky fields (e.g. bgImagePath) this option overrides become the new running default for entries after it
             ops.UISpec.PersistInto(owner.CurrentUISpec);
 
+            // text resolved after Results (parsed, below), not at display time - see Execute(EventEntry_Line)
             owner.QueueEventHeader(ops.line);
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, ops, rA, false, snap));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, ops, rA, false, snap, parsed));
         }
 
         // allow next to be overridden by any of results
@@ -1753,6 +2268,8 @@ public static class EventUtility
             if (op.isValid()) continue_notify = Execute(owner, op) && continue_notify;
             else continue_notify = false;
         }
+
+        if (snap != null) parsed = EventLineSnapshot.Take(owner, ops.line, ops.tooltip, snap.PortraitRefKey);
 
         if (!owner.EntryResultsSilentActive && owner.silent && ops.line != "") owner.SilentSink?.AddLine(UtilityEX.ParseEventEntry(owner, ops.line));
         if (continue_notify && owner.canRun)
@@ -1912,6 +2429,9 @@ public static class EventUtility
         }
     }
 
+    /// <summary>ExecuteAPOnSingleChara / EventAPPreview permission modes (default "none": normal permission rules).</summary>
+    public const string PermissionModeGrant = "grant", PermissionModeSkip = "skip", PermissionModeRequest = "request";
+
     static bool ExecuteAPOnSingleChara(EventInstance owner, Event.EventEntry.Executor exec)
     {
         bool untilClimax = exec.Type == Event.EventEntry.ExecutionType.ExecuteSexAPOnSingleCharaTillClimax;
@@ -1922,6 +2442,8 @@ public static class EventUtility
         int attempted = 0, injected = 0, completedIterations = 0;
         int maxIteration = 1;
         bool ignoreStatCost = false;
+        bool forceAccept = false;
+        string permissionMode = "none";
 
         string Refs(IEnumerable<Character_Trainable> actors, int argument = -1)
         {
@@ -1968,20 +2490,34 @@ public static class EventUtility
             Debug.LogWarning($"Event AP failed: event={owner.CurrentEventID}, entry={owner.CurrentEntryLabel ?? "<none>"}, "
                 + $"source=[{owner.EntryResultsSource ?? "direct"}], executor={exec.Type}, COM={(exec.arguments != null && exec.arguments.Count > 2 ? exec.arguments[2] : "<missing>")}, "
                 + $"args=[{(exec.arguments == null ? "null" : string.Join(", ", exec.arguments))}], doers=[{Refs(doers, 0)}], receivers=[{Refs(receivers, 1)}], "
-                + $"required=[{Refs(required)}], completedActors=[{Refs(completed)}], attemptedIteration={attempted}, completedIterations={completedIterations}, injected={injected}, limit={maxIteration}, ignoreStatCost={ignoreStatCost}; reason={reason}{state}");
+                + $"required=[{Refs(required)}], completedActors=[{Refs(completed)}], attemptedIteration={attempted}, completedIterations={completedIterations}, injected={injected}, limit={maxIteration}, ignoreStatCost={ignoreStatCost}, forceAccept={forceAccept}, permissions={permissionMode}; reason={reason}{state}");
             return false;
         }
 
         if (exec.arguments == null || exec.arguments.Count < (untilClimax ? 5 : 3)) return Fail("missing arguments");
+        bool isSolo = string.IsNullOrEmpty(exec.arguments[1]) || exec.arguments[1] == "none";
         owner.AppendStrings[exec.arguments[0] + "_climaxed"] = new List<string>() { "false" };
-        owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { "false" };
+        if (!isSolo) owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { "false" };
         if (exec.arguments.Count >= 4 && (!int.TryParse(exec.arguments[3], out maxIteration) || maxIteration < 1)) return Fail("invalid repeat/iteration count");
         int flagIndex = untilClimax ? 5 : 4;
         if (exec.arguments.Count > flagIndex && !bool.TryParse(exec.arguments[flagIndex], out ignoreStatCost))
             return Fail("invalid ignoreStatCost boolean");
+        if (exec.arguments.Count > flagIndex + 1 && !bool.TryParse(exec.arguments[flagIndex + 1], out forceAccept))
+            return Fail("invalid forceAccept boolean");
+        if (exec.arguments.Count > flagIndex + 2 && !string.IsNullOrEmpty(exec.arguments[flagIndex + 2]))
+        {
+            permissionMode = exec.arguments[flagIndex + 2];
+            if (permissionMode != "none" && permissionMode != PermissionModeGrant && permissionMode != PermissionModeSkip
+                && permissionMode != PermissionModeRequest)
+                return Fail("invalid permission mode (none / grant / skip / request)");
+        }
         if (!TryResolveExecTargets(owner, exec.arguments[0], out doers) || doers == null)
             return Fail("unresolved doer targets");
-        if (!TryResolveExecTargets(owner, exec.arguments[1], out receivers) || receivers == null)
+        if (isSolo)
+        {
+            receivers = new List<Character_Trainable>();
+        }
+        else if (!TryResolveExecTargets(owner, exec.arguments[1], out receivers) || receivers == null)
             return Fail("unresolved receiver targets");
         if (untilClimax)
         {
@@ -1991,14 +2527,21 @@ public static class EventUtility
             if (required.Any(c => c == null)) return Fail("null required climax actor");
         }
 
-        if (doers.Count != 1 || doers[0] == null || receivers.Count != 1 || receivers[0] == null
-            || doers[0] == receivers[0]) return Fail("invalid pairing: expected distinct non-null singleton doer and receiver");
-        var receiver = receivers[0];
+        if (isSolo)
+        {
+            if (doers.Count != 1 || doers[0] == null) return Fail("invalid solo pairing: expected non-null singleton doer");
+        }
+        else
+        {
+            if (doers.Count != 1 || doers[0] == null || receivers.Count != 1 || receivers[0] == null
+                || doers[0] == receivers[0]) return Fail("invalid pairing: expected distinct non-null singleton doer and receiver");
+        }
+        var receiver = isSolo ? null : receivers[0];
         var participants = doers.Concat(receivers).Distinct().ToList();
         required = required.Distinct().ToList();
         if (required.Any(c => !participants.Contains(c))) return Fail("required actor outside pair");
 
-        var job = receiver.InteractionJob;
+        var job = isSolo ? doers[0].InteractionJob : receiver.InteractionJob;
         var com = scr_System_Serializer.current.MasterList.COMs.GetByID(exec.arguments[2]);
         if (job == null) return Fail("missing interaction job");
         if (job.ParentRoom == null) return Fail("missing job room");
@@ -2015,6 +2558,10 @@ public static class EventUtility
         var previousJobs = doers.ToDictionary(c => c, c => c.CurrentJob);
         checkpoints = required.ToDictionary(c => c, c => c.Stats.SexStimulation?.UnclampedSeverity ?? 0f);
         var previousFamily = owner.SilentFamily;
+
+        // the result kojo of the last package run (repeats / until-climax iterations replace it): added to the collector
+        // before the final flush, which prints kojo ahead of the EXP
+        List<KojoCollector> lastKojo = null;
 
         void Flush()
         {
@@ -2043,12 +2590,19 @@ public static class EventUtility
             for (int iteration = 0; iteration < maxIteration; iteration++)
             {
                 attempted = iteration + 1;
-                var ap = com.MakePackage(job, doerRefs, new List<int>() { receiver.RefID }, -1);
+                var ap = com.MakePackage(job, doerRefs, isSolo ? new List<int>() : new List<int>() { receiver.RefID }, -1);
                 if (ap == null) return Fail("package null", untilClimax);
                 if (untilClimax && !(ap is ActionPackage_Sex)) return Fail($"package wrong type: {ap.GetType().Name}; expected ActionPackage_Sex", true);
                 ap.IgnoreStatCost = ignoreStatCost;
+                ap.ForceAccept = forceAccept;
+                // set before Validate: every evaluation of this package (validation, ForceExecute1, execution) skips the rules
+                ap.SkipPermissions = permissionMode == PermissionModeSkip;
+                // asked in ForceExecute1 (inside InjectPackageAndExecute), its kojo into this collector
+                ap.RequestPermissions = permissionMode == PermissionModeRequest;
                 ap.AuthoredSexSceneEntry = sceneEntry;
                 if (!ap.Validate()) return Fail("validation failed: " + (ap.tooltip == null ? "<null tooltip>" : string.Join(" | ", ap.tooltip)), true);
+                // before injection: ForceExecute1 rebuilds the EPs, so this round already runs with the permissions held
+                if (permissionMode == PermissionModeGrant) GrantMissingPermissions(owner, ap);
 
                 var occurrences = participants.ToDictionary(c => c, c => c.Body.ClimaxOccurrenceCount);
                 var actScopes = new List<IDisposable>();
@@ -2062,6 +2616,8 @@ public static class EventUtility
                     }
                     injected++;
                     job.InjectPackageAndExecute(ap, collector);
+                    // the collector takes only EXP from the package's own log, so its result kojo are carried over separately
+                    lastKojo = new List<KojoCollector>(ap.ResultKojo);
                     if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
 
                     // An internal check may already have granted the climax. Compare occurrences, not the
@@ -2072,6 +2628,9 @@ public static class EventUtility
                 {
                     ap.SourceEvent = null;
                     ap.IgnoreStatCost = false;
+                    ap.ForceAccept = false;
+                    ap.SkipPermissions = false;
+                    ap.RequestPermissions = false;
                     try
                     {
                         foreach (var actor in participants)
@@ -2105,7 +2664,8 @@ public static class EventUtility
         finally
         {
             owner.AppendStrings[exec.arguments[0] + "_climaxed"] = new List<string>() { doers.Any(completed.Contains) ? "true" : "false" };
-            owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { receivers.Any(completed.Contains) ? "true" : "false" };
+            if (!isSolo) owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { receivers.Any(completed.Contains) ? "true" : "false" };
+            if (lastKojo != null) foreach (var kol in lastKojo) collector.AddKojo(kol);
             try { Flush(); }
             finally
             {
@@ -2525,6 +3085,44 @@ public static class EventUtility
                 {
                     return false;
                 }
+            case Event.EventEntry.ExecutionType.TryJoinPrivacyAction:
+            {
+                if (owner.Self == null || exec.arguments.Count < 1) return false;
+                if (!owner.Targets.TryGetValue(exec.arguments[0], out var privacyOwners) || privacyOwners.Count < 1) return false;
+                var privacyOwner = privacyOwners[0];
+                if (!RequestLeaveUtility.TryGetJoinablePrivacyAction(privacyOwner, owner.Self, out var privacyAP, out _)) return false;
+
+                // the joiner's kojo for the joined command, set before joining so the refusal line has it too (as FindJoinableAP)
+                var joinRel = owner.Self.Relationships.FindRelationshipWith(privacyOwner);
+                string[] joinSuffixes = { "_Tryjoin", "_Joined", "_Join_Refused" };
+                string[] joinKeys = { "kojo_tryjoin", "kojo_joined", "kojo_join_refused" };
+                for (int i = 0; i < joinSuffixes.Length; i++)
+                {
+                    var kol = new KojoCollector(owner.Self, privacyAP.targetCOM.ID, joinSuffixes[i]);
+                    kol.LoadRel(joinRel);
+                    kol = owner.Self.Relationships.GetKOJOMessage_Suffix(kol, null);
+                    var texts = new List<string>();
+                    kol?.DumpMessage(texts);
+                    owner.AppendStrings[joinKeys[i]] = texts.Count > 0 ? texts : new List<string>() { "" };
+                }
+                return privacyAP.JoinAP(owner.Self, Memory_Response.None, true);
+            }
+            case Event.EventEntry.ExecutionType.SetJoinablePrivacyActionName:
+            {
+                if (owner.Self == null || exec.arguments.Count < 2) return false;
+                if (!owner.Targets.TryGetValue(exec.arguments[0], out var nameOwners) || nameOwners.Count < 1) return false;
+                if (!RequestLeaveUtility.TryGetJoinablePrivacyAction(nameOwners[0], owner.Self, out var nameAP, out var nameJoined)) return false;
+                owner.AppendStrings[exec.arguments[1]] = new List<string>() { nameAP.targetCOM.DisplayName(nameJoined.COMVariantID) };
+                bool wantTooltip = exec.arguments.Count >= 3 && exec.arguments[2] != "";
+                bool wantBlock = exec.arguments.Count >= 4 && exec.arguments[3] != "";
+                if (wantTooltip || wantBlock)
+                {
+                    var joinTooltip = BuildJoinPreviewTooltip(nameAP, nameJoined, out var joinBlock);
+                    if (wantTooltip) owner.AppendStrings[exec.arguments[2]] = new List<string>() { joinTooltip };
+                    if (wantBlock) owner.AppendStrings[exec.arguments[3]] = new List<string>() { joinBlock };
+                }
+                return true;
+            }
             case Event.EventEntry.ExecutionType.SetMemoryNameOverride:
             {
                 if (exec.arguments.Count < 4 || !bool.TryParse(exec.arguments[3], out var showRoomName)) return false;
@@ -4657,6 +5255,12 @@ public static class EventUtility
                 return EventExecutors_Expedition.ClassifyDay(owner, exec.arguments);
             case Event.EventEntry.ExecutionType.AssignResidence:
                 return ResidenceUtility.AssignResidence(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.BindExpPlugs:
+                return ExpInitPipeline.ExecuteBindExpPlugs(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.GenerateFaction:
+                return FactionGeneratorUtility.ExecuteGenerateFaction(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.GenerateHouseholdFor:
+                return FactionGeneratorUtility.ExecuteGenerateHouseholdFor(owner, exec.arguments);
             case Event.EventEntry.ExecutionType.AssignResidenceExisting:
                 return ResidenceUtility.AssignResidenceExisting(owner, exec.arguments);
             case Event.EventEntry.ExecutionType.GrantVisitAccess:
@@ -4665,9 +5269,245 @@ public static class EventUtility
                 return ResidenceUtility.AssignHotelGuest(owner, exec.arguments);
             case Event.EventEntry.ExecutionType.CheckOutHotelGuest:
                 return ResidenceUtility.CheckOutHotelGuest(owner, exec.arguments);
+            case Event.EventEntry.ExecutionType.FactionHasItem:
+            {
+                if (exec.arguments.Count < 3 || !int.TryParse(exec.arguments[2], out int need) || need < 1) return false;
+                var f = ResolveApprovalFactionArg(owner, exec.arguments[0]);
+                return f != null && f.Inventory != null && f.Inventory.GetItemCount(exec.arguments[1]) >= need;
+            }
+            case Event.EventEntry.ExecutionType.AddApprovalOption:
+            {
+                if (exec.arguments.Count < 1) return false;
+                string optKey = GetFirstAppendString(owner, "approvalOptionsKey");
+                if (string.IsNullOrEmpty(optKey)) optKey = "feeOptions";
+                bool isDefault = exec.arguments.Count >= 2 && exec.arguments[1].Equals("true", System.StringComparison.OrdinalIgnoreCase);
+                if (!owner.StoredOptions.TryGetValue(optKey, out var list))
+                {
+                    list = new List<Event.EventEntry.Options>();
+                    owner.StoredOptions[optKey] = list;
+                }
+                list.Add(new Event.EventEntry.Options()
+                {
+                    option = LocalizeDictionary.QueryThenParse(exec.arguments[0]),
+                    isDefaultAccept = isDefault,
+                    onSelect = ev => InvokeEventCallback(ev, "approve")
+                });
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.AddExchangeOption:
+            {
+                if (exec.arguments.Count < 6 || string.IsNullOrEmpty(exec.arguments[0])) return false;
+                string optKey = exec.arguments[0];
+                string labelKey = exec.arguments[1];
+                string payItemID = exec.arguments[2];
+                if (!int.TryParse(exec.arguments[3], out int payCount) || payCount < 1) return false;
+                string grantItemID = exec.arguments[4];
+                if (!int.TryParse(exec.arguments[5], out int grantCount) || grantCount < 1) return false;
+                bool isDefault = exec.arguments.Count >= 7 && exec.arguments[6].Equals("true", System.StringComparison.OrdinalIgnoreCase);
+
+                var payer = ResolveApprovalFactionArg(owner, "$payerFactionID");
+                var venue = ResolveApprovalFactionArg(owner, "$venueFactionID");
+                // only a player faction pays (RecreationUtility.ChargeEntranceFee's rule): NPC households keep no money
+                // reserve, so theirs is granted without the payment
+                bool charges = payer != null && payer.isPlayerFaction;
+                bool canAfford = payer != null && payer.Inventory != null && (!charges || payer.Inventory.GetItemCount(payItemID) >= payCount);
+
+                string ItemText(string itemID, int count)
+                {
+                    var itemBase = scr_System_Serializer.current?.index_Item_Base?.GetByID(itemID);
+                    string text = itemBase == null ? itemID : itemBase.DisplayName;
+                    return count > 1 ? $"{text} x{count}" : text;
+                }
+
+                string disabledTip = "";
+                if (!canAfford)
+                {
+                    disabledTip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_inventoryItemBaseID")
+                        .Replace("$faction$", payer == null ? "-" : payer.FactionDisplayName)
+                        .Replace("$name$", ItemText(payItemID, payCount));
+                }
+
+                if (!owner.StoredOptions.TryGetValue(optKey, out var list))
+                {
+                    list = new List<Event.EventEntry.Options>();
+                    owner.StoredOptions[optKey] = list;
+                }
+                list.Add(new Event.EventEntry.Options()
+                {
+                    option = LocalizeDictionary.QueryThenParse(labelKey),
+                    isDefaultAccept = isDefault && canAfford,
+                    disabledReasonText = disabledTip,
+                    onSelect = !canAfford ? null : (System.Action<EventInstance>)(ev =>
+                    {
+                        if (payer != null && payer.Inventory != null)
+                        {
+                            int taken = charges ? payer.Inventory.RemoveOwnStock(payItemID, payCount) : 0;
+                            if (taken > 0 && venue != null && venue != payer && venue.Inventory != null)
+                                venue.Inventory.AddItem(WorldManager.Instantiate(payItemID, "", taken));
+                            if (taken > 0 || !charges)
+                            {
+                                payer.Inventory.AddItem(WorldManager.Instantiate(grantItemID, "", grantCount));
+                                ev.AppendStrings["exchangeResultText"] = new List<string>() { LocalizeDictionary.QueryThenParse(charges ? "ui_event_exchange_done" : "ui_event_exchange_granted")
+                                    .Replace("$faction$", payer.FactionDisplayName)
+                                    .Replace("$pay$", ItemText(payItemID, taken))
+                                    .Replace("$grant$", ItemText(grantItemID, grantCount))
+                                    .Replace("$have$", payer.Inventory.GetItemCount(grantItemID).ToString()) };
+                            }
+                        }
+                    })
+                });
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.JumpToAppendEvent:
+            {
+                if (exec.arguments.Count < 1) return false;
+                string targetEv = GetFirstAppendString(owner, exec.arguments[0]);
+                if (string.IsNullOrEmpty(targetEv)) return false;
+                string targetLabel = exec.arguments.Count >= 2 ? exec.arguments[1] : "";
+                owner.LoadNext(targetEv, targetLabel);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.FilterTargets:
+            {
+                if (exec.arguments.Count < 3 || string.IsNullOrEmpty(exec.arguments[1])) return false;
+                string destKey = exec.arguments[1];
+                string mode = exec.arguments[2];
+                var matched = new List<Character_Trainable>();
+                if (TryResolveExecTargets(owner, exec.arguments[0], out var sourceList) && sourceList != null)
+                {
+                    if (mode == "canAct")
+                    {
+                        foreach (var c in sourceList) if (c != null && c.canAct && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "passive")
+                    {
+                        foreach (var c in sourceList) if (c != null && !c.canAct && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "wouldDeflate")
+                    {
+                        foreach (var c in sourceList) if (c != null && HasShowerExpellableContents(c) && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "hasPermission" && exec.arguments.Count >= 5)
+                    {
+                        string permID = exec.arguments[3];
+                        if (TryResolveExecTargets(owner, exec.arguments[4], out var holders) && holders != null && holders.Count > 0)
+                        {
+                            var holder = holders.Find(h => h != null);
+                            if (holder != null)
+                            {
+                                foreach (var c in sourceList)
+                                {
+                                    if (c == null || c == holder) continue;
+                                    if (PermissionService.Query(c, holder, permID).HasPermission && !matched.Contains(c))
+                                        matched.Add(c);
+                                }
+                            }
+                        }
+                    }
+                    else if (mode == "exclude" && exec.arguments.Count >= 4)
+                    {
+                        TryResolveExecTargets(owner, exec.arguments[3], out var excluded);
+                        foreach (var c in sourceList)
+                        {
+                            if (c == null) continue;
+                            if (excluded != null && excluded.Contains(c)) continue;
+                            if (!matched.Contains(c)) matched.Add(c);
+                        }
+                    }
+                }
+                owner.Targets[destKey] = matched;
+                owner.RelevantActors = null;
+                return matched.Count > 0;
+            }
+            case Event.EventEntry.ExecutionType.PopFirstTarget:
+            {
+                if (exec.arguments.Count < 2 || string.IsNullOrEmpty(exec.arguments[0]) || string.IsNullOrEmpty(exec.arguments[1]))
+                    return false;
+                string queueKey = exec.arguments[0];
+                string destKey = exec.arguments[1];
+                if (!owner.Targets.TryGetValue(queueKey, out var queue) || queue == null)
+                {
+                    owner.Targets[destKey] = new List<Character_Trainable>();
+                    return false;
+                }
+                while (queue.Count > 0 && queue[0] == null) queue.RemoveAt(0);
+                if (queue.Count == 0)
+                {
+                    owner.Targets[destKey] = new List<Character_Trainable>();
+                    return false;
+                }
+                var first = queue[0];
+                queue.RemoveAt(0);
+                owner.Targets[destKey] = new List<Character_Trainable>() { first };
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.SetAppendString:
+            {
+                if (exec.arguments.Count < 2 || string.IsNullOrEmpty(exec.arguments[0])) return false;
+                owner.AppendStrings[exec.arguments[0]] = new List<string>() { exec.arguments[1] ?? "" };
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.RemoveAppendStrings:
+                for (int i = 0; i < exec.arguments.Count; i++)
+                    if (!string.IsNullOrEmpty(exec.arguments[i])) owner.AppendStrings.Remove(exec.arguments[i]);
+                return true;
+            case Event.EventEntry.ExecutionType.ModAppendNumber:
+            {
+                if (exec.arguments.Count < 2 || string.IsNullOrEmpty(exec.arguments[0])
+                    || !double.TryParse(exec.arguments[1], System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out var delta)
+                    || double.IsNaN(delta) || double.IsInfinity(delta)) return false;
+                double current = 0;
+                if (owner.AppendStrings.TryGetValue(exec.arguments[0], out var curList)
+                    && curList != null && curList.Count == 1
+                    && double.TryParse(curList[0], System.Globalization.NumberStyles.Float,
+                        System.Globalization.CultureInfo.InvariantCulture, out var parsed)
+                    && !double.IsNaN(parsed) && !double.IsInfinity(parsed))
+                {
+                    current = parsed;
+                }
+                owner.AppendStrings[exec.arguments[0]] = new List<string>()
+                {
+                    (current + delta).ToString(System.Globalization.CultureInfo.InvariantCulture)
+                };
+                return true;
+            }
             default: return true;
 
         }
+    }
+
+    static bool HasShowerExpellableContents(Character_Trainable c)
+    {
+        if (c == null || c.Body == null) return false;
+        foreach (var part in c.Body.Internals)
+        {
+            if (part == null) continue;
+            bool fullOrifice = part.hasTag("mouth") || part.hasTag("vagina") || part.hasTag("anus");
+            if (fullOrifice && part.WouldDeflate(true)) return true;
+            if (part.WouldDeflate(false)) return true;
+        }
+        return false;
+    }
+
+    static string GetFirstAppendString(EventInstance owner, string key)
+    {
+        if (owner == null || string.IsNullOrEmpty(key)) return "";
+        return owner.AppendStrings.TryGetValue(key, out var list) && list != null && list.Count > 0 ? list[0] : "";
+    }
+
+    static Manageable ResolveApprovalFactionArg(EventInstance owner, string arg)
+    {
+        if (string.IsNullOrEmpty(arg)) return null;
+        string id = arg.StartsWith("$") ? GetFirstAppendString(owner, arg.Substring(1)) : arg;
+        if (string.IsNullOrEmpty(id)) return null;
+        return scr_System_CampaignManager.current?.FindFactionByID(id);
+    }
+
+    static void InvokeEventCallback(EventInstance owner, string callbackKey)
+    {
+        if (owner == null || !owner.FunctionCalls.TryGetValue(callbackKey, out var calls) || calls == null) return;
+        for (int i = 0; i < calls.Count; i++) calls[i]?.Invoke();
     }
 
     // ── MIA snapshot / body state helpers (conditions + StoreMIAExperienceGain). Plain data only, so they also work on

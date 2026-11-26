@@ -1,0 +1,17 @@
+{
+    "_doc": "Personality-specific description wording for personality_ErAV_Kanade (Docs/Body/Plan_CharacterDescription.md). Any description key (fragment or template) is reworded by defining <key>@<personalityID>; the fallback chain (personality_default) is searched too, then the plain key. Appearance only.",
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "chara_desc_hair@personality_ErAV_Kanade": "$hairPhrase$，梳理得一丝不乱$hairDetails$。",
+                "hair_front_center_part_desc@personality_ErAV_Kanade": "松松分开的中分刘海",
+                "chara_desc_eyes@personality_ErAV_Kanade": "$eyeColor$的眼睛，目光沉静。"
+            },
+            "en-us": {
+                "chara_desc_hair@personality_ErAV_Kanade": "Hair: $hairPhrase$, neatly kept$hairDetails$.",
+                "hair_front_center_part_desc@personality_ErAV_Kanade": "loosely center-parted bangs",
+                "chara_desc_eyes@personality_ErAV_Kanade": "Eyes: $eyeColor$, with a calm gaze."
+            }
+        }
+    }
+}

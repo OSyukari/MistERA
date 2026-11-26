@@ -10,32 +10,47 @@
                     "ID": "com_undress_outer_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "smile",
-                                "relaxed"
-                            ],
                             "responses": [
-                                "pb_com_undress_outer_Begin_A_1",
-                                "pb_com_undress_outer_Begin_A_2"
+                                "pb_com_undress_outer_Begin_1"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfForced": true
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "smile",
+                                        "relaxed"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_outer_Begin_A_1",
+                                        "pb_com_undress_outer_Begin_A_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_outer_Begin_B_1",
+                                        "pb_com_undress_outer_Begin_B_2"
+                                    ]
+                                }
                             ],
-                            "responses": [
-                                "pb_com_undress_outer_Begin_B_1",
-                                "pb_com_undress_outer_Begin_B_2"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "surprised",
                                 "troubled"
@@ -43,6 +58,12 @@
                             "responses": [
                                 "pb_com_undress_outer_Begin_C_1",
                                 "pb_com_undress_outer_Begin_C_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "pb_com_undress_outer_Begin_2"
                             ]
                         }
                     ],
@@ -86,32 +107,48 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "relaxed",
-                                "smile"
-                            ],
                             "responses": [
-                                "pb_com_undress_outer_I_1",
-                                "pb_com_undress_outer_I_2"
+                                "pb_com_undress_outer_1"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfForced": true
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "silence"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "relaxed",
+                                        "smile"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_outer_I_1",
+                                        "pb_com_undress_outer_I_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "silence"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_outer_J_1",
+                                        "pb_com_undress_outer_J_2"
+                                    ]
+                                }
                             ],
-                            "responses": [
-                                "pb_com_undress_outer_J_1",
-                                "pb_com_undress_outer_J_2"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "troubled",
                                 "doubt"
@@ -119,12 +156,13 @@
                             "responses": [
                                 "pb_com_undress_outer_K_1",
                                 "pb_com_undress_outer_K_2"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "pb_com_undress_outer_2"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -211,32 +249,47 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "smug",
-                                "confident"
-                            ],
                             "responses": [
-                                "pb_com_undress_inner_Begin_A_1",
-                                "pb_com_undress_inner_Begin_A_2"
+                                "pb_com_undress_inner_Begin_1"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfForced": true
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "smug",
+                                        "confident"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_inner_Begin_A_1",
+                                        "pb_com_undress_inner_Begin_A_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_inner_Begin_B_1",
+                                        "pb_com_undress_inner_Begin_B_2"
+                                    ]
+                                }
                             ],
-                            "responses": [
-                                "pb_com_undress_inner_Begin_B_1",
-                                "pb_com_undress_inner_Begin_B_2"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "blush",
                                 "troubled"
@@ -244,6 +297,12 @@
                             "responses": [
                                 "pb_com_undress_inner_Begin_C_1",
                                 "pb_com_undress_inner_Begin_C_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "pb_com_undress_inner_Begin_2"
                             ]
                         }
                     ],
@@ -290,32 +349,48 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "confident",
-                                "aroused"
-                            ],
                             "responses": [
-                                "pb_com_undress_inner_I_1",
-                                "pb_com_undress_inner_I_2"
+                                "pb_com_undress_inner_1"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfForced": true
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "sad"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "confident",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_inner_I_1",
+                                        "pb_com_undress_inner_I_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "sad"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_inner_J_1",
+                                        "pb_com_undress_inner_J_2"
+                                    ]
+                                }
                             ],
-                            "responses": [
-                                "pb_com_undress_inner_J_1",
-                                "pb_com_undress_inner_J_2"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "blush",
                                 "troubled"
@@ -323,12 +398,13 @@
                             "responses": [
                                 "pb_com_undress_inner_K_1",
                                 "pb_com_undress_inner_K_2"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "pb_com_undress_inner_2"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -418,33 +494,48 @@
                     ],
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "aroused",
-                                "smug"
-                            ],
                             "responses": [
-                                "pb_com_undress_skin_Begin_A_1",
-                                "pb_com_undress_skin_Begin_A_2"
+                                "pb_com_undress_skin_Begin_1"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfForced": true
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "aroused",
+                                        "smug"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_skin_Begin_A_1",
+                                        "pb_com_undress_skin_Begin_A_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_skin_Begin_B_1",
+                                        "pb_com_undress_skin_Begin_B_2"
+                                    ]
+                                }
                             ],
-                            "responses": [
-                                "pb_com_undress_skin_Begin_B_1",
-                                "pb_com_undress_skin_Begin_B_2"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "blush",
                                 "troubled"
@@ -452,6 +543,12 @@
                             "responses": [
                                 "pb_com_undress_skin_Begin_C_1",
                                 "pb_com_undress_skin_Begin_C_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "pb_com_undress_skin_Begin_2"
                             ]
                         }
                     ],
@@ -498,32 +595,48 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "aroused",
-                                "confident"
-                            ],
                             "responses": [
-                                "pb_com_undress_skin_I_1",
-                                "pb_com_undress_skin_I_2"
+                                "pb_com_undress_skin_1"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfForced": true
+                                "requireSelfAction": false,
+                                "allowRecording": true
                             },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "tearful"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "aroused",
+                                        "confident"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_skin_I_1",
+                                        "pb_com_undress_skin_I_2"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "tearful"
+                                    ],
+                                    "responses": [
+                                        "pb_com_undress_skin_J_1",
+                                        "pb_com_undress_skin_J_2"
+                                    ]
+                                }
                             ],
-                            "responses": [
-                                "pb_com_undress_skin_J_1",
-                                "pb_com_undress_skin_J_2"
-                            ]
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "blush",
                                 "troubled",
@@ -532,12 +645,13 @@
                             "responses": [
                                 "pb_com_undress_skin_K_1",
                                 "pb_com_undress_skin_K_2"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": [
+                                "pb_com_undress_skin_2"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -872,7 +986,19 @@
                 "pb_com_undress_outer_Refuse_rec_1": "$self$拉紧外套衣襟，往后退开。\n\"别脱我的外套，冷着呢。\"",
                 "pb_com_undress_outer_Refuse_rec_2": "$self$拍开$target$伸向衣领的手。\n\"我自己穿着就行，不用你脱。\"",
                 "pb_com_undress_skin_Refuse_rec_1": "$self$紧紧护住贴身遮蔽，眼神带着戒备。\n\"到这里为止吧，别再脱了。\"",
-                "pb_com_undress_skin_Refuse_rec_2": "$self$用力挣开$target$的手，往后缩去。\n\"不行，绝对不行！\""
+                "pb_com_undress_skin_Refuse_rec_2": "$self$用力挣开$target$的手，往后缩去。\n\"不行，绝对不行！\"",
+                "pb_com_undress_outer_Begin_1": "(unimplemented)",
+                "pb_com_undress_outer_Begin_2": "(unimplemented)",
+                "pb_com_undress_outer_1": "(unimplemented)",
+                "pb_com_undress_outer_2": "(unimplemented)",
+                "pb_com_undress_inner_Begin_1": "(unimplemented)",
+                "pb_com_undress_inner_Begin_2": "(unimplemented)",
+                "pb_com_undress_inner_1": "(unimplemented)",
+                "pb_com_undress_inner_2": "(unimplemented)",
+                "pb_com_undress_skin_Begin_1": "(unimplemented)",
+                "pb_com_undress_skin_Begin_2": "(unimplemented)",
+                "pb_com_undress_skin_1": "(unimplemented)",
+                "pb_com_undress_skin_2": "(unimplemented)"
             },
             "en-us": {
                 "pb_com_undress_outer_Begin_A_1": "$self$ spreads his arms easily. \"Sure, it's a bit warm anyway.\"",

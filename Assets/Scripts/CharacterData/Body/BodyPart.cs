@@ -18,6 +18,10 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public List<ActorPromptRuleset> PromptRulesets = new List<ActorPromptRuleset>();
     /// <summary> body trace definitions by id, subclass by "$type" (Docs/Body/Plan_BodyTraces.md) </summary>
     public List<TraceDefinition> Traces = new List<TraceDefinition>();
+    /// <summary> organ description profiles by id (BodyInternal_Base.descriptionProfile, Docs/Body/Plan_CharacterDescription.md) </summary>
+    public List<BodyDescriptionProfile> BodyDescriptionProfiles = new List<BodyDescriptionProfile>();
+    /// <summary> shared description fragment groups, inherited through BodyDescriptionProfile.inheritRulesets </summary>
+    public List<BodyDescriptionRuleset> BodyDescriptionRulesets = new List<BodyDescriptionRuleset>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -32,6 +36,8 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
             if (l.PromptProfiles != null) this.PromptProfiles.AddRange(l.PromptProfiles);
             if (l.PromptRulesets != null) this.PromptRulesets.AddRange(l.PromptRulesets);
             if (l.Traces != null) this.Traces.AddRange(l.Traces);
+            if (l.BodyDescriptionProfiles != null) this.BodyDescriptionProfiles.AddRange(l.BodyDescriptionProfiles);
+            if (l.BodyDescriptionRulesets != null) this.BodyDescriptionRulesets.AddRange(l.BodyDescriptionRulesets);
         }
     }
 
@@ -43,8 +49,32 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     Dictionary<string, ActorPromptProfile> ID_Dictionary5 = new Dictionary<string, ActorPromptProfile>();
     Dictionary<string, ActorPromptRuleset> ID_Dictionary6 = new Dictionary<string, ActorPromptRuleset>();
     Dictionary<string, TraceDefinition> ID_Dictionary7 = new Dictionary<string, TraceDefinition>();
+    Dictionary<string, BodyDescriptionProfile> ID_Dictionary8 = new Dictionary<string, BodyDescriptionProfile>();
+    Dictionary<string, BodyDescriptionRuleset> ID_Dictionary9 = new Dictionary<string, BodyDescriptionRuleset>();
     public void RegisterAllID(List<string> messages)
     {
+        ID_Dictionary8.Clear();
+        foreach (BodyDescriptionProfile o in this.BodyDescriptionProfiles)
+        {
+            if (o == null || string.IsNullOrEmpty(o.id))
+            {
+                Debug.LogError("Index_BodyPartBase body description profile has no id, skipped");
+                continue;
+            }
+            if (!ID_Dictionary8.TryAdd(o.id, o)) Debug.LogError($"failed to add Index_BodyPartBase body description profile id [{o.id}] due to duplicate");
+        }
+
+        ID_Dictionary9.Clear();
+        foreach (BodyDescriptionRuleset o in this.BodyDescriptionRulesets)
+        {
+            if (o == null || string.IsNullOrEmpty(o.id))
+            {
+                Debug.LogError("Index_BodyPartBase body description ruleset has no id, skipped");
+                continue;
+            }
+            if (!ID_Dictionary9.TryAdd(o.id, o)) Debug.LogError($"failed to add Index_BodyPartBase body description ruleset id [{o.id}] due to duplicate");
+        }
+
         messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]+[" + PromptProfiles.Count + "]+[" + PromptRulesets.Count + "]+[" + Traces.Count + "]");
 
         ID_Dictionary7.Clear();
@@ -164,6 +194,8 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public ActorPromptProfile GetPromptProfileByID(string id) { return id != null && ID_Dictionary5.TryGetValue(id, out var p) ? p : null; }
     public ActorPromptRuleset GetPromptRulesetByID(string id) { return id != null && ID_Dictionary6.TryGetValue(id, out var r) ? r : null; }
     public TraceDefinition GetTraceByID(string id) { return id != null && ID_Dictionary7.TryGetValue(id, out var t) ? t : null; }
+    public BodyDescriptionProfile GetBodyDescriptionProfileByID(string id) { return id != null && ID_Dictionary8.TryGetValue(id, out var p) ? p : null; }
+    public BodyDescriptionRuleset GetBodyDescriptionRulesetByID(string id) { return id != null && ID_Dictionary9.TryGetValue(id, out var r) ? r : null; }
     static readonly List<Hairstyle_SlotOption> emptyHairstyleOptions = new List<Hairstyle_SlotOption>();
     /// <summary> all options of a slot keyword. read only, don't modify the returned list </summary>
     public List<Hairstyle_SlotOption> GetHairstyleOptionsByKeyword(string keyword)
@@ -183,8 +215,11 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public void RemoveNSFW()
     {
         this.Traces.RemoveAll(x => x != null && x.tags.Contains("nsfw"));
+        // organ descriptions only - the organs are removed below
+        this.BodyDescriptionProfiles.Clear();
+        this.BodyDescriptionRulesets.Clear();
 
-        foreach (var i in this.BodyPart_Base) 
+        foreach (var i in this.BodyPart_Base)
         {
             i.equipLayers.RemoveAll(x => x == BodyEquipLayer.Skin);
             i.internalID.Clear();

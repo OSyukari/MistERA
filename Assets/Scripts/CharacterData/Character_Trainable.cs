@@ -436,47 +436,54 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         // Apply experience initializers declared in the template hierarchy.
         // Parent initializers are prepended (run first), then child's own.
-        var baseExp = Template.basicExperience;
-        var addonExps = Template.initialExperiences;
-
         List<string> expInits = new List<string>();
-
-        if (baseExp.Count > 0)
-        {
-            var rand = Utility.GetRandomElement(baseExp);
-            var expp = scr_System_Serializer.current.MasterList.Experiences.GetInitializerByID(rand);
-            if (expp != null)
-            {
-                expInits.Add($"adding exp {expp.BaseID}");
-                expp.Execute(this);
-            }
-            else
-            {
-                expInits.Add($"cannot find exp {rand}");
-            }
-        }
-
-        foreach (var id in addonExps)
-        {
-            var init = scr_System_Serializer.current.MasterList.Experiences.GetInitializerByID(id);
-            if (init != null)
-            {
-                expInits.Add($"adding exp {init.BaseID}");
-                init.Execute(this);
-            }
-            else
-            {
-                expInits.Add($"cannot find exp {id}");
-            }
-        }
+        var rolled = ExpInitPipeline.Roll(this, expInits);
+        ExpInitPipeline.CreatePlugStates(this, rolled);
 
         Debug.Log($"Character {FirstName} spawned, expinits {expInits.Count}:\n{String.Join("\n", expInits)}");
 
+        if (CharacterGeneration.IsDeferred)
+        {
+            CharacterGeneration.StoreRolled(this.referenceID, rolled);
+            return;
+        }
+
+        ExpInitPipeline.Execute(this, rolled);
         Skills.UpdateAllSkills(null);
 
         // fill statbars against the final maxes: exp inits and skill updates above can add
         // modifiers that change max values after the earlier RestoreAll
         RestoreAll();
+    }
+
+    [JsonProperty] List<ExpPlugState> expPlugs = null;
+    public bool ShouldSerializeexpPlugs() { return expPlugs != null && expPlugs.Count > 0; }
+    [JsonIgnore] public List<ExpPlugState> ExpPlugs { get { return expPlugs; } }
+
+    [JsonProperty] List<ExpInitRecordNode> expInitHistory = null;
+    public bool ShouldSerializeexpInitHistory() { return expInitHistory != null && expInitHistory.Count > 0; }
+    [JsonIgnore] public List<ExpInitRecordNode> ExpInitHistory { get { return expInitHistory; } }
+
+    public void AddExpInitRecord(ExpInitRecordNode node)
+    {
+        if (node == null || string.IsNullOrEmpty(node.id)) return;
+        if (expInitHistory == null) expInitHistory = new List<ExpInitRecordNode>();
+        expInitHistory.Add(node);
+    }
+
+    public void AddExpPlug(ExpPlugState plug)
+    {
+        if (plug == null) return;
+        if (expPlugs == null) expPlugs = new List<ExpPlugState>();
+        expPlugs.Add(plug);
+    }
+
+    public bool IsBoundToPlugPartner(int partnerRef)
+    {
+        if (expPlugs == null || partnerRef < 0) return false;
+        for (int i = 0; i < expPlugs.Count; i++)
+            if (expPlugs[i] != null && expPlugs[i].boundRef == partnerRef) return true;
+        return false;
     }
 
     [JsonProperty] protected SkillManager _Skills = null;
@@ -1281,6 +1288,131 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return false;
         }
     }
+    /// <summary>
+    /// Body regenerate (console regenBody) refusal: a running sex act caches this body's organ instances in its evaluation
+    /// packages, and a birth job works on the eggs that would be discarded.
+    /// </summary>
+    public bool CanRegenerateBody(out string reason)
+    {
+        reason = "";
+        if (CurrentJob is Job_Sex_Group)
+        {
+            reason = $"in sex job {CurrentJob.RefID}";
+            return false;
+        }
+        UtilityEX.GetAPsFrom(this, out List<ActionPackage> aps);
+        foreach (var ap in aps)
+        {
+            if (ap is ActionPackage_Sex)
+            {
+                reason = $"in sex act {ap.DisplayName}";
+                return false;
+            }
+        }
+        if (scr_System_CampaignManager.current.GetSpecialTrackedJobs(this, j => j is Job_GiveBirth || j is Job_CSection).Count > 0)
+        {
+            reason = "a birth job is running";
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Console regenBody (Docs/Body/Plan_BodyRegenerate.md): discards the body and builds it again from the current template.
+    /// Equipment comes off (kept, single-use items not consumed) and goes back on where the new body has a slot; organ
+    /// contents, pregnancy / labor, the reproduction cycle (restarted) and traces are discarded; organ first / last / unaware
+    /// experience records move to the new organ with the same base id. Caller checks CanRegenerateBody first.
+    /// </summary>
+    public void RegenerateBody()
+    {
+        var log = new System.Text.StringBuilder($"regenBody [{RefID} {FullName}]");
+
+        // 1. equipment off, kept where it is owned. Body.UnequipItem directly: the character-level unequip skips locked /
+        // armored items and consumes single-use ones
+        var equipped = new List<int>();
+        foreach (var id in Body.EquippedItemRefs)
+        {
+            if (id != -1 && !equipped.Contains(id)) equipped.Add(id);
+        }
+        foreach (var id in equipped) Body.UnequipItem(id);
+
+        // 2. + 3. old organs: contents discarded (cum, ingested items, foetus items)
+        var oldOrganNames = new List<string>();
+        int discarded = 0;
+        foreach (var organ in Body.Internals)
+        {
+            oldOrganNames.Add(organ.TraceHolderID);
+            discarded += organ.DiscardContents();
+        }
+        int traces = Body.GetTraces().Count;
+
+        // 4. pregnancy / cycle discarded, with the statuses they drive
+        int eggs = 0;
+        foreach (var wb in wombs) if (wb?.eggs != null) eggs += wb.eggs.Count;
+        var repro = ReproTemplate;
+        if (repro != null)
+        {
+            foreach (var id in repro.cycleStatusIDs)
+            {
+                if (string.IsNullOrEmpty(id)) continue;
+                Stats.RemoveStatusByStringMatch(id);
+                Stats.SyncPainCompanion(id);
+            }
+            foreach (var id in repro.pregnancyStatusIDs)
+            {
+                if (!string.IsNullOrEmpty(id) && Stats.HasStatusByStringMatch(id)) Stats.RemoveStatusByStringMatch(id);
+            }
+        }
+        foreach (var id in new[] { ReproductionUtility.status_labor, ReproductionUtility.status_labor_intense, ReproductionUtility.status_labor_obstructed, "chara_status_pain_birth" })
+        {
+            if (Stats.FindStatusByExactID(id) != null) Stats.RemoveStatusByExactID(id);
+        }
+        wombs.Clear();
+        ReproCycle = null;
+
+        // 5. rebuild (new wombs register a fresh cycle and quickstart it)
+        var oldOrgans = Body.Regenerate();
+
+        // 6. organ records to the new organ with the same base id (in order, e.g. two breasts)
+        var newOrganNames = new List<string>();
+        foreach (var organ in Body.Internals)
+        {
+            newOrganNames.Add(organ.TraceHolderID);
+            for (int i = 0; i < oldOrgans.Count; i++)
+            {
+                if (oldOrgans[i].TraceHolderID != organ.TraceHolderID) continue;
+                organ.CopyRecordsFrom(oldOrgans[i]);
+                oldOrgans.RemoveAt(i);
+                break;
+            }
+        }
+
+        // 7. equipment back on where it fits; the rest stays in the inventory / wardrobe
+        var notEquipped = new List<string>();
+        foreach (var id in equipped)
+        {
+            var item = Body.ResolveEquip(id);
+            if (item == null) continue;
+            if (!EquipItem(id)) notEquipped.Add($"{id} {item.DisplayName}");
+        }
+
+        // 8. refresh
+        Stats.RefreshTraits();
+        Stats.RefreshAllStats(true);
+        Skills.RefreshAvailableSkillChecks();
+        PortraitManager.RebuildInternal(this);
+        actorTagCache = null;
+        ClearRedressCache();
+
+        log.Append($"\nold organs [{String.Join(", ", oldOrganNames)}]");
+        log.Append($"\nnew organs [{String.Join(", ", newOrganNames)}]");
+        log.Append($"\nbody traits [{String.Join(", ", Body.BodyTraits.ConvertAll(t => t.ID))}]");
+        log.Append($"\ndiscarded contents {discarded}, eggs {eggs}, traces {traces}, cycle {(ReproCycle == null ? "none" : ReproCycle.CycleName(this))}");
+        log.Append($"\nre-equipped {equipped.Count - notEquipped.Count}/{equipped.Count}");
+        if (notEquipped.Count > 0) log.Append($", not re-equipped (kept): [{String.Join(", ", notEquipped)}]");
+        Debug.Log(log.ToString());
+    }
+
     public void RegisterWomb(BodyInternal_Womb wb)
     {
         if (wb == null) return;
@@ -1388,7 +1520,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (updateOrder != 0) return;
         this.FactionManager.FlagForDailyNeed();
-        // temporary permissions she gave expire, except to a partner in her running sex scene (cleared when it ends)
+        // temporary permissions she gave expire, except to a partner in her running sex scene (cleared when it ends);
+        // one to a partner in a command still running between them is renewed for the new day instead
         PermissionService.ClearTemporaryOnDayUpdate(this);
     }
 
@@ -1707,6 +1840,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     [JsonIgnore] public string MiddleName { get { return middleName == "" ? "" : LocalizeDictionary.QueryThenParse(middleName, middleName); } set { middleName = value; } }
     [JsonIgnore] public string LastName { get { return lastName == "" ? "" : LocalizeDictionary.QueryThenParse(lastName, lastName); } set { lastName = value; } }
+
+    /// <summary>Copies the raw lastName field (preserving localization keys if any) from source without altering first/middle name or format.</summary>
+    public void CopyLastNameFrom(Character_Trainable source)
+    {
+        if (source == null || string.IsNullOrEmpty(source.lastName)) return;
+        lastName = source.lastName;
+    }
 
     [JsonIgnore] public string FullNameID { get { return baseID+"_"+referenceID; } }
 
@@ -3141,7 +3281,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             notification.Targets["awake_bedmates"] = bedmates.Where(c => Awake(c) && !group.Contains(c)).ToList();
             notification.Targets["awake_roommates"] = roommates.Where(c => c != owner && Awake(c)
                 && !bedmates.Contains(c) && !group.Contains(c)
-                && scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID) == room).Distinct().ToList();
+                && scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID) == room
+                && MapUtility.CanSee(owner, c)).Distinct().ToList();   // not those behind a stall's door
             notification.Targets["wake_scene_leader"] = new List<Character_Trainable> { leader };
             notification.Targets["wake_followers"] = group.Where(c => c != leader).ToList();
             notification.Targets["wake_tired"] = group.Where(c => c.Stats.HasStatusByStringMatch(StatsUtility.Status_SleepDeprived)).ToList();

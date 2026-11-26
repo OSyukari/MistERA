@@ -561,6 +561,33 @@
                     ]
                 }
             ]
+        },
+        {
+            "statusID":"chara_status_sauna_refreshed",
+            "_comment":"Temporary non-stacking post-sauna relaxation moodlet. Severity decays 1/min from cap 180 (3h) back to 0; repeated sauna sessions refresh duration without stacking the stress bonus.",
+            "variationMode": {
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":1
+                }
+            },
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayName":"chara_status_sauna_refreshed_1",
+                    "threshold":180,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_sauna_refreshed", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                }
+            ]
         }
     ]
     },
@@ -580,6 +607,9 @@
 "chara_status_consciousness_tooltip": "角色的清醒程度\n意识低于70%的时候角色会处于意识低下，更难做出理智判断\n低于30%时角色昏迷",
 
 "chara_status_stress": "压力",
+"chara_status_sauna_refreshed": "桑拿舒畅",
+"chara_status_sauna_refreshed_1": "桑拿舒畅",
+"chara_status_sauna_refreshed_tooltip": "蒸完桑拿后身心放松，暂时缓解%%chara_status_stress%%（不可叠加，最长持续3小时）。",
 "chara_status_stress_0": "%%chara_status_stress%%：平静",
 "chara_status_stress_1": "%%chara_status_stress%%：放松",
 "chara_status_stress_m1": "%%chara_status_stress%%：紧张",

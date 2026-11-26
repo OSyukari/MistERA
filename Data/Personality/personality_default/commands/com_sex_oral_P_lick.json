@@ -158,28 +158,6 @@
                         },
                         {
                             "requireSelfDoer": true,
-                            "requirement": {
-                                "targetTags": [
-                                    "condom_filled"
-                                ],
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "doer",
-                                "blowjob",
-                                "blush"
-                            ],
-                            "_comment": "攻方 舔戴着装满精液的避孕套的肉棒",
-                            "responses": [
-                                "com_sex_oral_P_lick_condomFilled_1",
-                                "com_sex_oral_P_lick_condomFilled_2",
-                                "com_sex_oral_P_lick_condomFilled_3"
-                            ]
-                        },
-                        {
-                            "requireSelfDoer": true,
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
@@ -199,6 +177,34 @@
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "攻方 舔肉棒 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_P_lick_34"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "targetTags": [
+                                            "condom_filled"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "blowjob",
+                                        "blush"
+                                    ],
+                                    "_comment": "攻方 舔戴着装满精液的避孕套的肉棒",
+                                    "responses": [
+                                        "com_sex_oral_P_lick_condomFilled_1",
+                                        "com_sex_oral_P_lick_condomFilled_2",
+                                        "com_sex_oral_P_lick_condomFilled_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
                                         "requirePermission": true,
                                         "requireSelfAction": false,
                                         "requireTargetAction": false
@@ -216,17 +222,6 @@
                                         "com_sex_oral_P_lick_4"
                                     ]
                                 }
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            },
-                            "responses": [
-                                "com_sex_oral_P_lick_31",
-                                "com_sex_oral_P_lick_32",
-                                "com_sex_oral_P_lick_33"
                             ]
                         }
                     ],
@@ -407,13 +402,17 @@
                                 "com_sex_oral_P_lick_Begin_13",
                                 "com_sex_oral_P_lick_Begin_14",
                                 "com_sex_oral_P_lick_Begin_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 开始 com_sex_oral_P_lick",
                             "responses": [
                                 "com_sex_oral_P_lick_Begin_16",
                                 "com_sex_oral_P_lick_Begin_17",
@@ -450,13 +449,17 @@
                                 "com_sex_oral_P_lick_Ongoing_4",
                                 "com_sex_oral_P_lick_Ongoing_5",
                                 "com_sex_oral_P_lick_Ongoing_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_P_lick 进行中",
                             "responses": [
                                 "com_sex_oral_P_lick_Ongoing_7",
                                 "com_sex_oral_P_lick_Ongoing_8",
@@ -552,7 +555,8 @@
                 "com_sex_oral_P_lick_Ongoing_9": "$self$微微喘息着，动作不停地伸出舌尖从根部到顶端细细舔舐肉棒。",
                 "com_sex_oral_P_lick_31": "$self$微微喘息着，一边顺着动作继续互动，一边留意着$target$的反应。",
                 "com_sex_oral_P_lick_32": "空气渐渐升温，$self$放缓了节奏继续顺着动作继续互动：“……感觉怎么样？”",
-                "com_sex_oral_P_lick_33": "$self$轻吐出一口气，顺从着眼前的状态继续顺着动作继续互动。"
+                "com_sex_oral_P_lick_33": "$self$轻吐出一口气，顺从着眼前的状态继续顺着动作继续互动。",
+                "com_sex_oral_P_lick_34": "(unimplemented)"
             }
         }
     }

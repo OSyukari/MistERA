@@ -78,17 +78,124 @@ public static class MapUtility
     /// <summary> no actor of refs is visible to c (refs empty = not actor bound, visible) - message filtering </summary>
     public static bool NoneVisibleTo(Character_Trainable c, List<int> refs)
     {
-        if (c == null || refs == null || refs.Count < 1) return false;
+        if (c == null) return false;
+        return HiddenFromScope(c.ScopeRef, c.CurrentRoom, refs, -1, c.RefID);
+    }
+
+    /// <summary>
+    /// Seen from scope in room, a divider hides every actor of refs (+ extraRef, -1 = none): at least one resolves, all of
+    /// them are in room and none is visible from scope. An actor in another room is no divider question (not hidden - room
+    /// filtering is the caller's), refs empty = room-wide line (not hidden), viewerRef among them = the viewer's own line.
+    /// Docs/Furniture/Plan_DividerVisibility.md §2.1
+    /// </summary>
+    public static bool HiddenFromScope(int scope, Room_Instance room, List<int> refs, int extraRef = -1, int viewerRef = -1)
+    {
+        if (room == null) return false;
         if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return false;   // nobody in a stall: nobody hidden
-        int scope = c.ScopeRef;
         var campaign = scr_System_CampaignManager.current;
-        for (int i = 0; i < refs.Count; i++)
+        bool any = false;
+        int count = refs == null ? 0 : refs.Count;
+        for (int i = -1; i < count; i++)
         {
-            if (refs[i] == c.RefID) return false;
-            var a = campaign.FindInstanceByID(refs[i]);
-            if (a == null || CanSeeScope(scope, a.ScopeRef)) return false;
+            int r = i < 0 ? extraRef : refs[i];
+            if (r < 0) continue;
+            if (r == viewerRef) return false;
+            var a = campaign.FindInstanceByID(r);
+            if (a == null) continue;
+            if (!ReferenceEquals(a.CurrentRoom, room)) return false;
+            if (CanSeeScope(scope, a.ScopeRef)) return false;
+            any = true;
         }
-        return true;
+        return any;
+    }
+
+    /// <summary> viewer cannot see what the record (room-wide description / kojo, not about viewer) shows - log filtering </summary>
+    public static bool RecordHiddenFrom(Character_Trainable viewer, I_Records r)
+    {
+        if (viewer == null || r == null) return false;
+        if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return false;
+        if (r is DescriptionCollector d)
+        {
+            if (d.Visibility != VisibilityLevel.Roomwide || d.DirectlyRelated(viewer)) return false;
+            if (d.HasCrossing) return CrossingHidden(viewer.ScopeRef, viewer.CurrentRoom, d);
+            return HiddenFromScope(viewer.ScopeRef, viewer.CurrentRoom, d.RelevantActors, -1, viewer.RefID);
+        }
+        if (r is KojoCollector k)
+        {
+            if (k.Visibility != VisibilityLevel.Roomwide || k.DirectlyRelated(viewer)) return false;
+            return HiddenFromScope(viewer.ScopeRef, viewer.CurrentRoom, k.RelevantActorRefs, k.selfRef, viewer.RefID);
+        }
+        return false;
+    }
+
+    /// <summary> seen from scope in room (a camera), the record is hidden by a divider - recording filtering </summary>
+    public static bool RecordHiddenFromScope(int scope, Room_Instance room, I_Records r)
+    {
+        if (r == null) return false;
+        if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return false;
+        if (r is DescriptionCollector d)
+        {
+            if (d.Visibility != VisibilityLevel.Roomwide) return false;
+            if (d.HasCrossing) return CrossingHidden(scope, room, d);
+            return HiddenFromScope(scope, room, d.RelevantActors);
+        }
+        if (r is KojoCollector k)
+        {
+            if (k.Visibility != VisibilityLevel.Roomwide) return false;
+            return HiddenFromScope(scope, room, k.RelevantActorRefs, k.selfRef);
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// A divider enter / leave line (DescriptionCollector door stamp) is hidden from scope only when neither side of its
+    /// door - the open area and the divider's inside - is seen from there (no nested dividers). Another room: not a divider
+    /// question. Plan_DividerVisibility.md §6
+    /// </summary>
+    static bool CrossingHidden(int scope, Room_Instance room, DescriptionCollector d)
+    {
+        if (room == null || room.RefID != d.crossingRoomRef) return false;
+        return !CanSeeScope(scope, -1) && !CanSeeScope(scope, d.crossingScope);
+    }
+
+    // ---- LLM world state (Plan_DividerVisibility.md Q4): everyone in the room is listed, with where they are relative to the viewer's sight ----
+
+    /// <summary> c's place across the room's dividers as viewer sees it ("" = same room, neither inside a divider, or another room) </summary>
+    public static string DescribeSight(Character_Trainable viewer, Character_Trainable c)
+    {
+        if (viewer == null || c == null) return "";
+        if (!ReferenceEquals(viewer.CurrentRoom, c.CurrentRoom)) return "";
+        int vs = viewer.ScopeRef, cs = c.ScopeRef;
+        if (vs < 0 && cs < 0) return "";
+        if (ReferenceEquals(viewer, c)) return $"inside {DividerLabel(cs)}";
+        if (vs == cs) return $"inside {DividerLabel(cs)}, together with {viewer.FirstName}";
+        return DescribeAcross(viewer, vs, cs, "them");
+    }
+
+    /// <summary> where ap takes place across the room's dividers as viewer sees it ("" = where viewer is, or no divider involved) </summary>
+    public static string DescribeSight(Character_Trainable viewer, ActionPackage ap)
+    {
+        if (viewer == null || ap == null) return "";
+        if (!ReferenceEquals(viewer.CurrentRoom, ap.Room)) return "";
+        int vs = viewer.ScopeRef, s = PackageScope(ap);
+        if (vs == s) return "";
+        return DescribeAcross(viewer, vs, s, "it");
+    }
+
+    static string DescribeAcross(Character_Trainable viewer, int viewerScope, int scope, string what)
+    {
+        string where = scope >= 0 ? $"inside {DividerLabel(scope)}" : "in the room's open area";
+        if (viewerScope >= 0) where += $", while {viewer.FirstName} is inside {DividerLabel(viewerScope)}";
+        return where + (CanSeeScope(viewerScope, scope)
+            ? $"; {viewer.FirstName} can see {what} but cannot interact across the divider"
+            : $"; hidden from {viewer.FirstName}'s view");
+    }
+
+    static string DividerLabel(int scope)
+    {
+        var f = scr_System_CampaignManager.current.FindJobInstanceByID(scope) as Job_Furniture;
+        string name = f?.ParentInstance?.DisplayName ?? "a divider";
+        return f != null && f.BlocksVisibility ? $"{name} (closed divider)" : $"{name} (see-through divider)";
     }
 
     /// <summary>

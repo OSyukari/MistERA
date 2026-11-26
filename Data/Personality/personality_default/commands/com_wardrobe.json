@@ -93,61 +93,70 @@
                                         "com_undress_outer_Begin_11",
                                         "com_undress_outer_Begin_12"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "smile",
+                                        "relaxed"
+                                    ],
+                                    "_comment": "接受 被脱外衣 有允许",
+                                    "responses": [
+                                        "com_undress_outer_Begin_A_1",
+                                        "com_undress_outer_Begin_A_2",
+                                        "com_undress_outer_Begin_A_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling"
+                                    ],
+                                    "_comment": "接受 被脱外衣 被迫",
+                                    "responses": [
+                                        "com_undress_outer_Begin_B_1",
+                                        "com_undress_outer_Begin_B_2",
+                                        "com_undress_outer_Begin_B_3"
+                                    ]
                                 }
                             ],
-                            "responses": [
-                                "com_undress_outer_Begin_13",
-                                "com_undress_outer_Begin_14"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "smile",
-                                "relaxed"
-                            ],
-                            "_comment": "接受 被脱外衣 有允许",
-                            "responses": [
-                                "com_undress_outer_Begin_A_1",
-                                "com_undress_outer_Begin_A_2",
-                                "com_undress_outer_Begin_A_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
-                            ],
-                            "_comment": "接受 被脱外衣 被迫",
-                            "responses": [
-                                "com_undress_outer_Begin_B_1",
-                                "com_undress_outer_Begin_B_2",
-                                "com_undress_outer_Begin_B_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "shy",
-                                "troubled",
-                                "surprised"
-                            ],
-                            "_comment": "接受 被脱外衣 未允许",
                             "responses": [
                                 "com_undress_outer_Begin_C_1",
                                 "com_undress_outer_Begin_C_2",
                                 "com_undress_outer_Begin_C_3"
                             ],
+                            "_comment": "接受 被脱外衣 未允许",
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_undress_outer_Begin_15"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_undress_outer_Begin_16"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -246,12 +255,50 @@
                                         "com_undress_outer_new_11",
                                         "com_undress_outer_new_12"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "relaxed",
+                                        "smile"
+                                    ],
+                                    "_comment": "完成 被脱外衣 有允许",
+                                    "responses": [
+                                        "com_undress_outer_I_1",
+                                        "com_undress_outer_I_2",
+                                        "com_undress_outer_I_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "tearful",
+                                        "trembling"
+                                    ],
+                                    "_comment": "完成 被脱外衣 被迫",
+                                    "responses": [
+                                        "com_undress_outer_J_1",
+                                        "com_undress_outer_J_2",
+                                        "com_undress_outer_J_3"
+                                    ]
                                 }
                             ],
                             "responses": [
-                                "com_undress_outer_Receiver_1",
-                                "com_undress_outer_Receiver_2"
-                            ]
+                                "com_undress_outer_K_1",
+                                "com_undress_outer_K_2",
+                                "com_undress_outer_K_3"
+                            ],
+                            "_comment": "完成 被脱外衣 未允许",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -259,57 +306,21 @@
                                 "com_undress_outer_new_7",
                                 "com_undress_outer_new_8",
                                 "com_undress_outer_new_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "relaxed",
-                                "smile"
-                            ],
-                            "_comment": "完成 被脱外衣 有允许",
-                            "responses": [
-                                "com_undress_outer_I_1",
-                                "com_undress_outer_I_2",
-                                "com_undress_outer_I_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "tearful",
-                                "trembling"
-                            ],
-                            "_comment": "完成 被脱外衣 被迫",
-                            "responses": [
-                                "com_undress_outer_J_1",
-                                "com_undress_outer_J_2",
-                                "com_undress_outer_J_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "shy",
-                                "blush",
-                                "troubled"
-                            ],
-                            "_comment": "完成 被脱外衣 未允许",
-                            "responses": [
-                                "com_undress_outer_K_1",
-                                "com_undress_outer_K_2",
-                                "com_undress_outer_K_3"
                             ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_undress_outer_1"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -543,62 +554,71 @@
                                         "com_undress_inner_Begin_11",
                                         "com_undress_inner_Begin_12"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "接受 被脱衣物 有允许",
+                                    "responses": [
+                                        "com_undress_inner_Begin_A_1",
+                                        "com_undress_inner_Begin_A_2",
+                                        "com_undress_inner_Begin_A_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "trembling",
+                                        "tearful"
+                                    ],
+                                    "_comment": "接受 被脱衣物 被迫",
+                                    "responses": [
+                                        "com_undress_inner_Begin_B_1",
+                                        "com_undress_inner_Begin_B_2",
+                                        "com_undress_inner_Begin_B_3"
+                                    ]
                                 }
                             ],
-                            "responses": [
-                                "com_undress_inner_Begin_13",
-                                "com_undress_inner_Begin_14"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "affectionate"
-                            ],
-                            "_comment": "接受 被脱衣物 有允许",
-                            "responses": [
-                                "com_undress_inner_Begin_A_1",
-                                "com_undress_inner_Begin_A_2",
-                                "com_undress_inner_Begin_A_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling",
-                                "tearful"
-                            ],
-                            "_comment": "接受 被脱衣物 被迫",
-                            "responses": [
-                                "com_undress_inner_Begin_B_1",
-                                "com_undress_inner_Begin_B_2",
-                                "com_undress_inner_Begin_B_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "troubled"
-                            ],
-                            "_comment": "接受 被脱衣物 未允许",
                             "responses": [
                                 "com_undress_inner_Begin_C_1",
                                 "com_undress_inner_Begin_C_2",
                                 "com_undress_inner_Begin_C_3"
                             ],
+                            "_comment": "接受 被脱衣物 未允许",
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_undress_inner_Begin_15"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_undress_inner_Begin_16"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -699,12 +719,50 @@
                                         "com_undress_inner_new_11",
                                         "com_undress_inner_new_12"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "aroused"
+                                    ],
+                                    "_comment": "完成 被脱衣物 有允许",
+                                    "responses": [
+                                        "com_undress_inner_I_1",
+                                        "com_undress_inner_I_2",
+                                        "com_undress_inner_I_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "tearful",
+                                        "cry"
+                                    ],
+                                    "_comment": "完成 被脱衣物 被迫",
+                                    "responses": [
+                                        "com_undress_inner_J_1",
+                                        "com_undress_inner_J_2",
+                                        "com_undress_inner_J_3"
+                                    ]
                                 }
                             ],
                             "responses": [
-                                "com_undress_inner_Receiver_1",
-                                "com_undress_inner_Receiver_2"
-                            ]
+                                "com_undress_inner_K_1",
+                                "com_undress_inner_K_2",
+                                "com_undress_inner_K_3"
+                            ],
+                            "_comment": "完成 被脱衣物 未允许",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -712,57 +770,21 @@
                                 "com_undress_inner_new_7",
                                 "com_undress_inner_new_8",
                                 "com_undress_inner_new_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "aroused"
-                            ],
-                            "_comment": "完成 被脱衣物 有允许",
-                            "responses": [
-                                "com_undress_inner_I_1",
-                                "com_undress_inner_I_2",
-                                "com_undress_inner_I_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "tearful",
-                                "cry"
-                            ],
-                            "_comment": "完成 被脱衣物 被迫",
-                            "responses": [
-                                "com_undress_inner_J_1",
-                                "com_undress_inner_J_2",
-                                "com_undress_inner_J_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "troubled",
-                                "pouting"
-                            ],
-                            "_comment": "完成 被脱衣物 未允许",
-                            "responses": [
-                                "com_undress_inner_K_1",
-                                "com_undress_inner_K_2",
-                                "com_undress_inner_K_3"
                             ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_undress_inner_1"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -999,62 +1021,71 @@
                                         "com_undress_skin_Begin_5",
                                         "com_undress_skin_Begin_6"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "aroused",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "接受 被脱贴身衣物 有允许",
+                                    "responses": [
+                                        "com_undress_skin_Begin_A_1",
+                                        "com_undress_skin_Begin_A_2",
+                                        "com_undress_skin_Begin_A_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "fear",
+                                        "tearful",
+                                        "trembling"
+                                    ],
+                                    "_comment": "接受 被脱贴身衣物 被迫",
+                                    "responses": [
+                                        "com_undress_skin_Begin_B_1",
+                                        "com_undress_skin_Begin_B_2",
+                                        "com_undress_skin_Begin_B_3"
+                                    ]
                                 }
                             ],
-                            "responses": [
-                                "com_undress_skin_Begin_13",
-                                "com_undress_skin_Begin_14"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "aroused",
-                                "affectionate"
-                            ],
-                            "_comment": "接受 被脱贴身衣物 有允许",
-                            "responses": [
-                                "com_undress_skin_Begin_A_1",
-                                "com_undress_skin_Begin_A_2",
-                                "com_undress_skin_Begin_A_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "tearful",
-                                "trembling"
-                            ],
-                            "_comment": "接受 被脱贴身衣物 被迫",
-                            "responses": [
-                                "com_undress_skin_Begin_B_1",
-                                "com_undress_skin_Begin_B_2",
-                                "com_undress_skin_Begin_B_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "trembling"
-                            ],
-                            "_comment": "接受 被脱贴身衣物 未允许",
                             "responses": [
                                 "com_undress_skin_Begin_C_1",
                                 "com_undress_skin_Begin_C_2",
                                 "com_undress_skin_Begin_C_3"
                             ],
+                            "_comment": "接受 被脱贴身衣物 未允许",
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_undress_skin_Begin_15"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_undress_skin_Begin_16"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -1155,12 +1186,50 @@
                                         "com_undress_skin_new_11",
                                         "com_undress_skin_new_12"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "aroused",
+                                        "love"
+                                    ],
+                                    "_comment": "完成 被脱贴身衣物 有允许",
+                                    "responses": [
+                                        "com_undress_skin_I_1",
+                                        "com_undress_skin_I_2",
+                                        "com_undress_skin_I_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfForced": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "cry",
+                                        "tearful",
+                                        "fear"
+                                    ],
+                                    "_comment": "完成 被脱贴身衣物 被迫",
+                                    "responses": [
+                                        "com_undress_skin_J_1",
+                                        "com_undress_skin_J_2",
+                                        "com_undress_skin_J_3"
+                                    ]
                                 }
                             ],
                             "responses": [
-                                "com_undress_skin_Receiver_1",
-                                "com_undress_skin_Receiver_2"
-                            ]
+                                "com_undress_skin_K_1",
+                                "com_undress_skin_K_2",
+                                "com_undress_skin_K_3"
+                            ],
+                            "_comment": "完成 被脱贴身衣物 未允许",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -1168,57 +1237,21 @@
                                 "com_undress_skin_new_7",
                                 "com_undress_skin_new_8",
                                 "com_undress_skin_new_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "aroused",
-                                "love"
-                            ],
-                            "_comment": "完成 被脱贴身衣物 有允许",
-                            "responses": [
-                                "com_undress_skin_I_1",
-                                "com_undress_skin_I_2",
-                                "com_undress_skin_I_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfForced": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "cry",
-                                "tearful",
-                                "fear"
-                            ],
-                            "_comment": "完成 被脱贴身衣物 被迫",
-                            "responses": [
-                                "com_undress_skin_J_1",
-                                "com_undress_skin_J_2",
-                                "com_undress_skin_J_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "trembling"
-                            ],
-                            "_comment": "完成 被脱贴身衣物 未允许",
-                            "responses": [
-                                "com_undress_skin_K_1",
-                                "com_undress_skin_K_2",
-                                "com_undress_skin_K_3"
                             ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_undress_skin_1"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1463,18 +1496,31 @@
                                 "com_undress_all_Begin_11",
                                 "com_undress_all_Begin_12"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_undress_all_Begin_18"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_undress_all_Begin_16",
-                                "com_undress_all_Begin_17"
+                                "com_undress_all_Begin_19"
                             ]
                         }
                     ]
@@ -1593,7 +1639,11 @@
                                 "com_undress_all_11",
                                 "com_undress_all_12"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -1602,29 +1652,33 @@
                                 "com_undress_all_13",
                                 "com_undress_all_14",
                                 "com_undress_all_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_undress_all_19",
-                                "com_undress_all_20",
-                                "com_undress_all_21"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_undress_all_25",
-                                "com_undress_all_26"
+                                "com_undress_all_27"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_undress_all_19",
+                                        "com_undress_all_20",
+                                        "com_undress_all_21"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -1906,18 +1960,31 @@
                                 "com_redress_outer_Begin_2",
                                 "com_redress_outer_Begin_3"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_redress_outer_Begin_18"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_outer_Begin_16",
-                                "com_redress_outer_Begin_17"
+                                "com_redress_outer_Begin_19"
                             ]
                         }
                     ]
@@ -2033,7 +2100,11 @@
                                 "com_redress_outer_2",
                                 "com_redress_outer_3"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -2042,29 +2113,33 @@
                                 "com_redress_outer_7",
                                 "com_redress_outer_8",
                                 "com_redress_outer_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_redress_outer_16",
-                                "com_redress_outer_17",
-                                "com_redress_outer_18"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_outer_25",
-                                "com_redress_outer_26"
+                                "com_redress_outer_27"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_redress_outer_16",
+                                        "com_redress_outer_17",
+                                        "com_redress_outer_18"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -2167,18 +2242,31 @@
                                 "com_redress_inner_Begin_2",
                                 "com_redress_inner_Begin_3"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_redress_inner_Begin_18"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_inner_Begin_16",
-                                "com_redress_inner_Begin_17"
+                                "com_redress_inner_Begin_19"
                             ]
                         }
                     ]
@@ -2294,7 +2382,11 @@
                                 "com_redress_inner_20",
                                 "com_redress_inner_21"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -2303,29 +2395,33 @@
                                 "com_redress_inner_13",
                                 "com_redress_inner_14",
                                 "com_redress_inner_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_redress_inner_16",
-                                "com_redress_inner_17",
-                                "com_redress_inner_18"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_inner_25",
-                                "com_redress_inner_26"
+                                "com_redress_inner_27"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_redress_inner_16",
+                                        "com_redress_inner_17",
+                                        "com_redress_inner_18"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -2428,18 +2524,31 @@
                                 "com_redress_skin_Begin_8",
                                 "com_redress_skin_Begin_9"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_redress_skin_Begin_18"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_skin_Begin_16",
-                                "com_redress_skin_Begin_17"
+                                "com_redress_skin_Begin_19"
                             ]
                         }
                     ]
@@ -2555,7 +2664,11 @@
                                 "com_redress_skin_11",
                                 "com_redress_skin_12"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -2564,29 +2677,33 @@
                                 "com_redress_skin_1",
                                 "com_redress_skin_2",
                                 "com_redress_skin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_redress_skin_16",
-                                "com_redress_skin_17",
-                                "com_redress_skin_18"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_skin_25",
-                                "com_redress_skin_26"
+                                "com_redress_skin_27"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_redress_skin_16",
+                                        "com_redress_skin_17",
+                                        "com_redress_skin_18"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -2689,18 +2806,31 @@
                                 "com_redress_all_Begin_11",
                                 "com_redress_all_Begin_12"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_redress_all_Begin_18"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_all_Begin_16",
-                                "com_redress_all_Begin_17"
+                                "com_redress_all_Begin_19"
                             ]
                         }
                     ]
@@ -2816,7 +2946,11 @@
                                 "com_redress_all_5",
                                 "com_redress_all_6"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -2825,29 +2959,33 @@
                                 "com_redress_all_16",
                                 "com_redress_all_17",
                                 "com_redress_all_18"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_redress_all_7",
-                                "com_redress_all_8",
-                                "com_redress_all_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_redress_all_25",
-                                "com_redress_all_26"
+                                "com_redress_all_27"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_redress_all_7",
+                                        "com_redress_all_8",
+                                        "com_redress_all_9"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -5877,7 +6015,31 @@
                 "com_redress_Begin_sleeping_1": "熟睡中的$self$呼吸平稳，只是在衣物拂过皮肤时微微偏了偏头，任由$target$替自己穿好衣服。",
                 "com_redress_Begin_sleeping_2": "$self$沉浸在睡梦里没有醒来，软软地任由$target$帮她整理好衣物。",
                 "com_redress_Begin_unconscious_1": "昏迷中的$self$毫无动静，任由$target$替自己把衣物一件件穿回身上。",
-                "com_redress_Begin_unconscious_2": "失去意识的$self$软绵绵地躺着，对$target$为她整理衣物的举动毫无知觉。"
+                "com_redress_Begin_unconscious_2": "失去意识的$self$软绵绵地躺着，对$target$为她整理衣物的举动毫无知觉。",
+                "com_undress_outer_Begin_15": "(unimplemented)",
+                "com_undress_outer_Begin_16": "(unimplemented)",
+                "com_undress_outer_1": "(unimplemented)",
+                "com_undress_inner_Begin_15": "(unimplemented)",
+                "com_undress_inner_Begin_16": "(unimplemented)",
+                "com_undress_inner_1": "(unimplemented)",
+                "com_undress_skin_Begin_15": "(unimplemented)",
+                "com_undress_skin_Begin_16": "(unimplemented)",
+                "com_undress_skin_1": "(unimplemented)",
+                "com_undress_all_Begin_18": "(unimplemented)",
+                "com_undress_all_Begin_19": "(unimplemented)",
+                "com_undress_all_27": "(unimplemented)",
+                "com_redress_outer_Begin_18": "(unimplemented)",
+                "com_redress_outer_Begin_19": "(unimplemented)",
+                "com_redress_outer_27": "(unimplemented)",
+                "com_redress_inner_Begin_18": "(unimplemented)",
+                "com_redress_inner_Begin_19": "(unimplemented)",
+                "com_redress_inner_27": "(unimplemented)",
+                "com_redress_skin_Begin_18": "(unimplemented)",
+                "com_redress_skin_Begin_19": "(unimplemented)",
+                "com_redress_skin_27": "(unimplemented)",
+                "com_redress_all_Begin_18": "(unimplemented)",
+                "com_redress_all_Begin_19": "(unimplemented)",
+                "com_redress_all_27": "(unimplemented)"
             },
             "en-us": {
                 "com_undress_outer_Begin_A_1": "$self$ lifts her arms to help $target$, a small smile on her lips.",

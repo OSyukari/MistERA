@@ -9,6 +9,7 @@
                 "floorHeight": 380,
                 "AnchorType": "TopLeft",
                 "mapExit": "floor_1ldk_1_frontDoor",
+                "mainRoomIDs": ["floor_1ldk_1_room"],
                 "_comment_wholeBuildingRent": "1LDK house lease, charged monthly",
                 "wholeBuildingRent": {
                     "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 10000 },

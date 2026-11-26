@@ -6,7 +6,8 @@
         "Entries": {
             "en-us": {
                 "Recreation_FeeApproval_question": "Activity fee request:\n$feeRequestText$$feeConflictText$",
-                "Recreation_FeeApproval_decline": "Decline"
+                "Recreation_FeeApproval_decline": "Decline",
+                "Recreation_FeeApproval_approved": "$approvalResultText$"
             }
         }
     }

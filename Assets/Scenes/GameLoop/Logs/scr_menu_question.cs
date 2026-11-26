@@ -248,8 +248,13 @@ public class scr_menu_question : scr_Menu
                 else tooltip += (this.tooltip.Length > 0 ? "\n" : "") + option.tooltip;
             }
 
+            // the packages this option runs: acceptance, DC and permission consequence, built now like a command button
+            var apPreview = EventUtility.BuildAPPreviewTooltip(instance, option);
+            if (apPreview.Length > 0) this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + apPreview;
+
             if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + LocalizeDictionary.QueryThenParse("event_isDefaultCancel_tooltip");
-            if (!string.IsNullOrEmpty(option.disabledReasonKey)) this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(option.disabledReasonKey);
+            if (!string.IsNullOrEmpty(option.disabledReasonText)) this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + option.disabledReasonText;
+            else if (!string.IsNullOrEmpty(option.disabledReasonKey)) this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(option.disabledReasonKey);
             // authored reason for a fixed option whose conditions currently fail
             else if (!string.IsNullOrEmpty(option.invalidTooltip) && !EventUtility.isValid(option, instance))
                 this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(option.invalidTooltip);

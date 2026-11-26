@@ -19,7 +19,7 @@
                 "recreation": { "activities": [] },
                 "providedActivities": [
                     {
-                        "_comment": "The dog hosts (invite.SelfValidator: only the walk's provider) a Private session and invites up to 3 home members in friendliness order; the highest-ranked who accepts walks it (keepAccepted 1), the others are released. petWalk selects Job_ActivityPetWalk: travel to the nearest room of any venue in the home's world offering a walkComTag command, walk there, back home within the 2 booked hours.",
+                        "_comment": "The dog hosts (invite.SelfValidator: only the walk's provider) a Private session and invites up to 3 home members in friendliness order; the highest-ranked who accepts walks it (keepAccepted 1), the others are released. petWalk selects Job_ActivityPetWalk: travel to the nearest room of an outdoor venue in the home's world offering the dog's walk command (stroll, a large dog jogging), walk there, back home within the 2 booked hours.",
                         "ID": "house_activity_walk_dog",
                         "mainTypeTag": "pet_care",
                         "secondaryTags": ["outdoor", "home", "dog"],
@@ -34,16 +34,21 @@
                                 { "parameters": [ "HasActorKeyword", "dog" ] }
                             ]
                         },
+                        "_comment_petWalk": "A dog strolls (walkComTag stroll); a large dog (actor keyword dog_large) jogs. Destinations: rooms where furniture tagged outdoor (furnitureTags - the outdoor path marker) offers that command; a treadmill's jogging never counts. With no valid walk command there (too tired to jog...), the pair sandboxes in place - a recreation command, else a rest.",
                         "petWalk": {
-                            "walkComTag": "activity_recreation_walk",
+                            "walkComTag": "stroll",
+                            "walkComTagOverrides": [
+                                { "actorKeyword": "dog_large", "walkComTag": "jogging" }
+                            ],
+                            "furnitureTags": ["outdoor"],
                             "minimumOutdoorMinutes": 15,
                             "returnBufferMinutes": 5
                         },
-                        "_comment_commands": "The walk's commands are found by tag (petWalk.walkComTag, replaceCommandTags). workCommands only keeps the visit's work module active (MapPlan.WorkModuleInit.isActive needs a command); the two IDs are today's tagged walk commands.",
-                        "replaceCommandTags": ["activity_recreation_walk"],
+                        "_comment_commands": "The walk's commands are found by tag (petWalk.walkComTag / walkComTagOverrides, replaceCommandTags). workCommands only keeps the visit's work module active (MapPlan.WorkModuleInit.isActive needs a command); stroll and jogging are the walk commands.",
+                        "replaceCommandTags": ["stroll", "jogging"],
                         "workModule": {
                             "jobPostID": "house_activity_walk_dog",
-                            "workCommands": ["jp_park_stroll", "jp_riverside_relax"],
+                            "workCommands": ["com_furniture_stroll", "com_furniture_jogging"],
                             "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
                             "activeDays": []
                         },

@@ -1,0 +1,113 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID": "skill_exercise",
+                "tags": [],
+                "levels":
+                [
+                    {
+                        "DisplayName": "-"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_exercise", "operand": "gte", "value": 10 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [],
+                        "DisplayName": "1",
+                        "validUse": [
+                            {
+                                "skillUseTags": "exercise",
+                                "requireCOMTags": [],
+                                "allowDC": true
+                            }
+                        ]
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_exercise", "operand": "gte", "value": 30 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_str_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "1" },
+                            { "statID": "stats_derived_con_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "1" }
+                        ],
+                        "DisplayName": "2"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_exercise", "operand": "gte", "value": 90 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_str_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "1" },
+                            { "statID": "stats_derived_con_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "1" }
+                        ],
+                        "DisplayName": "3"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_exercise", "operand": "gte", "value": 150 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_str_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "2" },
+                            { "statID": "stats_derived_con_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "2" }
+                        ],
+                        "DisplayName": "4"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_exercise", "operand": "gte", "value": 300 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_str_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "2" },
+                            { "statID": "stats_derived_con_trainingMax", "modKey": "skill_exercise", "type": "addBase", "valueType": "number", "valueString": "2" }
+                        ],
+                        "DisplayName": "5"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_exercise": "锻炼",
+                "skill_exercise_tooltip": "适用范围：体能训练与日常锻炼类指令，提高对应判定的成功率。"
+            },
+            "en-us":
+            {
+                "skill_exercise": "Exercise",
+                "skill_exercise_tooltip": "Applies to: Physical training and exercise commands. Improves success rate on exercise checks."
+            }
+        }
+    }
+}

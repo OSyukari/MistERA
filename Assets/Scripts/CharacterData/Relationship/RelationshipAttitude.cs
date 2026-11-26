@@ -192,6 +192,8 @@ public class RelationshipRequirement
         else if (requireScoreID == "Goodwill") return isRawscore ? rel.Goodwill_Raw : rel.Goodwill;
         else if (requireScoreID == "Badwill") return isRawscore ? rel.Badwill_Raw : rel.Badwill;
         else if (requireScoreID == "Desire") return isRawscore ? rel.Desire_Raw : rel.Desire;
+        // derived (Goodwill + Trust - Badwill - Fear): not a stored score, so ScoreIndex / RaiseToSatisfy skip it
+        else if (requireScoreID == "Positivity") return isRawscore ? rel.Positivity_Raw : rel.Positivity;
         else return 0f;
     }
 

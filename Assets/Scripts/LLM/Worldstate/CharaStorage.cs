@@ -15,6 +15,8 @@ public partial class LLM_WorldState
         public List<MemoryStorage> Memories = null;
         public string CurrentlyDoing;
         public string CurrentLocation;
+        /// <summary> inside a room divider, or across one from the player: where, and whether the player sees them (MapUtility.DescribeSight). Null otherwise </summary>
+        public string DividerLocation = null;
         public string NextHourPlan;
         public Dictionary<string, RelationshipStorage> Relationships = null;
         public List<string> equipments = null;
@@ -155,6 +157,8 @@ public partial class LLM_WorldState
             CurrentlyDoing = c.GetJobDescription();
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
             if (room != null) CurrentLocation = $"{(room.parentFloor != null ? $"{room.parentFloor.displayName}, " : "")}{room.DisplayName}";
+            var sight = MapUtility.DescribeSight(scr_System_CampaignManager.current.Player, c);
+            if (sight.Length > 0) DividerLocation = sight;
             NextHourPlan = ((nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (nextHourFaction != null ? $"({nextHourFaction.FactionDisplayName})" : ""));
 
             // -- Status -- //

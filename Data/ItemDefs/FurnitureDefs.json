@@ -242,6 +242,28 @@
             { "comID":["com_furniture_changeOutfit"] } ]
         },
         {
+            "ID":"furniture_public_toilet_stall",
+            "displayName":"厕所隔间",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":50000,
+            "Tags":["rarity_common","plumbing"],
+            "_comments_occupancy":"public toilet stall divider that only offers using the toilet (no freshening up or outfit change; pair with furniture_bathroom_sink in the restroom).",
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true },
+            "givesJob":
+            [ { "comTags":["furniture","bathroom"] } ]
+        },
+        {
+            "ID":"furniture_bathroom_sink",
+            "displayName":"洗手池",
+            "recipe":[],
+            "furnitureSize":0,
+            "value":30000,
+            "Tags":["rarity_common","plumbing"],
+            "givesJob":
+            [ { "comID":["com_furniture_restroom_fix"] } ]
+        },
+        {
             "ID":"furniture_fitting_room",
             "displayName":"试衣间",
             "recipe":[],
@@ -442,6 +464,148 @@
                 { "comTags":["furniture","food_meal"] },
                 { "comID":["com_furniture_restroom_fix"] },
                 { "comID":["com_furniture_changeOutfit"] } ]
+        },
+        {
+            "ID":"furniture_marker_outdoor_path",
+            "displayName":"户外步道marker",
+            "_comment":"Hidden marker for outdoor walking/jogging paths (park, riverside, etc.). Offers both com_furniture_stroll and com_furniture_jogging via tag outdoor_path. Tag outdoor: a dog walk destination (housePets petWalk.furnitureTags).",
+            "noDisplay":true,
+            "recipe":[],
+            "furnitureSize":0,
+            "value":0,
+            "Tags":["outdoor"],
+            "givesJob": [ { "comTags":["furniture","outdoor_path"] } ]
+        },
+        {
+            "ID":"furniture_treadmill",
+            "displayName":"跑步机",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":400000,
+            "Tags":["rarity_common","electric","sports_equipment"],
+            "givesJob": [ { "comTags":["furniture","jogging"] } ]
+        },
+        {
+            "ID":"furniture_weight_rack",
+            "displayName":"哑铃架",
+            "recipe":[],
+            "furnitureSize":2,
+            "value":300000,
+            "Tags":["rarity_common","sports_equipment"],
+            "givesJob": [ { "comTags":["furniture","weights"] } ]
+        },
+        {
+            "ID":"furniture_training_machine",
+            "displayName":"训练器械",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":500000,
+            "Tags":["rarity_common","sports_equipment"],
+            "givesJob": [ { "comTags":["furniture","weights"] } ]
+        },
+        {
+            "ID":"furniture_yoga_mat",
+            "displayName":"瑜伽垫",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":5000,
+            "Tags":["rarity_common","sports_equipment"],
+            "givesJob": [ { "comTags":["furniture","yoga"] } ]
+        },
+        {
+            "ID":"furniture_shower_stall",
+            "displayName":"淋浴隔间",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":80000,
+            "Tags":["rarity_common","plumbing"],
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true },
+            "givesJob": [ { "comTags":["furniture","shower"] } ]
+        },
+        {
+            "ID":"furniture_sauna",
+            "displayName":"桑拿房",
+            "recipe":[],
+            "furnitureSize":0,
+            "value":800000,
+            "Tags":["plumbing"],
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true },
+            "givesJob": [ { "comTags":["furniture","sauna"] } ]
+        },
+        {
+            "ID":"furniture_lockers",
+            "displayName":"储物柜",
+            "recipe":[],
+            "furnitureSize":0,
+            "value":50000,
+            "Tags":["rarity_common"],
+            "givesJob": [ { "comID":["com_furniture_changeOutfit","com_furniture_restroom_fix"] } ]
+        },
+        {
+            "ID":"furniture_bench",
+            "displayName":"长椅",
+            "_comment":"Indoor bench: offers resting (and Wait... via Job_Furniture) without outdoor public-bench activities.",
+            "recipe":[],
+            "furnitureSize":0,
+            "value":30000,
+            "Tags":["rarity_common"],
+            "givesJob": [ { "comID":["com_furniture_takingBreak"] } ]
+        },
+        {
+            "ID":"furniture_pool_shallow",
+            "displayName":"浅水区",
+            "recipe":[],
+            "furnitureSize":0,
+            "value":1000000,
+            "Tags":["plumbing"],
+            "givesJob": [ { "comTags":["furniture","pool_shallow"] } ]
+        },
+        {
+            "ID":"furniture_pool_lane",
+            "displayName":"泳道",
+            "recipe":[],
+            "furnitureSize":2,
+            "value":1000000,
+            "Tags":["plumbing"],
+            "givesJob": [ { "comTags":["furniture","pool_swim"] } ]
+        },
+        {
+            "ID":"furniture_arcade_machine",
+            "displayName":"街机",
+            "recipe":[],
+            "furnitureSize":2,
+            "value":300000,
+            "Tags":["electric"],
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": true },
+            "givesJob": [ { "comTags":["furniture","arcade_play"] } ]
+        },
+        {
+            "ID":"furniture_crane_machine",
+            "displayName":"抓娃娃机",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":200000,
+            "Tags":["electric"],
+            "givesJob": [ { "comTags":["furniture","crane_play"] } ]
+        },
+        {
+            "ID":"furniture_photo_booth",
+            "displayName":"大头贴机",
+            "recipe":[],
+            "furnitureSize":5,
+            "value":250000,
+            "Tags":["electric"],
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": true },
+            "givesJob": [ { "comTags":["furniture","photo_booth"] } ]
+        },
+        {
+            "ID":"furniture_token_exchange_machine",
+            "displayName":"代币兑换机",
+            "recipe":[],
+            "furnitureSize":1,
+            "value":100000,
+            "Tags":["electric"],
+            "givesJob": [ { "comTags":["furniture","token_exchange"] } ]
         }
     ]
     },
@@ -494,7 +658,24 @@
 "furniture_hospital_bed":"医疗床",
 "furniture_shooting_range_spot":"靶场射击点",
 "furniture_arena_spot":"擂台",
-"furniture_stage":"舞台"
+"furniture_stage":"舞台",
+"furniture_marker_outdoor_path":"户外步道marker",
+"furniture_treadmill":"跑步机",
+"furniture_weight_rack":"哑铃架",
+"furniture_training_machine":"训练器械",
+"furniture_yoga_mat":"瑜伽垫",
+"furniture_shower_stall":"淋浴隔间",
+"furniture_sauna":"桑拿房",
+"furniture_lockers":"储物柜",
+"furniture_bench":"长椅",
+"furniture_pool_shallow":"浅水区",
+"furniture_pool_lane":"泳道",
+"furniture_public_toilet_stall":"厕所隔间",
+"furniture_bathroom_sink":"洗手池",
+"furniture_arcade_machine":"街机",
+"furniture_crane_machine":"抓娃娃机",
+"furniture_photo_booth":"大头贴机",
+"furniture_token_exchange_machine":"代币兑换机"
             },
             "en-us":
             {
@@ -537,7 +718,24 @@
   "furniture_cryopod": "Cryo Pod",
   "furniture_hospital_bed": "Hospital Bed",
   "furniture_shooting_range_spot": "Shooting Range Spot",
-  "furniture_arena_spot": "Arena Spot"
+  "furniture_arena_spot": "Arena Spot",
+  "furniture_marker_outdoor_path": "Outdoor Path Marker",
+  "furniture_treadmill": "Treadmill",
+  "furniture_weight_rack": "Weight Rack",
+  "furniture_training_machine": "Training Machine",
+  "furniture_yoga_mat": "Yoga Mat",
+  "furniture_shower_stall": "Shower Stall",
+  "furniture_sauna": "Sauna",
+  "furniture_lockers": "Lockers",
+  "furniture_bench": "Bench",
+  "furniture_pool_shallow": "Shallow Pool",
+  "furniture_pool_lane": "Swim Lane",
+  "furniture_public_toilet_stall": "Toilet Stall",
+  "furniture_bathroom_sink": "Bathroom Sink",
+  "furniture_arcade_machine": "Arcade Machine",
+  "furniture_crane_machine": "Crane Machine",
+  "furniture_photo_booth": "Photo Booth",
+  "furniture_token_exchange_machine": "Token Exchange Machine"
 
             }
         }

@@ -510,7 +510,7 @@ public static class TA_Changes
             var e = (JObject)r.Value;
             if ((string)e["batch"] != FindingsBatch || activeIds.Contains(r.Name)) continue;
             var state = (string)e["state"];
-            if (state == Resolved || state == Applied) toRemove.Add(r.Name);
+            if (state == Resolved || state == Applied || state == Rejected || state == Superseded || state == WillNotFix) toRemove.Add(r.Name);
         }
         for (int i = 0; i < toRemove.Count; i++) recs.Remove(toRemove[i]);
         return toRemove.Count;
@@ -663,7 +663,8 @@ public static class TA_Changes
             var type = (string)f["type"];
             var rule = (string)f["rule"] ?? "";
             var targetKey = FindingTargetKey(f, unit);
-            var id = RecordId($"{FindingsBatch}|{type}|{rule}|{targetKey}");
+            var leaf = type == "templateRequiredLeaf" ? (string)f["leaf"] ?? "" : "";
+            var id = RecordId(leaf == "" ? $"{FindingsBatch}|{type}|{rule}|{targetKey}" : $"{FindingsBatch}|{type}|{rule}|{targetKey}|{leaf}");
             if (byId.TryGetValue(id, out var existing)) { if (unit != null) AddUnit(existing, unit); continue; }
             var ops = f["ops"] as JArray;
             var record = new JObject

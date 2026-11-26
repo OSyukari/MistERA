@@ -1,0 +1,60 @@
+{
+    "_doc": "Appearance description text (Docs/Body/Plan_CharacterDescription.md, CharacterDescriptionUtility.BuildAppearance). <id>_desc = prose fragment of a hairstyle / subcategory / slot option / trait (missing = omitted for hair pieces, display name for traits). Hair phrase: chara_desc_hair_phrase with $color$, one $<phraseKind>$ per modifier kind (Hairstyles.json phraseKind: length, position), $noun$. A subcategory without phraseKind replaces the noun. Slot options without phraseKind are detail clauses: $hairDetails$ (prefix + sep), or placed by $hair_<keyword>$ in chara_desc_hair. Hair color pattern _desc uses $primary$ / $secondary$. A personality rewords any key with <key>@<personalityID>.",
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "chara_desc_hair_phrase": "$color$$length$$position$$noun$",
+                "chara_desc_hair_noun_default": "发",
+                "chara_desc_hair_modifier_sep": "",
+                "chara_desc_hair": "$hairPhrase$$hairDetails$。",
+                "chara_desc_hair_details_prefix": "，",
+                "chara_desc_hair_sep": "，",
+                "chara_desc_eyes": "$eyeColor$的眼睛。",
+                "chara_desc_body": "$skinColor$的皮肤，$bodyType$的身形。",
+                "chara_desc_body_skin": "$skinColor$的皮肤。",
+                "chara_desc_body_type": "$bodyType$的身形。",
+
+                "trait_HairColorPattern_two_tone_desc": "$primary$与$secondary$双色",
+                "trait_HairColorPattern_gradient_desc": "$primary$渐变至$secondary$的",
+                "trait_BodyType_athletic_desc": "结实",
+                "trait_BodyType_athletic_male_desc": "结实",
+
+                "hairstyle_straight_long_desc": "直发",
+                "hairstyle_ponytail_desc": "马尾",
+                "hairstyle_ponytail_high_desc": "高",
+                "hairstyle_ponytail_low_desc": "低",
+                "hairstyle_ponytail_side_desc": "侧",
+                "hairstyle_bob_desc": "波波头",
+                "hairstyle_twintails_desc": "双马尾",
+                "hairstyle_twintails_high_desc": "高",
+                "hairstyle_twintails_low_desc": "低",
+                "hairstyle_twintails_short_desc": "短",
+                "hairstyle_bun_desc": "发髻",
+                "hairstyle_braid_desc": "辫子",
+                "hairstyle_braid_twin_desc": "双辫",
+                "hairstyle_braid_single_desc": "侧边单辫",
+                "hairstyle_wavy_long_desc": "卷发",
+
+                "hair_length_short_desc": "短",
+                "hair_length_medium_desc": "中长",
+                "hair_length_long_desc": "长",
+                "hair_length_very_long_desc": "及腰长",
+
+                "hair_front_none_desc": "露出额头",
+                "hair_front_straight_bangs_desc": "齐刘海",
+                "hair_front_side_swept_desc": "斜刘海",
+                "hair_front_center_part_desc": "中分刘海",
+                "hair_front_parted_desc": "分刘海",
+                "hair_front_double_parted_desc": "双分刘海，一缕发丝垂在眉间",
+                "hair_front_blunt_desc": "厚重的齐刘海",
+
+                "hair_side_loose_desc": "两侧头发自然垂落",
+                "hair_side_tucked_desc": "两侧头发别在耳后",
+                "hair_side_sidelocks_desc": "两缕长鬓发垂在脸侧",
+
+                "hair_accent_ahoge_desc": "头顶翘着一根呆毛",
+                "hair_accent_side_braid_desc": "脸侧编着一条细辫子"
+            }
+        }
+    }
+}

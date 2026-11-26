@@ -335,6 +335,19 @@
                                 "trembling",
                                 "tearful",
                                 "pain"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 开始 com_sex_finger_caress_B",
+                            "responses": [
+                                "com_sex_finger_caress_B_Begin_19"
                             ]
                         },
                         {
@@ -376,19 +389,6 @@
                                         "com_sex_finger_caress_B_Begin_Self_2"
                                     ]
                                 }
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_finger_caress_B_Begin_16",
-                                "com_sex_finger_caress_B_Begin_17",
-                                "com_sex_finger_caress_B_Begin_18"
                             ]
                         }
                     ],
@@ -698,6 +698,26 @@
                                                 "com_sex_finger_caress_B_48",
                                                 "com_sex_finger_caress_B_49"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "breasts",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被B抚摸 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_caress_B_15",
+                                                "com_sex_finger_caress_B_38",
+                                                "com_sex_finger_caress_B_39"
+                                            ]
                                         }
                                     ]
                                 },
@@ -783,6 +803,30 @@
                                 "com_sex_finger_caress_B_16",
                                 "com_sex_finger_caress_B_22",
                                 "com_sex_finger_caress_B_23"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 com_sex_finger_caress_B 结果",
+                            "responses": [
+                                "com_sex_finger_caress_B_76"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_finger_caress_B 结果正面",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_77"
+                                    ]
+                                }
                             ]
                         },
                         {
@@ -869,54 +913,6 @@
                                 "com_sex_finger_caress_B_Self_16"
                             ],
                             "_comment": "2.5.12 独自B自慰 尝试但结果负面 无允许 口上文"
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "breasts",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被B抚摸 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_B_15",
-                                        "com_sex_finger_caress_B_38",
-                                        "com_sex_finger_caress_B_39"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被B抚摸 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "breasts",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_finger_caress_B_16",
-                                "com_sex_finger_caress_B_63",
-                                "com_sex_finger_caress_B_64"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ],
                     "template": "commandResult"
@@ -1120,19 +1116,19 @@
                                         "com_sex_finger_caress_B_Ongoing_3"
                                     ]
                                 }
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_finger_caress_B 进行中",
                             "responses": [
-                                "com_sex_finger_caress_B_Ongoing_7",
-                                "com_sex_finger_caress_B_Ongoing_8",
-                                "com_sex_finger_caress_B_Ongoing_9"
+                                "com_sex_finger_caress_B_Ongoing_10"
                             ]
                         }
                     ]
@@ -1307,7 +1303,11 @@
                 "com_sex_finger_caress_B_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_finger_caress_B_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_finger_caress_B_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_finger_caress_B_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_finger_caress_B_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_finger_caress_B_76": "(unimplemented)",
+                "com_sex_finger_caress_B_77": "(unimplemented)",
+                "com_sex_finger_caress_B_Begin_19": "(unimplemented)",
+                "com_sex_finger_caress_B_Ongoing_10": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_finger_caress_B_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

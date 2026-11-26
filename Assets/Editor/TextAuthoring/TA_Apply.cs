@@ -1017,7 +1017,8 @@ public static class TA_Apply
             // records from other origins may carry location/entry/notes as plain values - index only JObjects
             if ((r["entry"] as JObject)?["conditions"] is JArray conds) sb.AppendLine("- Entry conditions (exact, use as `conditions`): `" + conds.ToString(Formatting.None) + "`");
             var locObj = r["location"] as JObject;
-            var tplId = (string)locObj?["template"];
+            var findingObj = r["finding"] as JObject;
+            var tplId = (string)locObj?["template"] ?? (string)findingObj?["template"];
             if (!string.IsNullOrEmpty(tplId))
             {
                 var tpl = TA_KojoTemplate.Find(tplId);
@@ -1026,6 +1027,8 @@ public static class TA_Apply
                     var axisOrder = new List<string>();
                     for (int k = 0; k < tpl.axes.Count; k++) axisOrder.Add(tpl.axes[k].id);
                     sb.AppendLine($"- Template: `{tpl.id}` (axis order: `{string.Join(" → ", axisOrder)}`; fallback requirement: `{tpl.fallbackRequirement.ToString(Formatting.None)}`)");
+                    if ((string)r["findingType"] == "templateRequiredLeaf")
+                        sb.AppendLine($"- Required leaf: `{(string)findingObj?["leaf"]}` (when: `{(string)findingObj?["when"]}`; placeholder for truly missing lines: `{tpl.placeholder}`)");
                     var wt = (string)r["writeTo"] ?? "";
                     if (wt.StartsWith("create entry ", StringComparison.Ordinal))
                         sb.AppendLine($"- New entry requirement: set `\"template\": \"{tpl.id}\"` and append a top-level fallback variant at the end with `requirement: {tpl.fallbackRequirement.ToString(Formatting.None)}` and its own lines.");

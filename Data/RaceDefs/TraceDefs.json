@@ -187,6 +187,18 @@
                 "spreadChance": 0.3,
                 "matter": "Liquid",
                 "evaporationPerMinute": 0.05
+            },
+            {
+                "$type": "TraceDefinition_Temporary, Assembly-CSharp",
+                "id": "trace_sand",
+                "_comment": "Environmental sand trace (e.g. park sandpit). Solid: brushed off by Freshen Up, washed off by shower, or fades after 180m.",
+                "dirtiness": 0.5, "dirtinessPerAmount": 0.2,
+                "tags": ["dirt", "sand"],
+                "mergeMode": "Merge",
+                "defaultAmount": 1,
+                "maxAmount": 30,
+                "matter": "Solid",
+                "durationMinutes": 180
             }
         ]
     },
@@ -236,6 +248,8 @@
                 "trace_cum_dried_tooltip": "已经干掉的$race$精液，只能洗掉。",
                 "trace_lube": "润滑液",
                 "trace_lube_tooltip": "黏滑的润滑液。",
+                "trace_sand": "沙子",
+                "trace_sand_tooltip": "沾在身上的细沙，拍拍就能掸掉。",
                 "trace_clean_removed": "$location$上的$trace$",
                 "trace_clean_dried": "$location$上的$trace$（擦过后干在了皮肤上）",
                 "trace_clean_separator": "、"

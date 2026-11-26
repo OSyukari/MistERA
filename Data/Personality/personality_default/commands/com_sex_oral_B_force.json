@@ -150,14 +150,26 @@
                             }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_B_force 结果",
                             "responses": [
                                 "com_sex_oral_B_force_28",
                                 "com_sex_oral_B_force_29",
                                 "com_sex_oral_B_force_30"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_oral_B_force 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_B_force_31"
+                                    ]
+                                }
                             ]
                         }
                     ],
@@ -258,13 +270,17 @@
                                 "com_sex_oral_B_force_Begin_7",
                                 "com_sex_oral_B_force_Begin_8",
                                 "com_sex_oral_B_force_Begin_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 开始 com_sex_oral_B_force",
                             "responses": [
                                 "com_sex_oral_B_force_Begin_16",
                                 "com_sex_oral_B_force_Begin_17",
@@ -381,13 +397,17 @@
                                 "com_sex_oral_B_force_Ongoing_4",
                                 "com_sex_oral_B_force_Ongoing_5",
                                 "com_sex_oral_B_force_Ongoing_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_B_force 进行中",
                             "responses": [
                                 "com_sex_oral_B_force_Ongoing_7",
                                 "com_sex_oral_B_force_Ongoing_8",
@@ -474,7 +494,8 @@
                 "com_sex_oral_B_force_Ongoing_6": "$self$轻喘着承受着乳尖传来的触感，身子微微发软。",
                 "com_sex_oral_B_force_Ongoing_7": "$self$没有停下动作，继续狠狠叼住乳尖用力吸吮啃咬。",
                 "com_sex_oral_B_force_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏狠狠叼住乳尖用力吸吮啃咬。",
-                "com_sex_oral_B_force_Ongoing_9": "$self$微微喘息着，动作不停地狠狠叼住乳尖用力吸吮啃咬。"
+                "com_sex_oral_B_force_Ongoing_9": "$self$微微喘息着，动作不停地狠狠叼住乳尖用力吸吮啃咬。",
+                "com_sex_oral_B_force_31": "(unimplemented)"
             }
         }
     }

@@ -59,7 +59,10 @@
                                 "com_furniture_changeOutfit_10",
                                 "com_furniture_changeOutfit_11",
                                 "com_furniture_changeOutfit_12"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -68,27 +71,32 @@
                                 "com_furniture_changeOutfit_4",
                                 "com_furniture_changeOutfit_5",
                                 "com_furniture_changeOutfit_6"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_changeOutfit_7",
-                                "com_furniture_changeOutfit_8",
-                                "com_furniture_changeOutfit_9"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_changeOutfit_Fallback_1",
-                                "com_furniture_changeOutfit_Fallback_2"
+                                "com_furniture_changeOutfit_13"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_changeOutfit_7",
+                                        "com_furniture_changeOutfit_8",
+                                        "com_furniture_changeOutfit_9"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -160,16 +168,29 @@
                                         "com_furniture_changeOutfit_Begin_6"
                                     ]
                                 }
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_changeOutfit_Begin_Fallback_1",
-                                "com_furniture_changeOutfit_Begin_Fallback_2"
+                                "com_furniture_changeOutfit_Begin_7"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Begin_8"
                             ]
                         }
                     ]
@@ -367,27 +388,42 @@
                             ],
                             "responses": [
                                 "com_furniture_changeOutfit_Ongoing_Fallback_1"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_changeOutfit_Ongoing_1",
-                                "com_furniture_changeOutfit_Ongoing_2",
-                                "com_furniture_changeOutfit_Ongoing_3"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_changeOutfit_Ongoing_Fallback_2",
-                                "com_furniture_changeOutfit_Ongoing_Fallback_3"
+                                "com_furniture_changeOutfit_Ongoing_7"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_changeOutfit_Ongoing_8"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_changeOutfit_Ongoing_1",
+                                        "com_furniture_changeOutfit_Ongoing_2",
+                                        "com_furniture_changeOutfit_Ongoing_3"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -510,7 +546,12 @@
                 "com_furniture_changeOutfit_Begin_Fallback_1": "$self$抬手解开原来的扣子，准备配合着把衣服换上。",
                 "com_furniture_changeOutfit_Begin_Fallback_2": "$self$拿过替换的衣物抖了抖，准备开始更衣。",
                 "com_furniture_changeOutfit_Join_Refused_Fallback_1": "\"行，那我等会儿再来。\" $self$抱着衣服退开几步。",
-                "com_furniture_changeOutfit_Join_Refused_Fallback_2": "$self$点了点头，没再多说，拿着衣物转身走开。"
+                "com_furniture_changeOutfit_Join_Refused_Fallback_2": "$self$点了点头，没再多说，拿着衣物转身走开。",
+                "com_furniture_changeOutfit_13": "(unimplemented)",
+                "com_furniture_changeOutfit_Begin_7": "(unimplemented)",
+                "com_furniture_changeOutfit_Begin_8": "(unimplemented)",
+                "com_furniture_changeOutfit_Ongoing_7": "(unimplemented)",
+                "com_furniture_changeOutfit_Ongoing_8": "(unimplemented)"
             }
         }
     }

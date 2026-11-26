@@ -140,14 +140,13 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 开始 com_sex_tribadism",
                             "responses": [
-                                "com_sex_tribadism_Begin_AwakeCase_1"
+                                "com_sex_tribadism_Begin_1"
                             ]
                         }
                     ],
@@ -311,14 +310,24 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_tribadism 结果",
                             "responses": [
-                                "com_sex_tribadism_FailCase_1"
+                                "com_sex_tribadism_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_tribadism 结果正面",
+                                    "responses": [
+                                        "com_sex_tribadism_2"
+                                    ]
+                                }
                             ]
                         }
                     ],
@@ -353,17 +362,19 @@
                                 "com_sex_tribadism_Ongoing_Player_1",
                                 "com_sex_tribadism_Ongoing_Player_2",
                                 "com_sex_tribadism_Ongoing_Player_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_tribadism 进行中",
                             "responses": [
-                                "com_sex_tribadism_Ongoing_Player_1"
+                                "com_sex_tribadism_Ongoing_1"
                             ]
                         }
                     ],
@@ -479,7 +490,11 @@
                 "com_sex_tribadism_Refuse_WokenCase_3": "$self$惊醒后一把按住$target$的肩膀推远，拉过衣摆挡住自己：\"疯了吗？离我远一点！\"",
                 "com_sex_tribadism_Refuse_Case_1": "$self$合拢双腿往后退开，伸手挡住贴过来的$target$：\"等等，我现在没心情做这种事。\"",
                 "com_sex_tribadism_Refuse_Case_2": "$self$偏过身避开$target$压过来的动作，脸颊微热地摇了摇头：\"别闹了，这种姿势太奇怪了，我不干。\"",
-                "com_sex_tribadism_Refuse_Case_3": "$self$按住$target$的肩膀把人推开半步，皱起眉头：\"停下，我没答应要和你这样磨。\""
+                "com_sex_tribadism_Refuse_Case_3": "$self$按住$target$的肩膀把人推开半步，皱起眉头：\"停下，我没答应要和你这样磨。\"",
+                "com_sex_tribadism_1": "(unimplemented)",
+                "com_sex_tribadism_2": "(unimplemented)",
+                "com_sex_tribadism_Begin_1": "(unimplemented)",
+                "com_sex_tribadism_Ongoing_1": "(unimplemented)"
             }
         }
     }

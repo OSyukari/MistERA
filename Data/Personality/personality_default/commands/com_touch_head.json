@@ -636,18 +636,21 @@
                                 "com_touch_head_Ongoing_2",
                                 "com_touch_head_Ongoing_3"
                             ],
-                            "_comment": "受方 → NPC ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → NPC ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_head_Ongoing_7",
-                                "com_touch_head_Ongoing_8"
+                                "com_touch_head_Ongoing_9"
                             ]
                         }
                     ]
@@ -769,7 +772,8 @@
                 "com_touch_head_Interrupt_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
                 "com_touch_head_Interrupt_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
                 "com_touch_head_Ongoing_7": "$self$感受着头顶传来的动作，神色平静地待在原地。",
-                "com_touch_head_Ongoing_8": "见$target$还在继续，$self$只是微微偏了偏头，没有多说什么。"
+                "com_touch_head_Ongoing_8": "见$target$还在继续，$self$只是微微偏了偏头，没有多说什么。",
+                "com_touch_head_Ongoing_9": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_head_Begin_Doer_Permission_1": "$self$ smiles and rests a hand on $target$'s head, gently smoothing their hair with her palm.",

@@ -70,8 +70,8 @@
                         "displayName": "jp_sports_center_lobby",
                         "hideOnMap": true,
                         "connects": [],
-                        "_comment_furnitureIDs": "The only room open to the public: reception + a waiting bench (furniture_jp_hospital_waiting_bench - the generic 'wait' bench, no faction restriction) for visitors.",
-                        "furnitureIDs": ["furniture_jp_sports_center_reception_counter", "furniture_jp_sports_center_lounge_bench", "furniture_jp_hospital_waiting_bench"],
+                        "_comment_furnitureIDs": "The only room open to the public: reception + an indoor resting/waiting bench (furniture_bench offers rest + wait).",
+                        "furnitureIDs": ["furniture_jp_sports_center_reception_counter", "furniture_bench"],
                         "_comment_roomImagePath": "PLACEHOLDER - BA reception lobby (has a front desk) until a club lobby image exists",
                         "roomImagePath": "Media_UI_Scenario_Background/BG_ReceptionRoom.jpg"
                     },
@@ -96,7 +96,7 @@
                         "connects": [
                             { "ID": "sports_club_corridor_1", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_bathroom_set", "furniture_shower", "furniture_shower", "furniture_jp_sports_center_locker_bench", "furniture_marker_gender_male"],
+                        "furnitureIDs": ["furniture_sauna", "furniture_shower_stall", "furniture_shower_stall", "furniture_shower_stall", "furniture_public_toilet_stall", "furniture_public_toilet_stall", "furniture_public_toilet_stall", "furniture_bathroom_sink", "furniture_lockers", "furniture_marker_gender_male"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
@@ -107,7 +107,7 @@
                         "connects": [
                             { "ID": "sports_club_corridor_1", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_bathroom_set", "furniture_shower", "furniture_shower", "furniture_jp_sports_center_locker_bench", "furniture_marker_gender_female"],
+                        "furnitureIDs": ["furniture_sauna", "furniture_shower_stall", "furniture_shower_stall", "furniture_shower_stall", "furniture_public_toilet_stall", "furniture_public_toilet_stall", "furniture_public_toilet_stall", "furniture_bathroom_sink", "furniture_lockers", "furniture_marker_gender_female"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
@@ -119,10 +119,10 @@
                         "connects": [
                             { "ID": "sports_club_corridor_1", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_jp_sports_center_treadmill", "furniture_jp_sports_center_treadmill", "furniture_jp_sports_center_treadmill", "furniture_jp_sports_center_treadmill",
-                                         "furniture_jp_sports_center_weight_rack", "furniture_jp_sports_center_weight_rack",
-                                         "furniture_jp_sports_center_training_machine", "furniture_jp_sports_center_training_machine", "furniture_jp_sports_center_training_machine",
-                                         "furniture_jp_sports_center_gym_bench", "furniture_jp_sports_center_gym_staff_point"],
+                        "furnitureIDs": ["furniture_treadmill", "furniture_treadmill", "furniture_treadmill", "furniture_treadmill",
+                                         "furniture_weight_rack", "furniture_weight_rack",
+                                         "furniture_training_machine", "furniture_training_machine", "furniture_training_machine",
+                                         "furniture_bench"],
                         "_comment_roomImagePath": "PLACEHOLDER - BA health club (treadmills, benches, weights)",
                         "roomImagePath": "Media_UI_Scenario_Background/BG_HealthClub.jpg",
                         "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_HealthClub_Night.jpg"
@@ -135,7 +135,7 @@
                         "connects": [
                             { "ID": "sports_club_gym", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_jp_sports_center_studio_floor", "furniture_jp_sports_center_studio_staff_point"],
+                        "furnitureIDs": ["furniture_yoga_mat", "furniture_yoga_mat", "furniture_yoga_mat", "furniture_yoga_mat"],
                         "_comment_roomImagePath": "PLACEHOLDER - BA school gym hall (wooden floor) until a studio image exists",
                         "roomImagePath": "Media_UI_Scenario_Background/BG_Gym.jpg",
                         "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_Gym_Night.jpg"
@@ -149,23 +149,9 @@
                             { "ID": "sports_club_locker_male", "cost": 1.0 },
                             { "ID": "sports_club_locker_female", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_jp_sports_center_pool_lane", "furniture_jp_sports_center_pool_lane", "furniture_jp_sports_center_pool_lane",
-                                         "furniture_jp_sports_center_poolside_bench", "furniture_jp_sports_center_pool_staff_point"],
+                        "furnitureIDs": ["furniture_pool_shallow", "furniture_pool_lane", "furniture_pool_lane", "furniture_pool_lane", "furniture_sauna", "furniture_bench"],
                         "_comment_roomImagePath": "PLACEHOLDER - no pool image in the BA set; tiled shower hall is the closest wet area",
                         "roomImagePath": "Media_UI_Scenario_Background/BG_ShowerRoom.jpg"
-                    },
-                    {
-                        "ID": "sports_club_spa",
-                        "displayName": "jp_sports_center_spa",
-                        "hideOnMap": true,
-                        "requireFactionMembership": true,
-                        "connects": [
-                            { "ID": "sports_club_pool", "cost": 1.0 }
-                        ],
-                        "furnitureIDs": ["furniture_jp_sports_center_sauna", "furniture_jp_sports_center_cold_bath"],
-                        "_comment_roomImagePath": "PLACEHOLDER - BA resting lounge (massage chair) until a sauna/spa image exists",
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_RestingLounge.jpg",
-                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_RestingLounge_Night.jpg"
                     },
                     {
                         "ID": "sports_club_machine_room",
@@ -205,11 +191,11 @@
                             "mainTypeTag": "exercise", "secondaryTags": ["indoor", "strength", "cardio"],
                             "typeID": "gym_training", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
-                            "replaceCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
-                            "activityCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
+                            "replaceCommands": ["com_furniture_jogging", "com_furniture_weights", "com_furniture_takingBreak"],
+                            "activityCommands": ["com_furniture_jogging", "com_furniture_weights", "com_furniture_takingBreak"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_gym",
-                                "workCommands": ["jp_sports_center_cardio", "jp_sports_center_weights", "jp_sports_center_machine_workout", "jp_sports_center_gym_rest"],
+                                "workCommands": ["com_furniture_jogging", "com_furniture_weights", "com_furniture_takingBreak"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
                             "minHours": 2, "maxHours": 3,
@@ -225,10 +211,10 @@
                             "mainTypeTag": "exercise", "secondaryTags": ["indoor", "yoga", "flexibility"],
                             "typeID": "yoga_training", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
-                            "replaceCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"], "activityCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"],
+                            "replaceCommands": ["com_furniture_yoga"], "activityCommands": ["com_furniture_yoga"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_yoga",
-                                "workCommands": ["jp_sports_center_yoga", "jp_sports_center_stretch"],
+                                "workCommands": ["com_furniture_yoga"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
                             "minHours": 2, "maxHours": 2,
@@ -242,11 +228,11 @@
                             "mainTypeTag": "exercise", "secondaryTags": ["indoor", "swimming", "cardio"],
                             "typeID": "swimming_training", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
-                            "replaceCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
-                            "activityCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
+                            "replaceCommands": ["com_furniture_swim", "com_furniture_pool_play", "com_furniture_takingBreak"],
+                            "activityCommands": ["com_furniture_swim", "com_furniture_pool_play", "com_furniture_takingBreak"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_swimming",
-                                "workCommands": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk", "jp_sports_center_poolside_rest"],
+                                "workCommands": ["com_furniture_swim", "com_furniture_pool_play", "com_furniture_takingBreak"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
                             "minHours": 2, "maxHours": 3,
@@ -260,10 +246,10 @@
                             "mainTypeTag": "relaxation", "secondaryTags": ["indoor", "sauna", "wellness"],
                             "typeID": "sauna_visit", "allowMultipleInstances": true, "mergeWithSame": true,
                             "conflictsWith": [], "replaceCommandTags": [],
-                            "replaceCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"], "activityCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"],
+                            "replaceCommands": ["com_furniture_sauna"], "activityCommands": ["com_furniture_sauna"],
                             "workModule": {
                                 "jobPostID": "jp_sports_center_activity_sauna",
-                                "workCommands": ["jp_sports_center_sauna", "jp_sports_center_cool_down"],
+                                "workCommands": ["com_furniture_sauna"],
                                 "activeHours": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
                             },
                             "minHours": 2, "maxHours": 2,
@@ -527,39 +513,6 @@
         [
             { "ID": "furniture_jp_sports_center_reception_counter", "displayName": "jp_sports_center_reception_counter", "recipe": [], "furnitureSize": 2, "value": 80000, "Tags": [],
               "givesJob": [ { "comID": ["jp_sports_center_reception_duty"] } ] },
-            { "ID": "furniture_jp_sports_center_lounge_bench", "displayName": "jp_sports_center_lounge_bench", "recipe": [], "_comment": "furnitureSize 0 = no actor cap.", "furnitureSize": 0, "value": 40000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_gym_rest"] } ] },
-            { "ID": "furniture_jp_sports_center_locker_bench", "displayName": "jp_sports_center_locker_bench", "recipe": [], "furnitureSize": 0, "value": 30000, "Tags": [],
-              "_givesJob": [ { "comID": ["jp_sports_center_clean_lockers"] } ] },
-
-            { "ID": "furniture_jp_sports_center_treadmill", "displayName": "jp_sports_center_treadmill", "recipe": [], "furnitureSize": 1, "value": 400000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_cardio"] } ] },
-            { "ID": "furniture_jp_sports_center_weight_rack", "displayName": "jp_sports_center_weight_rack", "recipe": [], "furnitureSize": 2, "value": 300000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_weights"] } ] },
-            { "ID": "furniture_jp_sports_center_training_machine", "displayName": "jp_sports_center_training_machine", "recipe": [], "furnitureSize": 1, "value": 500000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_machine_workout"] } ] },
-            { "ID": "furniture_jp_sports_center_gym_bench", "displayName": "jp_sports_center_gym_bench", "recipe": [], "furnitureSize": 0, "value": 30000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_gym_rest"] } ] },
-            { "ID": "furniture_jp_sports_center_gym_staff_point", "displayName": "jp_sports_center_gym_staff_point", "recipe": [], "_comment": "Staff-only duties on the gym floor.", "furnitureSize": 0, "value": 50000, "Tags": [],
-              "_givesJob": [ { "comID": ["jp_sports_center_gym_instruct", "jp_sports_center_clean_equipment", "jp_sports_center_inspect_equipment"] } ] },
-
-            { "ID": "furniture_jp_sports_center_studio_floor", "displayName": "jp_sports_center_studio_floor", "recipe": [], "_comment": "Mat area - no actor cap (group classes).", "furnitureSize": 0, "value": 80000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_yoga", "jp_sports_center_stretch"] } ] },
-            { "ID": "furniture_jp_sports_center_studio_staff_point", "displayName": "jp_sports_center_studio_staff_point", "recipe": [], "furnitureSize": 0, "value": 30000, "Tags": [],
-              "_givesJob": [ { "comID": ["jp_sports_center_lead_class"] } ] },
-
-            { "ID": "furniture_jp_sports_center_pool_lane", "displayName": "jp_sports_center_pool_lane", "recipe": [], "furnitureSize": 2, "value": 1000000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_swim_laps", "jp_sports_center_water_walk"] } ] },
-            { "ID": "furniture_jp_sports_center_poolside_bench", "displayName": "jp_sports_center_poolside_bench", "recipe": [], "furnitureSize": 0, "value": 30000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_poolside_rest"] } ] },
-            { "ID": "furniture_jp_sports_center_pool_staff_point", "displayName": "jp_sports_center_pool_staff_point", "recipe": [], "_comment": "Lifeguard chair + pool deck duties.", "furnitureSize": 0, "value": 60000, "Tags": [],
-              "_givesJob": [ { "comID": ["jp_sports_center_lifeguard", "jp_sports_center_clean_pool_deck"] } ] },
-
-            { "ID": "furniture_jp_sports_center_sauna", "displayName": "jp_sports_center_sauna", "recipe": [], "furnitureSize": 0, "value": 800000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_sauna"] } ] },
-            { "ID": "furniture_jp_sports_center_cold_bath", "displayName": "jp_sports_center_cold_bath", "recipe": [], "furnitureSize": 0, "value": 300000, "Tags": [],
-              "givesJob": [ { "comID": ["jp_sports_center_cool_down"] } ] },
-
             { "ID": "furniture_jp_sports_center_filtration_panel", "displayName": "jp_sports_center_filtration_panel", "recipe": [], "furnitureSize": 0, "value": 600000, "Tags": [],
               "_givesJob": [ { "comID": ["jp_sports_center_pool_water_check", "jp_sports_center_filtration_service"] } ] }
         ]
@@ -569,154 +522,6 @@
         "_doc": "Member activity commands: non-job, tags [furniture, recreation, jp_sports_center, jp_sports_center_activity], gated only by requireJobFaction Any (bookable commands: the loose restriction only). Staff commands: job commands with a role tag, gated like the hospital's (requireJobFaction CurrentActive + the role's MemberType). Effects beyond the stamina/energy cost (fitness, cleanliness, water quality) are to be authored.",
         "list":
         [
-            {
-                "ID": "jp_sports_center_cardio", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_cardio_displayName",
-                "timeScale": 45,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_cardio_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$踏上跑步机开始慢跑"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在跑步机上挥汗如雨"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从跑步机上下来了"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了有氧训练"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_weights", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_weights_displayName",
-                "timeScale": 45,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_weights_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在哑铃架前开始力量训练"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在咬牙举着哑铃"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$放下了哑铃"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了力量训练"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_machine_workout", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_machine_workout_displayName",
-                "timeScale": 45,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 8, "cost_EN": 3 } } }, "displayName": "jp_sports_center_machine_workout_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$调好器械的重量，开始训练"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在器械上一组一组地练着"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了训练器械"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了器械训练"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_gym_rest", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_gym_rest_displayName",
-                "_comment": "Breather between sets. Deliberately not tagged 'rest' so other characters' generic rest searches never pick it up.",
-                "timeScale": 20,
-                "comTags": ["furniture", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } } ] },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_gym_rest_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_gym_rest_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$坐下来喝了口水"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在调整呼吸"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$站起身来"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$休息够了"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_yoga", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_yoga_displayName",
-                "timeScale": 60,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_yoga_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$铺好瑜伽垫，开始做瑜伽"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正保持着瑜伽体式慢慢呼吸"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$收起了瑜伽垫"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$做完了瑜伽"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_stretch", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_stretch_displayName",
-                "timeScale": 30,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_stretch_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在垫子上开始拉伸"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在垫子上舒展身体"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从垫子上起身"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了拉伸"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_swim_laps", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_swim_laps_displayName",
-                "timeScale": 45,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 10, "cost_EN": 3 } } }, "displayName": "jp_sports_center_swim_laps_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$滑进泳道开始游泳"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在泳道里一圈一圈地游着"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从泳池里上来了"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$游完了今天的距离"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_water_walk", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_water_walk_displayName",
-                "timeScale": 30,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4, "cost_EN": 2 } } }, "displayName": "jp_sports_center_water_walk_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$下到泳池里开始水中步行"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在水里慢慢地走着"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从泳池里上来了"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$结束了水中步行"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_poolside_rest", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_poolside_rest_displayName",
-                "timeScale": 20,
-                "comTags": ["furniture", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } } ] },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_poolside_rest_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_poolside_rest_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在池边长椅上坐下歇口气"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正裹着毛巾在池边休息"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从池边站了起来"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$休息够了"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_sauna", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_sauna_displayName",
-                "timeScale": 20,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 2, "cost_EN": 2 } } }, "displayName": "jp_sports_center_sauna_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$走进了桑拿房"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在桑拿房里蒸得满身是汗"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$走出了桑拿房"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$蒸完了桑拿"] } ] }
-            },
-            {
-                "ID": "jp_sports_center_cool_down", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_cool_down_displayName",
-                "timeScale": 20,
-                "comTags": ["furniture", "recreation", "jp_sports_center", "jp_sports_center_activity"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Any" } } },
-                "results_EP": { "results_character": [ { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "6" } } ] },
-                "variants": [ { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "jp_sports_center_cool_down_displayName" },
-                              { "requirements": { "requirement": { "doerCount": 2 } }, "displayName": "jp_sports_center_cool_down_displayName_2" } ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$泡进了冷水池"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正在冷水池和躺椅之间来回放松"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$从冷水池里出来了"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$浑身舒畅"] } ] }
-            },
-
             {
                 "ID": "jp_sports_center_reception_duty", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "jp_sports_center_reception_duty_displayName",
                 "timeScale": 60,
@@ -861,6 +666,9 @@
                 "jp_sports_center_spa": "桑拿·水疗区",
                 "jp_sports_center_machine_room": "机房",
 
+                "furniture_jp_sports_center_reception_counter": "前台",
+                "furniture_jp_sports_center_pool": "室内泳池",
+                "furniture_jp_sports_center_filtration_panel": "过滤设备",
                 "jp_sports_center_reception_counter": "前台",
                 "jp_sports_center_lounge_bench": "大厅长椅",
                 "jp_sports_center_locker_bench": "更衣室长椅",

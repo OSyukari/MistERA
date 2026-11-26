@@ -103,7 +103,10 @@ public class BodyInternal_Base
     public string traitClassString = "";
     public string maxSensitivityStatString = "";
 
+    /// <summary> kojo reaction tag added when the organ becomes exposed (Character_Trainable memory diff); its dictionary text is the short exposed label </summary>
     public string exposedKojoID = "";
+    /// <summary> BodyDescriptionProfile id of this organ's description line (Docs/Body/Plan_CharacterDescription.md), empty = none </summary>
+    public string descriptionProfile = "";
     /// <summary> optional portrait-only self key (naked_penis), added while the organ's cover slots carry no coverage at all - see-through counts as covered (Character_Body.ExposedPortraitKeys) </summary>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string exposedKeyword = null;

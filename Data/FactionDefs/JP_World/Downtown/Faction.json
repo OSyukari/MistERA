@@ -41,10 +41,13 @@
                         "hideOnMap": true,
                         "subfactionOwnerOverwrite": "jp_arcade",
                         "furnitureIDs": [
-                            "furniture_otaku_arcade_counter",
-                            "furniture_otaku_arcade_cabinets",
-                            "furniture_otaku_crane_games",
-                            "furniture_otaku_photo_booth"
+                            "furniture_token_exchange_machine",
+                            "furniture_arcade_machine",
+                            "furniture_arcade_machine",
+                            "furniture_arcade_machine",
+                            "furniture_crane_machine",
+                            "furniture_crane_machine",
+                            "furniture_photo_booth"
                         ],
                         "connects": [
                             {

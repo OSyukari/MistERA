@@ -95,13 +95,17 @@
                                 "com_sex_oral_V_force_Begin_10",
                                 "com_sex_oral_V_force_Begin_11",
                                 "com_sex_oral_V_force_Begin_12"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 开始 com_sex_oral_V_force",
                             "responses": [
                                 "com_sex_oral_V_force_Begin_16",
                                 "com_sex_oral_V_force_Begin_17",
@@ -261,14 +265,26 @@
                             }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_V_force 结果",
                             "responses": [
                                 "com_sex_oral_V_force_28",
                                 "com_sex_oral_V_force_29",
                                 "com_sex_oral_V_force_30"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_oral_V_force 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_V_force_31"
+                                    ]
+                                }
                             ]
                         }
                     ],
@@ -381,13 +397,17 @@
                                 "com_sex_oral_V_force_Ongoing_4",
                                 "com_sex_oral_V_force_Ongoing_5",
                                 "com_sex_oral_V_force_Ongoing_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_V_force 进行中",
                             "responses": [
                                 "com_sex_oral_V_force_Ongoing_7",
                                 "com_sex_oral_V_force_Ongoing_8",
@@ -474,7 +494,8 @@
                 "com_sex_oral_V_force_Ongoing_6": "$self$轻喘着承受着小穴深处传来的触感，身子微微发软。",
                 "com_sex_oral_V_force_Ongoing_7": "$self$没有停下动作，继续强硬地分开花唇将舌头深埋进小穴里翻搅。",
                 "com_sex_oral_V_force_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏强硬地分开花唇将舌头深埋进小穴里翻搅。",
-                "com_sex_oral_V_force_Ongoing_9": "$self$微微喘息着，动作不停地强硬地分开花唇将舌头深埋进小穴里翻搅。"
+                "com_sex_oral_V_force_Ongoing_9": "$self$微微喘息着，动作不停地强硬地分开花唇将舌头深埋进小穴里翻搅。",
+                "com_sex_oral_V_force_31": "(unimplemented)"
             }
         }
     }

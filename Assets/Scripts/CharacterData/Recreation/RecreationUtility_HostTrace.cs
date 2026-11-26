@@ -77,7 +77,8 @@ public static partial class RecreationUtility
     {
         if (!TraceEnabled) return false;
         string id = scr_System_CentralControl.current.LogPrefs.DLog_Recreation_ActivityID;
-        return string.IsNullOrEmpty(id) || check.activityID == id || Traced(check.session);
+        // an offer's check carries its ID in sourceKey (BookingCheck.ForOffer leaves activityID empty)
+        return string.IsNullOrEmpty(id) || check.activityID == id || check.sourceKey == id || Traced(check.session);
     }
 
     /// <summary>Why CanBeInvited rejects c (same checks, same order).</summary>
@@ -95,7 +96,31 @@ public static partial class RecreationUtility
         }
         if (!check.Passes(c, out _))
             return "BookingCheck: " + (check.source == RecreationBookingSource.Membership
-                ? ExplainBookingCheck(c, check.factionID, check.activityID, check.day, check.session) : check.source + " check failed");
+                ? ExplainBookingCheck(c, check.factionID, check.activityID, check.day, check.session)
+                : check.source == RecreationBookingSource.Offer
+                    ? "OfferAllows: " + ExplainOfferAllows(c.FactionManager, check.day, RecreationBoard.FindDef(check.sourceKey), check.session)
+                    : check.source + " check failed");
+        return "";
+    }
+
+    /// <summary>The first OfferAllows sub-check f fails for def, "" = passes (same calls, same order).</summary>
+    static string ExplainOfferAllows(Character_Factions f, int day, RecreationOfferDef def, RecreationGroup except)
+    {
+        if (f == null) return "no FactionManager";
+        if (def == null) return "offer def not found";
+        var incoming = except != null ? PreviewBooking(except) : new RecreationBooking { day = day, factionID = def.factionID,
+            source = RecreationBookingSource.Offer, sourceKey = def.ID, memberTypeID = def.memberTypeID };
+        if (!CooldownAllows(f, day, def.CooldownKey, def.minDaysBetween, incoming)) return $"cooldown ({def.CooldownKey}, minDaysBetween {def.minDaysBetween})";
+        if (!DailyMainTypeAllows(f, day, def.AsActivity, except, incoming: incoming)) return "DailyMainType (already has this main type that day)";
+        if (!def.AllowsAdvance(day - scr_System_Time.current.getAbsoluteDay())) return "daysInAdvance";
+        if (HasPendingReservation(f, def.CooldownKey, except, incoming)) return $"pending reservation of {def.CooldownKey}";
+        var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
+        if (venue == null) return "venue not found";
+        if (HasUnpaidActivityFee(f, venue)) return "unpaid activity fee at venue";
+        if (!IsEligible(f.Owner, def.AsActivity)) return "activity eligibility";
+        if (!FacilityAvailable(venue, def.AsActivity)) return "facility unavailable";
+        if (!def.IsEligible(f.Owner)) return "offer eligibility";
+        if (except != null) { string r = ReservationRefusal(f, PreviewBooking(except)); if (r != "") return "ReservationRefusal: " + r; }
         return "";
     }
 

@@ -41,7 +41,7 @@ static class Program
                 {
                     // WriteHtml resolves its fixed template path relative to the current directory.
                     Directory.SetCurrentDirectory(reportRoot);
-                    ImageReport.WriteHtml(reportPath, "Mods asset packs", folders, rulesPath, ImageWorkFolders.SelectionFileName);
+                    ImageReport.WriteHtml(reportPath, "Mods asset packs", folders, rulesPath, ImageWorkFolders.DatabaseFileName);
                 }
                 finally { Directory.SetCurrentDirectory(originalDirectory); }
                 Console.WriteLine($"Refreshed report from existing caches ({folders.Count} work folders): {reportPath}");
@@ -131,6 +131,7 @@ static class Program
             RestoreOriginalNameTests.Run(checks);
             UnifiedReportTests.Run(rules, checks);
             GlobalPortraitTemplateTests.Run(rules, checks);
+            VerifiedFoldersTests.Run(checks);
             checks.Test("input config and stored tags are unchanged", () =>
             {
                 checks.Equal(configHash, Hash(config), "Config SHA256");

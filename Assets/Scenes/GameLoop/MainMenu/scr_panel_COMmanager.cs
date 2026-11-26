@@ -208,7 +208,7 @@ public class scr_panel_COMmanager : scr_Menu
                                 
                 if (refID > 0)
                 {
-                    title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}{(team.Count > 0 ? LocalizeDictionary.QueryThenParse("comManager_title_skinship_teammate").Replace("$teammates$", String.Join(" ", team)): "")}\n{String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
+                    title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_target").Replace("$name$", scr_System_CampaignManager.current.FindInstanceByID(refID).FirstName)}{(team.Count > 0 ? LocalizeDictionary.QueryThenParse("comManager_title_skinship_teammate").Replace("$teammates$", String.Join(" ", team)): "")}\n{String.Join("\n", scr_System_CampaignManager.current.CurrentTarget.Body.BodyDescription)}";
                 }
                 else title_touch.text = $"{LocalizeDictionary.QueryThenParse("comManager_title_skinship_self")}{(team.Count > 0 ? LocalizeDictionary.QueryThenParse("comManager_title_skinship_teammate").Replace("$teammates$", String.Join(" ", team)) : "")}";
 
@@ -238,8 +238,8 @@ public class scr_panel_COMmanager : scr_Menu
         RefreshEquips(ref managedPlayerEquipRefs, playerbox ? scr_System_CampaignManager.current.Player : null, player_UndressEquipList);
         if (playerbox)
         {
-            //self_internal_descriptor.SetText("");
-            self_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.Player.Body.BodyRevealingDesriptors));
+            // exposed-label rect disabled in the prefab
+            //self_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.Player.Body.BodyRevealingDesriptors));
             undress_player_name.SetText(scr_System_CampaignManager.current.Player.FirstName);
             List<string> gear = new List<string>();
             foreach(var c in scr_System_CampaignManager.current.Player.Inventory.Contents)
@@ -253,7 +253,8 @@ public class scr_panel_COMmanager : scr_Menu
         RefreshEquips(ref managedTargetEquipRefs, targetbox ? scr_System_CampaignManager.current.CurrentTarget : null, target_UndressEquipList);
         if (targetbox)
         {
-            target_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyRevealingDesriptors));
+            // exposed-label rect disabled in the prefab
+            //target_internal_descriptor.SetText(String.Join(", ", scr_System_CampaignManager.current.CurrentTarget.Body.BodyRevealingDesriptors));
             undress_target_name.SetText(scr_System_CampaignManager.current.CurrentTarget.FirstName);
             List<string> gear = new List<string>();
             foreach (var c in scr_System_CampaignManager.current.CurrentTarget.Inventory.Contents)

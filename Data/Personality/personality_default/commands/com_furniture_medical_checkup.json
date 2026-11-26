@@ -89,18 +89,21 @@
                                         "com_furniture_medical_checkup_15"
                                     ]
                                 }
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_medical_checkup_Fallback_1",
-                                "com_furniture_medical_checkup_Fallback_2"
+                                "com_furniture_medical_checkup_16"
                             ]
                         }
                     ]
@@ -215,18 +218,21 @@
                                 "com_furniture_medical_checkup_Begin_10",
                                 "com_furniture_medical_checkup_Begin_11",
                                 "com_furniture_medical_checkup_Begin_12"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_medical_checkup_Begin_Fallback_1",
-                                "com_furniture_medical_checkup_Begin_Fallback_2"
+                                "com_furniture_medical_checkup_Begin_13"
                             ]
                         }
                     ]
@@ -336,18 +342,21 @@
                             ],
                             "responses": [
                                 "com_furniture_medical_checkup_Ongoing_Fallback_1"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_medical_checkup_Ongoing_Fallback_2",
-                                "com_furniture_medical_checkup_Ongoing_Fallback_3"
+                                "com_furniture_medical_checkup_Ongoing_4"
                             ]
                         }
                     ]
@@ -573,7 +582,10 @@
                 "com_furniture_medical_checkup_Join_Refused_Fallback_1": "\"好，那你自己看着弄就行。\" $self$放下笔退了出去。",
                 "com_furniture_medical_checkup_Join_Refused_Fallback_2": "$self$朝$target$摆摆手，没再挤在床边。",
                 "com_furniture_medical_checkup_Begin_Fallback_1": "$self$在检查床边坐稳，偏头示意可以开始检查了。",
-                "com_furniture_medical_checkup_Begin_Fallback_2": "$self$放松肩膀配合着检查姿势，安静地等着流程开始。"
+                "com_furniture_medical_checkup_Begin_Fallback_2": "$self$放松肩膀配合着检查姿势，安静地等着流程开始。",
+                "com_furniture_medical_checkup_16": "(unimplemented)",
+                "com_furniture_medical_checkup_Begin_13": "(unimplemented)",
+                "com_furniture_medical_checkup_Ongoing_4": "(unimplemented)"
             }
         }
     }

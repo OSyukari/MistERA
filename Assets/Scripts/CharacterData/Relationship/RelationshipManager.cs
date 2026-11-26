@@ -1170,6 +1170,57 @@ public class RelationshipManager
         FindRelationshipWith(target);
     }
 
+    /// <summary>
+    /// Applies a runtime bio and/or personal relationship preset between Owner and other (silently, with flipped isA on
+    /// other's side), then initializes scores from the resulting types on both sides. Empty ID leaves that slot unchanged.
+    /// </summary>
+    public void ApplyRuntimePreset(Character_Trainable other, string bioID, bool bioIsA, string personalID, bool personalIsA)
+    {
+        if (other == null || Owner == null || other == Owner) return;
+        if (string.IsNullOrEmpty(bioID) && string.IsNullOrEmpty(personalID)) return;
+
+        var ab = FindRelationshipWith(other);
+        var ba = other.Relationships?.FindRelationshipWith(Owner);
+        if (ab != null)
+        {
+            ab.SetRuntimePresetSlots(bioID, bioIsA, personalID, personalIsA);
+            ab.InitializeScoresFromTypes(silent: true);
+        }
+        if (ba != null)
+        {
+            ba.SetRuntimePresetSlots(bioID, !bioIsA, personalID, !personalIsA);
+            ba.InitializeScoresFromTypes(silent: true);
+        }
+    }
+
+    /// <summary>Returns true if this character holds any of the listed personal relationship type IDs with anyone.</summary>
+    public bool HasAnyPersonalRelationship(List<string> personalTypeIDs)
+    {
+        if (personalTypeIDs == null || personalTypeIDs.Count == 0 || relationships == null) return false;
+        foreach (var rel in relationships.Values)
+        {
+            if (rel == null || rel.Relationship_Personal == null) continue;
+            string id = rel.Relationship_Personal.ID;
+            for (int i = 0; i < personalTypeIDs.Count; i++)
+                if (id == personalTypeIDs[i]) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Silently adds [Trust, Goodwill, Desire, Badwill, Fear] score deltas toward other (used by experience plugs).</summary>
+    public void ApplyRuntimeScoreMod(Character_Trainable other, float[] scoreMod)
+    {
+        if (other == null || Owner == null || other == Owner || scoreMod == null || scoreMod.Length == 0) return;
+        var ab = FindRelationshipWith(other);
+        if (ab == null) return;
+        int len = scoreMod.Length < 5 ? scoreMod.Length : 5;
+        for (int i = 0; i < len; i++)
+        {
+            if (scoreMod[i] != 0f)
+                ab.ModRelationValue((RelationshipScoreType)i, scoreMod[i], silent: true);
+        }
+    }
+
     protected Character_Relationship MakeRelationshipWith(Character_Trainable chara)
     {
         if (chara == null) return null;

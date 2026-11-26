@@ -156,12 +156,11 @@ public static class SideRectUtility
     {
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
 
-        var desctext = LocalizeDictionary.QueryThenParse("charaDetail_description_text")
-            .Replace("$hairStyle$", chara.Wardrobe?.Hairstyle?.DisplayName)
-            .Replace("$hairColor$", chara.Wardrobe?.HairColor?.displayname)
-            .Replace("$eyeColor$", chara.Wardrobe?.EyeColor?.displayname)
-            .Replace("$bodyType$", chara.Wardrobe?.BodyType?.displayname)
-            .Replace("$skinColor$", chara.Wardrobe?.SkinColor?.displayname);
+        // appearance prose + exposed organs (all in x-ray / debug), Docs/Body/Plan_CharacterDescription.md
+        var descLines = new List<string>();
+        CharacterDescriptionUtility.BuildAppearance(chara, descLines);
+        if (!safeMode) descLines.AddRange(chara.Body.BodyDescription);
+        var desctext = string.Join("\n", descLines);
 
         // visible body traces per location (Docs/Body/Plan_BodyTraces.md), covered ones too in x-ray / debug mode
         bool seeCovered = scr_System_CampaignManager.current.XrayMode || scr_System_CampaignManager.current.DebugMode;

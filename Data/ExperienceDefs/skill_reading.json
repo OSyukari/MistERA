@@ -1,0 +1,101 @@
+{
+    "Skills":
+    {
+        "list":
+        [
+            {
+                "ID": "skill_reading",
+                "tags": [],
+                "levels":
+                [
+                    {
+                        "DisplayName": "-"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_reading", "operand": "gte", "value": 10 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [],
+                        "DisplayName": "1",
+                        "validUse": [
+                            {
+                                "skillUseTags": "reading",
+                                "requireCOMTags": [],
+                                "allowDC": true
+                            }
+                        ]
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_reading", "operand": "gte", "value": 30 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [],
+                        "DisplayName": "2"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_reading", "operand": "gte", "value": 90 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [],
+                        "DisplayName": "3"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_reading", "operand": "gte", "value": 150 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [],
+                        "DisplayName": "4"
+                    },
+                    {
+                        "requirements": {
+                            "$type": "CharaSkill+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireExperiences": [{ "experienceID": "experience_reading", "operand": "gte", "value": 300 }]
+                                }
+                            ]
+                        },
+                        "stat_modifiers": [],
+                        "DisplayName": "5"
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_reading": "阅读",
+                "skill_reading_tooltip": "适用范围：读书与学习类指令，提高对应判定的成功率。"
+            },
+            "en-us":
+            {
+                "skill_reading": "Reading",
+                "skill_reading_tooltip": "Applies to: Reading and study commands. Improves success rate on reading checks."
+            }
+        }
+    }
+}

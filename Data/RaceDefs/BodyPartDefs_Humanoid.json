@@ -185,6 +185,7 @@
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_B",
                 "sortOrder":2,
                 "exposedKojoID":"Exposed_Breasts",
+                "descriptionProfile":"bodydesc_breasts",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
                 "virginityLossTags":["penetration"]
             },
@@ -219,6 +220,7 @@
                 "volumeRatio":0.0284,
 
                 "exposedKojoID":"Exposed_Penis",
+                "descriptionProfile":"bodydesc_penis",
                 "exposedKeyword":"naked_penis",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "virginityLossTags":["penetration"]
@@ -245,6 +247,7 @@
                 "tag_directionOut":"ext",
                 "sensitivityClassString":"C",
                 "exposedKojoID":"Exposed_Clit",
+                "descriptionProfile":"bodydesc_clit",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":3
             },
@@ -291,6 +294,7 @@
                     ]
                 },
                 "exposedKojoID":"Exposed_Vagina",
+                "descriptionProfile":"bodydesc_vagina",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "_comment":"v is hardcoded to double its depth when aroused",
                 "virginityLossTags":["penetration"],
@@ -319,6 +323,7 @@
                 "tags":["nsfw","womb","internal"],
                 "requestSkills":["skill_sensitivity_W","skill_expansion_W"],
                 "sensitivityClassString":"W",
+                "descriptionProfile":"bodydesc_womb",
                 "_comment_flow":"end of the line (no In). Hourly: holding more cum than the vagina, 10% of the difference flows back; over capacity, 30% of the excess flows out. Cum fades 5x slower here (consumable_cum womb ingest method).",
                 "tag_directionOut":"vagina",
                 "backflowShare":0.1, "overflowShare":0.3,
@@ -403,6 +408,7 @@
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_A",
                 "needLubrication":true,
                 "exposedKojoID":"Exposed_Anus",
+                "descriptionProfile":"bodydesc_anus",
 
                 "sizeRatio":0.07, "stretch_ratio":1.8, "aroused_stretchMod":0.4,
                 "depthRatio":0.12, "aroused_depthMod":1.05,

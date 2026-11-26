@@ -1941,6 +1941,7 @@ public static partial class RecreationUtility
                 if (mod.condition == null || (c != null && EventUtility.isCharaValid(mod.condition, ConditionContext(c), c)))
                     weight += mod.modValue;
             }
+        weight = ApplyDebugWeight(activity, weight);
         return float.IsNaN(weight) || float.IsInfinity(weight) ? 0f : Mathf.Max(0f, weight);
     }
 

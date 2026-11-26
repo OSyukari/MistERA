@@ -1,0 +1,323 @@
+{
+    "_doc": "Reusable arcade furniture commands: arcade machine, crane machine, photo booth, and nested token exchange machine (parentCOMID).",
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_furniture_arcade_play",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_arcade_play_displayName_1",
+                "timeScale": 30,
+                "allowJoining": true,
+                "comTags": ["furniture", "recreation", "arcade_play", "operating", "social"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "item_arcade_token",
+                        "requiredCount": 1,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_EN", "value": "8" } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4 } } }, "displayName": "com_furniture_arcade_play_displayName_1" },
+                    { "requirements": { "requirement": { "doerCount": 2, "req_Doers": { "cost_ST": 4 } } }, "displayName": "com_furniture_arcade_play_displayName_2" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 8 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_arcade_play_begin_1"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_arcade_play_ongoing_1"] }] },
+                "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_arcade_play_remove_1"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_arcade_play_after_1"] }] }
+            },
+            {
+                "ID": "com_furniture_crane_play",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_crane_play_displayName_1",
+                "timeScale": 15,
+                "allowJoining": false,
+                "comTags": ["furniture", "recreation", "crane_play", "operating"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "item_arcade_token",
+                        "requiredCount": 1,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2 } } }, "displayName": "com_furniture_crane_play_displayName_1" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 10 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_begin_1"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_ongoing_1"] }] },
+                "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_remove_1"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_after_1"] }] }
+            },
+            {
+                "ID": "com_furniture_photo_booth",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_photo_booth_displayName_1",
+                "timeScale": 15,
+                "allowJoining": true,
+                "comTags": ["furniture", "recreation", "photo_booth", "social"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "item_arcade_token",
+                        "requiredCount": 4,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_EN", "value": "6" } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2 } } }, "displayName": "com_furniture_photo_booth_displayName_1" },
+                    { "requirements": { "requirement": { "doerCount": 5, "req_Doers": { "cost_ST": 2 } } }, "displayName": "com_furniture_photo_booth_displayName_2" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 5 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_photo_booth_begin_1"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_photo_booth_ongoing_1"] }] },
+                "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_photo_booth_remove_1"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_photo_booth_after_1"] }] }
+            },
+            {
+                "ID": "com_furniture_exchange_tokens",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_exchange_tokens_displayName",
+                "timeScale": 5,
+                "allowJoining": false,
+                "comTags": ["furniture", "token_exchange"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "com_furniture_exchange_tokens_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_begin"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_ongoing"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_after"] }] }
+            },
+            {
+                "parentCOMID": "com_furniture_exchange_tokens",
+                "ID": "com_furniture_exchange_tokens_100",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_exchange_tokens_100_displayName",
+                "timeScale": 5,
+                "allowJoining": false,
+                "comTags": ["furniture", "token_exchange"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "currency_JPY",
+                        "requiredCount": 100,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "results_EP": {
+                    "results_home": [
+                        { "entry_results": { "transferItem": { "matchByID": "item_arcade_token", "maxCount": 1 } } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "com_furniture_exchange_tokens_100_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_begin"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_ongoing"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_after"] }] }
+            },
+            {
+                "parentCOMID": "com_furniture_exchange_tokens",
+                "ID": "com_furniture_exchange_tokens_500",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_exchange_tokens_500_displayName",
+                "timeScale": 5,
+                "allowJoining": false,
+                "comTags": ["furniture", "token_exchange"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "currency_JPY",
+                        "requiredCount": 500,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "results_EP": {
+                    "results_home": [
+                        { "entry_results": { "transferItem": { "matchByID": "item_arcade_token", "maxCount": 5 } } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "com_furniture_exchange_tokens_500_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_begin"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_ongoing"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_after"] }] }
+            },
+            {
+                "parentCOMID": "com_furniture_exchange_tokens",
+                "ID": "com_furniture_exchange_tokens_1000",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_exchange_tokens_1000_displayName",
+                "timeScale": 5,
+                "allowJoining": false,
+                "comTags": ["furniture", "token_exchange"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "currency_JPY",
+                        "requiredCount": 1000,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "results_EP": {
+                    "results_home": [
+                        { "entry_results": { "transferItem": { "matchByID": "item_arcade_token", "maxCount": 10 } } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "com_furniture_exchange_tokens_1000_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_begin"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_ongoing"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_after"] }] }
+            },
+            {
+                "parentCOMID": "com_furniture_exchange_tokens",
+                "ID": "com_furniture_exchange_tokens_5000",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_exchange_tokens_5000_displayName",
+                "timeScale": 5,
+                "allowJoining": false,
+                "comTags": ["furniture", "token_exchange"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireInventory": {
+                        "inventoryItemBaseID": "currency_JPY",
+                        "requiredCount": 5000,
+                        "useActorAccessibleFactions": true,
+                        "transferItemTo": "TransferToJobOwner",
+                        "checkReceiver": false,
+                        "checkDoer": true,
+                        "checkMaster": false
+                    }
+                },
+                "results_EP": {
+                    "results_home": [
+                        { "entry_results": { "transferItem": { "matchByID": "item_arcade_token", "maxCount": 50 } } }
+                    ]
+                },
+                "variants": [
+                    { "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "com_furniture_exchange_tokens_5000_displayName" }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_begin"] }] },
+                "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_ongoing"] }] },
+                "description_after": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_exchange_tokens_after"] }] }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_arcade_play_displayName_1": "玩街机",
+                "com_furniture_arcade_play_displayName_2": "一起玩街机",
+                "com_furniture_arcade_play_begin_1": "$doer.firstname$投进代币，坐到街机前开始游戏。",
+                "com_furniture_arcade_play_ongoing_1": "$doer.firstname$盯着街机画面，熟练地按动摇杆与按键。",
+                "com_furniture_arcade_play_remove_1": "$doer.firstname$放开摇杆，离开了街机。",
+                "com_furniture_arcade_play_after_1": "$doer.firstname$打完这一局，从街机前站起身。",
+
+                "com_furniture_crane_play_displayName_1": "玩抓娃娃机",
+                "com_furniture_crane_play_begin_1": "$doer.firstname$往抓娃娃机里投进一枚代币。",
+                "com_furniture_crane_play_ongoing_1": "$doer.firstname$隔着玻璃仔细调整夹爪的位置。",
+                "com_furniture_crane_play_remove_1": "$doer.firstname$离开了抓娃娃机。",
+                "com_furniture_crane_play_after_1": "$doer.firstname$看着夹爪缓缓收回，结束了这一轮。",
+
+                "com_furniture_photo_booth_displayName_1": "拍大头贴",
+                "com_furniture_photo_booth_displayName_2": "一起拍大头贴",
+                "com_furniture_photo_booth_begin_1": "$doer.firstname$投进代币，在大头贴机里选好背景。",
+                "com_furniture_photo_booth_ongoing_1": "$doer.firstname$对着镜头摆好姿势，等待倒计时。",
+                "com_furniture_photo_booth_remove_1": "$doer.firstname$停下了拍照。",
+                "com_furniture_photo_booth_after_1": "$doer.firstname$收好刚印出来的大头贴。",
+
+                "com_furniture_exchange_tokens_displayName": "交换代币...",
+                "com_furniture_exchange_tokens_100_displayName": "100 日元 → 1 枚代币",
+                "com_furniture_exchange_tokens_500_displayName": "500 日元 → 5 枚代币",
+                "com_furniture_exchange_tokens_1000_displayName": "1000 日元 → 10 枚代币",
+                "com_furniture_exchange_tokens_5000_displayName": "5000 日元 → 50 枚代币",
+                "com_furniture_exchange_tokens_begin": "$doer.firstname$站到代币兑换机前，准备投币兑换。",
+                "com_furniture_exchange_tokens_ongoing": "$doer.firstname$正在代币兑换机上操作兑换。",
+                "com_furniture_exchange_tokens_after": "$doer.firstname$从出币口取出了兑好的游戏代币。"
+            },
+            "en-us": {
+                "com_furniture_arcade_play_displayName_1": "Play Arcade Game",
+                "com_furniture_arcade_play_displayName_2": "Play Arcade Game Together",
+                "com_furniture_arcade_play_begin_1": "$doer.firstname$ drops a token in and starts playing the arcade cabinet.",
+                "com_furniture_arcade_play_ongoing_1": "$doer.firstname$ focuses on the screen, working the joystick and buttons.",
+                "com_furniture_arcade_play_remove_1": "$doer.firstname$ steps away from the arcade machine.",
+                "com_furniture_arcade_play_after_1": "$doer.firstname$ finishes the round and stands up from the cabinet.",
+
+                "com_furniture_crane_play_displayName_1": "Play Crane Machine",
+                "com_furniture_crane_play_begin_1": "$doer.firstname$ inserts a token into the crane machine.",
+                "com_furniture_crane_play_ongoing_1": "$doer.firstname$ peers through the glass and lines up the claw.",
+                "com_furniture_crane_play_remove_1": "$doer.firstname$ steps back from the crane machine.",
+                "com_furniture_crane_play_after_1": "$doer.firstname$ watches the claw retract, ending the attempt.",
+
+                "com_furniture_photo_booth_displayName_1": "Take Photo Stickers",
+                "com_furniture_photo_booth_displayName_2": "Take Photo Stickers Together",
+                "com_furniture_photo_booth_begin_1": "$doer.firstname$ puts tokens in and picks a background in the photo booth.",
+                "com_furniture_photo_booth_ongoing_1": "$doer.firstname$ strikes a pose for the countdown.",
+                "com_furniture_photo_booth_remove_1": "$doer.firstname$ stops taking photos.",
+                "com_furniture_photo_booth_after_1": "$doer.firstname$ collects the freshly printed photo stickers.",
+
+                "com_furniture_exchange_tokens_displayName": "Exchange Tokens...",
+                "com_furniture_exchange_tokens_100_displayName": "100 JPY -> 1 Token",
+                "com_furniture_exchange_tokens_500_displayName": "500 JPY -> 5 Tokens",
+                "com_furniture_exchange_tokens_1000_displayName": "1000 JPY -> 10 Tokens",
+                "com_furniture_exchange_tokens_5000_displayName": "5000 JPY -> 50 Tokens",
+                "com_furniture_exchange_tokens_begin": "$doer.firstname$ steps up to the token exchange machine.",
+                "com_furniture_exchange_tokens_ongoing": "$doer.firstname$ is exchanging money for arcade tokens.",
+                "com_furniture_exchange_tokens_after": "$doer.firstname$ scoops the arcade tokens out of the tray."
+            }
+        }
+    }
+}

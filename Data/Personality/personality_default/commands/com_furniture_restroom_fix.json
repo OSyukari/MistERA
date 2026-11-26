@@ -66,7 +66,10 @@
                                 "com_furniture_restroom_fix_7",
                                 "com_furniture_restroom_fix_8",
                                 "com_furniture_restroom_fix_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -75,27 +78,32 @@
                                 "com_furniture_restroom_fix_4",
                                 "com_furniture_restroom_fix_5",
                                 "com_furniture_restroom_fix_6"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_restroom_fix_10",
-                                "com_furniture_restroom_fix_11",
-                                "com_furniture_restroom_fix_12"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_restroom_fix_Fallback_1",
-                                "com_furniture_restroom_fix_Fallback_2"
+                                "com_furniture_restroom_fix_13"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_restroom_fix_10",
+                                        "com_furniture_restroom_fix_11",
+                                        "com_furniture_restroom_fix_12"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -124,27 +132,42 @@
                             ],
                             "responses": [
                                 "com_furniture_restroom_fix_Ongoing_Fallback_1"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_restroom_fix_Ongoing_4",
-                                "com_furniture_restroom_fix_Ongoing_5",
-                                "com_furniture_restroom_fix_Ongoing_6"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_restroom_fix_Ongoing_Fallback_2",
-                                "com_furniture_restroom_fix_Ongoing_Fallback_3"
+                                "com_furniture_restroom_fix_Ongoing_7"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Ongoing_8"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_restroom_fix_Ongoing_4",
+                                        "com_furniture_restroom_fix_Ongoing_5",
+                                        "com_furniture_restroom_fix_Ongoing_6"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -315,16 +338,29 @@
                                 "com_furniture_restroom_fix_Begin_4",
                                 "com_furniture_restroom_fix_Begin_5",
                                 "com_furniture_restroom_fix_Begin_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_restroom_fix_Begin_Fallback_1",
-                                "com_furniture_restroom_fix_Begin_Fallback_2"
+                                "com_furniture_restroom_fix_Begin_7"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_fix_Begin_8"
                             ]
                         }
                     ]
@@ -509,7 +545,12 @@
                 "com_furniture_restroom_fix_Join_Refused_Fallback_1": "\"行，那你先用着，我等会儿再来。\" $self$退开两步让出门口。",
                 "com_furniture_restroom_fix_Join_Refused_Fallback_2": "$self$朝$target$点点头，转身到一旁等着去了。",
                 "com_furniture_restroom_fix_Refuse_Fallback_2": "$self$摇了摇头：\"不用麻烦了，我现在这样挺好的。\"",
-                "com_furniture_restroom_fix_Refuse_Fallback_3": "$self$摆摆手走开：\"不整了，还有别的事要忙。\""
+                "com_furniture_restroom_fix_Refuse_Fallback_3": "$self$摆摆手走开：\"不整了，还有别的事要忙。\"",
+                "com_furniture_restroom_fix_13": "(unimplemented)",
+                "com_furniture_restroom_fix_Ongoing_7": "(unimplemented)",
+                "com_furniture_restroom_fix_Ongoing_8": "(unimplemented)",
+                "com_furniture_restroom_fix_Begin_7": "(unimplemented)",
+                "com_furniture_restroom_fix_Begin_8": "(unimplemented)"
             }
         }
     }

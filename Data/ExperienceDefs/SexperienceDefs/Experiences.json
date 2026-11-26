@@ -1,7 +1,7 @@
 {
 "Experiences":{
 "list":[
-{  "ExperienceID":"experience_intimacy", "tags":[], "CountTotal":false, "ApplyToDoer":true, "ApplyToReceiver":true, "RequiredCOMTags":["intimacy", "touch", "interaction"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["sex", "service", "NonInteraction"] },
+{  "ExperienceID":"experience_intimacy", "tags":["nsfw"], "CountTotal":false, "ApplyToDoer":true, "ApplyToReceiver":true, "RequiredCOMTags":["intimacy", "touch", "interaction"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["sex", "service", "NonInteraction"] },
 
     {  "ExperienceID":"experience_sex_male", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","male"] , "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["masturbate"] },
     {  "ExperienceID":"experience_sex_female", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","female"], "ExcludeOwnerTags":["unconscious", "timestop"], "ExcludeCOMTags":["masturbate"] },

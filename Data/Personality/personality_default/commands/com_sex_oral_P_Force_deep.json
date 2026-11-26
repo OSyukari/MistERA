@@ -1078,6 +1078,15 @@
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_oral_P_Force_deep 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_deep_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_partner_M"
                                         ]
@@ -1109,18 +1118,10 @@
                                 "com_sex_oral_P_Force_deep_FE_Partner_1",
                                 "com_sex_oral_P_Force_deep_FE_Partner_2",
                                 "com_sex_oral_P_Force_deep_FE_Partner_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_oral_P_Force_deep_Fail_1"
-                            ]
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandResult",
@@ -1243,17 +1244,19 @@
                                 "com_sex_oral_P_Force_deep_Ongoing_Player_1",
                                 "com_sex_oral_P_Force_deep_Ongoing_Player_2",
                                 "com_sex_oral_P_Force_deep_Ongoing_Player_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_oral_P_Force_deep 进行中",
                             "responses": [
-                                "com_sex_oral_P_Force_deep_Ongoing_Player_1"
+                                "com_sex_oral_P_Force_deep_Ongoing_1"
                             ]
                         }
                     ],
@@ -1414,7 +1417,9 @@
                 "com_sex_oral_P_Force_deep_Refuse_Case_3": "$self$闭紧嘴唇仰起脖子挣脱开，没好气地瞪了$target$一眼：\"停下！说了不想做这种事，别硬按着我。\"",
                 "com_sex_oral_P_Force_deep_Ongoing_Player_1": "被按着头深喉吞吐的$self$余光瞥见一旁看着的$target$，羞耻得耳根通红，含着泪移开视线：\"唔……别在旁边盯着看啊……\"",
                 "com_sex_oral_P_Force_deep_Ongoing_Player_2": "$self$连咽喉都被塞得满满当当，呛出泪水的眼睛望向旁观的$target$，鼻腔里漏出断续的呜咽：\"呜……唔……\"",
-                "com_sex_oral_P_Force_deep_Ongoing_Player_3": "察觉到$target$正看着自己整根吞入的狼狈模样，$self$难堪地闭紧眼，只能被动承受着眼前的深顶。"
+                "com_sex_oral_P_Force_deep_Ongoing_Player_3": "察觉到$target$正看着自己整根吞入的狼狈模样，$self$难堪地闭紧眼，只能被动承受着眼前的深顶。",
+                "com_sex_oral_P_Force_deep_1": "(unimplemented)",
+                "com_sex_oral_P_Force_deep_Ongoing_1": "(unimplemented)"
             }
         }
     }

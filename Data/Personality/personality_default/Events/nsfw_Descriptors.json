@@ -1,92 +1,5 @@
 {
-    "Character_Personalities": {
-        "looselist": [
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "Exposed_Vagina", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
-                    "tags": [
-                        "nsfw"
-                    ],
-                    "variants": [
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "Expansion_Extreme"
-                                ]
-                            },
-                            "responses": [
-                                "Exposed_Vagina_Expansion_Extreme"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "selfTags": [
-                                    "Expansion"
-                                ]
-                            },
-                            "responses": [
-                                "Exposed_Vagina_Expansion"
-                            ]
-                        },
-                        {
-                            "responses": [
-                                "Exposed_Vagina"
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "Exposed_Clit", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
-                    "tags": [
-                        "nsfw"
-                    ],
-                    "variants": [
-                        {
-                            "responses": [
-                                "Exposed_Clit"
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "Exposed_Penis", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
-                    "tags": [
-                        "nsfw"
-                    ],
-                    "variants": [
-                        {
-                            "responses": [
-                                "Exposed_Penis"
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                "ID": "personality_default",
-                "Entry": {
-                    "ID": "Exposed_Breasts", "template": "none", "templateNote": "code-fetched kojo; dedicated template later",
-                    "tags": [
-                        "nsfw"
-                    ],
-                    "variants": [
-                        {
-                            "responses": [
-                                "Exposed_Breasts"
-                            ]
-                        }
-                    ]
-                }
-            }
-        ]
-    },
+    "_doc": "Short exposed-organ labels (BodyInternal_Base.exposedKojoID text, shown in the COM manager). The prose descriptions moved to Data/RaceDefs/BodyDescriptionDefs.json (Docs/Body/Plan_CharacterDescription.md); exposedKojoID itself is still the kojo reaction tag added when an organ becomes exposed.",
     "Dictionary": {
         "Entries": {
             "zh-cn": {
@@ -97,7 +10,7 @@
                 "Exposed_Vagina_Expansion": "阴部露出（小腹膨胀）",
                 "Exposed_Vagina_Expansion_Extreme": "阴部露出（精液灌满）",
                 "Exposed_Anus": "肛门露出"
-                
+
             },
             "en-us": {
                 "Exposed_Breasts": "Exposed Breasts",

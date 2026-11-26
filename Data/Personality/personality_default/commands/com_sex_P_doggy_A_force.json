@@ -1044,6 +1044,15 @@
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_P_doggy_A_force 结果正面",
+                                    "responses": [
+                                        "com_sex_P_doggy_A_force_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_partner_A"
                                         ]
@@ -1073,18 +1082,10 @@
                                 "com_sex_P_doggy_A_force_FE_Partner_1",
                                 "com_sex_P_doggy_A_force_FE_Partner_2",
                                 "com_sex_P_doggy_A_force_FE_Partner_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_doggy_A_force_Fail_1"
-                            ]
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandResult",
@@ -1207,17 +1208,19 @@
                                 "com_sex_P_doggy_A_force_Ongoing_Player_1",
                                 "com_sex_P_doggy_A_force_Ongoing_Player_2",
                                 "com_sex_P_doggy_A_force_Ongoing_Player_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_P_doggy_A_force 进行中",
                             "responses": [
-                                "com_sex_P_doggy_A_force_Ongoing_Player_1"
+                                "com_sex_P_doggy_A_force_Ongoing_1"
                             ]
                         }
                     ],
@@ -1378,7 +1381,9 @@
                 "com_sex_P_doggy_A_force_Refuse_Case_3": "$self$拍开$target$扶在腰上的手，皱眉后退半步：\"停下，我没答应让你从后面做这种事。\"",
                 "com_sex_P_doggy_A_force_Ongoing_Player_1": "跪趴着被从后方一路顶进结肠搅动的$self$抬头对上旁观的$target$的视线，羞得连忙把脸埋进臂弯：\"唔……别在前面盯着我看啊……\"",
                 "com_sex_P_doggy_A_force_Ongoing_Player_2": "身后直撞深处的闷响清晰可闻，$self$眼角泛红地望向旁观的$target$，声音被顶得断断续续：\"哈啊……后面被顶得这么深，你还一直看……\"",
-                "com_sex_P_doggy_A_force_Ongoing_Player_3": "察觉到$target$正看着自己跪趴着被顶到后穴深处而腰肢乱颤的模样，$self$难堪地咬住下唇，耳根一直红到了脖颈。"
+                "com_sex_P_doggy_A_force_Ongoing_Player_3": "察觉到$target$正看着自己跪趴着被顶到后穴深处而腰肢乱颤的模样，$self$难堪地咬住下唇，耳根一直红到了脖颈。",
+                "com_sex_P_doggy_A_force_1": "(unimplemented)",
+                "com_sex_P_doggy_A_force_Ongoing_1": "(unimplemented)"
             }
         }
     }

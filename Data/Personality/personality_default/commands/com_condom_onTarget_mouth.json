@@ -101,15 +101,19 @@
                                 "com_condom_onTarget_mouth_Begin_10",
                                 "com_condom_onTarget_mouth_Begin_11",
                                 "com_condom_onTarget_mouth_Begin_12"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_condom_onTarget_mouth_Begin_16",
                                 "com_condom_onTarget_mouth_Begin_17",
@@ -271,19 +275,34 @@
                                 "com_condom_onTarget_mouth_28",
                                 "com_condom_onTarget_mouth_29",
                                 "com_condom_onTarget_mouth_30"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_condom_onTarget_mouth_31",
-                                "com_condom_onTarget_mouth_32",
-                                "com_condom_onTarget_mouth_33"
+                                "com_condom_onTarget_mouth_34"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_condom_onTarget_mouth_31",
+                                        "com_condom_onTarget_mouth_32",
+                                        "com_condom_onTarget_mouth_33"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -370,15 +389,19 @@
                                 "com_condom_onTarget_mouth_Ongoing_4",
                                 "com_condom_onTarget_mouth_Ongoing_5",
                                 "com_condom_onTarget_mouth_Ongoing_6"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_condom_onTarget_mouth_Ongoing_7",
                                 "com_condom_onTarget_mouth_Ongoing_8",
@@ -718,7 +741,8 @@
             "com_condom_onTarget_mouth_Joined_6": "“两个人一起弄快得多。”$self$应了一声，唇瓣贴上去配合着$target$的节奏。",
             "com_condom_onTarget_mouth_Join_Refused_4": "“行吧，那你们自己慢慢弄。”$self$把嘴边的东西拿下来，退开两步。",
             "com_condom_onTarget_mouth_Join_Refused_5": "$self$听罢也不勉强，站在原地抱起胳膊：“那我就在旁边看着好了。”",
-            "com_condom_onTarget_mouth_Join_Refused_6": "“不让插手就算了。”$self$耸了耸肩，转身挪到不碍事的地方。"
+            "com_condom_onTarget_mouth_Join_Refused_6": "“不让插手就算了。”$self$耸了耸肩，转身挪到不碍事的地方。",
+            "com_condom_onTarget_mouth_34": "(unimplemented)"
         },
         "en-us": {}
     }

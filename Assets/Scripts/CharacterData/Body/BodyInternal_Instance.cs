@@ -69,6 +69,39 @@ public class BodyInternal_Instance : I_TraceHolder
 
     [JsonIgnore] public bool HasUnawareExperience { get { return this.unawareExperience != 0; } }
 
+    /// <summary> body regenerate (Docs/Body/Plan_BodyRegenerate.md): the old organ's first / last / unaware experience records move to the new one </summary>
+    public void CopyRecordsFrom(BodyInternal_Instance old)
+    {
+        if (old == null) return;
+        firstExperience = old.firstExperience;
+        lastExperience = old.lastExperience;
+        firstExpDesc = old.firstExpDesc;
+        lastExpDesc = old.lastExpDesc;
+        unawareExperience = old.unawareExperience;
+        unawareExpDesc = old.unawareExpDesc;
+        unawareDescKey = old.unawareDescKey;
+        unawareTargetName = old.unawareTargetName;
+        unawareTargetPartID = old.unawareTargetPartID;
+        unawareComID = old.unawareComID;
+        unawareComVariant = old.unawareComVariant;
+    }
+
+    /// <summary> body regenerate: every content item (cum, ingested items, foetus items) is taken out and unregistered. Returns the count </summary>
+    public int DiscardContents()
+    {
+        int count = 0;
+        var refs = new List<int>(ContainedRefs_Delays.Keys);
+        foreach (var r in refs)
+        {
+            var item = scr_System_CampaignManager.current.FindItemInstanceByID(r);
+            ExtractContent(r);
+            if (item == null) continue;
+            scr_System_CampaignManager.current.Unregister(item);
+            count++;
+        }
+        return count;
+    }
+
     /// <summary> this part can lose its virginity at all (has a first-experience text and virginityLossTags) </summary>
     [JsonIgnore] public bool CanLoseVirginity { get { return Base != null && Base.firstExperienceDesc != "" && Base.virginityLossTags.Count > 0; } }
     /// <summary> can lose it and has neither an aware nor an unaware first experience. Plain fields only (safe on a detached copy). </summary>
@@ -314,15 +347,20 @@ public class BodyInternal_Instance : I_TraceHolder
         }
         else return false;
     }
+    [JsonIgnore] public bool CanWriteGeneratedLast { get { return lastExperience == 0 || lastExperience == 1; } }
+
     // Called by ExperienceInitializer at generation time to mark this body part as already
     // deflowered, without a real partner or memory entry. Timestamp 1 is non-zero so virginity
     // checks pass, but is never a real DateTime tick value so FirstExperience returns null.
     public bool WriteSexExperience(bool hasPermission, ExperienceActor target, string comName, List<string> actiontags)
     {
+        string targetDisplay = target.isLiteralName ? target.displayName : LocalizeDictionary.QueryThenParse(target.displayName);
+        string insertionDisplay = string.IsNullOrEmpty(target.insertionName) ? "" : LocalizeDictionary.QueryThenParse(target.insertionName);
+
         if (lastExperience == 0 || lastExperience == 1)
         {
             this.lastExperience = 1;
-            this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", LocalizeDictionary.QueryThenParse( target.displayName)).Replace("$command$", comName).Replace("$insertion$", LocalizeDictionary.QueryThenParse(target.insertionName));
+            this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetDisplay).Replace("$command$", comName).Replace("$insertion$", insertionDisplay);
         }
 
         if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)
@@ -334,10 +372,28 @@ public class BodyInternal_Instance : I_TraceHolder
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", actiontags)}");
             this.firstExperience = 1;
-            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", LocalizeDictionary.QueryThenParse(target.displayName)).Replace("$insertion$", LocalizeDictionary.QueryThenParse(target.insertionName)).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetDisplay).Replace("$insertion$", insertionDisplay).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
             return true;
         }
         else return false;
+    }
+
+    /// <summary>
+    /// Rewrites generated first/last experience text with a real partner's name when an experience plug binds later,
+    /// only for slots still carrying the generation marker (timestamp == 1).
+    /// </summary>
+    public void RewriteGeneratedExperience(bool consensual, string literalPartnerName, string actionNameKey, string insertionKey, bool rewriteFirst, bool rewriteLast)
+    {
+        string comName = string.IsNullOrEmpty(actionNameKey) ? "" : LocalizeDictionary.QueryThenParse(actionNameKey);
+        string insertion = string.IsNullOrEmpty(insertionKey) ? "" : LocalizeDictionary.QueryThenParse(insertionKey);
+        if (rewriteLast && lastExperience == 1)
+        {
+            this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", literalPartnerName).Replace("$command$", comName).Replace("$insertion$", insertion);
+        }
+        if (rewriteFirst && firstExperience == 1)
+        {
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse(consensual ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", literalPartnerName).Replace("$insertion$", insertion).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+        }
     }
     public void Draw_FirstExperience(scr_HoverableText box)
     {

@@ -438,11 +438,12 @@ public static class TA_KojoTemplate
     /// <summary>
     /// Findings for one personality's own entry. defFile / defPath = the entry's definition (null when only a mod patch
     /// mentions it: the finding stays, without ops). cmd = what the key is when it is a command kojo key (else null);
-    /// resolves = whether a key resolves for this personality (own entry or fallback chain). summary = per-entry template
-    /// info for the index.
+    /// resolves = whether a key resolves for this personality (own entry or fallback chain). fallbackCovers = the
+    /// personality's fallback chain has this key too, so a branch miss here still speaks (no templateRequiredLeaf).
+    /// summary = per-entry template info for the index.
     /// </summary>
     public static void Entry(string provider, string entryID, ResponseEntry e, string defFile, string defPath, CommandKey cmd,
-        Func<string, bool> resolves, List<JObject> into, out JObject summary)
+        Func<string, bool> resolves, bool fallbackCovers, List<JObject> into, out JObject summary)
     {
         summary = null;
         if (templates == null) Load();
@@ -493,7 +494,7 @@ public static class TA_KojoTemplate
         summary["map"] = c.map;
         if (c.leaves.Count > 0) summary["leaves"] = c.leaves;
         summary["fallback"] = Fallback(tpl, provider, entryID, e, cmd, into);
-        RequiredLeaves(c, e.variants);
+        if (!fallbackCovers) RequiredLeaves(c, e.variants);
 
         // enabled extras: written (where) or available (with the block to copy) - on the summary for the viewer, and on
         // every finding of this entry so the coder task shows them

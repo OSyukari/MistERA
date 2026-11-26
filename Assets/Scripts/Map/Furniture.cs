@@ -79,8 +79,6 @@ public class FurnitureOccupancyDef
     public bool isRoomDivider = false;
     /// <summary> divider only: characters inside and outside do not see each other </summary>
     public bool blocksVisibility = false;
-    /// <summary> divider only: may host its own sex job </summary>
-    public bool allowSexJob = false;
     /// <summary> receives owners from the room's ownership (beds) </summary>
     public bool assignOwnership = false;
 }

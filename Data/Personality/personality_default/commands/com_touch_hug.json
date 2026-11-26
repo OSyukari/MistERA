@@ -84,49 +84,39 @@
                                         "com_touch_hug_Begin_Restrained_2",
                                         "com_touch_hug_Begin_Restrained_3"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被拥抱 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hug_Begin_1",
+                                        "com_touch_hug_Begin_2",
+                                        "com_touch_hug_Begin_3",
+                                        "com_touch_hug_Begin_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被拥抱 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_hug_Begin_7",
+                                        "com_touch_hug_Begin_8",
+                                        "com_touch_hug_Begin_9",
+                                        "com_touch_hug_Begin_10"
+                                    ]
                                 }
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_hug_Begin_Receiver_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被拥抱 有允许 口上文",
-                            "responses": [
-                                "com_touch_hug_Begin_1",
-                                "com_touch_hug_Begin_2",
-                                "com_touch_hug_Begin_3",
-                                "com_touch_hug_Begin_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被拥抱 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_hug_Begin_7",
-                                "com_touch_hug_Begin_8",
-                                "com_touch_hug_Begin_9",
-                                "com_touch_hug_Begin_10"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
                             ],
                             "_comment": "2.2.2 开始被拥抱 未允许 敌意 口上文",
                             "responses": [
@@ -135,11 +125,25 @@
                                 "com_touch_hug_Begin_15",
                                 "com_touch_hug_Begin_16"
                             ],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_hug_Begin_19"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -344,6 +348,24 @@
                                                 "com_touch_hug_restrained_fail_2",
                                                 "com_touch_hug_restrained_fail_3"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被拥抱 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_hug_43",
+                                                "com_touch_hug_44",
+                                                "com_touch_hug_45",
+                                                "com_touch_hug_46"
+                                            ]
                                         }
                                     ],
                                     "responses": [
@@ -371,97 +393,33 @@
                                 "com_touch_hug_50",
                                 "com_touch_hug_51",
                                 "com_touch_hug_52"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被拥抱 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_hug_31",
-                                        "com_touch_hug_32",
-                                        "com_touch_hug_33",
-                                        "com_touch_hug_34"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被拥抱 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_hug_37",
-                                "com_touch_hug_38",
-                                "com_touch_hug_39",
-                                "com_touch_hug_40"
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被拥抱 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_hug_43",
-                                        "com_touch_hug_44",
-                                        "com_touch_hug_45",
-                                        "com_touch_hug_46"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被拥抱 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_touch_hug_49",
-                                "com_touch_hug_50",
-                                "com_touch_hug_51",
-                                "com_touch_hug_52"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_hug_55"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_touch_hug_56"
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -602,17 +560,21 @@
                                 "com_touch_hug_Ongoing_NPC_1",
                                 "com_touch_hug_Ongoing_NPC_2",
                                 "com_touch_hug_Ongoing_NPC_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_hug_Ongoing_Fallback_1"
+                                "com_touch_hug_Ongoing_1"
                             ]
                         }
                     ]
@@ -731,7 +693,11 @@
                 "com_touch_hug_Ongoing_NPC_2": "拥抱结束后，$self$顺手理了理衣领，调侃道：\"你刚才抱得还挺暖和的。\"",
                 "com_touch_hug_Ongoing_NPC_3": "$self$看着$target$笑道：\"行啦，再抱下去天都要黑了。\"",
                 "com_touch_hug_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
-                "com_touch_hug_Ongoing_Fallback_1": "$self$安静地待在这个拥抱里，没有挣动。"
+                "com_touch_hug_Ongoing_Fallback_1": "$self$安静地待在这个拥抱里，没有挣动。",
+                "com_touch_hug_Begin_19": "(unimplemented)",
+                "com_touch_hug_55": "(unimplemented)",
+                "com_touch_hug_56": "(unimplemented)",
+                "com_touch_hug_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_hug_Begin_1": "$self$ naturally opened her arms and buried her face deep in the crook of $target$'s neck, letting out a comfortable sigh.",

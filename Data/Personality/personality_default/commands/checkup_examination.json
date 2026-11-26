@@ -25,18 +25,21 @@
                             "responses": [
                                 "checkup_examination_Ongoing_4",
                                 "checkup_examination_Ongoing_5"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "checkup_examination_Ongoing_6",
-                                "checkup_examination_Ongoing_7"
+                                "checkup_examination_Ongoing_8"
                             ]
                         }
                     ]
@@ -221,18 +224,21 @@
                                 "checkup_examination_Begin_11",
                                 "checkup_examination_Begin_12"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "checkup_examination_Begin_16",
-                                "checkup_examination_Begin_17"
+                                "checkup_examination_Begin_18"
                             ]
                         }
                     ]
@@ -348,18 +354,21 @@
                                 "checkup_examination_5",
                                 "checkup_examination_6"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "checkup_examination_19",
-                                "checkup_examination_20"
+                                "checkup_examination_21"
                             ]
                         }
                     ]
@@ -650,7 +659,10 @@
                 "checkup_examination_JoinFailed_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
                 "checkup_examination_JoinFailed_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
                 "checkup_examination_Joined_4": "$self$走进检查区站好：\"我也过来一起做个检查。\"",
-                "checkup_examination_Joined_5": "\"算我一个吧。\" $self$说着在旁边找了个位置。"
+                "checkup_examination_Joined_5": "\"算我一个吧。\" $self$说着在旁边找了个位置。",
+                "checkup_examination_Ongoing_8": "(unimplemented)",
+                "checkup_examination_Begin_18": "(unimplemented)",
+                "checkup_examination_21": "(unimplemented)"
             }
         }
     }

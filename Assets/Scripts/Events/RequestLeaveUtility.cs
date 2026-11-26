@@ -54,13 +54,14 @@ public static class RequestLeaveUtility
         // both private reasons exempt the room's other owners
         else if (!isRoomOwner(target, room))
         {
-            // PrivateAction: subject is doing a privacy-tagged action where privacy is allowed, target can get away. Inside a
-            // vision-blocking divider only the others in it who aren't part of the action; elsewhere anyone in the room. A
-            // gendered room is shared by everyone who fits it, so only an opposite-sex target can be asked
+            // PrivateAction: subject is doing a privacy-tagged action where privacy is allowed, target can get away and isn't
+            // part of the action (e.g. joined it - TryJoinPrivacyAction). Inside a vision-blocking divider only the others in
+            // it; elsewhere anyone in the room. A gendered room is shared by everyone who fits it, so only an opposite-sex
+            // target can be asked
             if (target.canMove && (room.GenderPreference == RoomGenderPreference.DontCare || room.IsOppositeSex(target))
                 && TryGetPrivacyAction(subject, room, out var privacyAP, out bool inBlockingDivider)
-                && (!inBlockingDivider || (target.ScopeRef == subject.ScopeRef
-                    && !privacyAP.DoerRefs.Contains(target.RefID) && !privacyAP.ReceiverRefs.Contains(target.RefID))))
+                && !privacyAP.actorRefs.Contains(target.RefID)
+                && (!inBlockingDivider || target.ScopeRef == subject.ScopeRef))
                 reason = RequestLeaveReason.PrivateAction;
             // PrivateRoom: subject owns the private room, target is a stranger not linked to them
             else if (conscious && room.isRoomPrivate && isRoomOwner(subject, room) && !isLinkedTo(target, subject, room) && isStranger(subject, target))
@@ -122,6 +123,37 @@ public static class RequestLeaveUtility
         if (room != null && room.isRoomPrivate) return true;
         var furniture = (ap.job as Job_Furniture)?.ParentInstance?.FurnitureBase;
         return furniture != null && furniture.Tags != null && furniture.Tags.Contains(AllowPrivacyFurnitureTag);
+    }
+
+    /// <summary>
+    /// The owner's privacy action (TryGetPrivacyAction - interaction job or current job, where privacy is allowed) when joiner
+    /// may join it, validated as the existing joins do: listed by Job.JoinablePackages (executing, Duration >= 2, AllowJoining,
+    /// the furniture lets joiner use the command), not temporary / paused, the furniture's occupancy scope allows it
+    /// (as Job_Furniture's NPC join), the command validates on the job (COM.ValidateJob), and a copy with joiner added (canJoinAP's
+    /// actors, ResetRequest as the player's join button) validates with neither rate at 0 (the button's auto-failure).
+    /// joined = that validated copy: its COMVariantID names the join option, its rates gate it (EventUtility.JoinCheckRate).
+    /// Event condition canJoinPrivacyAction, results TryJoinPrivacyAction / SetJoinablePrivacyActionName. Not a hot path.
+    /// </summary>
+    public static bool TryGetJoinablePrivacyAction(Character_Trainable owner, Character_Trainable joiner, out ActionPackage ap, out ActionPackage joined)
+    {
+        ap = null;
+        joined = null;
+        if (owner == null || joiner == null || owner == joiner) return false;
+        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(owner.RefID);
+        if (!TryGetPrivacyAction(owner, room, out var privacyAP, out _)) return false;
+        var job = privacyAP.job;
+        if (job == null || privacyAP.targetCOM == null || privacyAP.isTemporaryAP || privacyAP.isPaused) return false;
+        if (!job.JoinablePackages(joiner.RefID).Contains(privacyAP)) return false;
+        if (job is Job_Furniture furniture && !FurnitureOccupancyUtility.ScopeAllowsCommand(furniture, joiner, privacyAP.targetCOM)) return false;
+        if (!privacyAP.targetCOM.ValidateJob(job, out _)) return false;
+
+        if (privacyAP.canJoinAP(joiner, out var doers, out var receivers, out _) < 0) return false;
+        var copy = privacyAP.Copy();
+        copy.ResetRequest(doers, receivers, privacyAP.masterRef);
+        if (!copy.Validate() || copy.RequestRate * copy.ResponseRate == 0) return false;
+        ap = privacyAP;
+        joined = copy;
+        return true;
     }
 
     static bool isRoomOwner(Character_Trainable c, Room_Instance room)

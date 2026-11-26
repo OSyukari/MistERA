@@ -25,7 +25,7 @@
                         "question": "Recreation_FeeApproval_question",
                         "npcDecides": true,
                         "loadOptionsKey": "feeOptions",
-                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ],
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "result" ] } ],
                         "options": [
                             {
                                 "option": "Recreation_FeeApproval_decline",
@@ -36,6 +36,30 @@
                                 ]
                             }
                         ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "result",
+                        "_comment": "approvalResultText is set by the approve callback; [支付并一同加入] announces itself instead.",
+                        "options": [
+                            {
+                                "option": "approved",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": [ "approvalResultText" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "approved" ] }
+                                ]
+                            },
+                            {
+                                "option": "other",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "approved",
+                        "line": "Recreation_FeeApproval_approved",
+                        "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
@@ -51,7 +75,8 @@
         "Entries": {
             "zh-cn": {
                 "Recreation_FeeApproval_question": "活动费用申请：\n$feeRequestText$$feeConflictText$",
-                "Recreation_FeeApproval_decline": "拒绝"
+                "Recreation_FeeApproval_decline": "拒绝",
+                "Recreation_FeeApproval_approved": "$approvalResultText$"
             }
         }
     }

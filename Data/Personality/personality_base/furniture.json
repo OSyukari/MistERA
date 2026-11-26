@@ -323,27 +323,37 @@
                     "ID": "com_furniture_takingBreak",
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "extraSelfPortraitTags": [
-                                "thinking",
-                                "happy",
-                                "resting"
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "thinking",
+                                        "happy",
+                                        "resting"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_furniture_takingBreak_2"
+                                    ]
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": true
-                            },
                             "extraSelfPortraitTags": [
                                 "pouting",
                                 "doubt"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_takingBreak_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_furniture_takingBreak_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -691,27 +701,37 @@
                     "ID": "com_furniture_watchVideo",
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "extraSelfPortraitTags": [
-                                "happy",
-                                "excited",
-                                "surprised"
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_furniture_watchVideo_2"
+                                    ]
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": true
-                            },
                             "extraSelfPortraitTags": [
                                 "pouting",
                                 "doubt"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_watchVideo_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_furniture_watchVideo_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1007,27 +1027,37 @@
                     "ID": "com_furniture_playVideoGames",
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "extraSelfPortraitTags": [
-                                "happy",
-                                "excited",
-                                "surprised"
+                            "requireSelfOnly": true,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "happy",
+                                        "excited",
+                                        "surprised"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_furniture_playVideoGames_2"
+                                    ]
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": true
-                            },
                             "extraSelfPortraitTags": [
                                 "pouting",
                                 "doubt"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_furniture_playVideoGames_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_furniture_playVideoGames_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1333,7 +1363,16 @@
                 "pb_com_furniture_watchVideo_Refuse_1": "$self$摇了摇头。\n\"现在不太想看，你自己看吧。\"",
                 "pb_com_furniture_watchVideo_Refuse_2": "$self$移开视线，婉拒道。\n\"不了，我没什么兴致。\"",
                 "pb_com_furniture_watchVideo_JoinFailed_1": "$self$看了一眼屏幕，摇摇头。\n\"看到一半了，现在不太方便一起。\"",
-                "pb_com_furniture_watchVideo_JoinFailed_2": "$self$往椅背一靠，淡淡说道。\n\"我只想一个人安静看会儿。\""
+                "pb_com_furniture_watchVideo_JoinFailed_2": "$self$往椅背一靠，淡淡说道。\n\"我只想一个人安静看会儿。\"",
+                "pb_com_furniture_takingBreak_1": "(unimplemented)",
+                "pb_com_furniture_takingBreak_2": "(unimplemented)",
+                "pb_com_furniture_takingBreak_3": "(unimplemented)",
+                "pb_com_furniture_watchVideo_1": "(unimplemented)",
+                "pb_com_furniture_watchVideo_2": "(unimplemented)",
+                "pb_com_furniture_watchVideo_3": "(unimplemented)",
+                "pb_com_furniture_playVideoGames_1": "(unimplemented)",
+                "pb_com_furniture_playVideoGames_2": "(unimplemented)",
+                "pb_com_furniture_playVideoGames_3": "(unimplemented)"
             },
             "en-us": {}
         }

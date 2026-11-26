@@ -110,6 +110,36 @@ public static class ResultCharaUtility
         {
             r.modifyStatusValue.Execute(c, log);
         }
+        if (r.trainBaseStat != null && r.trainBaseStat.isValid)
+        {
+            var applied = c.Stats.TrainBaseStat(r.trainBaseStat.statID, r.trainBaseStat.value, r.trainBaseStat.modKey);
+            if (log != null && System.Math.Abs(applied) >= 1e-6f)
+                log.AddStats(c.RefID, "stats_base_" + r.trainBaseStat.statID, applied);
+        }
+        if (r.addTrace != null && r.addTrace.isValid && c.Body != null)
+        {
+            var def = TraceUtility.GetDefinition(r.addTrace.traceID);
+            if (def != null && (r.addTrace.chance >= 1f || Random.value < r.addTrace.chance))
+            {
+                var candidates = new List<TraceSpot>();
+                bool filterSlots = r.addTrace.slots != null && r.addTrace.slots.Count > 0;
+                foreach (var part in c.Body.Body)
+                {
+                    if (part == null || !part.AllowTraces) continue;
+                    foreach (var slot in part.TraceSlots)
+                    {
+                        if (!filterSlots || r.addTrace.slots.Contains(slot))
+                            candidates.Add(new TraceSpot(part, slot));
+                    }
+                }
+                if (candidates.Count > 0)
+                {
+                    var spot = Utility.GetRandomElement(candidates);
+                    float amount = r.addTrace.amount > 0f ? r.addTrace.amount : def.defaultAmount;
+                    TraceUtility.Add(spot.holder, def, amount, null, spot.slot);
+                }
+            }
+        }
 
         if (r.toggleTeamStatus)
         {

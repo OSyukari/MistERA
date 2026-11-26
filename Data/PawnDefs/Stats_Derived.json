@@ -298,6 +298,34 @@
                         "valueString":"Strength"
                     }
                 ]
+            },
+            {
+                "id": "stats_derived_str_trainingMax",
+                "displayName": "Bonus Strength Cap",
+                "statKeyword": "",
+                "tooltip": "Maximum bonus Strength that can be gained through training (default 2). Modified by traits and skills.",
+                "valueBase": { "baseValue_value": 2.0, "baseValue_mult": 1.0, "finalMod_value": 0.0, "finalMod_mult": 1.0, "valueFloor": 0.0, "valueCeiling": 999 }
+            },
+            {
+                "id": "stats_derived_con_trainingMax",
+                "displayName": "Bonus Constitution Cap",
+                "statKeyword": "",
+                "tooltip": "Maximum bonus Constitution that can be gained through training (default 2). Modified by traits and skills.",
+                "valueBase": { "baseValue_value": 2.0, "baseValue_mult": 1.0, "finalMod_value": 0.0, "finalMod_mult": 1.0, "valueFloor": 0.0, "valueCeiling": 999 }
+            },
+            {
+                "id": "stats_derived_psy_trainingMax",
+                "displayName": "Bonus Psyche Cap",
+                "statKeyword": "",
+                "tooltip": "Maximum bonus Psyche that can be gained through training (default 2). Modified by traits and skills.",
+                "valueBase": { "baseValue_value": 2.0, "baseValue_mult": 1.0, "finalMod_value": 0.0, "finalMod_mult": 1.0, "valueFloor": 0.0, "valueCeiling": 999 }
+            },
+            {
+                "id": "stats_derived_wil_trainingMax",
+                "displayName": "Bonus Willpower Cap",
+                "statKeyword": "",
+                "tooltip": "Maximum bonus Willpower that can be gained through training (default 2). Modified by traits and skills.",
+                "valueBase": { "baseValue_value": 2.0, "baseValue_mult": 1.0, "finalMod_value": 0.0, "finalMod_mult": 1.0, "valueFloor": 0.0, "valueCeiling": 999 }
             }
         ]
     },

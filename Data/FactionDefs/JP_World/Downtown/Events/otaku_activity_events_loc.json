@@ -2,6 +2,12 @@
     "Dictionary": { "Entries": { "en-us": {
         "otaku_maid_begin": "Menus wait on the cafe tables, with the clink of dishes coming from the kitchen. There is time to sit down and choose.", "otaku_maid_join": "$joining.name$ takes an empty cafe chair and opens a menu.", "otaku_maid_late": "$joining.name$ reaches the cafe a little later and puts their belongings beside a seat.",
         "otaku_arcade_begin": "Rows of cabinets glow, rhythm-game beats mixing with racing sounds. The arcade visit begins.", "otaku_arcade_join": "$joining.name$ enters the cabinet area and looks for a game to play.", "otaku_arcade_late": "$joining.name$ arrives at the arcade a little later and looks along the glowing screens.",
+        "otaku_arcade_approve_use_existing": "Approve (Use Existing Tokens)",
+        "otaku_arcade_fee_cost": "Arcade tokens (no fixed amount)",
+        "otaku_arcade_exchange_question": "$approvalContextText$\n\nFewer than 6 arcade tokens on hand; tokens must be exchanged first.",
+        "otaku_arcade_exchange_600": "Exchange 6 Tokens (600 JPY)",
+        "otaku_arcade_exchange_2000": "Exchange 20 Tokens (2000 JPY)",
+        "otaku_arcade_exchanged": "$exchangeResultText$",
         "otaku_manga_begin": "New releases fill the display by the entrance. Quiet aisles run between the shelves, with a separate adult section behind the curtain.", "otaku_manga_join": "$joining.name$ opens a preview copy at the new-release table.", "otaku_manga_late": "$joining.name$ reaches the bookshop a little later and checks the shelf categories by the door.",
         "otaku_net_read_begin": "Manga is sorted on shelves beside the open reading seats. The drink bar is a few steps away. The reading visit begins.", "otaku_net_read_join": "$joining.name$ takes a manga volume and sits in the open seating area.", "otaku_net_read_late": "$joining.name$ reaches the reading area a little later and quietly pulls out a chair.",
         "otaku_net_single_begin": "A computer and reading lamp wait in the reserved single booth. Closing the door softens the footsteps outside.", "otaku_net_single_join": "$joining.name$ enters the reserved single booth and puts down their belongings.", "otaku_net_single_late": "$joining.name$ reaches the reserved booth a little later and switches on the reading lamp.",

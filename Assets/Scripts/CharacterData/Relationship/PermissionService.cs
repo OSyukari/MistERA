@@ -225,7 +225,9 @@ public static class PermissionService
 
     /// <summary>
     /// Granter's day update: removes the temporary grants it gave, except to a holder in the same running sex scene
-    /// (those are removed when the scene ends, ClearTemporaryForPair).
+    /// (those are removed when the scene ends, ClearTemporaryForPair). A grant to a holder who shares an ongoing command
+    /// with the granter (SharesOngoingCommand, e.g. a shower that started before midnight) is renewed for the new day
+    /// instead: it stays through that command and its result event, and expires at the next day update.
     /// </summary>
     public static void ClearTemporaryOnDayUpdate(Character_Trainable granter)
     {
@@ -234,9 +236,11 @@ public static class PermissionService
         var scene = RunningSexScene(granter);
         var removed = removedHoldersBuffer ?? (removedHoldersBuffer = new List<int>());
         removed.Clear();
+        var now = scr_System_Time.current != null ? scr_System_Time.current.getCurrentTime() : default(DateTime);
         campaign.PermissionGrants.RemoveTemporaryByGranter(granter.RefID,
             scene == null ? (Func<int, bool>)null : holderRef => ReferenceEquals(RunningSexScene(campaign.FindInstanceByID(holderRef)), scene),
-            removed);
+            removed,
+            holderRef => SharesOngoingCommand(granter, campaign.FindInstanceByID(holderRef)), now);
         for (int i = 0; i < removed.Count; i++)
         {
             var holder = campaign.FindInstanceByID(removed[i]);
@@ -269,6 +273,32 @@ public static class PermissionService
             if (granter == null || holder == null || granter.CurrentJobRefID < 0 || granter.CurrentJobRefID != holder.CurrentJobRefID) return false;
             return campaign.FindJobInstanceByID(granter.CurrentJobRefID) is Job_Sex_Group scene && !scene.IsEnded;
         });
+    }
+
+    /// <summary>
+    /// granter and holder are both actors (doer or receiver) of one active package (Job.ActivePackages) of either one's
+    /// current job - a command still running between them, whose permissions should not lapse mid-way.
+    /// </summary>
+    static bool SharesOngoingCommand(Character_Trainable granter, Character_Trainable holder)
+    {
+        if (granter == null || holder == null || granter == holder) return false;
+        return JobHasPairPackage(granter.CurrentJob, granter.RefID, holder.RefID)
+            || (holder.CurrentJob != granter.CurrentJob && JobHasPairPackage(holder.CurrentJob, granter.RefID, holder.RefID));
+    }
+
+    static bool JobHasPairPackage(Job job, int refA, int refB)
+    {
+        if (job == null) return false;
+        var packages = job.ActivePackages;
+        for (int i = 0; i < packages.Count; i++)
+        {
+            var ap = packages[i];
+            if (ap == null) continue;
+            bool hasA = ap.DoerRefs.Contains(refA) || ap.ReceiverRefs.Contains(refA);
+            bool hasB = ap.DoerRefs.Contains(refB) || ap.ReceiverRefs.Contains(refB);
+            if (hasA && hasB) return true;
+        }
+        return false;
     }
 
     static Job_Sex_Group RunningSexScene(Character_Trainable c)

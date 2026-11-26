@@ -874,7 +874,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log, bool success)
     {
         //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
-        if (success) results_EP.ApplyResults(job, p, evp, target,log);
+        results_EP.ApplyResults(job, p, evp, target, log, success);
 
         if (target == evp.Doer)
         {

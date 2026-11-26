@@ -208,39 +208,56 @@ public static class ResidenceUtility
     }
 
     /// <summary>
+    /// Links faction's room (by base ID linkRoomID) to attachRoom on its floor: attaches a standalone room via
+    /// Map.AttachRoom, or registers runtime exits and a runtime floor door between the two floors.
+    /// </summary>
+    public static bool LinkFactionToRoom(Manageable faction, string linkRoomID, Room_Instance attachRoom, bool rebuildPath = true)
+    {
+        if (faction == null || string.IsNullOrEmpty(linkRoomID) || attachRoom == null || attachRoom.parentFloor == null) return false;
+        Room_Instance homeRoom = null;
+        foreach (var room in faction.ManagedRooms.Values)
+            if (room != null && room.Base != null && room.Base.ID == linkRoomID) { homeRoom = room; break; }
+        return LinkFactionRoom(faction, homeRoom, attachRoom, rebuildPath);
+    }
+
+    static bool LinkFactionRoom(Manageable faction, Room_Instance homeRoom, Room_Instance attachRoom, bool rebuildPath)
+    {
+        if (faction == null || homeRoom == null || attachRoom == null || attachRoom.parentFloor == null) return false;
+        if (homeRoom.isStandalone)
+            return scr_System_CampaignManager.current.Map.AttachRoom(attachRoom.parentFloor, attachRoom, homeRoom, 1f, rebuildPath);
+        if (homeRoom.parentFloor == null) return false;
+        var sourceFaction = attachRoom.FactionOwner as Manageable;
+        if (sourceFaction == null) return false;
+
+        // runtime sockets: a hidden exit on the attach room for this faction, one on the home's link room (its own
+        // floor instance), joined by a runtime floor door between the real faction IDs
+        string sourceExitID = "res_" + faction.ID;
+        const string homeExitID = "res_link";
+        attachRoom.parentFloor.AddRuntimeExit(sourceExitID, attachRoom.Base.ID);
+        homeRoom.parentFloor.AddRuntimeExit(homeExitID, homeRoom.Base.ID);
+        scr_System_CampaignManager.current.Map.RegisterRuntimeFloorDoor(new FloorDoor()
+        {
+            cost = 1f,
+            sourceFaction = sourceFaction.ID,
+            sourceFloor = attachRoom.parentFloor.floorPlanID,
+            sourceExit = sourceExitID,
+            targetFaction = faction.ID,
+            targetFloor = homeRoom.parentFloor.floorPlanID,
+            targetExit = homeExitID,
+        }, rebuildPath);
+        return true;
+    }
+
+    /// <summary>
     /// Registers home as a home of district (shared by generated and adopted homes): marks it (residentialDistrictID),
     /// records it, and attaches a standalone homeRoom to the district floor, or uses the legacy runtime floor door.
     /// rebuildPath false = the caller rebuilds pathing later (world instantiation, before its floors are on the map).
     /// </summary>
     static bool LinkResidence(Manageable district, Manageable home, Room_Instance attach, Room_Instance homeRoom, string templateID, bool rebuildPath = true)
     {
-        if (homeRoom.isStandalone)
-        {
-            if (!scr_System_CampaignManager.current.Map.AttachRoom(attach.parentFloor, attach, homeRoom, 1f, rebuildPath)) return false;
-            home.residentialDistrictID = district.ID;
-            district.residences.Add(new ResidenceRecord() { factionID = home.ID, templateID = templateID, attachRoomID = attach.Base.ID });
-            return true;
-        }
-        if (homeRoom.parentFloor == null) return false;
+        if (!LinkFactionRoom(home, homeRoom, attach, rebuildPath)) return false;
         home.residentialDistrictID = district.ID;
         district.residences.Add(new ResidenceRecord() { factionID = home.ID, templateID = templateID, attachRoomID = attach.Base.ID });
-
-        // runtime sockets: a hidden exit on the attach room for this home, one on the home's link room (its own floor
-        // instance), joined by a runtime floor door between the real faction IDs
-        string districtExitID = "res_" + home.ID;
-        const string homeExitID = "res_link";
-        attach.parentFloor.AddRuntimeExit(districtExitID, attach.Base.ID);
-        homeRoom.parentFloor.AddRuntimeExit(homeExitID, homeRoom.Base.ID);
-        scr_System_CampaignManager.current.Map.RegisterRuntimeFloorDoor(new FloorDoor()
-        {
-            cost = 1f,
-            sourceFaction = district.ID,
-            sourceFloor = attach.parentFloor.floorPlanID,
-            sourceExit = districtExitID,
-            targetFaction = home.ID,
-            targetFloor = homeRoom.parentFloor.floorPlanID,
-            targetExit = homeExitID,
-        }, rebuildPath);
         return true;
     }
 
@@ -375,8 +392,173 @@ public static class ResidenceUtility
             }
     }
 
+    static bool RoomHasDoubleBed(Room_Instance room)
+    {
+        if (room == null || room.Furnitures == null) return false;
+        for (int i = 0; i < room.Furnitures.Count; i++)
+        {
+            var f = room.Furnitures[i];
+            if (f != null && f.FurnitureBase != null && f.FurnitureBase.ID != null && f.FurnitureBase.ID.Contains(DoubleBedFurnitureID))
+                return true;
+        }
+        return false;
+    }
+
+    static int RoomHumanBedCapacity(Room_Instance room)
+    {
+        if (room == null || room.Furnitures == null) return 0;
+        int cap = 0;
+        for (int i = 0; i < room.Furnitures.Count; i++)
+        {
+            var f = room.Furnitures[i];
+            if (f == null || f.FurnitureBase == null || f.FurnitureBase.BedTypeID != BedPreferenceUtility.HumanType) continue;
+            if (f.JobGiver is Job_Furniture jf && jf.AssignsOwnership) cap += jf.Capacity > 0 ? jf.Capacity : 1;
+            else cap += f.FurnitureBase.furnitureSize >= 1f ? Mathf.FloorToInt(f.FurnitureBase.furnitureSize) : 1;
+        }
+        return cap;
+    }
+
+    /// <summary>
+    /// Free private rooms of home matching roomIDPrefix (empty = any), ordered by:
+    /// 1) rooms whose base ID is listed in their floor's mainRoomIDs (in mainRoomIDs order),
+    /// 2) remaining free private rooms with a double bed first, then authored order.
+    /// </summary>
+    public static List<Room_Instance> OrderFreePrivateRooms(Manageable home, string roomIDPrefix = "")
+    {
+        var ordered = new List<Room_Instance>();
+        if (home == null) return ordered;
+
+        var free = new List<Room_Instance>();
+        foreach (var room in home.ManagedRooms.Values)
+        {
+            if (room == null || !room.isRoomPrivate || home.RoomOwners(room.RefID).Count > 0) continue;
+            if (!string.IsNullOrEmpty(roomIDPrefix) && (room.Base == null || !room.Base.ID.StartsWith(roomIDPrefix))) continue;
+            free.Add(room);
+        }
+        if (free.Count == 0) return ordered;
+
+        var used = new bool[free.Count];
+
+        // 1) mainRoomIDs per floor, in each floor's mainRoomIDs priority order
+        var seenFloors = new List<Floor_Instance>();
+        for (int i = 0; i < free.Count; i++)
+        {
+            var fl = free[i].parentFloor;
+            if (fl != null && !seenFloors.Contains(fl)) seenFloors.Add(fl);
+        }
+        for (int f = 0; f < seenFloors.Count; f++)
+        {
+            var mainIDs = seenFloors[f].FloorBase?.mainRoomIDs;
+            if (mainIDs == null || mainIDs.Count == 0) continue;
+            for (int m = 0; m < mainIDs.Count; m++)
+            {
+                string targetID = mainIDs[m];
+                if (string.IsNullOrEmpty(targetID)) continue;
+                for (int i = 0; i < free.Count; i++)
+                {
+                    if (used[i]) continue;
+                    if (free[i].parentFloor == seenFloors[f] && free[i].Base != null && free[i].Base.ID == targetID)
+                    {
+                        used[i] = true;
+                        ordered.Add(free[i]);
+                    }
+                }
+            }
+        }
+
+        // 2) remaining rooms: double bed first, then authored order
+        for (int i = 0; i < free.Count; i++)
+        {
+            if (used[i] || !RoomHasDoubleBed(free[i])) continue;
+            used[i] = true;
+            ordered.Add(free[i]);
+        }
+        for (int i = 0; i < free.Count; i++)
+        {
+            if (used[i]) continue;
+            used[i] = true;
+            ordered.Add(free[i]);
+        }
+        return ordered;
+    }
+
+    /// <summary>
+    /// Assigns room ownership in home to groups of characters. Groups marked main in mainFlags are placed first
+    /// (stable), taking rooms from OrderFreePrivateRooms(home, roomIDPrefix). When free rooms run out, remaining
+    /// groups join an already-assigned room with remaining bed capacity if any, else the last assigned room.
+    /// Returns one assigned room per input group index (null when no free room exists).
+    /// </summary>
+    public static List<Room_Instance> AssignRoomGroups(Manageable home, List<List<Character_Trainable>> groups, List<bool> mainFlags, string roomIDPrefix = "")
+    {
+        var result = new List<Room_Instance>();
+        if (groups == null || groups.Count == 0) return result;
+        for (int i = 0; i < groups.Count; i++) result.Add(null);
+        if (home == null) return result;
+
+        var rooms = OrderFreePrivateRooms(home, roomIDPrefix);
+        if (rooms.Count == 0)
+        {
+            Debug.LogError($"AssignRoomGroups: no free private room in [{home.ID}]{(string.IsNullOrEmpty(roomIDPrefix) ? "" : $" with prefix [{roomIDPrefix}]")}");
+            return result;
+        }
+
+        // Stable partition of group indices: mainRoom == true first, then the rest
+        var order = new List<int>(groups.Count);
+        for (int i = 0; i < groups.Count; i++)
+            if (mainFlags != null && i < mainFlags.Count && mainFlags[i]) order.Add(i);
+        for (int i = 0; i < groups.Count; i++)
+            if (mainFlags == null || i >= mainFlags.Count || !mainFlags[i]) order.Add(i);
+
+        var assignedRooms = new List<Room_Instance>();
+        var assignedCounts = new List<int>();
+        var assignedCaps = new List<int>();
+        int nextRoom = 0;
+
+        for (int k = 0; k < order.Count; k++)
+        {
+            int gIdx = order[k];
+            var group = groups[gIdx];
+            if (group == null || group.Count == 0) continue;
+
+            Room_Instance chosen;
+            int slotIndex;
+            if (nextRoom < rooms.Count)
+            {
+                chosen = rooms[nextRoom++];
+                slotIndex = assignedRooms.Count;
+                assignedRooms.Add(chosen);
+                assignedCounts.Add(0);
+                assignedCaps.Add(RoomHumanBedCapacity(chosen));
+            }
+            else
+            {
+                // Prefer an already-assigned room with remaining bed capacity, else the last assigned room
+                slotIndex = assignedRooms.Count - 1;
+                for (int r = 0; r < assignedRooms.Count; r++)
+                {
+                    if (assignedCounts[r] + group.Count <= assignedCaps[r])
+                    {
+                        slotIndex = r;
+                        break;
+                    }
+                }
+                chosen = assignedRooms[slotIndex];
+            }
+
+            result[gIdx] = chosen;
+            for (int m = 0; m < group.Count; m++)
+            {
+                var c = group[m];
+                if (c == null) continue;
+                home.AddRoomOwnership(c.RefID, chosen.RefID);
+                assignedCounts[slotIndex]++;
+            }
+        }
+        return result;
+    }
+
     /// <summary>Faction ID argument: a literal ID, or "$key" = the first string stored under owner.AppendStrings[key].</summary>
-    static string ResolveFactionArg(EventInstance owner, string arg)
+    public static string ResolveFactionArg(EventInstance owner, string arg)
     {
         if (string.IsNullOrEmpty(arg) || !arg.StartsWith("$")) return arg;
         return owner.AppendStrings.TryGetValue(arg.Substring(1), out var stored) && stored != null && stored.Count > 0 ? stored[0] : "";
@@ -391,8 +573,8 @@ public static class ResidenceUtility
     /// <summary>
     /// Builds a new home in district for household (first = leader; CreateResidence picks a template with a
     /// bedroom each, templateID optional), makes it their home (leader / member types), gives each a private room (leader:
-    /// double bed first), names it after the leader and seeds their relationships. Null with nothing created when the
-    /// district is full or nothing fits. sendEvent false = no join events (load-time rehousing, FactionLoadCleanup).
+    /// mainRoom / double bed first), names it after the leader and seeds their relationships. Null with nothing created when
+    /// the district is full or nothing fits. sendEvent false = no join events (load-time rehousing, FactionLoadCleanup).
     /// </summary>
     public static Manageable AssignResidence(List<Character_Trainable> household, Manageable district, MemberType leaderType, MemberType memberType, string templateID = null, bool sendEvent = true)
     {
@@ -400,12 +582,15 @@ public static class ResidenceUtility
         var home = CreateResidence(district, household.Count, string.IsNullOrEmpty(templateID) ? null : templateID);
         if (home == null) return null;
 
+        var groups = new List<List<Character_Trainable>>(household.Count);
+        var mainFlags = new List<bool>(household.Count);
         for (int i = 0; i < household.Count; i++)
         {
             household[i].FactionManager.SetHomeFaction(home.ID, i == 0 ? leaderType : memberType, sendEvent);
-            if (AssignPrivateRoom(home, household[i], i == 0) == null)
-                Debug.LogError($"AssignResidence: no private room left in [{home.ID}] for {household[i].FullName}");
+            groups.Add(new List<Character_Trainable>() { household[i] });
+            mainFlags.Add(i == 0);
         }
+        AssignRoomGroups(home, groups, mainFlags);
         NameAfter(home, household[0]);
         InitializeRelationshipsBetween(household);
         return home;
@@ -519,7 +704,7 @@ public static class ResidenceUtility
     }
 
     /// <summary>Names a generated home (faction and its floors) after leader's family name: "(name)家" / "(name) Residence".</summary>
-    static void NameAfter(Manageable home, Character_Trainable leader)
+    public static void NameAfter(Manageable home, Character_Trainable leader)
     {
         string name = !string.IsNullOrEmpty(leader.LastName) ? leader.LastName : leader.FirstName;
         if (string.IsNullOrEmpty(name)) return;

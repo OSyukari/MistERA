@@ -124,6 +124,23 @@ public class SkillInstance : hasCategory
         return true;
     }
 
+    /// <summary>
+    /// Directly raises this skill to targetLevel (clamped to defined Levels) without running upgrade requirements.
+    /// Used by FactionGenerator's forceSatisfySkillsReq fallback when experience top-ups alone don't reach minLevel.
+    /// </summary>
+    public void ForceLevel(int targetLevel)
+    {
+        if (BaseRef == null || BaseRef.Levels == null || BaseRef.Levels.Count == 0) return;
+        int clamped = targetLevel < BaseRef.Levels.Count ? targetLevel : BaseRef.Levels.Count - 1;
+        if (clamped <= currentLevel) return;
+
+        bool refresh = GetStatMods().Count > 0;
+        currentLevel = clamped;
+        refresh = refresh || GetStatMods().Count > 0;
+        if (refresh && Owner != null && Owner.Stats != null) Owner.Stats.RefreshAllStats(true);
+        _cachedUses = null;
+    }
+
     List<SkillUse> _cachedUses = null;
     [JsonIgnore]
     public List<SkillUse> PossibleUses

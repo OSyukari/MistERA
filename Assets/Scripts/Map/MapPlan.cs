@@ -38,6 +38,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     // though, we do need to make sure the game does not store membertype inside save file, and always have the game use pointer to this object's stored membertypes
     // also, if there is no memberrelationship applicable, then we store null value so that we dont do the same query next time
     public List<MemberRelations> memberRelations = new List<MemberRelations>();
+    public List<FactionGenerator> factionGenerator = new List<FactionGenerator>();
 
     public void RegisterAllID(List<string> message)
     {
@@ -145,6 +146,13 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
                 string reverseKey = $"{o.memberTypeB}||{o.memberTypeA}";
                 if (!ID_Dictionary_MemberRelations.TryAdd(reverseKey, o)) Debug.Log($"failed to add Index_MemberRelations pair [{reverseKey}] due to duplicate");
             }
+        }
+
+        message.Add("Index_FactionGenerator : registering ID with list length [" + factionGenerator.Count + "]");
+        foreach (FactionGenerator o in this.factionGenerator)
+        {
+            if (o == null || string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary_FactionGenerator.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_FactionGenerator id [{o.ID}] due to duplicate");
         }
     }
     Dictionary<string, MapPlan> ID_Dictionary_Map = new Dictionary<string, MapPlan>();
@@ -255,6 +263,9 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         return ID_Dictionary_MemberRelations.TryGetValue($"{typeA}||{typeB}", out var result) ? result : null;
     }
 
+    Dictionary<string, FactionGenerator> ID_Dictionary_FactionGenerator = new Dictionary<string, FactionGenerator>();
+    public FactionGenerator GetByID_FactionGenerator(string id) { return !string.IsNullOrEmpty(id) && ID_Dictionary_FactionGenerator.TryGetValue(id, out var result) ? result : null; }
+
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Index_MapPlan;
@@ -270,6 +281,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.sharedHouseActivities != null) this.sharedHouseActivities.AddRange(l.sharedHouseActivities);
         if (l.sharedAssignableMemberTypes != null) this.sharedAssignableMemberTypes.AddRange(l.sharedAssignableMemberTypes);
         if (l.memberRelations != null) this.memberRelations.AddRange(l.memberRelations);
+        if (l.factionGenerator != null) this.factionGenerator.AddRange(l.factionGenerator);
         houseActivityCache.Clear();
     }
 

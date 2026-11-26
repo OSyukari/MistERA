@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class COM_Results
@@ -6,7 +6,7 @@ public class COM_Results
     // Universally required data:
     // - source faction, job, actor, package 
 
-    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Character_Trainable c, ExperienceLog log)
+    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Character_Trainable c, ExperienceLog log, bool success = true)
     {
         //Manageable faction; // job.FactionOwner
 
@@ -16,11 +16,22 @@ public class COM_Results
         bool isDoer = p.doer.Contains(c) || (effectiveRequirements.TreatReceiverAsDoer && p.receiver.Contains(c));
         bool isReceiver = p.receiver.Contains(c) || (effectiveRequirements.TreatDoerAsReceiver && p.doer.Contains(c));
 
-        if (results_character != null) foreach (var result in results_character) ResultCharaUtility.Apply( result, evp, c, isDoer, isReceiver,log);
+        if (results_character != null)
+        {
+            foreach (var result in results_character)
+            {
+                if (!success && (result.entry_conditions == null || !result.entry_conditions.applyOnFailure)) continue;
+                ResultCharaUtility.Apply(result, evp, c, isDoer, isReceiver, log);
+            }
+        }
+        if (!success) return;
+
         if (results_jobContainer != null) foreach(var result in results_jobContainer) result.Apply(job, p, evp, c);
         if (results_room != null) foreach (var result in results_room) result.Apply(job, p, evp, c);
 
         if (!c.hasSleepNeed && p.targetCOM != null && p.targetCOM.comTags.Contains("sleep")) c.FullRest(1);
+
+        if (results_home != null) foreach (var result in results_home) ResultFactionUtility.Apply(result, job, p, evp, c);
 
         if (results_jobOwner != null) foreach (var result in results_jobOwner) ResultFactionUtility.Apply(result, job, c);
 

@@ -15,7 +15,6 @@ public class Character_Body
 
     List<string> _cached_bodyDescriptions = new List<string>();
     List<string> _cached_internalTags = new List<string>();
-    bool _cached_internals_description = false;
 
     // null = rebuild on next read; cleared by EquipItem / UnequipItem / ClearBodyCaches
     List<string> _cached_exposedPortraitKeys = null;
@@ -48,65 +47,37 @@ public class Character_Body
         }
     }
 
+    // body descriptions are rebuilt on every read (they depend on skills, cycle, equipment, coverage too)
     public void NotifyInternalsContentChange()
     {
-        _cached_internals_description = false;
     }
     public void NotifyStimulated()
     {
         Stimulated = true;
     }
 
+    /// <summary> one description line per described organ, as currently visible (CharacterDescriptionUtility.BuildBody). Shared list, rebuilt on read </summary>
     [JsonIgnore]
     public List<string> BodyDescription
     {
         get
         {
-            if (!_cached_internals_description && GetBodyDescription()) return _cached_bodyDescriptions;
-            else return _cached_bodyDescriptions;
+            GetBodyDescription();
+            return _cached_bodyDescriptions;
         }
     }
+    /// <summary> short labels of the exposed organs (exposedKojoID text). Shared list, rebuilt on read </summary>
     [JsonIgnore]
     public List<string> BodyRevealingDesriptors { get
         {
-            if (!_cached_internals_description && GetBodyDescription()) return _cached_internalTags;
-            else return _cached_internalTags;
+            GetBodyDescription();
+            return _cached_internalTags;
         } }
-    protected bool GetBodyDescription()
+    protected void GetBodyDescription()
     {
-        _cached_internals_description = true;
-        _cached_bodyDescriptions.Clear();// = "";
+        _cached_bodyDescriptions.Clear();
         _cached_internalTags.Clear();
-        var tempList = new SortedDictionary<int,string>();
-        var tempList2 = new Dictionary<string, List<string>>();
-        foreach(var part in this.Body)
-        {
-            if (part.internals.Count < 1) continue;
-            foreach(var i in part.internals)
-            {
-                if (i.Base.exposedKojoID == "") continue;
-                if (i.GetRevealingScore(BodyEquipLayer.None) > 0) continue;
-                tempList.Add(i.sortOrder, i.Base.exposedKojoID);
-                if (!tempList2.ContainsKey(i.Base.exposedKojoID)) tempList2.Add(i.Base.exposedKojoID, new List<string>());
-                if (i.isExtremelyExpanded) tempList2[i.Base.exposedKojoID].Add("Expansion_Extreme");
-                else if (i.isVisiblyExpanded) tempList2[i.Base.exposedKojoID].Add("Expansion");
-            }
-        }
-        var string_tempList = tempList.Values.Distinct().ToList();
-        var relation = Owner.Relationships.FindRelationshipWith(Owner);
-        foreach(var kojoID in string_tempList)
-        {
-            var result = Owner.Relationships.Personality.GetKOJOMessage(kojoID, relation, tempList2[kojoID].Distinct().ToList(), null);
-            if (result == null) continue;
-            var dump = new List<string>();
-            result.DumpMessage(dump);
-            if (dump.Count < 1) continue;
-            _cached_bodyDescriptions.AddRange(dump);
-            _cached_internalTags.Add(LocalizeDictionary.QueryThenParse(kojoID));
-        }
-
-        _cached_internalTags = _cached_internalTags.Distinct().ToList();
-        return true;
+        CharacterDescriptionUtility.BuildBody(this, false, _cached_bodyDescriptions, _cached_internalTags);
     }
 
 
@@ -663,7 +634,6 @@ public class Character_Body
     {
         if (Owner == null) return;
         FillMissingBodyTraits(Owner, Owner.Appearance);
-        _cached_internals_description = false;
         if (refreshStats) RefreshOwnerTraitStats();
     }
 
@@ -677,7 +647,35 @@ public class Character_Body
         bodyTraits.Clear();
         ClearBodyTraitCache();
         FillMissingBodyTraits(Owner, Owner.Template != null ? Owner.Template.Appearance : Owner.Appearance);
-        _cached_internals_description = false;
+    }
+
+    /// <summary>
+    /// Body regenerate (Docs/Body/Plan_BodyRegenerate.md), the body part only - Character_Trainable.RegenerateBody runs the
+    /// rest (equipment, contents, pregnancy, stats) around it. Drops every part / organ (their traces go with them), re-reads
+    /// height / weight and every body trait from the template, then builds the parts again (AddMissing registers new wombs).
+    /// Returns the old organs so their records can be carried over.
+    /// </summary>
+    public List<BodyInternal_Instance> Regenerate()
+    {
+        var oldOrgans = new List<BodyInternal_Instance>();
+        if (Owner == null) return oldOrgans;
+        if (body != null) foreach (var part in body) oldOrgans.AddRange(part.internals);
+
+        if (Owner.Template != null)
+        {
+            Height = Owner.Template.Height;
+            Weight = Owner.Template.Weight;
+        }
+        ResetBodyTraitsFromTemplate();
+
+        body = null;
+        ClearBodyCaches();
+        AddMissing();
+        NotifyTracesChanged();
+        Climax = false;
+        Cum = false;
+        Stimulated = false;
+        return oldOrgans;
     }
 
     /// <summary>
@@ -706,7 +704,6 @@ public class Character_Body
 
         BodyTraitUtility.SetInList(bodyTraits, t);
         ClearBodyTraitCache();
-        _cached_internals_description = false;
         if (refreshStats) RefreshOwnerTraitStats();
         return true;
     }
@@ -719,7 +716,6 @@ public class Character_Body
         if (t == null) return;
         if (!bodyTraits.Remove(t.ID)) return;
         ClearBodyTraitCache();
-        _cached_internals_description = false;
         if (refreshStats) RefreshOwnerTraitStats();
     }
 
@@ -881,7 +877,6 @@ public class Character_Body
                     if (part.EquipItem(item, ref slots, forceEquip) && slots.Count < 1) break;
                 }
             }
-            _cached_internals_description = false;
             _cached_exposedPortraitKeys = null;
             return true;
         }
@@ -1147,7 +1142,6 @@ public class Character_Body
             returnVal = i.UnequipItem(itemRefID) || returnVal;
             //if (returnVal) break;
         }
-        _cached_internals_description = false;
         _cached_exposedPortraitKeys = null;
         return returnVal;
 

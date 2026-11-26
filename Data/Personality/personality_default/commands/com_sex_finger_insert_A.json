@@ -25,7 +25,8 @@
                             "_comment": "时停中",
                             "responses": [
                                 "com_sex_finger_insert_A_Climax_timestop_1",
-                                "com_sex_finger_insert_A_Climax_timestop_2"
+                                "com_sex_finger_insert_A_Climax_timestop_2",
+                                "com_sex_finger_insert_A_Climax_timestop_3"
                             ]
                         },
                         {
@@ -42,7 +43,8 @@
                             "_comment": "睡眠中",
                             "responses": [
                                 "com_sex_finger_insert_A_Climax_sleeping_1",
-                                "com_sex_finger_insert_A_Climax_sleeping_2"
+                                "com_sex_finger_insert_A_Climax_sleeping_2",
+                                "com_sex_finger_insert_A_Climax_sleeping_3"
                             ]
                         },
                         {
@@ -61,7 +63,8 @@
                             "_comment": "昏迷（非睡眠）",
                             "responses": [
                                 "com_sex_finger_insert_A_Climax_unconscious_1",
-                                "com_sex_finger_insert_A_Climax_unconscious_2"
+                                "com_sex_finger_insert_A_Climax_unconscious_2",
+                                "com_sex_finger_insert_A_Climax_unconscious_3"
                             ]
                         },
                         {
@@ -282,6 +285,15 @@
                                         "com_sex_finger_insert_A_Begin_21"
                                     ]
                                 }
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_insert_A_Begin_28",
+                                "com_sex_finger_insert_A_Begin_29",
+                                "com_sex_finger_insert_A_Begin_30"
                             ]
                         },
                         {
@@ -570,6 +582,32 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_insert_A_104",
+                                "com_sex_finger_insert_A_112",
+                                "com_sex_finger_insert_A_113"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_sex_finger_insert_A_105",
+                                        "com_sex_finger_insert_A_108",
+                                        "com_sex_finger_insert_A_109"
+                                    ]
+                                }
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
                             "requireSelfOnly": true,
                             "variants": [
                                 {
@@ -652,7 +690,10 @@
                                 "com_sex_finger_insert_A_Self_15",
                                 "com_sex_finger_insert_A_Self_16"
                             ],
-                            "_comment": "2.5.12 独自A指入自慰 尝试但结果负面 无允许 口上文"
+                            "_comment": "2.5.12 独自A指入自慰 尝试但结果负面 无允许 口上文",
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -741,7 +782,7 @@
                                                     "_comment": "2.2.7 玩家专用的 刚睡醒时的 被A指入 无允许 好意 口上文",
                                                     "responses": [
                                                         "com_sex_finger_insert_A_49",
-                                                        "com_sex_finger_insert_A_50",
+                                                        "com_sex_finger_insert_A_111",
                                                         "com_sex_finger_insert_A_51",
                                                         "com_sex_finger_insert_A_52",
                                                         "com_sex_finger_insert_A_53",
@@ -836,7 +877,13 @@
                                     "responses": [
                                         "com_sex_finger_insert_A_97",
                                         "com_sex_finger_insert_A_98",
-                                        "com_sex_finger_insert_A_99"
+                                        "com_sex_finger_insert_A_99",
+                                        "com_sex_finger_insert_A_79",
+                                        "com_sex_finger_insert_A_80",
+                                        "com_sex_finger_insert_A_81",
+                                        "com_sex_finger_insert_A_82",
+                                        "com_sex_finger_insert_A_83",
+                                        "com_sex_finger_insert_A_84"
                                     ],
                                     "variants": [
                                         {
@@ -850,6 +897,31 @@
                                                 "com_sex_finger_insert_A_88",
                                                 "com_sex_finger_insert_A_89",
                                                 "com_sex_finger_insert_A_90"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "fingering",
+                                                "spread_pussy",
+                                                "spread_ass",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被A指入 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_finger_insert_A_73",
+                                                "com_sex_finger_insert_A_74",
+                                                "com_sex_finger_insert_A_75",
+                                                "com_sex_finger_insert_A_76",
+                                                "com_sex_finger_insert_A_77",
+                                                "com_sex_finger_insert_A_78"
                                             ]
                                         }
                                     ]
@@ -906,7 +978,7 @@
                                             "_comment": "2.2.7 玩家专用的 刚睡醒时的 被A指入 无允许 好意 口上文",
                                             "responses": [
                                                 "com_sex_finger_insert_A_49",
-                                                "com_sex_finger_insert_A_50",
+                                                "com_sex_finger_insert_A_110",
                                                 "com_sex_finger_insert_A_51",
                                                 "com_sex_finger_insert_A_52",
                                                 "com_sex_finger_insert_A_53",
@@ -946,63 +1018,9 @@
                                         "com_sex_finger_insert_A_96"
                                     ]
                                 }
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "fingering",
-                                        "spread_pussy",
-                                        "spread_ass",
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被A指入 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_insert_A_73",
-                                        "com_sex_finger_insert_A_74",
-                                        "com_sex_finger_insert_A_75",
-                                        "com_sex_finger_insert_A_76",
-                                        "com_sex_finger_insert_A_77",
-                                        "com_sex_finger_insert_A_78"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被A指入 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "fingering",
-                                "spread_pussy",
-                                "spread_ass",
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_sex_finger_insert_A_79",
-                                "com_sex_finger_insert_A_80",
-                                "com_sex_finger_insert_A_81",
-                                "com_sex_finger_insert_A_82",
-                                "com_sex_finger_insert_A_83",
-                                "com_sex_finger_insert_A_84"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
                         }
@@ -1203,6 +1221,15 @@
                     "template": "commandAct",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_sex_finger_insert_A_Ongoing_10",
+                                "com_sex_finger_insert_A_Ongoing_11",
+                                "com_sex_finger_insert_A_Ongoing_12"
+                            ]
+                        },
+                        {
                             "requireSelfReceiver": true,
                             "_comment": "受方 → 对方 ｜ 接受",
                             "responses": [
@@ -1272,7 +1299,7 @@
                 "com_sex_finger_insert_A_Begin_4": "$self$跨坐到$target$身侧，把身后的穴口抵上指尖。\n\"我自己来坐进去……你手别动。\"",
                 "com_sex_finger_insert_A_Begin_5": "$self$深吸口气趴好，拍了拍自己的臀肉。\n\"来吧……先进根食指就够。\"",
                 "com_sex_finger_insert_A_Begin_6": "$self$把润滑油涂满$target$的手指，又抹了抹自己的穴口。\n\"涂匀了再进……会舒服点。\"",
-                "com_sex_finger_insert_A_Begin_7": "$self$僵住，抵在穴口的指尖让她呼吸乱了。\n\"等、等等……手指也要进去吗……\"",
+                "com_sex_finger_insert_A_Begin_7": "$self$猛地屏住气，抵在穴口的指尖让她呼吸乱了。\n\"等、等等……手指也要进去吗……\"",
                 "com_sex_finger_insert_A_Begin_8": "$self$缩了缩臀肉，却没躲开那根手指。\n\"唔……好奇怪……胀胀的……\"",
                 "com_sex_finger_insert_A_Begin_9": "$self$趴着不敢动，指尖挤进来时她抓紧了臂弯。\n\"慢、慢点……让我缓缓……\"",
                 "com_sex_finger_insert_A_Begin_10": "$self$睁大眼回头看着入体的手指，声音发飘。\n\"进了……这么深……唔……\"",
@@ -1299,7 +1326,7 @@
                 "com_sex_finger_insert_A_5": "$self$梦到了什么难为情的事，手指顶到深处时她腰抖了抖，穴肉咬紧又松开。",
                 "com_sex_finger_insert_A_6": "$self$翻了个身继续睡，臀缝里的手指顺势没得更深，她只是咂了咂嘴。",
                 "com_sex_finger_insert_A_7": "$self$维持着原本的姿势，菊穴含着入体的手指定住不动，穴肉本能地缩了缩。",
-                "com_sex_finger_insert_A_8": "$self$僵在原地，被手指撑开的穴口毫无反应，任由$target$缓缓抽送。",
+                "com_sex_finger_insert_A_8": "$self$一动不动地停在原地，被手指撑开的穴口毫无反应，任由$target$缓缓抽送。",
                 "com_sex_finger_insert_A_9": "$self$定格在弯腰的瞬间，臀瓣被掰开、菊穴被指尖钻弄，她连眼神都没变。",
                 "com_sex_finger_insert_A_10": "$self$的身子定住，手指在菊穴里画圈搅动，穴肉随着变形，她毫无所觉。",
                 "com_sex_finger_insert_A_11": "$self$保持着张腿的姿势，两根手指插在穴里随意抽送，时间恢复前她都不会知道。",
@@ -1366,7 +1393,7 @@
                 "com_sex_finger_insert_A_66": "$self$舒服得脚趾蜷紧，腰软得直往下塌。\n\"再加……再加根手指也行……哈啊……♡\"",
                 "com_sex_finger_insert_A_79": "$self$抓着身下能抓的东西，疼得手背绷紧：“好痛……拔出去……求你了！”",
                 "com_sex_finger_insert_A_80": "$self$咬着牙忍受干涩的摩擦，眼泪直打转。\n\"还没结束吗……难受死了……\"",
-                "com_sex_finger_insert_A_81": "$self$僵着身子数着时间，穴肉毫无反应。\n\"……你弄你的，别指望我出声。\"",
+                "com_sex_finger_insert_A_81": "$self$绷着身子数着时间，穴肉毫无反应。\n\"……你弄你的，别指望我出声。\"",
                 "com_sex_finger_insert_A_82": "$self$嫌恶地想合拢腿，被膝盖抵住分不开。\n\"恶心……快点拿出去……\"",
                 "com_sex_finger_insert_A_83": "$self$把脸埋进臂弯，声音闷闷的。\n\"我恨你……这种事……我记着呢……\"",
                 "com_sex_finger_insert_A_84": "$self$浑身绷紧，被撑开的胀意让她直冒冷汗。\n\"呜……太撑了……你轻点会死吗……\"",
@@ -1445,7 +1472,7 @@
                 "com_sex_finger_insert_A_102": "抽插暂告一段落，$self$略微调整了一下站姿，没有再开口。",
                 "com_sex_finger_insert_A_Ongoing_4": "手指还在后穴里缓缓抽动着，$self$绷紧腰背，连呼吸都变得有些艰难。",
                 "com_sex_finger_insert_A_Ongoing_5": "$self$抓紧身旁的支撑，忍着后穴传来的异物感与阵阵酸麻。",
-                "com_sex_finger_insert_A_Ongoing_6": "深处被不断顶弄的触感让$self$耳根发烫，只能死死咬住嘴唇。",
+                "com_sex_finger_insert_A_Ongoing_6": "深处被不断顶弄的触感让$self$耳根发烫，只能用力咬住嘴唇。",
                 "com_sex_finger_insert_A_Ongoing_7": "动作仍在继续，$self$保持着此刻的姿势没有多动。",
                 "com_sex_finger_insert_A_Ongoing_8": "$self$微微垂下视线，顺着当前的节奏安静地待在原地。",
                 "com_sex_finger_insert_A_Ongoing_9": "指间的抽插没有停下，$self$一时间没有发出别的声响。",
@@ -1454,7 +1481,27 @@
                 "com_sex_finger_insert_A_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_finger_insert_A_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_finger_insert_A_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_finger_insert_A_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_finger_insert_A_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_finger_insert_A_103": "指节在后穴里进出的触感一阵阵传来，$self$抿着唇没有开口，只顺着节奏微调了姿态。",
+                "com_sex_finger_insert_A_104": "$self$放慢了抽插的动作，低头确认$target$的状态：“……太深了吗？我退出来一点。”",
+                "com_sex_finger_insert_A_105": "感觉到紧窄的后穴渐渐软下来含住指根，$self$低声笑了笑：“已经适应得不错了嘛。”",
+                "com_sex_finger_insert_A_Begin_28": "$self$凑近$target$身后，指尖试探着抵开穴口慢慢推进：“……放松点，别夹这么紧。”",
+                "com_sex_finger_insert_A_Ongoing_10": "$self$手上抽送的动作没停，只是偏过头瞥了一眼旁边的$target$：“……你在旁边看得很起劲啊。”",
+                "com_sex_finger_insert_A_Climax_unconscious_3": "高潮的抽搐让$self$的四肢短暂地绷紧了一瞬，菊穴一缩一缩地咬住指根，她依然没有半分苏醒的迹象。",
+                "com_sex_finger_insert_A_Begin_29": "“会有点胀，忍一下就好。”$self$一边留意着$target$的肩背反应，一边稳稳送入指节。",
+                "com_sex_finger_insert_A_Begin_30": "$self$没有急着往深处顶，而是先让手指停在穴口里，等$target$的呼吸平缓些再缓缓试探。",
+                "com_sex_finger_insert_A_Climax_timestop_3": "菊穴绞紧手指剧烈收缩着，$self$却连眨眼都做不到，整个人仍停在时间冻结前的瞬间。",
+                "com_sex_finger_insert_A_Climax_sleeping_3": "后穴突然咬紧了体内的手指，$self$在梦里无意识地抓紧身下布料，脚趾蜷缩着颤了几下。",
+                "com_sex_finger_insert_A_106": "$self$垂眼没有回头，呼吸略微放慢，没有出声阻拦$target$的动作。",
+                "com_sex_finger_insert_A_107": "一阵酸胀从身后深处漫开，$self$轻轻吸了口气，静静等着这阵抽送过去。",
+                "com_sex_finger_insert_A_108": "“看来没那么难受了？”$self$顺着变软的穴肉微微弯起指节，按揉着深处的软肉。",
+                "com_sex_finger_insert_A_109": "后穴一吸一缩地缠住手指，$self$没有停下抽送，目光一直落在$target$泛红的耳根上。",
+                "com_sex_finger_insert_A_110": "$self$绷着身子不敢动，等那根手指停在穴里才小声开口。\n\"什么时候进来的……唔……先别动……\"",
+                "com_sex_finger_insert_A_Ongoing_11": "“盯着看这么久，想试试看吗？”$self$冲$target$挑了挑眉，手指仍在受方后穴里慢慢进出。",
+                "com_sex_finger_insert_A_Ongoing_12": "注意到$target$的目光，$self$略微侧开身子让出视线，方便旁边的$target$看得更清楚。",
+                "com_sex_finger_insert_A_111": "$self$绷着身子不敢动，等那根手指停在穴里才小声开口。\n\"什么时候进来的……唔……先别动……\"",
+                "com_sex_finger_insert_A_112": "“里面还是有点紧啊……”$self$停顿了半拍，试探着换了个角度轻按。",
+                "com_sex_finger_insert_A_113": "$self$收回些力道，让指尖在后穴里轻轻打转：“这样会不会好受些？”"
             },
             "en-us": {
                 "com_sex_finger_insert_A_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

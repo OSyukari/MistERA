@@ -12,7 +12,10 @@
                 "chara_status_fatigue_3": "%%chara_status_fatigue%%: Exhausted",
                 "chara_status_fatigue_tooltip": "This value is the character's current %%stats_derived_extended_stamina%% as a percentage. When it drops too low, the character becomes fatigued, lowering Mood.",
 
-                "chara_status_analgesic_tooltip": "Lowers sensitivity to pain."
+                "chara_status_analgesic_tooltip": "Lowers sensitivity to pain.",
+                "chara_status_sauna_refreshed": "Post-Sauna Relaxation",
+                "chara_status_sauna_refreshed_1": "Post-Sauna Relaxation",
+                "chara_status_sauna_refreshed_tooltip": "Relaxed after a sauna session, temporarily relieving %%chara_status_stress%% (non-stacking, up to 3 hours)."
             }
         }
     }

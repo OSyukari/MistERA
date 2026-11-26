@@ -84,48 +84,38 @@
                                         "com_touch_ears_Begin_Restrained_2",
                                         "com_touch_ears_Begin_Restrained_3"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被撫摸耳朵 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_ears_Begin_Allow_1",
+                                        "com_touch_ears_Begin_Allow_2",
+                                        "com_touch_ears_Begin_Allow_3",
+                                        "com_touch_ears_Begin_Allow_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被撫摸耳朵 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_ears_Begin_NoAllow_Like_1",
+                                        "com_touch_ears_Begin_NoAllow_Like_2",
+                                        "com_touch_ears_Begin_NoAllow_Like_3"
+                                    ]
                                 }
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_ears_Begin_Receiver_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被撫摸耳朵 有允许 口上文",
-                            "responses": [
-                                "com_touch_ears_Begin_Allow_1",
-                                "com_touch_ears_Begin_Allow_2",
-                                "com_touch_ears_Begin_Allow_3",
-                                "com_touch_ears_Begin_Allow_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被撫摸耳朵 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_ears_Begin_NoAllow_Like_1",
-                                "com_touch_ears_Begin_NoAllow_Like_2",
-                                "com_touch_ears_Begin_NoAllow_Like_3"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
                             ],
                             "_comment": "2.2.2 开始被撫摸耳朵 未允许 敌意 口上文",
                             "responses": [
@@ -133,11 +123,25 @@
                                 "com_touch_ears_Begin_NoAllow_Hate_2",
                                 "com_touch_ears_Begin_NoAllow_Hate_3"
                             ],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_ears_Begin_1"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -336,6 +340,23 @@
                                                 "com_touch_ears_restrained_fail_2",
                                                 "com_touch_ears_restrained_fail_3"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被撫摸耳朵 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_ears_Bad_Allow_1",
+                                                "com_touch_ears_Bad_Allow_2",
+                                                "com_touch_ears_Bad_Allow_3"
+                                            ]
                                         }
                                     ],
                                     "responses": [
@@ -361,93 +382,33 @@
                                 "com_touch_ears_Bad_NoAllow_1",
                                 "com_touch_ears_Bad_NoAllow_2",
                                 "com_touch_ears_Bad_NoAllow_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被撫摸耳朵 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_ears_Succ_Allow_1",
-                                        "com_touch_ears_Succ_Allow_2",
-                                        "com_touch_ears_Succ_Allow_3"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被撫摸耳朵 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_ears_Succ_NoAllow_1",
-                                "com_touch_ears_Succ_NoAllow_2",
-                                "com_touch_ears_Succ_NoAllow_3"
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被撫摸耳朵 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_ears_Bad_Allow_1",
-                                        "com_touch_ears_Bad_Allow_2",
-                                        "com_touch_ears_Bad_Allow_3"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被撫摸耳朵 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_touch_ears_Bad_NoAllow_1",
-                                "com_touch_ears_Bad_NoAllow_2",
-                                "com_touch_ears_Bad_NoAllow_3"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_ears_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_touch_ears_2"
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -585,17 +546,21 @@
                                 "com_touch_ears_Ongoing_NPC_1",
                                 "com_touch_ears_Ongoing_NPC_2",
                                 "com_touch_ears_Ongoing_NPC_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_ears_Ongoing_Fallback_1"
+                                "com_touch_ears_Ongoing_1"
                             ]
                         }
                     ]
@@ -679,7 +644,11 @@
                 "com_touch_ears_Ongoing_NPC_2": "揉捏停下后，$self$看着$target$调侃道：\"手感就这么好啊？一直捏个没完。\"",
                 "com_touch_ears_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，再捏下去耳朵都要红透了。\"",
                 "com_touch_ears_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
-                "com_touch_ears_Ongoing_Fallback_1": "$self$耳廓微微一动，静静地受着这番触碰。"
+                "com_touch_ears_Ongoing_Fallback_1": "$self$耳廓微微一动，静静地受着这番触碰。",
+                "com_touch_ears_Begin_1": "(unimplemented)",
+                "com_touch_ears_1": "(unimplemented)",
+                "com_touch_ears_2": "(unimplemented)",
+                "com_touch_ears_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_ears_Begin_Allow_1": "$self$ naturally leans her cheek into $target$'s palm, letting out a comfortable hum. \"Mmm... that tickles.\"",

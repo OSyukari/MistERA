@@ -202,18 +202,31 @@
                                 "com_furniture_prison_REMOVE_Begin_2",
                                 "com_furniture_prison_REMOVE_Begin_3"
                             ],
-                            "variants": []
-                        },
-                        {
+                            "variants": [],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_prison_REMOVE_Begin_13"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_prison_REMOVE_Begin_Fallback_1",
-                                "com_furniture_prison_REMOVE_Begin_Fallback_2"
+                                "com_furniture_prison_REMOVE_Begin_14"
                             ]
                         }
                     ]
@@ -315,7 +328,11 @@
                                 "com_furniture_prison_REMOVE_10",
                                 "com_furniture_prison_REMOVE_11",
                                 "com_furniture_prison_REMOVE_12"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -323,18 +340,20 @@
                             "responses": [
                                 "com_furniture_prison_REMOVE_Self_1",
                                 "com_furniture_prison_REMOVE_Self_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_prison_REMOVE_Fallback_1",
-                                "com_furniture_prison_REMOVE_Fallback_2"
+                                "com_furniture_prison_REMOVE_16"
                             ]
                         }
                     ]
@@ -516,18 +535,31 @@
                             ],
                             "responses": [
                                 "com_furniture_prison_REMOVE_Ongoing_Fallback_1"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_prison_REMOVE_Ongoing_4"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_prison_REMOVE_Ongoing_Fallback_2",
-                                "com_furniture_prison_REMOVE_Ongoing_Fallback_3"
+                                "com_furniture_prison_REMOVE_Ongoing_5"
                             ]
                         }
                     ]
@@ -623,7 +655,12 @@
                 "com_furniture_prison_REMOVE_Join_Fallback_1": "$self$朝走近的$target$点点头：\"多个人搭把手，这门能开得利索点。\"",
                 "com_furniture_prison_REMOVE_Join_Fallback_2": "\"来得正好，帮忙托一下门扇。\" $self$招呼了一句。",
                 "com_furniture_prison_REMOVE_JoinFailed_Fallback_1": "$self$看了眼窄小的门前过道，对$target$摆手：\"这儿站不下这么多人，不用挤了。\"",
-                "com_furniture_prison_REMOVE_JoinFailed_Fallback_2": "\"锁马上就开了，用不着再添人手。\" $self$朝$target$示意了一下。"
+                "com_furniture_prison_REMOVE_JoinFailed_Fallback_2": "\"锁马上就开了，用不着再添人手。\" $self$朝$target$示意了一下。",
+                "com_furniture_prison_REMOVE_Begin_13": "(unimplemented)",
+                "com_furniture_prison_REMOVE_Begin_14": "(unimplemented)",
+                "com_furniture_prison_REMOVE_16": "(unimplemented)",
+                "com_furniture_prison_REMOVE_Ongoing_4": "(unimplemented)",
+                "com_furniture_prison_REMOVE_Ongoing_5": "(unimplemented)"
             }
         }
     }

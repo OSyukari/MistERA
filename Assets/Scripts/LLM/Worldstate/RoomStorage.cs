@@ -42,12 +42,15 @@ public partial class LLM_WorldState
                 RoomNameShort = room.DisplayNameShort;
                 if (room.FactionOwner != null) OwnerFaction = room.FactionOwner.FactionDisplayName;
 
+                var player = scr_System_CampaignManager.current.Player;
                 List<string> aps = new List<string>();
                 foreach (var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(room.RefID, false))
                 {
                     if (ap.job.isPlayerRelatedJob) continue;
                     if (ap.isTemporaryAP) continue;
-                    aps.Add(ap.DescriptionText());
+                    // across a room divider: where it happens and whether the player sees it (Plan_DividerVisibility.md Q4)
+                    var apSight = MapUtility.DescribeSight(player, ap);
+                    aps.Add(apSight.Length > 0 ? $"{ap.DescriptionText()} ({apSight})" : ap.DescriptionText());
                 }
 
                 RoomInfo = $"{room.DisplayableFurnitureNames}";
@@ -66,7 +69,11 @@ public partial class LLM_WorldState
                     else
                     {
                         if (CharactersInRoomShort == null) CharactersInRoomShort = new Dictionary<string, string>();
-                        if (!CharactersInRoomShort.ContainsKey(c.FullName)) CharactersInRoomShort[c.FullName] = $"refID {c.RefID}, currently doing: {c.GetJobDescription()}";
+                        if (!CharactersInRoomShort.ContainsKey(c.FullName))
+                        {
+                            var sight = MapUtility.DescribeSight(player, c);
+                            CharactersInRoomShort[c.FullName] = $"refID {c.RefID}, currently doing: {c.GetJobDescription()}{(sight.Length > 0 ? $", {sight}" : "")}";
+                        }
                     }
                 }
 

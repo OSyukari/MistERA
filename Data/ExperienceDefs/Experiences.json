@@ -5,7 +5,9 @@
 {  "ExperienceID":"experience_cooking", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["cooking"] , "ExcludeOwnerTags":[] },
 {  "ExperienceID":"experience_farming", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["farming"] , "ExcludeOwnerTags":[] },
 {  "ExperienceID":"experience_social", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["social", "interaction"] , "ExcludeOwnerTags":[] },
-{  "ExperienceID":"experience_operating", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["operating"] , "ExcludeOwnerTags":[] }
+{  "ExperienceID":"experience_operating", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["operating"] , "ExcludeOwnerTags":[] },
+{  "ExperienceID":"experience_reading", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["reading"] , "ExcludeOwnerTags":[] },
+{  "ExperienceID":"experience_exercise", "tags":[], "RequiredOwnerTags":[], "RequiredCOMTags":["exercise"] , "ExcludeOwnerTags":[] }
         ]
     },
 "Dictionary":
@@ -23,6 +25,10 @@
     "experience_intimacy":"亲密经验",
     "experience_intimacy_tooltip":"通过摸头、拥抱及日常抚摸、按摩积累，用于提升亲密技能。",
     "experience_farming":"农活经验",
+    "experience_reading":"阅读经验",
+    "experience_reading_tooltip":"通过阅读书籍与学习积累，用于提升阅读技能。",
+    "experience_exercise":"锻炼经验",
+    "experience_exercise_tooltip":"通过体能训练与日常锻炼积累，用于提升锻炼技能。",
 
     "experience_perception":"察觉经验",
     "experience_perception_tooltip":"str，搜索，寻找，追踪",
@@ -74,6 +80,10 @@
     "experience_intimacy": "Intimacy Exp",
     "experience_intimacy_tooltip": "Gained through head pats, hugs, and ordinary touching or massage. Advances the Intimacy skill.",
     "experience_farming": "Farming Exp",
+    "experience_reading": "Reading Exp",
+    "experience_reading_tooltip": "Gained through reading books and studying. Advances the Reading skill.",
+    "experience_exercise": "Exercise Exp",
+    "experience_exercise_tooltip": "Gained through physical training and workouts. Advances the Exercise skill.",
 
     "experience_perception": "Perception Exp",
     "experience_perception_tooltip": "str, Searching, Finding, Tracking",

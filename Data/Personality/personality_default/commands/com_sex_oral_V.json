@@ -261,75 +261,76 @@
                                         "com_sex_oral_V_Begin_23",
                                         "com_sex_oral_V_Begin_24"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cunnilingus",
+                                        "spread_pussy",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被舔阴 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_1",
+                                        "com_sex_oral_V_Begin_2",
+                                        "com_sex_oral_V_Begin_3",
+                                        "com_sex_oral_V_Begin_4",
+                                        "com_sex_oral_V_Begin_5",
+                                        "com_sex_oral_V_Begin_6"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cunnilingus",
+                                        "spread_pussy",
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被舔阴 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_7",
+                                        "com_sex_oral_V_Begin_8",
+                                        "com_sex_oral_V_Begin_9",
+                                        "com_sex_oral_V_Begin_10",
+                                        "com_sex_oral_V_Begin_11",
+                                        "com_sex_oral_V_Begin_12"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "cunnilingus",
+                                        "spread_pussy",
+                                        "surprised"
+                                    ],
+                                    "_comment": "对方初体验 开始舔阴（被侍奉的一方）",
+                                    "responses": [
+                                        "com_sex_oral_V_Begin_FE_Partner_1",
+                                        "com_sex_oral_V_Begin_FE_Partner_2",
+                                        "com_sex_oral_V_Begin_FE_Partner_3"
+                                    ]
                                 }
                             ],
                             "responses": [
                                 "com_sex_oral_V_Begin_25",
                                 "com_sex_oral_V_Begin_26",
-                                "com_sex_oral_V_Begin_27"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            }
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被舔阴 有允许 口上文",
-                            "responses": [
-                                "com_sex_oral_V_Begin_1",
-                                "com_sex_oral_V_Begin_2",
-                                "com_sex_oral_V_Begin_3",
-                                "com_sex_oral_V_Begin_4",
-                                "com_sex_oral_V_Begin_5",
-                                "com_sex_oral_V_Begin_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被舔阴 未允许 好意 口上文",
-                            "responses": [
-                                "com_sex_oral_V_Begin_7",
-                                "com_sex_oral_V_Begin_8",
-                                "com_sex_oral_V_Begin_9",
-                                "com_sex_oral_V_Begin_10",
-                                "com_sex_oral_V_Begin_11",
-                                "com_sex_oral_V_Begin_12"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
-                            ],
-                            "_comment": "2.2.2 开始被舔阴 未允许 敌意 口上文",
-                            "responses": [
+                                "com_sex_oral_V_Begin_27",
                                 "com_sex_oral_V_Begin_13",
                                 "com_sex_oral_V_Begin_14",
                                 "com_sex_oral_V_Begin_15",
@@ -340,7 +341,17 @@
                             "requirement": {
                                 "requireSelfAction": false,
                                 "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
                             },
+                            "_comment": "施方 开始 com_sex_oral_V",
+                            "responses": [
+                                "com_sex_oral_V_Begin_28"
+                            ],
                             "variants": [
                                 {
                                     "requirement": {
@@ -440,26 +451,6 @@
                                         "com_sex_oral_V_Begin_FE_5",
                                         "com_sex_oral_V_Begin_FE_6",
                                         "com_sex_oral_V_Begin_FE_8"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "surprised"
-                                    ],
-                                    "_comment": "对方初体验 开始舔阴（被侍奉的一方）",
-                                    "responses": [
-                                        "com_sex_oral_V_Begin_FE_Partner_1",
-                                        "com_sex_oral_V_Begin_FE_Partner_2",
-                                        "com_sex_oral_V_Begin_FE_Partner_3"
                                     ]
                                 }
                             ]
@@ -623,12 +614,137 @@
                                                 "com_sex_oral_V_98",
                                                 "com_sex_oral_V_99"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment1": "玩家专用 刚睡醒时的 舔阴口上文",
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "cunnilingus",
+                                                        "spread_pussy",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔阴 有允许 口上文",
+                                                    "responses": [
+                                                        "com_sex_oral_V_43",
+                                                        "com_sex_oral_V_44",
+                                                        "com_sex_oral_V_45",
+                                                        "com_sex_oral_V_46",
+                                                        "com_sex_oral_V_47",
+                                                        "com_sex_oral_V_48"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "cunnilingus",
+                                                        "spread_pussy",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔阴 无允许 好意 口上文",
+                                                    "responses": [
+                                                        "com_sex_oral_V_49",
+                                                        "com_sex_oral_V_50",
+                                                        "com_sex_oral_V_51",
+                                                        "com_sex_oral_V_52",
+                                                        "com_sex_oral_V_53",
+                                                        "com_sex_oral_V_54"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被舔阴 无允许 敌意 口上文",
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "responses": [
+                                                "com_sex_oral_V_55",
+                                                "com_sex_oral_V_56",
+                                                "com_sex_oral_V_57",
+                                                "com_sex_oral_V_58",
+                                                "com_sex_oral_V_59",
+                                                "com_sex_oral_V_60"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被舔阴 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_V_61",
+                                                "com_sex_oral_V_62",
+                                                "com_sex_oral_V_63",
+                                                "com_sex_oral_V_64",
+                                                "com_sex_oral_V_65",
+                                                "com_sex_oral_V_66"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "surprised"
+                                            ],
+                                            "_comment": "对方初体验 舔阴（被侍奉的一方）",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_Partner_1",
+                                                "com_sex_oral_V_92",
+                                                "com_sex_oral_V_93"
+                                            ]
                                         }
                                     ],
                                     "responses": [
                                         "com_sex_oral_V_112",
                                         "com_sex_oral_V_113",
-                                        "com_sex_oral_V_114"
+                                        "com_sex_oral_V_114",
+                                        "com_sex_oral_V_67",
+                                        "com_sex_oral_V_68",
+                                        "com_sex_oral_V_69",
+                                        "com_sex_oral_V_70",
+                                        "com_sex_oral_V_71",
+                                        "com_sex_oral_V_72"
                                     ]
                                 },
                                 {
@@ -647,50 +763,64 @@
                                                 "com_sex_oral_V_107",
                                                 "com_sex_oral_V_108"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被舔阴 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_oral_V_73",
+                                                "com_sex_oral_V_74",
+                                                "com_sex_oral_V_75",
+                                                "com_sex_oral_V_76",
+                                                "com_sex_oral_V_77",
+                                                "com_sex_oral_V_78"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "cunnilingus",
+                                                "spread_pussy",
+                                                "surprised"
+                                            ],
+                                            "_comment": "对方初体验 舔阴（被侍奉的一方）",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_Partner_1",
+                                                "com_sex_oral_V_FE_Partner_2",
+                                                "com_sex_oral_V_FE_Partner_3"
+                                            ]
                                         }
                                     ],
                                     "responses": [
                                         "com_sex_oral_V_115",
                                         "com_sex_oral_V_116",
-                                        "com_sex_oral_V_117"
+                                        "com_sex_oral_V_117",
+                                        "com_sex_oral_V_79",
+                                        "com_sex_oral_V_80",
+                                        "com_sex_oral_V_81",
+                                        "com_sex_oral_V_82",
+                                        "com_sex_oral_V_83",
+                                        "com_sex_oral_V_84"
                                     ]
                                 },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "com_sex_oral_V_100",
-                                        "com_sex_oral_V_101",
-                                        "com_sex_oral_V_102"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_sex_oral_V_109",
-                                "com_sex_oral_V_110",
-                                "com_sex_oral_V_111"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            }
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -769,25 +899,140 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被舔阴 结果正面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_oral_V_61",
-                                        "com_sex_oral_V_62",
-                                        "com_sex_oral_V_63",
-                                        "com_sex_oral_V_64",
-                                        "com_sex_oral_V_65",
-                                        "com_sex_oral_V_66"
+                                        "com_sex_oral_V_100",
+                                        "com_sex_oral_V_101",
+                                        "com_sex_oral_V_102"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_oral_V_109",
+                                "com_sex_oral_V_110",
+                                "com_sex_oral_V_111"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 com_sex_oral_V 结果",
+                            "responses": [
+                                "com_sex_oral_V_118",
+                                "com_sex_oral_V_119",
+                                "com_sex_oral_V_120"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_oral_V 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_V_121"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_M"
+                                                ]
+                                            },
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "targetBaseID": "PLAYER"
+                                                    },
+                                                    "variants": [
+                                                        {
+                                                            "requirement": {
+                                                                "requirePermission": true
+                                                            },
+                                                            "extraSelfPortraitTags": [
+                                                                "sex",
+                                                                "doer",
+                                                                "cunnilingus",
+                                                                "blush",
+                                                                "shy",
+                                                                "love"
+                                                            ],
+                                                            "_comment": "初体验 玩家专用 舔阴 有允许",
+                                                            "responses": [
+                                                                "com_sex_oral_V_FE_Player_1",
+                                                                "com_sex_oral_V_FE_Player_2",
+                                                                "com_sex_oral_V_FE_Player_3"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "_comment": "玩家专用（无允许兜底）",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_4",
+                                                        "com_sex_oral_V_FE_5",
+                                                        "com_sex_oral_V_96"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cunnilingus",
+                                                        "blush",
+                                                        "shy"
+                                                    ],
+                                                    "_comment": "初体验 舔阴 有允许（还不熟练）",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_1",
+                                                        "com_sex_oral_V_FE_2",
+                                                        "com_sex_oral_V_FE_9"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "doer",
+                                                        "cunnilingus",
+                                                        "blush",
+                                                        "shy",
+                                                        "trembling"
+                                                    ],
+                                                    "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
+                                                    "responses": [
+                                                        "com_sex_oral_V_FE_3",
+                                                        "com_sex_oral_V_89",
+                                                        "com_sex_oral_V_90"
+                                                    ]
+                                                }
+                                            ],
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "cunnilingus",
+                                                "fear",
+                                                "trembling",
+                                                "tearful"
+                                            ],
+                                            "_comment": "初体验 舔阴 未允许 敌意",
+                                            "responses": [
+                                                "com_sex_oral_V_FE_4",
+                                                "com_sex_oral_V_FE_5",
+                                                "com_sex_oral_V_85"
+                                            ]
+                                        }
                                     ]
                                 },
                                 {
@@ -817,8 +1062,8 @@
                                                     "_comment": "初体验 玩家专用 舔阴 有允许",
                                                     "responses": [
                                                         "com_sex_oral_V_FE_Player_1",
-                                                        "com_sex_oral_V_FE_Player_2",
-                                                        "com_sex_oral_V_FE_Player_3"
+                                                        "com_sex_oral_V_94",
+                                                        "com_sex_oral_V_95"
                                                     ]
                                                 }
                                             ],
@@ -826,7 +1071,7 @@
                                             "responses": [
                                                 "com_sex_oral_V_FE_4",
                                                 "com_sex_oral_V_FE_5",
-                                                "com_sex_oral_V_96"
+                                                "com_sex_oral_V_FE_6"
                                             ]
                                         },
                                         {
@@ -844,7 +1089,7 @@
                                             "responses": [
                                                 "com_sex_oral_V_FE_1",
                                                 "com_sex_oral_V_FE_2",
-                                                "com_sex_oral_V_FE_9"
+                                                "com_sex_oral_V_91"
                                             ]
                                         },
                                         {
@@ -862,8 +1107,8 @@
                                             "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
                                             "responses": [
                                                 "com_sex_oral_V_FE_3",
-                                                "com_sex_oral_V_89",
-                                                "com_sex_oral_V_90"
+                                                "com_sex_oral_V_FE_7",
+                                                "com_sex_oral_V_FE_8"
                                             ]
                                         }
                                     ],
@@ -879,305 +1124,8 @@
                                     "responses": [
                                         "com_sex_oral_V_FE_4",
                                         "com_sex_oral_V_FE_5",
-                                        "com_sex_oral_V_85"
+                                        "com_sex_oral_V_86"
                                     ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "surprised"
-                                    ],
-                                    "_comment": "对方初体验 舔阴（被侍奉的一方）",
-                                    "responses": [
-                                        "com_sex_oral_V_FE_Partner_1",
-                                        "com_sex_oral_V_92",
-                                        "com_sex_oral_V_93"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被舔阴 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_sex_oral_V_67",
-                                "com_sex_oral_V_68",
-                                "com_sex_oral_V_69",
-                                "com_sex_oral_V_70",
-                                "com_sex_oral_V_71",
-                                "com_sex_oral_V_72"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "targetBaseID": "PLAYER",
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment1": "玩家专用 刚睡醒时的 舔阴口上文",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被舔阴 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_oral_V_43",
-                                        "com_sex_oral_V_44",
-                                        "com_sex_oral_V_45",
-                                        "com_sex_oral_V_46",
-                                        "com_sex_oral_V_47",
-                                        "com_sex_oral_V_48"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被舔阴 无允许 好意 口上文",
-                                    "responses": [
-                                        "com_sex_oral_V_49",
-                                        "com_sex_oral_V_50",
-                                        "com_sex_oral_V_51",
-                                        "com_sex_oral_V_52",
-                                        "com_sex_oral_V_53",
-                                        "com_sex_oral_V_54"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被舔阴 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "cunnilingus",
-                                "spread_pussy",
-                                "scared",
-                                "submissive"
-                            ],
-                            "responses": [
-                                "com_sex_oral_V_55",
-                                "com_sex_oral_V_56",
-                                "com_sex_oral_V_57",
-                                "com_sex_oral_V_58",
-                                "com_sex_oral_V_59",
-                                "com_sex_oral_V_60"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            },
-                            "responses": [
-                                "com_sex_oral_V_118",
-                                "com_sex_oral_V_119",
-                                "com_sex_oral_V_120"
-                            ],
-                            "variants": [
-                                {
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "receiver",
-                                                "cunnilingus",
-                                                "spread_pussy",
-                                                "pain",
-                                                "bored",
-                                                "doubt",
-                                                "disappointed"
-                                            ],
-                                            "_comment": "2.1.4 ($self$) 被舔阴 结果负面 有允许 口上文",
-                                            "responses": [
-                                                "com_sex_oral_V_73",
-                                                "com_sex_oral_V_74",
-                                                "com_sex_oral_V_75",
-                                                "com_sex_oral_V_76",
-                                                "com_sex_oral_V_77",
-                                                "com_sex_oral_V_78"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
-                                                    "firstexp_M"
-                                                ]
-                                            },
-                                            "variants": [
-                                                {
-                                                    "requirement": {
-                                                        "targetBaseID": "PLAYER"
-                                                    },
-                                                    "variants": [
-                                                        {
-                                                            "requirement": {
-                                                                "requirePermission": true
-                                                            },
-                                                            "extraSelfPortraitTags": [
-                                                                "sex",
-                                                                "doer",
-                                                                "cunnilingus",
-                                                                "blush",
-                                                                "shy",
-                                                                "love"
-                                                            ],
-                                                            "_comment": "初体验 玩家专用 舔阴 有允许",
-                                                            "responses": [
-                                                                "com_sex_oral_V_FE_Player_1",
-                                                                "com_sex_oral_V_94",
-                                                                "com_sex_oral_V_95"
-                                                            ]
-                                                        }
-                                                    ],
-                                                    "_comment": "玩家专用（无允许兜底）",
-                                                    "responses": [
-                                                        "com_sex_oral_V_FE_4",
-                                                        "com_sex_oral_V_FE_5",
-                                                        "com_sex_oral_V_FE_6"
-                                                    ]
-                                                },
-                                                {
-                                                    "requirement": {
-                                                        "requirePermission": true
-                                                    },
-                                                    "extraSelfPortraitTags": [
-                                                        "sex",
-                                                        "doer",
-                                                        "cunnilingus",
-                                                        "blush",
-                                                        "shy"
-                                                    ],
-                                                    "_comment": "初体验 舔阴 有允许（还不熟练）",
-                                                    "responses": [
-                                                        "com_sex_oral_V_FE_1",
-                                                        "com_sex_oral_V_FE_2",
-                                                        "com_sex_oral_V_91"
-                                                    ]
-                                                },
-                                                {
-                                                    "requirement": {
-                                                        "requireSelfAttitudeGTE": "Like"
-                                                    },
-                                                    "extraSelfPortraitTags": [
-                                                        "sex",
-                                                        "doer",
-                                                        "cunnilingus",
-                                                        "blush",
-                                                        "shy",
-                                                        "trembling"
-                                                    ],
-                                                    "_comment": "初体验 舔阴 未允许 好意（还不熟练）",
-                                                    "responses": [
-                                                        "com_sex_oral_V_FE_3",
-                                                        "com_sex_oral_V_FE_7",
-                                                        "com_sex_oral_V_FE_8"
-                                                    ]
-                                                }
-                                            ],
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "cunnilingus",
-                                                "fear",
-                                                "trembling",
-                                                "tearful"
-                                            ],
-                                            "_comment": "初体验 舔阴 未允许 敌意",
-                                            "responses": [
-                                                "com_sex_oral_V_FE_4",
-                                                "com_sex_oral_V_FE_5",
-                                                "com_sex_oral_V_86"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
-                                                    "firstexp_partner_M"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "receiver",
-                                                "cunnilingus",
-                                                "spread_pussy",
-                                                "surprised"
-                                            ],
-                                            "_comment": "对方初体验 舔阴（被侍奉的一方）",
-                                            "responses": [
-                                                "com_sex_oral_V_FE_Partner_1",
-                                                "com_sex_oral_V_FE_Partner_2",
-                                                "com_sex_oral_V_FE_Partner_3"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.6 ($self$) 被舔阴 结果负面 未允许 口上文",
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "cunnilingus",
-                                        "spread_pussy",
-                                        "angry",
-                                        "cry",
-                                        "glare",
-                                        "disgust",
-                                        "pouting",
-                                        "sad",
-                                        "troubled",
-                                        "silence"
-                                    ],
-                                    "responses": [
-                                        "com_sex_oral_V_79",
-                                        "com_sex_oral_V_80",
-                                        "com_sex_oral_V_81",
-                                        "com_sex_oral_V_82",
-                                        "com_sex_oral_V_83",
-                                        "com_sex_oral_V_84"
-                                    ],
-                                    "requirement": {
-                                        "requireSelfAction": false,
-                                        "requireTargetAction": false,
-                                        "allowRecording": true
-                                    }
                                 }
                             ]
                         }
@@ -1372,13 +1320,17 @@
                                 "com_sex_oral_V_Ongoing_4",
                                 "com_sex_oral_V_Ongoing_5",
                                 "com_sex_oral_V_Ongoing_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_V 进行中",
                             "responses": [
                                 "com_sex_oral_V_Ongoing_7",
                                 "com_sex_oral_V_Ongoing_8",
@@ -1623,7 +1575,9 @@
                 "com_sex_oral_V_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_oral_V_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_oral_V_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_oral_V_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_oral_V_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_oral_V_121": "(unimplemented)",
+                "com_sex_oral_V_Begin_28": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_oral_V_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

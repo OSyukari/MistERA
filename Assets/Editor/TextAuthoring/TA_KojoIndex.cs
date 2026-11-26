@@ -53,18 +53,21 @@ public class TA_KojoIndex : TA_DocBuilderBase
             {
                 var e = entries[keys[k]];
                 if (e == null) continue;
-                TA_KojoShadow.Entry(p.ID, keys[k], e, entries, callResolves, findings);
+                var cmd = CommandKeyOf(keys[k], commands);
+                TA_KojoShadow.Entry(p.ID, keys[k], e, entries, callResolves, cmd != null, findings);
                 var o = new JObject { ["provider"] = p.ID, ["entry"] = keys[k] };
                 // binding (T3): absent = no template yet, "none" = exempt
                 if (!string.IsNullOrEmpty(e.template)) o["template"] = e.template;
                 if (!string.IsNullOrEmpty(e.templateNote)) o["templateNote"] = e.templateNote;
                 DefinitionOf(p.ID, keys[k], out var defFile, out var defPath);
-                var cmd = CommandKeyOf(keys[k], commands);
                 // a kojo-override entry is listed with its command (viewer groups and sorts by it)
                 if (cmd?.overrideOf != null) { o["overrideOf"] = cmd.overrideOf; if (cmd.side != null) o["overrideSide"] = cmd.side; }
                 // who takes part (COM.kojoParticipants or Auto), shown on the entry so a wrong Auto is easy to spot
                 if (cmd?.participants != null) o["participants"] = cmd.participants;
-                TA_KojoTemplate.Entry(p.ID, keys[k], e, defFile, defPath, cmd, callResolves, findings, out var tplSummary);
+                // a branch miss on an own entry falls through to the fallback personality (Character_Personality.GetKOJOMessage)
+                var fallback = Fallback(p);
+                bool fallbackCovers = fallback != null && Resolves(fallback, keys[k]);
+                TA_KojoTemplate.Entry(p.ID, keys[k], e, defFile, defPath, cmd, callResolves, fallbackCovers, findings, out var tplSummary);
                 if (tplSummary != null) o["tpl"] = tplSummary;
                 var redirect = e.CheckRedirect(keys[k]);
                 if (redirect != keys[k]) o["redirect"] = redirect;

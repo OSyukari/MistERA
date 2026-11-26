@@ -39,10 +39,47 @@ public class PetWalkActivitySpec
     /// <summary>
     /// Command tag of walking: destinations are the rooms of any venue in the home's world whose furniture offers a command
     /// with it (RecreationUtility.WorldVenuesOffering - no authored venue list), and the walk itself is those commands.
+    /// The default for every pet; walkComTagOverrides replace it per pet.
     /// </summary>
-    public string walkComTag = "activity_recreation_walk";
+    public string walkComTag = "stroll";
+    /// <summary>The first entry whose actorKeyword the pet has (Character_Trainable.ActorKeywords) replaces walkComTag (a large dog jogs).</summary>
+    public List<PetWalkComTagOverride> walkComTagOverrides = new List<PetWalkComTagOverride>();
+    /// <summary>The furniture offering the walk command must carry one of these FurnitureBase.Tags (e.g. "outdoor"); empty = any furniture.</summary>
+    public List<string> furnitureTags = new List<string>();
     public int minimumOutdoorMinutes = 15;
     public int returnBufferMinutes = 5;
+
+    /// <summary>The walk command tag for pet: its first matching override, else walkComTag.</summary>
+    public string WalkComTagFor(Character_Trainable pet)
+    {
+        if (pet != null && walkComTagOverrides != null)
+        {
+            var keywords = pet.ActorKeywords;
+            for (int i = 0; i < walkComTagOverrides.Count; i++)
+            {
+                var entry = walkComTagOverrides[i];
+                if (entry != null && !string.IsNullOrEmpty(entry.walkComTag) && keywords.Contains(entry.actorKeyword)) return entry.walkComTag;
+            }
+        }
+        return walkComTag;
+    }
+
+    /// <summary>furnitureTags is empty, or furniture carries one of them - it may offer the walk.</summary>
+    public bool AllowsFurniture(FurnitureBase furniture)
+    {
+        if (furnitureTags == null || furnitureTags.Count == 0) return true;
+        if (furniture?.Tags == null) return false;
+        for (int i = 0; i < furnitureTags.Count; i++)
+            if (furniture.Tags.Contains(furnitureTags[i])) return true;
+        return false;
+    }
+}
+
+/// <summary>PetWalkActivitySpec.walkComTagOverrides entry: a pet with actorKeyword walks by walkComTag.</summary>
+public class PetWalkComTagOverride
+{
+    public string actorKeyword = "";
+    public string walkComTag = "";
 }
 
 /// <summary>
@@ -115,6 +152,13 @@ public class RecreationActivity
     /// activity whose fee covers it leaves it empty.
     /// </summary>
     public ItemEntry entranceFee = null;
+
+    /// <summary>
+    /// Optional custom event started instead of Recreation_FeeApproval / Recreation_Invite when approving or confirming
+    /// this activity. Runs on the approver (silently with npcDecides for NPCs), may check conditions / early-abort via
+    /// decline, inject custom options into StoredOptions[approvalOptionsKey], and jump to approvalTargetEvent.
+    /// </summary>
+    public string approvalEventID = "";
 
     /// <summary>
     /// The room Job_Activity gathers this activity's participants in before launch (a room ID at the venue). "" = the
@@ -285,6 +329,7 @@ public class RecreationActivity
         result.gatherFailedEventID = execution.gatherFailedEventID;
         result.endEventID = execution.endEventID;
         result.entranceFee = execution.entranceFee;
+        result.approvalEventID = execution.approvalEventID;
         result.allowWalkIn = false;
         result.minHours = System.Math.Max(MinHours, execution.MinHours);
         result.maxHours = System.Math.Min(MaxHours, execution.MaxHours);

@@ -12,7 +12,7 @@
                 "value": 30000,
                 "Tags": [],
                 "givesJob": [
-                    { "comID": ["com_furniture_takingBreak", "com_furniture_takingLongBreak"] },
+                    { "comID": ["com_furniture_takingBreak"] },
                     { "comTags": ["instrument_practice_outdoor"] }
                 ]
             }

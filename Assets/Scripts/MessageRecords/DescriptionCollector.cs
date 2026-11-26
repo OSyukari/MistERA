@@ -56,10 +56,11 @@ public class DescriptionCollector : I_Records
             else return false;
         }
         if (DirectlyRelated(c)) return message.Length > 0;
-        // happening behind a stall's door (room divider blocking visibility) - no actor of it is seen
-        if (Visibility == VisibilityLevel.Roomwide && room != null && MapUtility.NoneVisibleTo(c, RelevantActors))
+        // happening behind a stall's door (room divider blocking visibility) - no actor of it is seen; a divider
+        // enter / leave line: neither side of its door is seen (MapUtility.RecordHiddenFrom)
+        if (Visibility == VisibilityLevel.Roomwide && room != null && MapUtility.RecordHiddenFrom(c, this))
         {
-            Debug.LogWarning($"[Visibility] description hidden from {c.FirstName} (no actor visible across a room divider): {message_excludeRelated}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Visibility) Debug.LogWarning($"[Visibility] description hidden from {c.FirstName} (no actor visible across a room divider): {message_excludeRelated}");
             return false;
         }
         else return message_excludeRelated.Length > 0;
@@ -67,6 +68,21 @@ public class DescriptionCollector : I_Records
     public bool RightAlign(Character_Trainable c)
     {
         return c != null && !DirectlyRelated(c);
+    }
+
+    /// <summary>
+    /// Door stamp of a divider enter / leave line (FurnitureOccupancyUtility.LogDividerMove): the room and the divider
+    /// (its RefID) it went through. Such a line is seen by whoever sees either side of the door, not judged by where its
+    /// actor is afterwards (MapUtility.RecordHiddenFrom). Not saved - filtering happens before anything is stored.
+    /// Docs/Furniture/Plan_DividerVisibility.md §6
+    /// </summary>
+    [JsonIgnore] public int crossingRoomRef = -1;
+    [JsonIgnore] public int crossingScope = -1;
+    [JsonIgnore] public bool HasCrossing { get { return crossingScope >= 0; } }
+    public void SetCrossing(Room_Instance room, Job_Furniture divider)
+    {
+        crossingRoomRef = room == null ? -1 : room.RefID;
+        crossingScope = divider == null ? -1 : divider.RefID;
     }
 
     public string message = "";

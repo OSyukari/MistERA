@@ -21,6 +21,43 @@
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "join", "line": "otaku_arcade_join", "isLast": true },
             { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "line": "otaku_arcade_late", "isLast": true }
         ] },
+        { "ID": "Otaku_Arcade_Approval", "allowDuplicate": true, "_comment": "Branch options run every Result even after a failed check, so the checks only pick a label; options are added in single-option branches. 6+ tokens: approve; fewer: exchange question, then approve.", "events": [
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "_comment": "Request text: cost line instead of the (absent) entrance fee lines.", "options": [
+                { "option": "_init", "Results": [
+                    { "Type": "SetAppendString", "arguments": ["feeCostKey", "otaku_arcade_fee_cost"] },
+                    { "Type": "ExecuteCallbackPermissive", "arguments": ["refreshRequestText"] },
+                    { "Type": "JumpToLabel", "arguments": ["", "check"] }
+                ] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "check", "options": [
+                { "option": "enough", "Results": [
+                    { "Type": "FactionHasItem", "arguments": ["$payerFactionID", "item_arcade_token", "6"] },
+                    { "Type": "JumpToLabel", "arguments": ["", "approve"] }
+                ] },
+                { "option": "short", "Results": [
+                    { "Type": "AddExchangeOption", "arguments": ["exchangeOptions", "otaku_arcade_exchange_600", "currency_JPY", "600", "item_arcade_token", "6", "true"] },
+                    { "Type": "AddExchangeOption", "arguments": ["exchangeOptions", "otaku_arcade_exchange_2000", "currency_JPY", "2000", "item_arcade_token", "20", "false"] },
+                    { "Type": "JumpToLabel", "arguments": ["", "exchange"] }
+                ] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp", "label": "exchange", "_comment_portrait": "inviter: set by an invitation (StartPlayerPrompt); a fee request has none - no portrait.", "UISpec": { "portraitRefKey": "inviter" }, "question": "otaku_arcade_exchange_question", "npcDecides": true,
+              "loadOptionsKey": "exchangeOptions",
+              "loadOptionsResults": [{ "Type": "JumpToLabel", "arguments": ["", "exchanged"] }],
+              "options": [
+                { "option": "Recreation_FeeApproval_decline", "isDefaultCancel": true, "Results": [
+                    { "Type": "ExecuteCallbackPermissive", "arguments": ["decline"] },
+                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                ] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "exchanged", "line": "otaku_arcade_exchanged", "nextEntryLabel": "approve" },
+            { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "label": "approve", "options": [
+                { "option": "_add", "Results": [
+                    { "Type": "AddApprovalOption", "arguments": ["otaku_arcade_approve_use_existing", "true"] },
+                    { "Type": "JumpToAppendEvent", "arguments": ["approvalTargetEvent", ""] }
+                ] }
+            ] },
+            { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "end", "line": "", "isLast": true }
+        ] },
         { "ID": "Otaku_Manga_Begin", "events": [
             { "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp", "options": [
                 { "option": "join", "Results": [{ "Type": "ExistAppendStrings", "arguments": ["isJoin"] }, { "Type": "JumpToLabel", "arguments": ["", "join"] }] },
@@ -85,6 +122,12 @@
     "Dictionary": { "Entries": { "zh-cn": {
         "otaku_maid_begin": "咖啡厅客席上摆着菜单，厨房那边传来餐具轻碰的声音。可以坐下来慢慢挑选。", "otaku_maid_join": "$joining.name$在咖啡厅找了张空椅坐下，翻开菜单。", "otaku_maid_late": "$joining.name$晚些来到咖啡厅，在客席旁放下随身物品。",
         "otaku_arcade_begin": "机台灯光一排排亮着，音游节拍和赛车声混在一起。游戏时段开始了。", "otaku_arcade_join": "$joining.name$走进机台区，挑选想玩的游戏。", "otaku_arcade_late": "$joining.name$晚些赶到游戏中心，沿着亮着屏幕的机台看过去。",
+        "otaku_arcade_approve_use_existing": "批准（使用现有代币）",
+        "otaku_arcade_fee_cost": "花费游戏代币（无固定数量）",
+        "otaku_arcade_exchange_question": "$approvalContextText$\n\n游戏代币不足 6 枚，需要先兑换代币。",
+        "otaku_arcade_exchange_600": "兑换 6 枚代币（600 日元）",
+        "otaku_arcade_exchange_2000": "兑换 20 枚代币（2000 日元）",
+        "otaku_arcade_exchanged": "$exchangeResultText$",
         "otaku_manga_begin": "新刊摆在入口展示台上，书架间还留着安静的通道；帘子后面是另设的成人书区。", "otaku_manga_join": "$joining.name$走到新刊台前，翻看试阅本。", "otaku_manga_late": "$joining.name$晚些来到书店，在门口确认了书架分类。",
         "otaku_net_read_begin": "开放阅览席旁的书架分门别类排着漫画，饮料吧就在几步外。阅览时段开始了。", "otaku_net_read_join": "$joining.name$拿了本漫画，在开放席坐下。", "otaku_net_read_late": "$joining.name$晚些来到阅览区，轻轻拉开一张椅子。",
         "otaku_net_single_begin": "预订的单人包间里放着电脑与阅读灯。关上门后，外面的脚步声轻了许多。", "otaku_net_single_join": "$joining.name$来到预订的单人包间，放下随身物品。", "otaku_net_single_late": "$joining.name$晚些来到预订包间，打开了阅读灯。",

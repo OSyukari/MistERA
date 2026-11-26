@@ -16,7 +16,7 @@
                 "setWeight": 66,
                 "heightVariation": 7,
                 "weightVariation": 8,
-                "basicExperienceOverride": ["exp_collection_boy_hetero"]
+                "experienceOverride": ["exp_jp_life_adult_m"]
             },
             {
                 "ID": "jp_generic_adult_female",
@@ -30,7 +30,7 @@
                 "setWeight": 52,
                 "heightVariation": 6,
                 "weightVariation": 6,
-                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+                "experienceOverride": ["exp_jp_life_adult_f"]
             },
             {
                 "ID": "jp_hospital_doctor_female",
@@ -44,7 +44,7 @@
                 "nameDisplayFormat": "chara_fullname_lastToFirst",
                 "heightVariation": 6,
                 "weightVariation": 6,
-                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+                "experienceOverride": ["exp_jp_life_adult_f"]
             },
             {
                 "ID": "jp_hospital_nurse_female",
@@ -59,7 +59,7 @@
                 "nameDisplayFormat": "chara_fullname_lastToFirst",
                 "heightVariation": 6,
                 "weightVariation": 6,
-                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+                "experienceOverride": ["exp_jp_life_adult_f"]
             },
             {
                 "ID": "jp_hospital_doctor",
@@ -78,7 +78,7 @@
                     { "ID": "clothing_jp_hospital_sterile_gloves" },
                     { "ID": "clothing_inner_shoes" }
                 ],
-                "experienceOverride": ["exp_collection_jp_hobbies"]
+                "experienceOverride": ["exp_jp_career_doctor"]
             },
             {
                 "ID": "jp_hospital_nurse",
@@ -94,7 +94,7 @@
                     { "ID": "clothing_jp_hospital_nurse_cap" },
                     { "ID": "clothing_jp_hospital_nurse_shoes" }
                 ],
-                "experienceOverride": ["exp_collection_jp_hobbies"]
+                "experienceOverride": ["exp_jp_career_nurse"]
             },
             {
                 "ID": "jp_store_clerk_female",
@@ -109,7 +109,7 @@
                 "nameDisplayFormat": "chara_fullname_lastToFirst",
                 "heightVariation": 6,
                 "weightVariation": 6,
-                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+                "experienceOverride": ["exp_jp_life_adult_f"]
             },
             {
                 "ID": "jp_store_clerk",
@@ -125,7 +125,65 @@
                     { "ID": "clothing_inner_skirt" },
                     { "ID": "clothing_inner_shoes" }
                 ],
-                "experienceOverride": ["exp_collection_jp_hobbies"]
+                "experienceOverride": ["exp_jp_career_clerk"]
+            },
+            {
+                "ID": "jp_highschool_male",
+                "_comment": "Younger NPC generator: runs childhood -> primary -> middle -> high school periods only.",
+                "targetBaseIDs": ["jp_generic_adult_base"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 168,
+                "setWeight": 60,
+                "heightVariation": 6,
+                "weightVariation": 6,
+                "experienceOverride": ["exp_jp_life_highschool_m"]
+            },
+            {
+                "ID": "jp_highschool_female",
+                "_comment": "Younger NPC generator: runs childhood -> primary -> middle -> high school periods only.",
+                "targetBaseIDs": ["jp_generic_adult_base"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Female",
+                "personalityIDOverride": "personality_default",
+                "setHeight": 156,
+                "setWeight": 49,
+                "heightVariation": 5,
+                "weightVariation": 5,
+                "experienceOverride": ["exp_jp_life_highschool_f"]
+            },
+            {
+                "ID": "jp_university_male",
+                "_comment": "Younger NPC generator: runs childhood -> primary -> middle -> high school -> university periods.",
+                "targetBaseIDs": ["jp_generic_adult_base"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 171,
+                "setWeight": 64,
+                "heightVariation": 6,
+                "weightVariation": 7,
+                "experienceOverride": ["exp_jp_life_university_m"]
+            },
+            {
+                "ID": "jp_university_female",
+                "_comment": "Younger NPC generator: runs childhood -> primary -> middle -> high school -> university periods.",
+                "targetBaseIDs": ["jp_generic_adult_base"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Female",
+                "personalityIDOverride": "personality_default",
+                "setHeight": 158,
+                "setWeight": 51,
+                "heightVariation": 5,
+                "weightVariation": 5,
+                "experienceOverride": ["exp_jp_life_university_f"]
             }
         ]
     },

@@ -714,6 +714,7 @@ public class Map_Instance
     {
         var campaign = scr_System_CampaignManager.current;
         if (!IsBothCharaInSameRoom(self.RefID, target.RefID)
+            || !MapUtility.CanSee(self, target)   // no greeting through a stall's door (room dividers blocking visibility)
             || campaign.isPlayerPartyMember(self.RefID) == campaign.isPlayerPartyMember(target.RefID)
             || Character_Trainable.DeferNaturalWakeGreeting(self, target) || self.forbidGreeting) return;
         // Re-evaluate live packages: the wake may have removed/replaced the original sleeping APs.

@@ -91,6 +91,8 @@ public partial class EvaluationPackage
     void ApplyPermissionRules(Modifiers result, bool isDoer, Character_Trainable self, Character_Trainable checkTarget)
     {
         if (self == null || targetCOM == null || self.Stats.isConsciousnessUnconscious || self.isTimeStopped) return;
+        // event package that skips permissions (ActionPackage.SkipPermissions): nothing missing, nothing penalized or granted
+        if (Package != null && Package.SkipPermissions) return;
         bool unaware = self.Stats.isConsciousnessReduced;
         var index = scr_System_Serializer.current?.MasterList?.PermissionDefinitions;
         if (index?.list == null) return;
@@ -204,13 +206,16 @@ public partial class EvaluationPackage
     /// climaxing (else / missing: [id]_LowConsciousness). A climaxing granter that cannot be asked says [id]_Refused.
     /// Every kojo here except the granted one shares the once-per-scene record (TryRecordPermissionAnswer).
     /// </summary>
-    internal void RequestMissingPermissions(Memory_Response forceAccept)
+    /// <param name="kojoTarget">where the granted / refused kojo go (event "request" mode: the event's collector); null = job.m</param>
+    internal void RequestMissingPermissions(Memory_Response forceAccept, MessageCollect kojoTarget = null)
     {
         if (permissionRequestsDone) return;
         permissionRequestsDone = true;
+        permissionKojoTarget = kojoTarget;
         if (Package == null || targetCOM == null || Doer == null || Receiver == null || Doer == Receiver) return;
-        // event-authored executions (ExecuteAPOnSingleChara...) are arranged, not voluntary. A "forced" command still asks.
-        if (forceAccept != Memory_Response.None || Package.SourceEvent != null) return;
+        // event-authored executions (ExecuteAPOnSingleChara...) are arranged, not voluntary - unless the event opts into
+        // asking (permission mode "request", ActionPackage.RequestPermissions). A "forced" command still asks.
+        if (forceAccept != Memory_Response.None || (Package.SourceEvent != null && !Package.RequestPermissions)) return;
         if (epjson != null && epjson.command_result != Memory_Response.None) return;
 
         permissionRequestsAsked = true;
@@ -271,9 +276,12 @@ public partial class EvaluationPackage
     /// result. Fetched from the personality directly: RelationshipManager's kojo getters skip the player, who answers
     /// here too. grantType fills the $permission_grant_type$ token of the granted kojo's consent line. False when the
     /// personality has no valid entry.</summary>
+    /// <summary>RequestMissingPermissions' kojoTarget for this EP's request phase (not serialized, like the request flags).</summary>
+    [JsonIgnore] MessageCollect permissionKojoTarget = null;
+
     bool LogPermissionKojo(Character_Trainable granter, Character_Trainable holder, string kojoID, PermissionGrantType grantType)
     {
-        var m = job?.m;
+        var m = permissionKojoTarget ?? job?.m;
         var personality = granter.Relationships?.Personality;
         if (m == null || personality == null) return false;
 

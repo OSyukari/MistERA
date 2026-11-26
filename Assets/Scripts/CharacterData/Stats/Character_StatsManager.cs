@@ -1085,6 +1085,28 @@ public class StatsManager : I_StatsManager
         return false;
     }
 
+    public Stats_Base GetBaseStat(string statID)
+    {
+        if (statID == Strength.ID) return Strength;
+        if (statID == Constitution.ID) return Constitution;
+        if (statID == Psyche.ID) return Psyche;
+        if (statID == Willpower.ID) return Willpower;
+        return null;
+    }
+
+    /// <summary>
+    /// Applies a persistent training delta to a base stat (Willpower is not trainable for now).
+    /// The cap is read from the base stat's derived bonus-cap stat at write-time only.
+    /// Returns the actual delta applied.
+    /// </summary>
+    public float TrainBaseStat(string statID, float delta, string modKey = "training")
+    {
+        if (string.IsNullOrEmpty(statID) || statID == "Willpower") return 0f;
+        var stat = GetBaseStat(statID);
+        if (stat == null) return 0f;
+        return stat.AddTraining(delta, modKey);
+    }
+
     public bool HasStat(string statID)
     {
         if (statID == Strength.ID || statID == Constitution.ID || statID == Psyche.ID || statID == Willpower.ID) return true;

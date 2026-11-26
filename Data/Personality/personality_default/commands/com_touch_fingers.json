@@ -84,49 +84,39 @@
                                         "com_touch_fingers_Begin_Restrained_2",
                                         "com_touch_fingers_Begin_Restrained_3"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被撫摸手指 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_Begin_1",
+                                        "com_touch_fingers_Begin_2",
+                                        "com_touch_fingers_Begin_3",
+                                        "com_touch_fingers_Begin_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被撫摸手指 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_fingers_Begin_5",
+                                        "com_touch_fingers_Begin_6",
+                                        "com_touch_fingers_Begin_7",
+                                        "com_touch_fingers_Begin_8"
+                                    ]
                                 }
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_fingers_Begin_Receiver_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被撫摸手指 有允许 口上文",
-                            "responses": [
-                                "com_touch_fingers_Begin_1",
-                                "com_touch_fingers_Begin_2",
-                                "com_touch_fingers_Begin_3",
-                                "com_touch_fingers_Begin_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被撫摸手指 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_fingers_Begin_5",
-                                "com_touch_fingers_Begin_6",
-                                "com_touch_fingers_Begin_7",
-                                "com_touch_fingers_Begin_8"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
                             ],
                             "_comment": "2.2.2 开始被撫摸手指 未允许 敌意 口上文",
                             "responses": [
@@ -135,11 +125,25 @@
                                 "com_touch_fingers_Begin_11",
                                 "com_touch_fingers_Begin_12"
                             ],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_fingers_Begin_13"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -344,6 +348,24 @@
                                                 "com_touch_fingers_restrained_fail_2",
                                                 "com_touch_fingers_restrained_fail_3"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被撫摸手指 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_fingers_29",
+                                                "com_touch_fingers_30",
+                                                "com_touch_fingers_31",
+                                                "com_touch_fingers_32"
+                                            ]
                                         }
                                     ],
                                     "responses": [
@@ -371,97 +393,33 @@
                                 "com_touch_fingers_34",
                                 "com_touch_fingers_35",
                                 "com_touch_fingers_36"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被撫摸手指 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_fingers_21",
-                                        "com_touch_fingers_22",
-                                        "com_touch_fingers_23",
-                                        "com_touch_fingers_24"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被撫摸手指 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_fingers_25",
-                                "com_touch_fingers_26",
-                                "com_touch_fingers_27",
-                                "com_touch_fingers_28"
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被撫摸手指 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_fingers_29",
-                                        "com_touch_fingers_30",
-                                        "com_touch_fingers_31",
-                                        "com_touch_fingers_32"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被撫摸手指 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_touch_fingers_33",
-                                "com_touch_fingers_34",
-                                "com_touch_fingers_35",
-                                "com_touch_fingers_36"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_fingers_37"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_touch_fingers_38"
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -602,17 +560,21 @@
                                 "com_touch_fingers_Ongoing_NPC_1",
                                 "com_touch_fingers_Ongoing_NPC_2",
                                 "com_touch_fingers_Ongoing_NPC_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_fingers_Ongoing_Fallback_1"
+                                "com_touch_fingers_Ongoing_1"
                             ]
                         }
                     ]
@@ -707,7 +669,11 @@
                 "com_touch_fingers_Ongoing_NPC_2": "揉捏停下后，$self$看着$target$调侃道：\"手指有这么好玩吗，一直捏个没完。\"",
                 "com_touch_fingers_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，这下手指松快多了，谢了。\"",
                 "com_touch_fingers_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
-                "com_touch_fingers_Ongoing_Fallback_1": "$self$任由指尖被轻轻握着，没有抽回手。"
+                "com_touch_fingers_Ongoing_Fallback_1": "$self$任由指尖被轻轻握着，没有抽回手。",
+                "com_touch_fingers_Begin_13": "(unimplemented)",
+                "com_touch_fingers_37": "(unimplemented)",
+                "com_touch_fingers_38": "(unimplemented)",
+                "com_touch_fingers_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_fingers_Begin_1": "$self$ didn't pull back; instead, she interlaced her fingers with $target$'s, holding hands tightly.",

@@ -250,6 +250,96 @@ public class SkillManager
         if (updated) RefreshSkillsList();
     }
 
+    /// <summary>
+    /// Raises skillID to at least minLevel on Owner: first tops up missing gte/gt experience requirements across
+    /// levels 1..minLevel and runs UpdateAllSkills(null); if still below minLevel, directly sets the level via
+    /// SkillInstance.ForceLevel. Returns whether Owner's GetSkillLevel(skillID) now meets minLevel.
+    /// </summary>
+    public bool ForceSatisfySkillLevel(string skillID, int minLevel)
+    {
+        if (Owner == null || string.IsNullOrEmpty(skillID) || minLevel <= 0) return true;
+        if (Owner.GetSkillLevel(skillID) >= minLevel) return true;
+
+        if (!skills.TryGetValue(skillID, out var inst) || inst == null || inst.BaseRef == null)
+        {
+            RefreshSkillsList();
+            if (!skills.TryGetValue(skillID, out inst) || inst == null || inst.BaseRef == null) return false;
+        }
+
+        var levels = inst.BaseRef.Levels;
+        if (levels == null || levels.Count == 0) return false;
+        int maxIdx = minLevel < levels.Count ? minLevel : levels.Count - 1;
+
+        for (int lv = 1; lv <= maxIdx; lv++)
+        {
+            var req = levels[lv]?.requirements;
+            if (req == null || req.entries == null || req.entries.Count == 0) continue;
+            if (req is CharaSkill.RequireAll)
+            {
+                for (int i = 0; i < req.entries.Count; i++)
+                    TopUpRequirementEntryExperiences(req.entries[i]);
+            }
+            else if (req is CharaSkill.RequireOne)
+            {
+                // Pick the first entry whose non-experience requirements aren't already broken if possible, else index 0
+                int chosen = 0;
+                for (int i = 0; i < req.entries.Count; i++)
+                {
+                    var e = req.entries[i];
+                    if (e != null && e.requireGender == InteractionGenderType.none
+                        && (e.requireBodyTag == null || e.requireBodyTag.Count == 0)
+                        && (e.requireStatKeyword == null || e.requireStatKeyword.Count == 0))
+                    {
+                        chosen = i;
+                        break;
+                    }
+                }
+                TopUpRequirementEntryExperiences(req.entries[chosen]);
+            }
+        }
+
+        UpdateAllSkills(null);
+        if (Owner.GetSkillLevel(skillID) < minLevel)
+            inst.ForceLevel(minLevel);
+
+        return Owner.GetSkillLevel(skillID) >= minLevel;
+    }
+
+    void TopUpRequirementEntryExperiences(CharaSkill.RequirementEntry entry)
+    {
+        if (entry == null) return;
+        if (entry.requireExperiences != null)
+        {
+            for (int i = 0; i < entry.requireExperiences.Count; i++)
+            {
+                var re = entry.requireExperiences[i];
+                if (re == null || !re.isValid) continue;
+                int target;
+                if (re.operand == LogicalOperand.gte) target = re.value;
+                else if (re.operand == LogicalOperand.gt) target = re.value + 1;
+                else continue;
+
+                int current = GetExperienceLevel(re.experienceID);
+                if (current < target) AddExperienceByID(re.experienceID, target - current);
+            }
+        }
+        if (entry.requireSumExperiences != null && entry.requireSumExperiences.isValid
+            && entry.requireSumExperiences.experienceIDs != null && entry.requireSumExperiences.experienceIDs.Count > 0)
+        {
+            var rse = entry.requireSumExperiences;
+            int target;
+            if (rse.operand == LogicalOperand.gte) target = rse.value;
+            else if (rse.operand == LogicalOperand.gt) target = rse.value + 1;
+            else return;
+
+            int sum = 0;
+            for (int i = 0; i < rse.experienceIDs.Count; i++)
+                sum += GetExperienceLevel(rse.experienceIDs[i]);
+            if (sum < target)
+                AddExperienceByID(rse.experienceIDs[0], target - sum);
+        }
+    }
+
     protected void RefreshSkillsList()
     {
         foreach (var sk in scr_System_Serializer.current.index_Skills.list)

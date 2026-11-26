@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -328,7 +328,7 @@ public class ExperienceLog
                     if (kvp.Value != 0)
                     {
                         hasvalue = true;
-                        var format = kvp.Key.StartsWith("relationship_", StringComparison.Ordinal) ? "+0.##;-0.##" : "+0.#;-0.#";
+                        var format = (kvp.Key.StartsWith("relationship_", StringComparison.Ordinal) || kvp.Key.StartsWith("stats_base_", StringComparison.Ordinal)) ? "+0.##;-0.##" : "+0.#;-0.#";
                         s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString(format) + " ";
                     }
                 }

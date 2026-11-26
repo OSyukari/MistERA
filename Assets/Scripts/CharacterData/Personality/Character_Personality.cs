@@ -148,6 +148,7 @@ public class Character_Personality
     private Character_Personality Fallback { get {
         if (fallbackRef == null && fallbackID != "" && fallbackID != this.id) fallbackRef = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(fallbackID);
         return fallbackRef; } }
+    [JsonIgnore] public Character_Personality FallbackPersonality { get { return Fallback; } }
 
     [JsonProperty] string behaviorID = "";
 
@@ -388,7 +389,11 @@ public class Character_Personality
                 if (entries.ContainsKey(parentkey))
                 {
                     parentkey = entries[parentkey].CheckRedirect(parentkey);
-                    return entries[parentkey].GetResponse(kol);
+                    var parentMessage = entries[parentkey].GetResponse(kol);
+                    if (parentMessage != null || Fallback == null) return parentMessage;
+                    // no branch matched: the fallback personality answers, from the command itself
+                    kol.eventID = backup;
+                    return Fallback.GetKOJOMessage(kol);
                 }
                 else
                 {
@@ -403,14 +408,17 @@ public class Character_Personality
         if (!entries[key].Validate(kol.Owner))
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}] self validation failed");
-            return null;
+            return Fallback != null ? Fallback.GetKOJOMessage(kol) : null;
         }
 
         var eventID = entries[key].CheckRedirect(key);
 
         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}] self validation success, proceeding to redirectID {eventID}");
 
-        return entries[eventID].GetResponse(kol);
+        var message = entries[eventID].GetResponse(kol);
+        // an own entry with no matching branch doesn't silence the fallback personality
+        if (message == null && Fallback != null) return Fallback.GetKOJOMessage(kol);
+        return message;
     }
 
     public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Relationship rel)
@@ -429,8 +437,10 @@ public class Character_Personality
 
         UtilityEX.GetEPsFrom(xx, yy, out List<EvaluationPackage> xxEPs, out List<EvaluationPackage> yyEPs);
 
-        eventID = entries[eventID].CheckRedirect(eventID);
-        return entries[eventID].GetResponse(rel, xxEPs, yyEPs);
+        var key = entries[eventID].CheckRedirect(eventID);
+        var message = entries[key].GetResponse(rel, xxEPs, yyEPs);
+        if (message == null && Fallback != null) return Fallback.GetKOJOMessage(eventID, rel);
+        return message;
     }
 
     public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Relationship rel, List<string> selfTags, List<string> targetTags)
@@ -447,8 +457,11 @@ public class Character_Personality
         }
 
 
-        eventID = entries[eventID].CheckRedirect(eventID);
-        return entries[eventID].GetResponse(rel, selfTags, targetTags);
+        var key = entries[eventID].CheckRedirect(eventID);
+        var message = entries[key].GetResponse(rel, selfTags, targetTags);
+        // same fallback call as a missing key above
+        if (message == null && Fallback != null) return Fallback.GetKOJOMessage(eventID, rel);
+        return message;
     }
 
     /// <summary>

@@ -95,13 +95,17 @@
                                 "com_sex_oral_A_force_Begin_13",
                                 "com_sex_oral_A_force_Begin_14",
                                 "com_sex_oral_A_force_Begin_15"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 开始 com_sex_oral_A_force",
                             "responses": [
                                 "com_sex_oral_A_force_Begin_16",
                                 "com_sex_oral_A_force_Begin_17",
@@ -261,14 +265,26 @@
                             }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_A_force 结果",
                             "responses": [
                                 "com_sex_oral_A_force_28",
                                 "com_sex_oral_A_force_29",
                                 "com_sex_oral_A_force_30"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_oral_A_force 结果正面",
+                                    "responses": [
+                                        "com_sex_oral_A_force_31"
+                                    ]
+                                }
                             ]
                         }
                     ],
@@ -350,13 +366,17 @@
                                 "com_sex_oral_A_force_Ongoing_4",
                                 "com_sex_oral_A_force_Ongoing_5",
                                 "com_sex_oral_A_force_Ongoing_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_oral_A_force 进行中",
                             "responses": [
                                 "com_sex_oral_A_force_Ongoing_7",
                                 "com_sex_oral_A_force_Ongoing_8",
@@ -474,7 +494,8 @@
                 "com_sex_oral_A_force_Climax_3": "后穴贪婪地咬住$target$深入的舌头一阵阵抽搐，$self$软倒在原地大口喘息：“哈啊……连里面都被舔到高潮了……♡”",
                 "com_sex_oral_A_force_Climax_4": "在持续的刺激下，$self$浑身猛地一颤，迎来了难以抑制的高潮。",
                 "com_sex_oral_A_force_Climax_5": "积攒的热意瞬间炸开，$self$仰起脖子发出一声短促的喘息，彻底攀上顶峰。",
-                "com_sex_oral_A_force_Climax_6": "$self$紧紧攥住身侧的布料，在绵延的快感中颤抖着达到高潮。"
+                "com_sex_oral_A_force_Climax_6": "$self$紧紧攥住身侧的布料，在绵延的快感中颤抖着达到高潮。",
+                "com_sex_oral_A_force_31": "(unimplemented)"
             }
         }
     }

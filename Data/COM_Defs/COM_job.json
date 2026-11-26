@@ -561,7 +561,7 @@
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 10
                 },
-                "DifficultyCheck":{ "baseD20Check":5 },
+                "DifficultyCheck":{ "baseD20Check":0 },
                 "description_begin":
                 {
                     "Entries":[ 
@@ -602,6 +602,19 @@
                     }
                 },
                 "results_EP":{
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "trainBaseStat": {
+                                    "statID": "Strength",
+                                    "value": 0.01
+                                }
+                            }
+                        }
+                    ],
                     "results_jobContainer":[
                         {
                             "entry_results":{
@@ -709,6 +722,21 @@
                             "requireContaining": {
                                 "requireContentAbsent": true
                             }
+                        },
+                        "results_EP": {
+                            "results_character": [
+                                {
+                                    "entry_conditions": {
+                                        "applyToDoer": true
+                                    },
+                                    "entry_results": {
+                                        "trainBaseStat": {
+                                            "statID": "Strength",
+                                            "value": 0.01
+                                        }
+                                    }
+                                }
+                            ]
                         },
                         "variants": [
                             {

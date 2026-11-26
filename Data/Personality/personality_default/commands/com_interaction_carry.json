@@ -98,15 +98,19 @@
                                 "com_interaction_carry_Result_Receiver_1",
                                 "com_interaction_carry_Result_Receiver_2",
                                 "com_interaction_carry_Result_Receiver_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_interaction_carry_Fallback_1"
                             ]
@@ -197,15 +201,19 @@
                                 "com_interaction_carry_Begin_Receiver_1",
                                 "com_interaction_carry_Begin_Receiver_2",
                                 "com_interaction_carry_Begin_Receiver_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_interaction_carry_Begin_Fallback_1"
                             ]

@@ -209,6 +209,9 @@ public partial class EvaluationPackage : I_ResultStorage
 
     [JsonIgnore] public int ResponseRate { get { return responseRate; } }
     [JsonIgnore] public int RequestRate { get { return requestRate; } }
+    /// <summary>Chance (%) the attitude roll lands on Dislike (RollAttitude) - read-only, for previews.</summary>
+    [JsonIgnore] public int AttitudeRateNegDoer { get { return attitudeRate_neg_doer; } }
+    [JsonIgnore] public int AttitudeRateNegReceiver { get { return attitudeRate_neg_receiver; } }
 
     [JsonIgnore] public int EffectiveRequestRate
     {
@@ -691,6 +694,8 @@ public partial class EvaluationPackage : I_ResultStorage
 
         // permissions of the leaf command and actual pair (PermissionDefinition.rules), incl. the migrated legacy ones
         ApplyPermissionRules(copy, isDoer, self, target);
+        // the COM's own permissionBonus list can also clear hasPermission; a skipping event package runs as permitted
+        if (p.SkipPermissions) copy.hasPermission = true;
 
         ApplyActAcceptanceModifiers(copy, isDoer, self, isThreat);
         ApplyArousalAcceptance(copy, isDoer, self);
@@ -1343,9 +1348,10 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Combination of evaluate and request
     /// </summary>
-    public void ForceRespond()
+    /// <param name="forceAccept">accept regardless of the roll (event-forced, ActionPackage.ForceAccept); DebugMode always does</param>
+    public void ForceRespond(bool forceAccept = false)
     {
-        TryRespond(true, scr_System_CampaignManager.current.DebugMode ? Memory_Response.Accept : Memory_Response.None);
+        TryRespond(true, forceAccept || scr_System_CampaignManager.current.DebugMode ? Memory_Response.Accept : Memory_Response.None);
     }
 
     protected bool TryRespond(bool recalculateRate = false, Memory_Response forceSuccess = Memory_Response.None)

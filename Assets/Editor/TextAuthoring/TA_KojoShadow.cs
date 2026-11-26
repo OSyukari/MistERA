@@ -11,6 +11,8 @@ using Newtonsoft.Json.Linq;
 /// Findings: kojoShadowed (B never passes, names the blocker), kojoSilentParent (a passing node without own lines whose
 /// children don't cover it returns an empty message and ends its level: later siblings / the parent's own lines are cut),
 /// kojoRedirectMissing / kojoRedirectChain (redirects resolve in the same personality, one hop), kojoCallMissing.
+/// Command keys: the doer and the master always act (an unaware doer is an escape state only, silence is fine there), so
+/// below a node that requires the speaker in a cases.json state with canAct false the speaker is the receiver.
 /// </summary>
 public static class TA_KojoShadow
 {
@@ -36,12 +38,14 @@ public static class TA_KojoShadow
 
     /// <summary>
     /// Findings for one personality's own entry. own = that personality's entries (redirects resolve there);
-    /// callResolves = whether a key resolves through the personality's fallback chain (selfEventCall).
+    /// callResolves = whether a key resolves through the personality's fallback chain (selfEventCall);
+    /// command = the key is a command kojo key (doer / master never unaware).
     /// </summary>
     public static void Entry(string provider, string entryID, ResponseEntry e, Dictionary<string, ResponseEntry> own,
-        System.Func<string, bool> callResolves, List<JObject> into)
+        System.Func<string, bool> callResolves, bool command, List<JObject> into)
     {
         reqCache.Clear();
+        unawareTags = null;
         if (!string.IsNullOrEmpty(e.RedirectID))
         {
             // Character_Personality: entries[CheckRedirect(key)] - same personality, no fallback, one hop
@@ -51,11 +55,12 @@ public static class TA_KojoShadow
                 into.Add(Finding("kojoRedirectChain", provider, entryID, null, "redirect", e.RedirectID, "next", target.RedirectID));
             return;
         }
-        Level(provider, entryID, e.variants, "", false, callResolves, into);
+        Level(provider, entryID, e.variants, "", false, command, false, callResolves, into);
     }
 
+    /// <param name="unaware">an ancestor requires the speaker unaware (command keys only: the speaker is the receiver)</param>
     static void Level(string provider, string entryID, List<ResponseEntry.Variant> list, string prefix, bool parentHasLines,
-        System.Func<string, bool> callResolves, List<JObject> into)
+        bool command, bool unaware, System.Func<string, bool> callResolves, List<JObject> into)
     {
         if (list == null) return;
         var dead = new bool[list.Count];
@@ -81,31 +86,57 @@ public static class TA_KojoShadow
                 into.Add(Finding("kojoCallMissing", provider, entryID, path, "call", b.selfEventCall));
 
             bool hasLines = HasLines(b);
+            bool receiverOnly = command && (unaware || RequiresUnaware(b));
             if (b.variants != null && b.variants.Count > 0)
             {
-                if (!hasLines && string.IsNullOrEmpty(b.selfEventCall) && !b.keepLooking && !ChildCovers(b))
+                if (!hasLines && string.IsNullOrEmpty(b.selfEventCall) && !b.keepLooking && !ChildCovers(b, receiverOnly))
                 {
                     // what the empty result cuts: a later sibling that could pass in the same situation (a refuse node
                     // cuts nothing from success-only siblings) and has something to print, or the parent's own lines
                     string cuts = null;
                     for (int k = i + 1; k < list.Count && cuts == null; k++)
-                        if (list[k] != null && !Disjoint(b, list[k]) && Prints(list[k])) cuts = "siblings";
+                        if (list[k] != null && !Disjoint(b, list[k], receiverOnly) && Prints(list[k])) cuts = "siblings";
                     if (cuts == null && parentHasLines) cuts = "parentLines";
                     if (cuts != null) into.Add(Finding("kojoSilentParent", provider, entryID, path, "cuts", cuts, "cond", TA_Conditions.DescribeVariant(b)));
                 }
-                Level(provider, entryID, b.variants, path, hasLines, callResolves, into);
+                Level(provider, entryID, b.variants, path, hasLines, command, receiverOnly, callResolves, into);
             }
         }
     }
 
-    /// <summary>Some child without keepLooking passes whenever the node passes (so the node always prints through it).</summary>
-    static bool ChildCovers(ResponseEntry.Variant node)
+    /// <summary>
+    /// Some child without keepLooking passes whenever the node passes (so the node always prints through it).
+    /// receiverOnly: the speaker can only be the receiver here (command key, unaware speaker).
+    /// </summary>
+    static bool ChildCovers(ResponseEntry.Variant node, bool receiverOnly)
     {
         for (int i = 0; i < node.variants.Count; i++)
         {
             var c = node.variants[i];
-            if (c != null && !c.keepLooking && Covers(c, node)) return true;
+            if (c != null && !c.keepLooking && Covers(c, node, receiverOnly)) return true;
         }
+        return false;
+    }
+
+    static HashSet<string> unawareTags;
+
+    /// <summary>The node requires the speaker in a state that can't act (cases.json states with canAct false: its tags).</summary>
+    static bool RequiresUnaware(ResponseEntry.Variant v)
+    {
+        var tags = v.requirement?.selfTags;
+        if (tags == null || tags.Count == 0) return false;
+        if (unawareTags == null)
+        {
+            unawareTags = new HashSet<string>();
+            if (TA_CaseTemplate.States.Count == 0) TA_CaseTemplate.Load();
+            foreach (var p in TA_CaseTemplate.States.Properties())
+            {
+                var s = p.Value as JObject;
+                if (s == null || ((bool?)s["canAct"] ?? true) || !(s["tags"] is JArray st)) continue;
+                for (int i = 0; i < st.Count; i++) unawareTags.Add((string)st[i]);
+            }
+        }
+        for (int i = 0; i < tags.Count; i++) if (tags[i] != null && unawareTags.Contains(tags[i])) return true;
         return false;
     }
 
@@ -128,16 +159,17 @@ public static class TA_KojoShadow
     /// A passes in every situation B passes: each of A's own conditions is implied by B's own conditions (isValid +
     /// Requirement.Validate; children don't inherit, so siblings compare their own fields). requireSelfOnly splits
     /// self-targeted lookups from the rest, so a different value never overlaps (no-target lookups aside - not reported).
+    /// bReceiverOnly: B's speaker is the receiver and not the master even where B doesn't say so.
     /// </summary>
-    internal static bool Covers(ResponseEntry.Variant a, ResponseEntry.Variant b)
+    internal static bool Covers(ResponseEntry.Variant a, ResponseEntry.Variant b, bool bReceiverOnly = false)
     {
         if (a.requireSelfOnly != b.requireSelfOnly) return false;
         if (a.requireCOMStrongVariant && !b.requireCOMStrongVariant) return false;
         if (a.requireSelfDoer && !b.requireSelfDoer) return false;
-        if (a.requireSelfReceiver && !b.requireSelfReceiver) return false;
+        if (a.requireSelfReceiver && !b.requireSelfReceiver && !bReceiverOnly) return false;
         if (a.requireMaster && !b.requireMaster) return false;
         if (a.requireSelfMaster && !b.requireSelfMaster) return false;
-        if (a.requireSelfNotMaster && !b.requireSelfNotMaster) return false;
+        if (a.requireSelfNotMaster && !b.requireSelfNotMaster && !bReceiverOnly) return false;
         if (a.requireRefusalContext != ResponseEntry.RefusalContext.None && a.requireRefusalContext != b.requireRefusalContext) return false;
         var ra = a.requirement ?? new ResponseEntry.Variant.Requirement();
         var rb = b.requirement ?? new ResponseEntry.Variant.Requirement();
@@ -173,10 +205,12 @@ public static class TA_KojoShadow
     /// <summary>
     /// A and B can never pass in the same situation: different requireSelfOnly, no common EP outcome, master vs not
     /// master, a tag one requires and the other excludes, different targetBaseID / variantID. Anything else may overlap.
+    /// aReceiverOnly: A's speaker is the receiver and not the master, so a doer / self-master B never overlaps.
     /// </summary>
-    static bool Disjoint(ResponseEntry.Variant a, ResponseEntry.Variant b)
+    static bool Disjoint(ResponseEntry.Variant a, ResponseEntry.Variant b, bool aReceiverOnly)
     {
         if (a.requireSelfOnly != b.requireSelfOnly) return true;
+        if (aReceiverOnly && (b.requireSelfDoer || b.requireSelfMaster)) return true;
         if ((a.requireSelfMaster && b.requireSelfNotMaster) || (a.requireSelfNotMaster && b.requireSelfMaster)) return true;
         if (a.requireRefusalContext != ResponseEntry.RefusalContext.None && b.requireRefusalContext != ResponseEntry.RefusalContext.None
             && a.requireRefusalContext != b.requireRefusalContext) return true;

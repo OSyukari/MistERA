@@ -42,8 +42,10 @@
 
   "_comment_required": "Leaves every bound entry must have, by the facts of the commands using the key (pair / solo / d20). path = leaf ids, outer to inner (levels in between may be skipped). Each required leaf needs its own lines. D20 failure = the leaf's own lines below the success child.",
   "required": [
+    { "path": ["doer"], "when": ["pair"] },
     { "path": ["receiver"], "when": ["pair"] },
     { "path": ["self"], "when": ["solo"] },
+    { "path": ["doer", "success"], "when": ["pair", "d20"] },
     { "path": ["receiver", "success"], "when": ["pair", "d20"] },
     { "path": ["self", "success"], "when": ["solo", "d20"] }
   ],

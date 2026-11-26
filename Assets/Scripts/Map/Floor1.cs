@@ -33,6 +33,8 @@ public class Floor_Base
     public List<FloorPlan_Exit> exits = new List<FloorPlan_Exit>();
     public List<Room_Base> rooms = new List<Room_Base>();
     public List<Door_Base> doors = new List<Door_Base>();
+    /// <summary>Optional room base IDs of main bedrooms on this floor, in priority order (ResidenceUtility.AssignRoomGroups).</summary>
+    public List<string> mainRoomIDs = new List<string>();
 
     /// <summary>
     /// Rent/maintenance owed by a faction that owns this floor's own MapPlan outright - i.e. it IS the

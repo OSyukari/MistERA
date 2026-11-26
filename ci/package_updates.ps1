@@ -55,6 +55,8 @@ function Add-Payload($directory, [string]$relative = '') {
         if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Reparse point in build: $path" }
         if ($path -match '(^|/)(Save|\.updates|\.git|Library|Temp|Logs|obj|bin|Backups?|[^/]*_BackUpThisFolder_ButDontShipItWithYourGame|[^/]*_BurstDebugInformation_DoNotShip)(/|$)' -or
             $path -match '(?i)\.(meta|pdb|texcache|tmp|bak|old|log)$' -or $path -eq 'game-files.json') { continue }
+        # windows-x64 release: ARM64 plugins are dead weight and make 7-Zip use its ARM64 filter, which many extractors cannot read.
+        if ($path -match '^[^/]+_Data/Plugins/ARM64(/|$)') { continue }
         if ($path -like 'Mods/*' -and $path -notin @('Mods/Assetpacks', 'Mods/Assetpacks/Image_Generation_Config.json')) { continue }
         if ($item.PSIsContainer) { Add-Payload $item.FullName $path; continue }
         if ($path -match '(^|/)(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])([.]|/|$)|[<>:"|?*]|[. ](/|$)' -or -not $seen.Add($path)) { throw "Unsafe or case-colliding path: $path" }

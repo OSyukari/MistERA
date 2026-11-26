@@ -25,7 +25,8 @@
                             "_comment": "时停中",
                             "responses": [
                                 "com_sex_P_doggy_Climax_timestop_1",
-                                "com_sex_P_doggy_Climax_timestop_2"
+                                "com_sex_P_doggy_Climax_timestop_2",
+                                "com_sex_P_doggy_Climax_timestop_3"
                             ]
                         },
                         {
@@ -42,7 +43,8 @@
                             "_comment": "睡眠中",
                             "responses": [
                                 "com_sex_P_doggy_Climax_sleeping_1",
-                                "com_sex_P_doggy_Climax_sleeping_2"
+                                "com_sex_P_doggy_Climax_sleeping_2",
+                                "com_sex_P_doggy_Climax_sleeping_3"
                             ]
                         },
                         {
@@ -61,7 +63,8 @@
                             "_comment": "昏迷（非睡眠）",
                             "responses": [
                                 "com_sex_P_doggy_Climax_unconscious_1",
-                                "com_sex_P_doggy_Climax_unconscious_2"
+                                "com_sex_P_doggy_Climax_unconscious_2",
+                                "com_sex_P_doggy_Climax_unconscious_3"
                             ]
                         },
                         {
@@ -312,7 +315,9 @@
                                                 }
                                             ],
                                             "responses": [
-                                                "com_sex_P_doggy_Begin_FE_Player_4"
+                                                "com_sex_P_doggy_Begin_FE_Player_4",
+                                                "com_sex_P_doggy_Begin_FE_Player_5",
+                                                "com_sex_P_doggy_Begin_FE_Player_6"
                                             ]
                                         },
                                         {
@@ -454,7 +459,8 @@
                             ],
                             "responses": [
                                 "com_sex_P_doggy_Begin_DoerFallback_1",
-                                "com_sex_P_doggy_Begin_DoerFallback_2"
+                                "com_sex_P_doggy_Begin_DoerFallback_2",
+                                "com_sex_P_doggy_Begin_DoerFallback_3"
                             ]
                         },
                         {
@@ -466,7 +472,8 @@
                             "_comment": "兜底分支",
                             "responses": [
                                 "com_sex_P_doggy_Begin_Fallback_1",
-                                "com_sex_P_doggy_Begin_Fallback_2"
+                                "com_sex_P_doggy_Begin_Fallback_2",
+                                "com_sex_P_doggy_Begin_Fallback_3"
                             ]
                         }
                     ],
@@ -582,7 +589,9 @@
                                             ],
                                             "_comment": "初体验 睡眠中 后背位V",
                                             "responses": [
-                                                "com_sex_P_doggy_FE_Sleep_1"
+                                                "com_sex_P_doggy_FE_Sleep_1",
+                                                "com_sex_P_doggy_53",
+                                                "com_sex_P_doggy_54"
                                             ]
                                         },
                                         {
@@ -631,6 +640,66 @@
                                         "com_sex_P_doggy_Fainted_1",
                                         "com_sex_P_doggy_Fainted_2",
                                         "com_sex_P_doggy_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_sex_P_doggy_45",
+                                "com_sex_P_doggy_60",
+                                "com_sex_P_doggy_61"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_sex_P_doggy_46",
+                                        "com_sex_P_doggy_51",
+                                        "com_sex_P_doggy_52"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_V"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "doggy"
+                                            ],
+                                            "_comment": "对方初体验 后背位V（插入的一方）",
+                                            "responses": [
+                                                "com_sex_P_doggy_FE_Partner_1",
+                                                "com_sex_P_doggy_FE_Partner_2",
+                                                "com_sex_P_doggy_FE_Partner_3"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_V"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "doggy"
+                                    ],
+                                    "_comment": "对方初体验 后背位V（插入的一方）",
+                                    "responses": [
+                                        "com_sex_P_doggy_FE_Partner_1",
+                                        "com_sex_P_doggy_49",
+                                        "com_sex_P_doggy_50"
                                     ]
                                 }
                             ]
@@ -704,7 +773,8 @@
                                                     "_comment": "玩家专用（无允许兜底）",
                                                     "responses": [
                                                         "com_sex_P_doggy_FE_4",
-                                                        "com_sex_P_doggy_FE_5"
+                                                        "com_sex_P_doggy_FE_5",
+                                                        "com_sex_P_doggy_48"
                                                     ]
                                                 },
                                                 {
@@ -763,24 +833,6 @@
                                         {
                                             "requirement": {
                                                 "selfTags": [
-                                                    "firstexp_partner_V"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "doggy"
-                                            ],
-                                            "_comment": "对方初体验 后背位V（插入的一方）",
-                                            "responses": [
-                                                "com_sex_P_doggy_FE_Partner_1",
-                                                "com_sex_P_doggy_FE_Partner_2",
-                                                "com_sex_P_doggy_FE_Partner_3"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
                                                     "justWokenUp"
                                                 ]
                                             },
@@ -808,7 +860,8 @@
                                                             "_comment": "2.1.5  玩家专用的 刚睡醒时的 被后背位V 有允许 口上文",
                                                             "responses": [
                                                                 "com_sex_P_doggy_19",
-                                                                "com_sex_P_doggy_20"
+                                                                "com_sex_P_doggy_20",
+                                                                "com_sex_P_doggy_66"
                                                             ]
                                                         },
                                                         {
@@ -827,7 +880,8 @@
                                                             "_comment": "2.2.7 玩家专用的 刚睡醒时的 被后背位V 无允许 好意 口上文",
                                                             "responses": [
                                                                 "com_sex_P_doggy_21",
-                                                                "com_sex_P_doggy_22"
+                                                                "com_sex_P_doggy_22",
+                                                                "com_sex_P_doggy_55"
                                                             ]
                                                         }
                                                     ],
@@ -840,14 +894,16 @@
                                                         "submissive"
                                                     ],
                                                     "responses": [
-                                                        "com_sex_P_doggy_23",
-                                                        "com_sex_P_doggy_24"
+                                                        "com_sex_P_doggy_56",
+                                                        "com_sex_P_doggy_24",
+                                                        "com_sex_P_doggy_57"
                                                     ]
                                                 }
                                             ],
                                             "responses": [
                                                 "com_sex_P_doggy_JustWoken_1",
-                                                "com_sex_P_doggy_JustWoken_2"
+                                                "com_sex_P_doggy_JustWoken_2",
+                                                "com_sex_P_doggy_JustWoken_3"
                                             ]
                                         },
                                         {
@@ -1028,14 +1084,17 @@
                                                     ],
                                                     "_comment": "初体验 玩家专用 后背位V 有允许",
                                                     "responses": [
-                                                        "com_sex_P_doggy_FE_Player_1"
+                                                        "com_sex_P_doggy_FE_Player_1",
+                                                        "com_sex_P_doggy_64",
+                                                        "com_sex_P_doggy_65"
                                                     ]
                                                 }
                                             ],
                                             "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
                                                 "com_sex_P_doggy_FE_4",
-                                                "com_sex_P_doggy_FE_5"
+                                                "com_sex_P_doggy_FE_5",
+                                                "com_sex_P_doggy_58"
                                             ]
                                         },
                                         {
@@ -1052,7 +1111,8 @@
                                             "_comment": "初体验 后背位V 有允许（还在适应）",
                                             "responses": [
                                                 "com_sex_P_doggy_FE_1",
-                                                "com_sex_P_doggy_FE_2"
+                                                "com_sex_P_doggy_FE_2",
+                                                "com_sex_P_doggy_47"
                                             ]
                                         },
                                         {
@@ -1069,7 +1129,9 @@
                                             ],
                                             "_comment": "初体验 后背位V 未允许 好意（还在适应）",
                                             "responses": [
-                                                "com_sex_P_doggy_FE_3"
+                                                "com_sex_P_doggy_FE_3",
+                                                "com_sex_P_doggy_62",
+                                                "com_sex_P_doggy_63"
                                             ]
                                         }
                                     ],
@@ -1084,23 +1146,8 @@
                                     "_comment": "初体验 后背位V 未允许 敌意",
                                     "responses": [
                                         "com_sex_P_doggy_FE_4",
-                                        "com_sex_P_doggy_FE_5"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_V"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "doggy"
-                                    ],
-                                    "_comment": "对方初体验 后背位V（插入的一方）",
-                                    "responses": [
-                                        "com_sex_P_doggy_FE_Partner_1"
+                                        "com_sex_P_doggy_FE_5",
+                                        "com_sex_P_doggy_59"
                                     ]
                                 },
                                 {
@@ -1153,7 +1200,8 @@
                             "_comment": "兜底分支",
                             "responses": [
                                 "com_sex_P_doggy_Fallback_1",
-                                "com_sex_P_doggy_Fallback_2"
+                                "com_sex_P_doggy_Fallback_2",
+                                "com_sex_P_doggy_Fallback_3"
                             ]
                         }
                     ],
@@ -1296,7 +1344,8 @@
                             "_comment": "兜底分支",
                             "responses": [
                                 "com_sex_P_doggy_Refuse_Fallback_1",
-                                "com_sex_P_doggy_Refuse_Fallback_2"
+                                "com_sex_P_doggy_Refuse_Fallback_2",
+                                "com_sex_P_doggy_Refuse_Fallback_3"
                             ],
                             "useActiveTags": false
                         }
@@ -1314,8 +1363,13 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
-                            "_comment": "TODO Doer 进行中",
-                            "responses": []
+                            "_comment": "施方 com_sex_P_doggy 进行中",
+                            "responses": [
+                                "com_sex_P_doggy_Ongoing_3"
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -1337,18 +1391,10 @@
                                         "com_sex_P_doggy_Ongoing_Player_3"
                                     ]
                                 }
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_doggy_Ongoing_Player_1"
-                            ]
+                                "requireSelfAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -1502,15 +1548,50 @@
                 "com_sex_P_doggy_Fallback_2": "$self$顺从着背后的律动轻声喘息，身体微微前倾。",
                 "com_sex_P_doggy_Refuse_Fallback_1": "$self$转过身避开$target$，摇头拒绝了后背位的接触。",
                 "com_sex_P_doggy_Refuse_Fallback_2": "$self$伸手挡住$target$，神色平静地回绝了对方的要求。",
-                "com_sex_P_doggy_JustWoken_1": "$self$刚从睡梦中醒来，迷迷糊糊地察觉到$target$正贴在身侧。",
-                "com_sex_P_doggy_JustWoken_2": "$self$揉了揉惺忪的睡眼，还没完全清醒便感受到了动作。",
-                "com_sex_P_doggy_Begin_FE_Player_4": "$self$听着身后$target$的动静，身体微微发僵，手指紧紧抓住了身下的床单：……这是第一次，请轻一点……",
+                "com_sex_P_doggy_JustWoken_1": "$self$刚从睡梦中醒来，迷迷糊糊地察觉到$target$正贴在身后。",
+                "com_sex_P_doggy_JustWoken_2": "$self$揉了揉惺忪的睡眼，还没完全清醒便感受到了体内的顶弄。",
+                "com_sex_P_doggy_Begin_FE_Player_4": "$self$听着身后$target$的动静，身体微微绷紧，手指紧紧抓住了身下的布料：“……这是第一次，请轻一点……”",
                 "com_sex_P_doggy_Climax_timestop_1": "$self$被定格在凝固的时间里，身体在毫无知觉的状态下迎来了剧烈的痉挛与高潮，眼神却依旧空洞静止。",
                 "com_sex_P_doggy_Climax_timestop_2": "时间静止之中，$self$的表情没有丝毫波动，唯有失控颤抖的躯体诚实地承受着攀上顶峰的快感。",
                 "com_sex_P_doggy_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_P_doggy_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_P_doggy_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_P_doggy_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_P_doggy_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_P_doggy_45": "$self$稍微放慢了挺腰的动作，低头看着$target$的反应：“……有点太猛了吗？我缓一缓。”",
+                "com_sex_P_doggy_46": "湿热的小穴随着抽送越发紧致地吸住棒身，$self$双手扣紧$target$的腰，加快了往里顶撞的节奏：“里面……吸得这么紧啊……”",
+                "com_sex_P_doggy_47": "$self$趴在臂弯里慢慢调整着呼吸，等痛意渐渐散去：“唔……慢一点抽送的话，就没刚才那么疼了……”",
+                "com_sex_P_doggy_48": "每一次从背后的顶撞都牵扯着初破的伤口，$self$咬紧牙关忍着痛哼，膝盖止不住地打颤。",
+                "com_sex_P_doggy_49": "$self$俯下身贴了贴$target$微颤的后背，放缓了节奏：“还疼的话就说一声，不用勉强忍着。”",
+                "com_sex_P_doggy_50": "“第一次从后面来可能有点深，慢慢适应就好。”$self$扶稳$target$的腰侧，克制着往前顶的幅度。",
+                "com_sex_P_doggy_Ongoing_1": "身后的拍击声与水声清晰地传进耳中，$self$顶着$target$看过来的目光咬住下唇，耳根发烫。",
+                "com_sex_P_doggy_Ongoing_2": "察觉到$target$一直站在旁边看着，$self$羞耻地偏开视线，任由身后的动作继续。",
+                "com_sex_P_doggy_Begin_FE_Player_5": "看不见身后的紧张与破开的刺痛让$self$呼吸发乱，她咬住下唇不敢回头：“……慢一点，我还没适应。”",
+                "com_sex_P_doggy_Begin_FE_Player_6": "“唔……第一次就要从后面吗……”$self$撑在身前的手臂微微发抖，声音压得很低。",
+                "com_sex_P_doggy_Climax_sleeping_3": "腿间涌出的热流顺着腿根滑落，$self$在梦里无意识地抓紧身下布料，脚趾蜷缩着颤了几下。",
+                "com_sex_P_doggy_51": "“就是这个角度吧？”$self$听着身前传来的甜腻喘息，大开大合地挺腰撞向最深处。",
+                "com_sex_P_doggy_52": "肉棒每次抽出都带出晶亮的爱液，$self$按着$target$的胯部，稳稳地一次次贯穿到底。",
+                "com_sex_P_doggy_53": "$self$在沉睡中随着身后的抽插无意识地轻哼，破瓜后的小穴在梦里本能地收紧。",
+                "com_sex_P_doggy_54": "熟睡的$self$趴在原处呼吸微促，对身后初次被反复顶弄的痛楚毫无知觉。",
+                "com_sex_P_doggy_Climax_unconscious_3": "高潮的抽搐让$self$的四肢短暂地绷紧了一瞬，穴肉一缩一缩地绞紧柱身，她依然没有半分苏醒的迹象。",
+                "com_sex_P_doggy_55": "迷糊中涌上来的酥麻让$self$漏出一声轻喘，她没有挣扎，只是小声抱怨：\"唔……至少等我醒透了再进来啊……\"",
+                "com_sex_P_doggy_56": "$self$惊醒后发觉自己正被从身后按着侵犯，吓得不敢动弹，只能顺从地承受：\"我不乱动……我听话……求你轻点……\"",
+                "com_sex_P_doggy_57": "刚睡醒的无力感加上背后的压迫让$self$浑身发抖，只能咬着唇忍受身后的撞击：\"……求你快点结束……\"",
+                "com_sex_P_doggy_Begin_DoerFallback_3": "$self$双手扶稳$target$的腰侧，缓缓沉腰抵开入口往里推进。",
+                "com_sex_P_doggy_Climax_timestop_3": "小穴在剧烈抽搐中紧紧吸住体内的柱身，$self$却连眨眼都做不到，整个人仍停在时间冻结前的瞬间。",
+                "com_sex_P_doggy_58": "每一次从背后的顶撞都牵扯着伤口，$self$咬紧牙关忍着痛哼，膝盖止不住地发颤。",
+                "com_sex_P_doggy_59": "每一次从背后的顶撞都牵扯着伤口，$self$膝盖发软地往前滑了半寸：“唔……别再抓着我的腰往后拽了……”",
+                "com_sex_P_doggy_60": "“里面还太紧了啊……”$self$停顿了半拍，试探着调整了一下顶入的角度。",
+                "com_sex_P_doggy_61": "$self$松开些扶在$target$腰上的手，改为小幅度地浅浅抽送：“这样会好受一点吗？”",
+                "com_sex_P_doggy_62": "$self$红着眼眶把脸埋低，身后的撞击让她声音发颤：“呜……第一次就用这种看不见你的姿势，心里好慌……”",
+                "com_sex_P_doggy_63": "“别突然用力顶啊……里面还在痛呢……”$self$慌乱地反手按住$target$搭在自己胯上的手，双腿直发软。",
+                "com_sex_P_doggy_Begin_Fallback_3": "呼吸在近距离交错，$self$没有出声，顺着当下的动作进入状态。",
+                "com_sex_P_doggy_Fallback_3": "贴合的腰臀随着动作轻轻晃动，$self$没有出声，安静地配合着节奏。",
+                "com_sex_P_doggy_Refuse_Fallback_3": "“抱歉，现在不想用这个姿势。”$self$往后退开半步拉开了距离。",
+                "com_sex_P_doggy_JustWoken_3": "“唔……你什么时候从后面进来的……”$self$声音还带着刚醒的沙哑，一时间没能挣开。",
+                "com_sex_P_doggy_64": "$self$撑着手臂努力稳住发抖的腰，声音软糯：“嗯……从后面顶得好深，你舒服吗……？”",
+                "com_sex_P_doggy_65": "“因为是第一次，里面还很紧吧……”$self$反手握住$target$扶在自己腰侧的手，呼吸渐渐变得温热。",
+                "com_sex_P_doggy_66": "$self$懒洋洋地趴在枕上没起来，任由身后的人继续动作：\"唔……还困着呢，轻一点顶哦……\"",
+                "com_sex_P_doggy_Ongoing_3": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_P_doggy_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

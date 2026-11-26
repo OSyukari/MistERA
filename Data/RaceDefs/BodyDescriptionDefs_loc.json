@@ -1,0 +1,71 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for BodyDescriptionDefs.json. Holds en-us organ description prose."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "bodydesc_list_sep": ", ",
+
+                "bodydesc_sens_high": ", hypersensitive to even the slightest brush of air",
+                "bodydesc_sens_mid": ", noticeably sensitive and quick to react to touch",
+                "bodydesc_arousal_high": ", flushed and warm with arousal",
+                "bodydesc_lubrication_high": ", glistening and slick with a steady welling of clear wetness",
+                "bodydesc_expansion_high": ", thoroughly stretched and loose, barely able to close",
+                "bodydesc_expansion_mid": ", supple and well-accustomed to being stretched",
+                "bodydesc_content_extreme": ", brimming with $content$ spilling steadily out",
+                "bodydesc_content_visible": ", filled with $content$ beginning to seep out",
+                "bodydesc_content_some": ", still holding traces of $content$ inside",
+                "bodydesc_equip_any": ", with $item$ lodged inside",
+                "bodydesc_cycle_menstrual": ", warm and tender during menstruation",
+                "bodydesc_cycle_heat": ", hot and aching in the grip of ovulation, seeming to crave being filled",
+                "bodydesc_pubes_none": ", shaved completely smooth",
+                "bodydesc_pubes_trimmed": ", framed by neatly trimmed pubic hair",
+                "bodydesc_pubes_natural": ", framed by natural pubic hair",
+
+                "bodydesc_breasts_base": "Bare breasts with a soft, natural curve$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_AAA_bodydesc": "A flat, firm chest with a pair of small nipples exposed$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_AA_bodydesc": "A nearly flat chest with only the faintest swell and small, delicate nipples$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_A_bodydesc": "Small, perky breasts that barely fill a palm, tipped with pale pink areolae$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_B_bodydesc": "Well-proportioned, rounded breasts that fit comfortably in a hand, soft and supple$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_C_bodydesc": "Full, shapely breasts with a lush curve, soft flesh swaying gently and spilling past a palm$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_D_bodydesc": "Generous, heavy breasts resting full against the chest with deep cleavage, trembling softly with each breath$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_E_bodydesc": "Plump, ample breasts of striking weight, pressing together into deep cleavage and jiggling visibly at the slightest motion$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_F_bodydesc": "Huge, weighty breasts that dominate the chest, lush flesh curving heavily beneath its own softness$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_G_bodydesc": "Enormous, overflowing breasts hanging heavy against the ribs, their sheer fullness shifting and swaying with every breath$sensitivity$$arousal$$equip$.",
+                "trait_Size_B_H_bodydesc": "Massive, overwhelmingly lush breasts weighing down the chest, so full and heavy they are impossible to look away from$sensitivity$$arousal$$equip$.",
+                "bodydesc_breasts_arousal_high": ", nipples flushed and standing erect",
+                "bodydesc_breasts_equip": ", adorned at the nipples with $item$",
+
+                "bodydesc_penis_base": "An exposed penis rests between the thighs$pubes$$sensitivity$$arousal$$equip$.",
+                "trait_Size_P_tiny_bodydesc": "A tiny, slender penis rests between the thighs, with a delicate, petite glans$pubes$$sensitivity$$arousal$$equip$.",
+                "trait_Size_P_small_bodydesc": "A small, trim penis rests between the thighs, neat and compact in shape$pubes$$sensitivity$$arousal$$equip$.",
+                "trait_Size_P_average_bodydesc": "An average-sized, well-proportioned penis rests between the thighs, smooth along the shaft with a rounded glans$pubes$$sensitivity$$arousal$$equip$.",
+                "trait_Size_P_big_bodydesc": "A thick, sizable penis hangs heavy between the thighs, stout along the shaft with faint veins tracing its length$pubes$$sensitivity$$arousal$$equip$.",
+                "trait_Size_P_huge_bodydesc": "A huge, intimidatingly thick penis dominates the groin, heavy and imposing from base to broad glans$pubes$$sensitivity$$arousal$$equip$.",
+                "bodydesc_penis_arousal_high": ", now fully stiff and throbbing, with clear precum beading at the tip",
+                "bodydesc_penis_equip": ", fitted with $item$",
+
+                "bodydesc_clit_base": "A small, pink clitoris nestles at the top of the folds$sensitivity$$arousal$$equip$.",
+                "bodydesc_clit_arousal_high": ", swollen and flushed as it peeks out from beneath its hood",
+                "bodydesc_clit_equip": ", wearing $item$",
+
+                "bodydesc_vagina_base": "A soft vulva lies exposed between the thighs, smooth labia resting close together$pubes$$virgin$$sensitivity$$expansion$$arousal$$lubrication$$content$$cycle$$equip$.",
+                "trait_Size_V_1_bodydesc": "A soft vulva lies exposed between the thighs, smooth labia resting close together$pubes$$virgin$$sensitivity$$expansion$$arousal$$lubrication$$content$$cycle$$equip$.",
+                "bodydesc_vagina_virgin": ", still tight and untouched",
+                "bodydesc_vagina_arousal_high": ", the inner folds flushed deep pink and parting slightly with heat",
+
+                "bodydesc_anus_base": "A neat, puckered anus is exposed between the buttocks, its fine folds drawn tight$virgin$$sensitivity$$expansion$$content$$equip$.",
+                "trait_Size_A_1_bodydesc": "A neat, puckered anus is exposed between the buttocks, its fine folds drawn tight$virgin$$sensitivity$$expansion$$content$$equip$.",
+                "bodydesc_anus_virgin": ", still tightly shut and wholly unaccustomed to touch",
+
+                "bodydesc_womb_pregnant": "The lower belly swells in a distinct, rounded curve of pregnancy$content$.",
+                "bodydesc_womb_extreme": "The lower belly bulges dramatically outward, skin drawn taut as if stretched to its limit$content$.",
+                "bodydesc_womb_visible": "The lower belly shows a soft, noticeable swell$content$.",
+                "bodydesc_womb_content_extreme": ", weighed down and packed to capacity with $content$",
+                "bodydesc_womb_content_visible": ", visibly heavy with $content$ pooled inside",
+                "bodydesc_womb_content_some": ", holding a trace of $content$ within"
+            }
+        }
+    }
+}

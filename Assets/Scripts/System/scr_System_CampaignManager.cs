@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -374,6 +374,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         this.CurrentCampaignID = obj.campaignSettingID;
         this.currentWorldPlanIDs = obj.WorldPlanIDs ?? new List<string>();
         HolidaySeasonSystem.Reset();   // trackers are runtime-only; the next day update/query rebuilds them silently
+        ExpPlugRegistry.Reset();
         this.recreationBoard = obj.RecreationBoard;
         this.recreationGroups = obj.RecreationGroups;
         this.permissionGrants = obj.PermissionGrants?.CreateSnapshot() ?? new PermissionGrantDatabase();
@@ -795,33 +796,39 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="line"></param>
     /// <param name="animate">whether on add line invoke a ui update</param>
-    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true, UISpec displaySnapshot = null)
+    /// <param name="parsed">text/tooltip/portrait targets resolved when the entry executed (EventLineSnapshot); null = resolve now</param>
+    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true, UISpec displaySnapshot = null, EventLineSnapshot parsed = null)
     {
-        AddLog_LineContent(instance, line, line.line, displaySnapshot ?? line.UISpec, rA, line.tooltip);
+        AddLog_LineContent(instance, line, line.line, displaySnapshot ?? line.UISpec, rA, line.tooltip, parsed);
     }
 
-    public void AddLog_Line(EventInstance instance, Event.EventEntry.Options option, bool rA, bool animate = true, UISpec displaySnapshot = null)
+    public void AddLog_Line(EventInstance instance, Event.EventEntry.Options option, bool rA, bool animate = true, UISpec displaySnapshot = null, EventLineSnapshot parsed = null)
     {
-        AddLog_LineContent(instance, option, option.line, displaySnapshot ?? option.UISpec, rA, option.tooltip);
+        AddLog_LineContent(instance, option, option.line, displaySnapshot ?? option.UISpec, rA, option.tooltip, parsed);
     }
 
-    private void AddLog_LineContent(EventInstance instance, I_hasPortrait handler, string rawLine, UISpec spec, bool rA, string rawTooltip = "")
+    private void AddLog_LineContent(EventInstance instance, I_hasPortrait handler, string rawLine, UISpec spec, bool rA, string rawTooltip = "", EventLineSnapshot parsed = null)
     {
         // here we need to process line into translated
         //Debug.Log($"Event Addline {line}");
         Message_Text log = null;
 
-        var content = UtilityEX.ParseEventEntry(instance, rawLine);
+        // display runs once the event next waits; a snapshot taken at execution keeps targets/append strings that later
+        // entries reassign before then (e.g. a loop popping the next character into the same key)
+        var content = parsed != null ? parsed.content : UtilityEX.ParseEventEntry(instance, rawLine);
         if (content.Length < 1) return;
         //Debug.Log($"AddLog_Line parsed content: {content}");
-        var tooltip = string.IsNullOrEmpty(rawTooltip) ? "" : UtilityEX.ParseEventEntry(instance, rawTooltip);
+        var tooltip = parsed != null ? parsed.tooltip : string.IsNullOrEmpty(rawTooltip) ? "" : UtilityEX.ParseEventEntry(instance, rawTooltip);
+        List<Character_Trainable> targetrefs = null;
+        bool hasTargets = parsed != null ? parsed.portraitTargets != null : instance.Targets.TryGetValue(spec.PortraitRefKey, out targetrefs);
+        if (parsed != null) targetrefs = parsed.portraitTargets;
         if (spec.PortraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
         {
             var msglog = new Message_Text(instance.Self, handler, content, rA, tooltip, default, instance);
             //msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
-        else if (instance.Targets.TryGetValue(spec.PortraitRefKey, out var targetrefs))
+        else if (hasTargets)
         {
             var msglog = new Message_Text(targetrefs, handler, null, tooltip, default, instance);
             msglog.AddMessage(content, rA);
@@ -2626,6 +2633,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (sub != null) sub = InstantiateCharacter(sub, debugRoom);
 
         HolidaySeasonSystem.Reset();   // a new campaign starts with no holiday/season trackers
+        ExpPlugRegistry.Reset();
 
         scr_System_Time.current.initializeTime();
 
@@ -2927,6 +2935,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     [NonSerialized] public int jobRef_followPlayerCOM = 1;
 
     Dictionary<int, Character_Trainable> Index_referenceID;
+    [JsonIgnore] internal Dictionary<int, Character_Trainable>.ValueCollection AllCharacters => Index_referenceID.Values;
 
     /// <summary> Snapshot of registered character IDs, including actors not located on the current map. </summary>
     public int[] LoadedCharacterIDs => Index_referenceID == null ? Array.Empty<int>() : Index_referenceID.Keys.ToArray();
@@ -3141,6 +3150,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         this.Index_referenceID.Remove(c.RefID);
         RecreationUtility.ForgetActivityCharacter(c.FactionManager);
         PermissionGrants.RemoveCharacter(c.RefID);
+        ExpPlugRegistry.UnregisterCharacter(c.RefID);
         // first, notify everyone that this should be purged
         foreach (var chara in this.Index_referenceID.Values)
         {

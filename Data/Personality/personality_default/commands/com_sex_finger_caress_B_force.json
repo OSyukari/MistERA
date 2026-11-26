@@ -135,19 +135,19 @@
                                         "com_sex_finger_caress_B_force_Begin_12"
                                     ]
                                 }
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 开始 com_sex_finger_caress_B_force",
                             "responses": [
-                                "com_sex_finger_caress_B_force_Begin_16",
-                                "com_sex_finger_caress_B_force_Begin_17",
-                                "com_sex_finger_caress_B_force_Begin_18"
+                                "com_sex_finger_caress_B_force_Begin_19"
                             ]
                         }
                     ]
@@ -305,19 +305,30 @@
                                         "com_sex_finger_caress_B_force_18"
                                     ]
                                 }
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_finger_caress_B_force 结果",
                             "responses": [
-                                "com_sex_finger_caress_B_force_28",
-                                "com_sex_finger_caress_B_force_29",
-                                "com_sex_finger_caress_B_force_30"
+                                "com_sex_finger_caress_B_force_31"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_finger_caress_B_force 结果正面",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_32"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -352,19 +363,19 @@
                                         "com_sex_finger_caress_B_force_Ongoing_3"
                                     ]
                                 }
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_finger_caress_B_force 进行中",
                             "responses": [
-                                "com_sex_finger_caress_B_force_Ongoing_7",
-                                "com_sex_finger_caress_B_force_Ongoing_8",
-                                "com_sex_finger_caress_B_force_Ongoing_9"
+                                "com_sex_finger_caress_B_force_Ongoing_10"
                             ]
                         }
                     ]
@@ -499,7 +510,11 @@
                 "com_sex_finger_caress_B_force_Ongoing_9": "动作还在继续，$self$目光微垂，一时间没有别的动作。",
                 "com_sex_finger_caress_B_force_Refuse_7": "$self$往后退开半步，冷声道：“别碰那里。”",
                 "com_sex_finger_caress_B_force_Refuse_8": "$self$抬手挡住伸过来的手指，神色冷淡地回绝了这次触碰。",
-                "com_sex_finger_caress_B_force_Refuse_9": "“拿开。”$self$直接侧身避过，语气里没有半分商量的余地。"
+                "com_sex_finger_caress_B_force_Refuse_9": "“拿开。”$self$直接侧身避过，语气里没有半分商量的余地。",
+                "com_sex_finger_caress_B_force_31": "(unimplemented)",
+                "com_sex_finger_caress_B_force_32": "(unimplemented)",
+                "com_sex_finger_caress_B_force_Begin_19": "(unimplemented)",
+                "com_sex_finger_caress_B_force_Ongoing_10": "(unimplemented)"
             }
         }
     }

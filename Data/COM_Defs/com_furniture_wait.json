@@ -10,6 +10,7 @@
                 "displayName":"com_furniture_wait_displayName",
                 "timeScale":60,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -33,6 +34,7 @@
                 "_comment":"timeScale is only a fallback - ActionPackage_WaitUntilNextHour (temporary AP) sets its duration from the game clock on construction/reset/repeat. COM_WaitUntilNextHour only fills $minutes$ in the texts.",
                 "timeScale":60,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -54,6 +56,7 @@
                 "displayName":"com_furniture_wait_5min_displayName",
                 "timeScale":5,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -75,6 +78,7 @@
                 "displayName":"com_furniture_wait_15min_displayName",
                 "timeScale":15,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -96,6 +100,7 @@
                 "displayName":"com_furniture_wait_30min_displayName",
                 "timeScale":30,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -117,6 +122,7 @@
                 "displayName":"com_furniture_wait_1h_displayName",
                 "timeScale":60,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -138,6 +144,7 @@
                 "displayName":"com_furniture_wait_2h_displayName",
                 "timeScale":120,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
@@ -159,6 +166,7 @@
                 "displayName":"com_furniture_wait_4h_displayName",
                 "timeScale":240,
                 "comTags":["furniture","wait"],
+                "allowJoining":false,
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {

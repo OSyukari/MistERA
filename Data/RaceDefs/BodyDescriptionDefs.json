@@ -1,0 +1,223 @@
+{
+    "_doc": "Organ description profiles (Docs/Body/Plan_CharacterDescription.md). Organs reference one by BodyInternal_Base.descriptionProfile. Base text = dictionary key <current trait of baseTraitGroup>_bodydesc if it exists, else the first matching base row. Each $group$ in the base text is filled by the first matching row of that group (own groups replace same-named ruleset groups; later rulesets win over earlier ones). Row conditions: requireTraits/excludeTraits, sensitivity/expansion {min,max} (skill level of this organ), contentState [empty|some|visible|extreme], requireContentTags/excludeContentTags, requireEquip, requireEquipTags/excludeEquipTags, cycleStages [Menstrual|PreOvulation|Ovulation|Rest|Pregnant|PostPregnancy|Proestrus|Estrus|Interestrus], arousal {min,max} (sex stimulation ~0-100), lubrication {min,max} (EffectiveLubrication, organs needing lubrication only), virgin. Fragment placeholders: $item$ $content$ $name$. A personality rewords any key with the dictionary key <key>@<personalityID>. Preview: Tools/Text Authoring/Body Description Preview (play mode).",
+    "BodyPartBases": {
+        "BodyDescriptionRulesets": [
+            {
+                "id": "bodydesc_set_sensitivity",
+                "groups": {
+                    "sensitivity": [
+                        { "id": "high", "sensitivity": { "min": 8 }, "text": "bodydesc_sens_high" },
+                        { "id": "mid", "sensitivity": { "min": 4 }, "text": "bodydesc_sens_mid" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_set_arousal",
+                "groups": {
+                    "arousal": [
+                        { "id": "aroused", "arousal": { "min": 40 }, "text": "bodydesc_arousal_high" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_set_container",
+                "groups": {
+                    "expansion": [
+                        { "id": "high", "expansion": { "min": 7 }, "text": "bodydesc_expansion_high" },
+                        { "id": "mid", "expansion": { "min": 3 }, "text": "bodydesc_expansion_mid" }
+                    ],
+                    "content": [
+                        { "id": "extreme", "contentState": ["extreme"], "text": "bodydesc_content_extreme" },
+                        { "id": "visible", "contentState": ["visible"], "text": "bodydesc_content_visible" },
+                        { "id": "some", "contentState": ["some"], "text": "bodydesc_content_some" }
+                    ],
+                    "equip": [
+                        { "id": "any", "requireEquip": true, "text": "bodydesc_equip_any" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_set_cycle",
+                "groups": {
+                    "cycle": [
+                        { "id": "menstrual", "cycleStages": ["Menstrual"], "text": "bodydesc_cycle_menstrual" },
+                        { "id": "heat", "cycleStages": ["Ovulation", "Estrus"], "text": "bodydesc_cycle_heat" }
+                    ]
+                }
+            }
+        ],
+        "BodyDescriptionProfiles": [
+            {
+                "id": "bodydesc_breasts",
+                "inheritRulesets": ["bodydesc_set_sensitivity", "bodydesc_set_arousal"],
+                "baseTraitGroup": "trait_Size_B",
+                "base": [
+                    { "id": "default", "text": "bodydesc_breasts_base" }
+                ],
+                "groups": {
+                    "arousal": [
+                        { "id": "aroused", "arousal": { "min": 40 }, "text": "bodydesc_breasts_arousal_high" }
+                    ],
+                    "equip": [
+                        { "id": "any", "requireEquip": true, "text": "bodydesc_breasts_equip" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_penis",
+                "inheritRulesets": ["bodydesc_set_sensitivity", "bodydesc_set_arousal"],
+                "baseTraitGroup": "trait_Size_P",
+                "base": [
+                    { "id": "default", "text": "bodydesc_penis_base" }
+                ],
+                "groups": {
+                    "pubes": [
+                        { "id": "none", "requireTraits": ["trait_PubicHair_none"], "text": "bodydesc_pubes_none" },
+                        { "id": "trimmed", "requireTraits": ["trait_PubicHair_trimmed"], "text": "bodydesc_pubes_trimmed" },
+                        { "id": "natural", "text": "bodydesc_pubes_natural" }
+                    ],
+                    "arousal": [
+                        { "id": "aroused", "arousal": { "min": 40 }, "text": "bodydesc_penis_arousal_high" }
+                    ],
+                    "equip": [
+                        { "id": "any", "requireEquip": true, "text": "bodydesc_penis_equip" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_clit",
+                "inheritRulesets": ["bodydesc_set_sensitivity", "bodydesc_set_arousal"],
+                "base": [
+                    { "id": "default", "text": "bodydesc_clit_base" }
+                ],
+                "groups": {
+                    "arousal": [
+                        { "id": "aroused", "arousal": { "min": 40 }, "text": "bodydesc_clit_arousal_high" }
+                    ],
+                    "equip": [
+                        { "id": "any", "requireEquip": true, "text": "bodydesc_clit_equip" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_vagina",
+                "inheritRulesets": ["bodydesc_set_sensitivity", "bodydesc_set_arousal", "bodydesc_set_container", "bodydesc_set_cycle"],
+                "baseTraitGroup": "trait_Size_V",
+                "base": [
+                    { "id": "default", "text": "bodydesc_vagina_base" }
+                ],
+                "groups": {
+                    "pubes": [
+                        { "id": "none", "requireTraits": ["trait_PubicHair_none"], "text": "bodydesc_pubes_none" },
+                        { "id": "trimmed", "requireTraits": ["trait_PubicHair_trimmed"], "text": "bodydesc_pubes_trimmed" },
+                        { "id": "natural", "text": "bodydesc_pubes_natural" }
+                    ],
+                    "virgin": [
+                        { "id": "virgin", "virgin": true, "text": "bodydesc_vagina_virgin" }
+                    ],
+                    "arousal": [
+                        { "id": "aroused", "arousal": { "min": 40 }, "text": "bodydesc_vagina_arousal_high" }
+                    ],
+                    "lubrication": [
+                        { "id": "wet", "lubrication": { "min": 66 }, "text": "bodydesc_lubrication_high" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_anus",
+                "inheritRulesets": ["bodydesc_set_sensitivity", "bodydesc_set_container"],
+                "baseTraitGroup": "trait_Size_A",
+                "base": [
+                    { "id": "default", "text": "bodydesc_anus_base" }
+                ],
+                "groups": {
+                    "virgin": [
+                        { "id": "virgin", "virgin": true, "text": "bodydesc_anus_virgin" }
+                    ]
+                }
+            },
+            {
+                "id": "bodydesc_womb",
+                "visibility": "always",
+                "base": [
+                    { "id": "pregnant", "cycleStages": ["Pregnant"], "text": "bodydesc_womb_pregnant" },
+                    { "id": "extreme", "contentState": ["extreme"], "text": "bodydesc_womb_extreme" },
+                    { "id": "visible", "contentState": ["visible"], "text": "bodydesc_womb_visible" }
+                ],
+                "groups": {
+                    "content": [
+                        { "id": "extreme", "contentState": ["extreme"], "text": "bodydesc_womb_content_extreme" },
+                        { "id": "visible", "contentState": ["visible"], "text": "bodydesc_womb_content_visible" },
+                        { "id": "some", "contentState": ["some"], "text": "bodydesc_womb_content_some" }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "bodydesc_list_sep": "、",
+
+                "bodydesc_sens_high": "，敏感得惊人，光是空气拂过便微微发颤",
+                "bodydesc_sens_mid": "，已经开发得相当敏感，稍加触碰便会泛起反应",
+                "bodydesc_arousal_high": "，因情欲充血而微微发烫发红",
+                "bodydesc_lubrication_high": "，透明粘稠的爱液源源不断涌出，将整片私处浸得水光淋漓",
+                "bodydesc_expansion_high": "，穴口已被充分开拓，柔软松弛得几乎合不拢",
+                "bodydesc_expansion_mid": "，穴口软熟而富有弹性，已习惯了被撑开的触感",
+                "bodydesc_content_extreme": "，里面被$content$彻底灌满，粘稠的液体正顺着缝隙不断溢出",
+                "bodydesc_content_visible": "，里面蓄积了不少$content$，正顺着边缘缓缓渗出",
+                "bodydesc_content_some": "，内部还残留着些许$content$",
+                "bodydesc_equip_any": "，$item$正深插在里面",
+                "bodydesc_cycle_menstrual": "，正值经期，透出些许娇弱与温热",
+                "bodydesc_cycle_heat": "，正值排卵发情的高峰，深处隐隐发烫，仿佛本能地渴求着填满",
+                "bodydesc_pubes_none": "，周围光洁无毛，细腻的肌肤一览无余",
+                "bodydesc_pubes_trimmed": "，周围毛发修剪得整整齐齐",
+                "bodydesc_pubes_natural": "，覆着自然生长的柔软阴毛",
+
+                "bodydesc_breasts_base": "裸露在外的胸口线条柔和$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_AAA_bodydesc": "平坦紧实的胸膛上，两点淡色乳头清晰可见$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_AA_bodydesc": "近乎平坦的胸口只有微微的弧度，小巧的乳尖贴在光滑的皮肤上$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_A_bodydesc": "小巧挺翘的双乳刚刚能拢进掌心，乳晕淡粉而紧致$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_B_bodydesc": "匀称饱满的双乳线条圆润，一手刚好握满，柔软而富有弹性$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_C_bodydesc": "丰润挺拔的双乳勾勒出诱人的弧度，软肉在胸前微微起伏，掌心已有些握不住$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_D_bodydesc": "饱满丰腴的硕乳沉甸甸地挺在胸前，乳沟深陷，随着呼吸轻轻颤动$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_E_bodydesc": "丰满高耸的双乳极具分量，雪白软肉挤出深邃的沟壑，稍一动作便晃出撩人的波纹$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_F_bodydesc": "硕大沉重的巨乳几乎占满胸前视野，饱满的软肉带着下垂的肉感弧度，晃动间尽显丰腴$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_G_bodydesc": "惊人硕大的豪乳沉甸甸地压在胸口，夸张的肉量圆滚饱满，每一下呼吸都牵动着大片雪白颤晃$sensitivity$$arousal$$equip$。",
+                "trait_Size_B_H_bodydesc": "庞大得近乎犯规的超巨乳沉沉坠在胸前，丰厚的软肉如熟透般饱胀，存在感几乎令人移不开眼$sensitivity$$arousal$$equip$。",
+                "bodydesc_breasts_arousal_high": "，乳头早已充血挺立，泛着惹眼的红晕",
+                "bodydesc_breasts_equip": "，乳头上佩戴着$item$",
+
+                "bodydesc_penis_base": "股间裸露着一根肉棒$pubes$$sensitivity$$arousal$$equip$。",
+                "trait_Size_P_tiny_bodydesc": "股间露出一根迷你小巧的肉棒，柱身纤细，龟头显得格外娇嫩$pubes$$sensitivity$$arousal$$equip$。",
+                "trait_Size_P_small_bodydesc": "股间露出一根偏小的肉棒，轮廓秀气紧致，色泽干净$pubes$$sensitivity$$arousal$$equip$。",
+                "trait_Size_P_average_bodydesc": "股间露出一根尺寸匀称的肉棒，柱身线条流畅，龟头饱满圆润$pubes$$sensitivity$$arousal$$equip$。",
+                "trait_Size_P_big_bodydesc": "股间盘踞着一根粗壮硕大的肉棒，柱身厚实有力，隐约可见浮起的脉络$pubes$$sensitivity$$arousal$$equip$。",
+                "trait_Size_P_huge_bodydesc": "股间赫然露出一条粗长惊人的巨型肉棒，分量沉重，硕大的龟头极具压迫感$pubes$$sensitivity$$arousal$$equip$。",
+                "bodydesc_penis_arousal_high": "，此刻已彻底勃起发硬，顶端的铃口正渗出晶莹的先走汁",
+                "bodydesc_penis_equip": "，上面套着$item$",
+
+                "bodydesc_clit_base": "阴唇顶端藏着一颗粉嫩小巧的阴蒂$sensitivity$$arousal$$equip$。",
+                "bodydesc_clit_arousal_high": "，已充血胀大得从包皮下探出头来，微微发红发亮",
+                "bodydesc_clit_equip": "，上面戴着$item$",
+
+                "bodydesc_vagina_base": "两腿之间裸露着粉嫩的小穴，两片软肉紧密贴合$pubes$$virgin$$sensitivity$$expansion$$arousal$$lubrication$$content$$cycle$$equip$。",
+                "trait_Size_V_1_bodydesc": "两腿之间裸露着粉嫩的小穴，两片软肉紧密贴合$pubes$$virgin$$sensitivity$$expansion$$arousal$$lubrication$$content$$cycle$$equip$。",
+                "bodydesc_vagina_virgin": "，青涩紧致，仍留着未经人事的娇嫩",
+                "bodydesc_vagina_arousal_high": "，阴唇充血泛起深红，正随着脉搏微微张合",
+
+                "bodydesc_anus_base": "臀缝深处露出隐秘的后穴，细密的褶皱整齐收拢$virgin$$sensitivity$$expansion$$content$$equip$。",
+                "trait_Size_A_1_bodydesc": "臀缝深处露出隐秘的后穴，细密的褶皱整齐收拢$virgin$$sensitivity$$expansion$$content$$equip$。",
+                "bodydesc_anus_virgin": "，紧窄得一丝不苟，显然尚未被人开发过",
+
+                "bodydesc_womb_pregnant": "小腹因怀有身孕而明显隆起，圆润饱满的弧度透出温润的母性肉感$content$。",
+                "bodydesc_womb_extreme": "原本平坦的小腹此刻被撑得高高鼓起，紧绷的皮肤下仿佛快要装不下一般$content$。",
+                "bodydesc_womb_visible": "小腹微微鼓起一圈柔软的弧度，能看出里面正存着分量$content$。",
+                "bodydesc_womb_content_extreme": "，深处沉甸甸地灌满了大量的$content$",
+                "bodydesc_womb_content_visible": "，里面明显蓄积着不少$content$",
+                "bodydesc_womb_content_some": "，内部还残留着些许$content$"
+            }
+        }
+    }
+}

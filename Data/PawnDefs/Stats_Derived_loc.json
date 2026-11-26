@@ -17,7 +17,15 @@
                 "o_acceptance": "口腔插入意愿",
                 "ui_lubrication_stimulation": "快感润滑加成",
                 "ui_bodyLubrication_value": "润滑度：$value$",
-                "ui_bodyLubrication_breakdown": "派生润滑度：$derived$（$stat$）\n液体润滑加成：$liquid$\n部位内全部液体：$amount$ ml\n液体加成按部位内全部液体的毫升数计算，不按容量占比计算；不是永久加成。"
+                "ui_bodyLubrication_breakdown": "派生润滑度：$derived$（$stat$）\n液体润滑加成：$liquid$\n部位内全部液体：$amount$ ml\n液体加成按部位内全部液体的毫升数计算，不按容量占比计算；不是永久加成。",
+                "stats_derived_str_trainingMax": "额外力量上限",
+                "stats_derived_str_trainingMax_tooltip": "通过锻炼可获得的额外力量加值上限（默认2）。受特质与技能等级影响。",
+                "stats_derived_con_trainingMax": "额外体质上限",
+                "stats_derived_con_trainingMax_tooltip": "通过锻炼可获得的额外体质加值上限（默认2）。受特质与技能等级影响。",
+                "stats_derived_psy_trainingMax": "额外心灵上限",
+                "stats_derived_psy_trainingMax_tooltip": "通过锻炼可获得的额外心灵加值上限（默认2）。受特质与技能等级影响。",
+                "stats_derived_wil_trainingMax": "额外意志上限",
+                "stats_derived_wil_trainingMax_tooltip": "通过锻炼可获得的额外意志加值上限（默认2）。受特质与技能等级影响。"
             },
             "en-us": {
                 "v_lubrication": "Vaginal Lubrication",
@@ -40,7 +48,15 @@
                 "stats_derived_cleanlinessSensitivity_tooltip": "This value (a multiplier) determines how much mess a character can tolerate in a room and on their body - the higher it is, the less tolerant.\nDefault 1.0",
                 "stats_derived_wakeupOffset": "Sleep Schedule",
                 "stats_derived_wakeupOffset_tooltip": "Whether the character wakes up on time or stays up late, default 0 (on time).\nWhen this value is above 0, the character goes to bed and wakes up early; below 0, they go to bed and wake up late.",
-                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0\nAt 0, the character feels no pain at all\nAlso affects %%experience_pain%% gain during training"
+                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0\nAt 0, the character feels no pain at all\nAlso affects %%experience_pain%% gain during training",
+                "stats_derived_str_trainingMax": "Bonus Strength Cap",
+                "stats_derived_str_trainingMax_tooltip": "Maximum bonus Strength that can be gained through training (default 2). Modified by traits and skill levels.",
+                "stats_derived_con_trainingMax": "Bonus Constitution Cap",
+                "stats_derived_con_trainingMax_tooltip": "Maximum bonus Constitution that can be gained through training (default 2). Modified by traits and skill levels.",
+                "stats_derived_psy_trainingMax": "Bonus Psyche Cap",
+                "stats_derived_psy_trainingMax_tooltip": "Maximum bonus Psyche that can be gained through training (default 2). Modified by traits and skill levels.",
+                "stats_derived_wil_trainingMax": "Bonus Willpower Cap",
+                "stats_derived_wil_trainingMax_tooltip": "Maximum bonus Willpower that can be gained through training (default 2). Modified by traits and skill levels."
             }
         }
     }

@@ -257,10 +257,44 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
+                            "requireSelfOnly": true,
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "happy",
+                                                "excited",
+                                                "surprised",
+                                                "intrigued",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "frustrated",
+                                        "pouting",
+                                        "complaining",
+                                        "glare",
+                                        "teary",
+                                        "doubt",
+                                        "bored",
+                                        "annoyed",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_job_cleaning_2"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
@@ -288,38 +322,15 @@
                                 "disappointed"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_cleaning_1"
+                            ]
                         },
                         {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "happy",
-                                        "excited",
-                                        "surprised",
-                                        "intrigued",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "frustrated",
-                                "pouting",
-                                "complaining",
-                                "glare",
-                                "teary",
-                                "doubt",
-                                "bored",
-                                "annoyed",
-                                "disappointed"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_job_cleaning_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -626,10 +637,44 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
+                            "requireSelfOnly": true,
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "happy",
+                                                "excited",
+                                                "surprised",
+                                                "intrigued",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "frustrated",
+                                        "pouting",
+                                        "complaining",
+                                        "glare",
+                                        "teary",
+                                        "doubt",
+                                        "bored",
+                                        "annoyed",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_job_farm_cultivate_crop_2"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
@@ -657,38 +702,15 @@
                                 "disappointed"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_farm_cultivate_crop_1"
+                            ]
                         },
                         {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "happy",
-                                        "excited",
-                                        "surprised",
-                                        "intrigued",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "frustrated",
-                                "pouting",
-                                "complaining",
-                                "glare",
-                                "teary",
-                                "doubt",
-                                "bored",
-                                "annoyed",
-                                "disappointed"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_job_farm_cultivate_crop_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -995,10 +1017,44 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
+                            "requireSelfOnly": true,
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "happy",
+                                                "excited",
+                                                "surprised",
+                                                "intrigued",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "frustrated",
+                                        "pouting",
+                                        "complaining",
+                                        "glare",
+                                        "teary",
+                                        "doubt",
+                                        "bored",
+                                        "annoyed",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_job_farm_maintain_2"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
@@ -1026,38 +1082,15 @@
                                 "disappointed"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_farm_maintain_1"
+                            ]
                         },
                         {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "happy",
-                                        "excited",
-                                        "surprised",
-                                        "intrigued",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "frustrated",
-                                "pouting",
-                                "complaining",
-                                "glare",
-                                "teary",
-                                "doubt",
-                                "bored",
-                                "annoyed",
-                                "disappointed"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_job_farm_maintain_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1364,10 +1397,44 @@
                     "interruptSelfJob": true,
                     "variants": [
                         {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
+                            "requireSelfOnly": true,
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requireSelfAttitudeGTE": "Like"
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "happy",
+                                                "excited",
+                                                "surprised",
+                                                "intrigued",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "frustrated",
+                                        "pouting",
+                                        "complaining",
+                                        "glare",
+                                        "teary",
+                                        "doubt",
+                                        "bored",
+                                        "annoyed",
+                                        "disappointed"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "pb_com_job_production_cooking_2"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
@@ -1395,38 +1462,15 @@
                                 "disappointed"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_job_production_cooking_1"
+                            ]
                         },
                         {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "happy",
-                                        "excited",
-                                        "surprised",
-                                        "intrigued",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
-                                }
-                            ],
-                            "extraSelfPortraitTags": [
-                                "frustrated",
-                                "pouting",
-                                "complaining",
-                                "glare",
-                                "teary",
-                                "doubt",
-                                "bored",
-                                "annoyed",
-                                "disappointed"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "requireSelfDoer": true,
+                            "responses": [
+                                "pb_com_job_production_cooking_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1497,7 +1541,19 @@
                 "pb_com_job_production_cooking_Refuse_1": "$self$摇摇头。\n\"我现在不想下厨，你自己做吧。\"",
                 "pb_com_job_production_cooking_Refuse_2": "$self$摆手推辞道。\n\"做饭的事先不了，没什么心情。\"",
                 "pb_com_job_production_cooking_JoinFailed_1": "$self$看了一眼灶台，摇摇头。\n\"厨房里转不开身，我一个人来就行。\"",
-                "pb_com_job_production_cooking_JoinFailed_2": "$self$摆了摆手。\n\"这边火候正忙着，先别挤进来。\""
+                "pb_com_job_production_cooking_JoinFailed_2": "$self$摆了摆手。\n\"这边火候正忙着，先别挤进来。\"",
+                "pb_com_job_cleaning_1": "(unimplemented)",
+                "pb_com_job_cleaning_2": "(unimplemented)",
+                "pb_com_job_cleaning_3": "(unimplemented)",
+                "pb_com_job_farm_cultivate_crop_1": "(unimplemented)",
+                "pb_com_job_farm_cultivate_crop_2": "(unimplemented)",
+                "pb_com_job_farm_cultivate_crop_3": "(unimplemented)",
+                "pb_com_job_farm_maintain_1": "(unimplemented)",
+                "pb_com_job_farm_maintain_2": "(unimplemented)",
+                "pb_com_job_farm_maintain_3": "(unimplemented)",
+                "pb_com_job_production_cooking_1": "(unimplemented)",
+                "pb_com_job_production_cooking_2": "(unimplemented)",
+                "pb_com_job_production_cooking_3": "(unimplemented)"
             },
             "en-us": {}
         }

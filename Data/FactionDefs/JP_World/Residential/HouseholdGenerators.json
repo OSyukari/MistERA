@@ -1,0 +1,64 @@
+{
+    "_doc": "Generic household FactionGenerator templates for JP_World (Docs/Households/Plan_FactionGenerator.md).",
+    "MapPlans": {
+        "factionGenerator": [
+            {
+                "ID": "household_jp_couple_generic",
+                "homeTemplateID": "jp_home_tpl_apt_2ldk",
+                "homeScope": {
+                    "residentialOnly": true
+                },
+                "mealHours": [7, 12, 18],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22,
+                "characters": [
+                    {
+                        "scopeKey": "husband",
+                        "generatorID": "jp_generic_adult_male",
+                        "memberTypeID": "membertype_family_leader",
+                        "lastNameFrom": "",
+                        "extraExperiences": ["exp_jp_married_husband"]
+                    },
+                    {
+                        "scopeKey": "wife",
+                        "generatorID": "jp_generic_adult_female",
+                        "memberTypeID": "membertype_family_member",
+                        "lastNameFrom": "husband",
+                        "extraExperiences": ["exp_jp_married_wife"]
+                    }
+                ],
+                "roomGroups": [
+                    {
+                        "scopeKeys": ["husband", "wife"],
+                        "mainRoom": true
+                    }
+                ],
+                "relationships": [
+                    {
+                        "a": "husband",
+                        "b": "wife",
+                        "bio": "",
+                        "bio_isA": false,
+                        "personal": "relationship_marriage",
+                        "personal_isA": false
+                    }
+                ],
+                "workFactions": [
+                    {
+                        "scope": {
+                            "memberTypeTags_any": ["memberType_work_fullTime"],
+                            "respectHeadcount": true
+                        },
+                        "assignTo": [
+                            {
+                                "targetKey": "husband",
+                                "forceSatisfySkillsReq": false
+                            }
+                        ],
+                        "chance": 100
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -775,4 +775,20 @@ public class MemberTypeAssignRequirements
         tooltip = lines.Count == 0 ? "" : LocalizeDictionary.QueryThenParse("ui_assignMemberType_requires") + "\n" + string.Join("\n", lines);
         return all;
     }
+
+    /// <summary>
+    /// For each requireSkills entry not yet met on c, tops up level experience requirements and forces the level if needed
+    /// (SkillManager.ForceSatisfySkillLevel). Used by FactionGenerator when forceSatisfySkillsReq is true.
+    /// </summary>
+    public void ForceSatisfySkills(Character_Trainable c)
+    {
+        if (c == null || c.Skills == null || requireSkills == null) return;
+        for (int i = 0; i < requireSkills.Count; i++)
+        {
+            var req = requireSkills[i];
+            if (req == null || string.IsNullOrEmpty(req.skillID)) continue;
+            if (c.GetSkillLevel(req.skillID) < req.minLevel)
+                c.Skills.ForceSatisfySkillLevel(req.skillID, req.minLevel);
+        }
+    }
 }

@@ -17,6 +17,13 @@
     {
         "id":"item_videocd_news",
         "Tags":["furniture_watchVideo","noFactionReq"]
+    },
+
+    {
+        "id":"item_arcade_token",
+        "Tags":[],
+        "value":100,
+        "itemComps_Template":[]
     }
 
 ]
@@ -30,14 +37,18 @@
 "item_gamecd_minesweeper":"扫雷",
 "item_gamecd_minesweeper_tooltip":"扫雷",
 "item_videocd_news":"新闻",
-"item_videocd_news_tooltip":"新闻"
+"item_videocd_news_tooltip":"新闻",
+"item_arcade_token":"游戏代币",
+"item_arcade_token_tooltip":"用于街机、抓娃娃机与大头贴机的代币。"
             },
             "en-us":
             {
                 "item_gamecd_minesweeper": "Minesweeper",
                 "item_gamecd_minesweeper_tooltip": "Minesweeper",
                 "item_videocd_news": "News",
-                "item_videocd_news_tooltip": "News"
+                "item_videocd_news_tooltip": "News",
+                "item_arcade_token": "Arcade Token",
+                "item_arcade_token_tooltip": "Token used for arcade machines, crane machines, and photo booths."
             }
         }
     }

@@ -8,6 +8,7 @@
                 "floorHeight": 482,
                 "AnchorType": "TopLeft",
                 "mapExit": "4ldk_floor_1L_frontDoor",
+                "mainRoomIDs": ["4ldk_floor_2L_roomdouble"],
                 "_comment_wholeBuildingRent": "4LDK house/apartment lease, charged monthly",
                 "wholeBuildingRent": {
                     "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 15000 },

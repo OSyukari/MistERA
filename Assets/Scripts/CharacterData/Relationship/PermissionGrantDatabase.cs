@@ -30,12 +30,20 @@ public sealed class PermissionGrant
     }
 
     // Normal grants still require the caller to check their live relationship prerequisites.
-    // Temporary grants live until removed: the granter's day update (unless the pair shares a running sex scene)
-    // or the pair's sex scene ending (PermissionService.ClearTemporaryOnDayUpdate / ClearTemporaryForPair).
+    // Temporary grants live until removed: the granter's day update (unless the pair shares a running sex scene, or is
+    // renewed for the new day while the pair shares an ongoing command) or the pair's sex scene ending
+    // (PermissionService.ClearTemporaryOnDayUpdate / ClearTemporaryForPair).
     public bool IsWithinLifetime(DateTime gameTime)
     {
         if (gameTime < grantedAt) return false;
         return type == PermissionGrantType.Normal || type == PermissionGrantType.Temporary;
+    }
+
+    /// <summary>A temporary grant kept over the day change counts as given at time (its new day), so it expires at the
+    /// next day update and is not stale for the load cleanup.</summary>
+    internal void Renew(DateTime time)
+    {
+        grantedAt = time;
     }
 }
 
@@ -119,10 +127,12 @@ public sealed class PermissionGrantDatabase
     }
 
     /// <summary>
-    /// Removes the temporary grants given by granterRef, except those whose holder keepHolder protects. Holders of removed
-    /// grants are appended to removedHolders (no duplicates) so the caller can invalidate the pairs.
+    /// Removes the temporary grants given by granterRef, except those whose holder keepHolder protects (left untouched) or
+    /// renewHolder protects (renewed to renewAt - PermissionGrant.Renew). Holders of removed grants are appended to
+    /// removedHolders (no duplicates) so the caller can invalidate the pairs.
     /// </summary>
-    public void RemoveTemporaryByGranter(int granterRef, Func<int, bool> keepHolder, List<int> removedHolders)
+    public void RemoveTemporaryByGranter(int granterRef, Func<int, bool> keepHolder, List<int> removedHolders,
+        Func<int, bool> renewHolder = null, DateTime renewAt = default)
     {
         lock (sync)
         {
@@ -131,6 +141,11 @@ public sealed class PermissionGrantDatabase
                 var grant = grants[i];
                 if (grant.granterRef != granterRef || grant.type != PermissionGrantType.Temporary) continue;
                 if (keepHolder != null && keepHolder(grant.holderRef)) continue;
+                if (renewHolder != null && renewAt != default && renewHolder(grant.holderRef))
+                {
+                    grant.Renew(renewAt);
+                    continue;
+                }
                 grants.RemoveAt(i);
                 if (removedHolders != null && !removedHolders.Contains(grant.holderRef)) removedHolders.Add(grant.holderRef);
             }

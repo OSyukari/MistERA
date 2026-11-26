@@ -38,6 +38,8 @@ public class Result_Character
     {
         public bool applyToDoer = false;
         public bool applyToReceiver = false;
+        /// <summary> When true, this character result also fires when the COM's difficulty check fails. </summary>
+        public bool applyOnFailure = false;
 
         public int attitudeGTE = (int)Memory_Attitude.None;
         public int attitudeLTE = (int)Memory_Attitude.None;
@@ -46,6 +48,8 @@ public class Result_Character
     public class Entry_Result
     {
         public ModStatusValue modifyStatusValue = new ModStatusValue();
+        public TrainBaseStat trainBaseStat = null;
+        public AddTrace addTrace = null;
         public CharaResultType type = CharaResultType.none;
         public string value = "";
         public List<string> tags = new List<string>();
@@ -82,8 +86,33 @@ public class Result_Character
                 List<string> s = new List<string>();
                 if (type != CharaResultType.none && value != "") s.Add($"{type}{value}");
                 if (modifyStatusValue != null && modifyStatusValue.isValid) s.Add(modifyStatusValue.Print());
+                if (trainBaseStat != null && trainBaseStat.isValid) s.Add(trainBaseStat.Print());
                 return String.Join(", ", s);
             } }
+    }
+
+    public class TrainBaseStat
+    {
+        public string statID = "";
+        public float value = 0f;
+        public string modKey = "training";
+        [JsonIgnore] public bool isValid { get { return !string.IsNullOrEmpty(statID) && value != 0f; } }
+        public string Print()
+        {
+            return $"{LocalizeDictionary.QueryThenParse("stats_base_" + statID, statID)}{value.ToString("+0.##;-0.##")}";
+        }
+    }
+
+    public class AddTrace
+    {
+        public string traceID = "";
+        /// <summary> Candidate trace slots to pick from randomly (e.g. ["Hand", "Leg"]); empty = any trace slot on the body. </summary>
+        public List<BodyPartEquipSlot> slots = new List<BodyPartEquipSlot>();
+        /// <summary> &lt;= 0 uses the trace definition's defaultAmount. </summary>
+        public float amount = 0f;
+        /// <summary> 0..1 chance to apply (default 1 = always). </summary>
+        public float chance = 1f;
+        [JsonIgnore] public bool isValid { get { return !string.IsNullOrEmpty(traceID) && chance > 0f; } }
     }
 
     public class ModStatusValue

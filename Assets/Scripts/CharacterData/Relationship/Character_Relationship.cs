@@ -1278,6 +1278,13 @@ public class Character_Relationship
     /// </summary>
     [JsonIgnore] public float Friendliness_Raw { get { return Trust_Raw - Fear_Raw + Goodwill_Raw - Badwill_Raw + Desire_Raw; } }
 
+    /// <summary>
+    /// Whether Owner's relationship toward Target is positive overall: Goodwill + Trust - Badwill - Fear (Desire left out).
+    /// RelationshipRequirement score ID "Positivity" (e.g. recreation invitation companions).
+    /// </summary>
+    [JsonIgnore] public float Positivity_Raw { get { return Goodwill_Raw + Trust_Raw - Badwill_Raw - Fear_Raw; } }
+    [JsonIgnore] public float Positivity { get { return Goodwill + Trust - Badwill - Fear; } }
+
     protected float Desire_Div
     {
         get
@@ -1427,6 +1434,32 @@ public class Character_Relationship
         }
         if (applied) OnRelationshioChange();
         return applied;
+    }
+
+    /// <summary>
+    /// Silently overwrites the bio and/or personal relationship slots for a runtime-generated preset (household
+    /// relationships or experience plugs) without logging room messages, setting cooldown, or writing a memory entry.
+    /// Empty ID leaves that slot unchanged.
+    /// </summary>
+    public void SetRuntimePresetSlots(string bioID, bool bioIsA, string personalID, bool personalIsA)
+    {
+        bool changed = false;
+        if (!string.IsNullOrEmpty(bioID))
+        {
+            relationshipTypeID_Bio = bioID;
+            isA_Bio = bioIsA;
+            _Relationship_Bio = null;
+            changed = true;
+        }
+        if (!string.IsNullOrEmpty(personalID))
+        {
+            personalRelationshipVersion++;
+            relationshipTypeID_Personal = personalID;
+            isA_Personal = personalIsA;
+            _Relationship_Personal = null;
+            changed = true;
+        }
+        if (changed) OnRelationshioChange();
     }
 
     /// <summary>

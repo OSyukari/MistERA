@@ -91,6 +91,7 @@ public static class ExpeditionSilentRunner
         Event.EventEntry.ExecutionType.SetBGImage,
         Event.EventEntry.ExecutionType.StartEvent,
         Event.EventEntry.ExecutionType.TryJoinTargetJob,
+        Event.EventEntry.ExecutionType.TryJoinPrivacyAction,
         Event.EventEntry.ExecutionType.FindJoinableAP,
         Event.EventEntry.ExecutionType.WakeUp,
         Event.EventEntry.ExecutionType.FlushLogs,

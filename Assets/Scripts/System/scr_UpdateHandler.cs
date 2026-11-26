@@ -1642,9 +1642,12 @@ public partial class scr_UpdateHandler : MonoBehaviour
     }
 
     MessageCollect Message = new MessageCollect();
-    public void NotifyJobDescriptions(MessageCollect m, bool clearOnMerge = true)
+    /// <param name="filterSight">drop what the player cannot see across a room divider (MessageCollect.DropHiddenFrom) -
+    /// false for a tape's playback, which shows what was filmed</param>
+    public void NotifyJobDescriptions(MessageCollect m, bool clearOnMerge = true, bool filterSight = true)
     {
        // Debug.Log("NotifyJobDescriptions");
+        if (filterSight) m.DropHiddenFrom(scr_System_CampaignManager.current.Player);
         this.Message.Merge(m, clearOnMerge);
     }
 
@@ -1716,10 +1719,10 @@ public partial class scr_UpdateHandler : MonoBehaviour
             FlushCollectedLogs(true, false);
         }
     }
-    /// <summary> room enter/leave lines (MovementLog) - see MessageCollect.AddMessage_Movement </summary>
-    public void AppendMovementMessage(DescriptionCollector record, Room_Instance room, bool enter, int actorRef, string name, string detail, bool mergeable)
+    /// <summary> room enter/leave lines (MovementLog), divider enter/leave lines (placeName = the furniture's name) - see MessageCollect.AddMessage_Movement </summary>
+    public void AppendMovementMessage(DescriptionCollector record, Room_Instance room, bool enter, int actorRef, string name, string detail, bool mergeable, string placeName = null)
     {
-        this.Message.AddMessage_Movement(record, room, enter, actorRef, name, detail, mergeable);
+        this.Message.AddMessage_Movement(record, room, enter, actorRef, name, detail, mergeable, placeName);
     }
     public void AppendMessageAfter(DescriptionCollector desc, Room_Instance room, bool allowFlush = false)
     {

@@ -30,6 +30,13 @@ public class Job_ActivityPetWalk : Job_Activity
     [JsonIgnore] bool sandboxChoicesBuilt;
     [JsonIgnore] SandboxChoice humanSandbox;
     [JsonIgnore] SandboxChoice petSandbox;
+    [JsonIgnore] string walkTag;
+
+    /// <summary>
+    /// What a walker does at the destination when no walk command is valid (too tired to jog, all taken...): sandbox in
+    /// place like a facility visit (Job_Activity.DispatchFacility) - a recreation command in the room, else a rest.
+    /// </summary>
+    static readonly string[] FallbackComTags = { "recreation", "rest" };
 
     sealed class SandboxChoice
     {
@@ -37,6 +44,22 @@ public class Job_ActivityPetWalk : Job_Activity
         public COM Command;
         public ActionPackage Pending;
         public ActionPackage Running;
+    }
+
+    /// <summary>The pet's walk command tag (petWalk.WalkComTagFor - a large dog jogs); null until the pet is known.</summary>
+    [JsonIgnore] string WalkTag
+    {
+        get
+        {
+            if (walkTag == null)
+            {
+                var spec = Definition?.petWalk;
+                var pet = petRef >= 0 ? scr_System_CampaignManager.current?.FindInstanceByID(petRef) : null;
+                if (spec == null || pet == null) return null;
+                walkTag = spec.WalkComTagFor(pet) ?? "";
+            }
+            return walkTag;
+        }
     }
 
     [JsonIgnore] public bool PhaseLaunched { get { return Phase == ActivityPhase.Launched && !ending; } }
@@ -117,7 +140,9 @@ public class Job_ActivityPetWalk : Job_Activity
             || !PairStillLive(human, pet) || !At(human, ParentRoom) || !At(pet, ParentRoom)) return false;
         var group = ActivityInstance as RecreationGroup;
         var spec = Definition?.petWalk;
-        if (group == null || group.AbsEnd - group.AbsStart != 2 || string.IsNullOrEmpty(spec?.walkComTag)) return false;
+        walkTag = null;
+        string tag = WalkTag;
+        if (group == null || group.AbsEnd - group.AbsStart != 2 || spec == null || string.IsNullOrEmpty(tag)) return false;
         fixedEnd = scr_System_Time.current.getStartTime().Date.AddHours(group.AbsStart + 2);
         minimumOutdoorMinutes = Math.Max(15, spec.minimumOutdoorMinutes);
         returnBufferMinutes = Math.Max(5, spec.returnBufferMinutes);
@@ -127,9 +152,10 @@ public class Job_ActivityPetWalk : Job_Activity
         string world = Manageable.ResolveWorldID(home);
         if (homeExit == null || string.IsNullOrEmpty(world)) return false;
         worldID = world;
-        // Destinations by what the furniture offers (walkComTag) in any venue of the home's world - the nearest room that
-        // fits the booked interval wins. Rooms examined per venue stay bounded.
-        var venues = RecreationUtility.WorldVenuesOffering(world, spec.walkComTag);
+        // Destinations by what the furniture offers (the pet's walk tag, on furniture with petWalk.furnitureTags - outdoor)
+        // in any venue of the home's world - the nearest room that fits the booked interval wins. Rooms examined per venue
+        // stay bounded.
+        var venues = RecreationUtility.WorldVenuesOffering(world, tag);
         Room_Instance best = null;
         float bestOutbound = float.MaxValue;
         int bestBack = 0;
@@ -142,7 +168,7 @@ public class Job_ActivityPetWalk : Job_Activity
             {
                 if (++examined > 16) break;
                 var room = entry.Value;
-                if (!RecreationUtility.RoomOffersCommandTag(room, spec.walkComTag)
+                if (!RecreationUtility.RoomOffersCommandTag(room, tag) || !RoomHasWalkFurniture(room, tag, spec)
                     || !room.CanBeAccessedBy(human) || !room.CanBeAccessedBy(pet)) continue;
                 float outbound = Math.Max(FactionUtility.GetTravelMinutesToRoom(human, room),
                     FactionUtility.GetTravelMinutesToRoom(pet, room));
@@ -170,6 +196,18 @@ public class Job_ActivityPetWalk : Job_Activity
         outdoorDeadline = returnDeadline.AddMinutes(-minimumOutdoorMinutes);
         reason = "";
         return true;
+    }
+
+    /// <summary>Some furniture in room the walk may use (petWalk.furnitureTags) offers a command tagged tag.</summary>
+    static bool RoomHasWalkFurniture(Room_Instance room, string tag, PetWalkActivitySpec spec)
+    {
+        for (int i = 0, count = room.FurnitureCount; i < count; i++)
+        {
+            var furniture = room.GetFurniture(i);
+            if (furniture?.JobGiver != null && spec.AllowsFurniture(furniture.FurnitureBase)
+                && furniture.JobGiver.HasAvailableCOMwithCOMTags(tag)) return true;
+        }
+        return false;
     }
 
     static bool FiniteTrip(float minutes)
@@ -250,6 +288,7 @@ public class Job_ActivityPetWalk : Job_Activity
         ending = false;
         sandboxChoicesBuilt = false;
         humanSandbox = petSandbox = null;
+        walkTag = null;
         if (travelRoomRefs == null) travelRoomRefs = new List<int>();
         base.OnAfterDeserialize();
     }
@@ -374,9 +413,16 @@ public class Job_ActivityPetWalk : Job_Activity
             && choice.Running.internalState == AP_Status.success && choice.Running.executeSuccessful
             && !choice.Running.PackageRepeat)
         {
-            // Reuse the selected job/COM only after its actual package completed, never on a failed tick.
-            if (choice.Job.CanBeInterrupted && choice.Job.ValidateActor(c, choice.Command))
-                package = MakeSandboxPackage(c, choice.Job, choice.Command);
+            // Choose again only after its actual package completed, never on a failed tick: the walk command first, so a
+            // walker who fell back to a stroll or a rest goes back to the walk once they can.
+            if (c.RefID == humanRef) humanSandbox = null;
+            else petSandbox = null;
+            choice = SelectSandboxChoice(c);
+            if (c.RefID == humanRef) humanSandbox = choice;
+            else petSandbox = choice;
+            if (choice == null) return Hold(c);   // nothing in the room fits: already exhausted
+            package = choice.Pending;
+            choice.Pending = null;
         }
         if (package == null)
         {
@@ -419,24 +465,38 @@ public class Job_ActivityPetWalk : Job_Activity
         var running = FindOwnedPackage(c.CurrentJob, c.RefID);
         if (running != null && c.CurrentJob is Job_Furniture current)
             return new SandboxChoice { Job = current, Command = running.targetCOM, Running = running };
-        var target = DestinationRoom;
-        var jobs = target.Jobs;
+        // The walk command (on walk furniture - petWalk.furnitureTags) first; none valid: sandbox in place
+        // (FallbackComTags, any furniture) rather than standing idle.
+        var choice = FindSandboxChoice(c, WalkTag, Definition?.petWalk);
+        for (int t = 0; choice == null && t < FallbackComTags.Length; t++) choice = FindSandboxChoice(c, FallbackComTags[t], null);
+        if (choice == null) ExhaustSandboxChoice(c);
+        return choice;
+    }
+
+    /// <summary>
+    /// The first furniture command in the destination room carrying tag that c may do right now - with spec, only on
+    /// furniture it allows (petWalk.furnitureTags).
+    /// </summary>
+    SandboxChoice FindSandboxChoice(Character_Trainable c, string tag, PetWalkActivitySpec spec)
+    {
+        if (string.IsNullOrEmpty(tag)) return null;
+        var jobs = DestinationRoom.Jobs;
         int examined = 0;
         for (int i = 0; i < jobs.Count && i < 16 && examined < 64; i++)
         {
             if (!(jobs[i] is Job_Furniture furniture) || !furniture.CanBeInterrupted) continue;
+            if (spec != null && !spec.AllowsFurniture(furniture.ParentInstance?.FurnitureBase)) continue;
             var commands = furniture.allusableCOMs;
             for (int j = 0; j < commands.Count && examined < 64; j++)
             {
                 examined++;
                 var command = commands[j];
-                if (!WalkCommand(command) || !furniture.ValidateActor(c, command)) continue;
+                if (!HasComTag(command, tag) || !furniture.ValidateActor(c, command)) continue;
                 var package = MakeSandboxPackage(c, furniture, command);
                 if (package == null) continue;
                 return new SandboxChoice { Job = furniture, Command = command, Pending = package };
             }
         }
-        ExhaustSandboxChoice(c);
         return null;
     }
 
@@ -487,7 +547,7 @@ public class Job_ActivityPetWalk : Job_Activity
             return package is ActionPackage_ActivityWait && package.targetCOM?.ID == WaitCOMID;
         }
         int ownRef = actorRef == humanRef ? humanSandboxJobRef : petSandboxJobRef;
-        return job is Job_Furniture && job.RefID == ownRef && WalkCommand(package.targetCOM);
+        return job is Job_Furniture && job.RefID == ownRef && SandboxCommand(package.targetCOM);
     }
 
     ActionPackage FindOwnedPackage(Job job, int actorRef)
@@ -507,10 +567,20 @@ public class Job_ActivityPetWalk : Job_Activity
 
     protected override bool IsOwnCommandByTag(COM command) { return WalkCommand(command); }
 
-    /// <summary>command (or a parent of it - its variants) carries the activity's walk tag (petWalk.walkComTag).</summary>
-    bool WalkCommand(COM command)
+    /// <summary>command (or a parent of it - its variants) carries the pet's walk tag (WalkTag).</summary>
+    bool WalkCommand(COM command) { return HasComTag(command, WalkTag); }
+
+    /// <summary>A command the walk runs at the destination: its walk command, or a sandbox-in-place fallback (FallbackComTags).</summary>
+    bool SandboxCommand(COM command)
     {
-        string tag = Definition?.petWalk?.walkComTag;
+        if (WalkCommand(command)) return true;
+        for (int i = 0; i < FallbackComTags.Length; i++)
+            if (HasComTag(command, FallbackComTags[i])) return true;
+        return false;
+    }
+
+    static bool HasComTag(COM command, string tag)
+    {
         if (string.IsNullOrEmpty(tag)) return false;
         for (var current = command; current != null; current = current.ParentCOM)
             if (current.comTags != null && current.comTags.Contains(tag)) return true;

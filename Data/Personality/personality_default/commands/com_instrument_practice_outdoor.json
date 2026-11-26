@@ -69,15 +69,29 @@
                                 "com_instrument_practice_outdoor_Begin_2",
                                 "com_instrument_practice_outdoor_Begin_3"
                             ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受"
-                        },
-                        {
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Begin_9"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_instrument_practice_outdoor_Begin_7",
                                 "com_instrument_practice_outdoor_Begin_8"
@@ -151,7 +165,11 @@
                             ],
                             "responses": [
                                 "com_instrument_practice_outdoor_22"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -182,62 +200,67 @@
                             ],
                             "responses": [
                                 "com_instrument_practice_outdoor_10"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_comment": "判定成功",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER"
-                                    },
-                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
-                                    "responses": [
-                                        "com_instrument_practice_outdoor_4",
-                                        "com_instrument_practice_outdoor_5",
-                                        "com_instrument_practice_outdoor_6"
-                                    ]
-                                }
                             ],
-                            "responses": [
-                                "com_instrument_practice_outdoor_25"
-                            ]
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessLTE": "Failure"
-                            },
-                            "_comment": "判定失败",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "targetBaseID": "PLAYER"
-                                    },
-                                    "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
-                                    "responses": [
-                                        "com_instrument_practice_outdoor_19",
-                                        "com_instrument_practice_outdoor_20",
-                                        "com_instrument_practice_outdoor_21"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_instrument_practice_outdoor_26"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_instrument_practice_outdoor_27",
                                 "com_instrument_practice_outdoor_28"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "判定成功",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "_comment": "自己（单人） → 玩家 ｜ 接受·判定成功",
+                                            "responses": [
+                                                "com_instrument_practice_outdoor_4",
+                                                "com_instrument_practice_outdoor_5",
+                                                "com_instrument_practice_outdoor_6"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_25"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessLTE": "Failure"
+                                    },
+                                    "_comment": "判定失败",
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER"
+                                            },
+                                            "_comment": "自己（单人） → 玩家 ｜ 接受·判定失败",
+                                            "responses": [
+                                                "com_instrument_practice_outdoor_19",
+                                                "com_instrument_practice_outdoor_20",
+                                                "com_instrument_practice_outdoor_21"
+                                            ]
+                                        }
+                                    ],
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_26"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -366,29 +389,45 @@
                                 "com_instrument_practice_outdoor_Ongoing_2",
                                 "com_instrument_practice_outdoor_Ongoing_3"
                             ],
-                            "_comment": "受方 → NPC ｜ 接受"
+                            "_comment": "受方 → NPC ｜ 接受",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
-                                "targetBaseID": "PLAYER"
+                                "allowRecording": true
                             },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_instrument_practice_outdoor_Ongoing_7",
-                                "com_instrument_practice_outdoor_Ongoing_8",
-                                "com_instrument_practice_outdoor_Ongoing_9"
+                                "com_instrument_practice_outdoor_Ongoing_12"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_instrument_practice_outdoor_Ongoing_10",
                                 "com_instrument_practice_outdoor_Ongoing_11"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_instrument_practice_outdoor_Ongoing_7",
+                                        "com_instrument_practice_outdoor_Ongoing_8",
+                                        "com_instrument_practice_outdoor_Ongoing_9"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -643,7 +682,9 @@
                 "com_instrument_practice_outdoor_Tryjoin_4": "$self$拎着乐器走近，朝$target$笑了笑：\"一起合奏一段吗？\"",
                 "com_instrument_practice_outdoor_Tryjoin_5": "\"听起来不错，能加我一个吗？\" $self$站在旁边问道。",
                 "com_instrument_practice_outdoor_Join_Refused_4": "\"好吧，那我就在旁边安静听一会儿。\" $self$收起乐器退开半步。",
-                "com_instrument_practice_outdoor_Join_Refused_5": "$self$点点头：\"没关系，你们先练，我待会儿再自己找时间。\""
+                "com_instrument_practice_outdoor_Join_Refused_5": "$self$点点头：\"没关系，你们先练，我待会儿再自己找时间。\"",
+                "com_instrument_practice_outdoor_Begin_9": "(unimplemented)",
+                "com_instrument_practice_outdoor_Ongoing_12": "(unimplemented)"
             }
         }
     }

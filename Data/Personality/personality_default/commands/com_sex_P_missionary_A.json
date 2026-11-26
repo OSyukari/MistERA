@@ -25,7 +25,8 @@
                             "_comment": "时停中",
                             "responses": [
                                 "com_sex_P_missionary_A_Climax_timestop_1",
-                                "com_sex_P_missionary_A_Climax_timestop_2"
+                                "com_sex_P_missionary_A_Climax_timestop_2",
+                                "com_sex_P_missionary_A_Climax_timestop_3"
                             ]
                         },
                         {
@@ -42,7 +43,8 @@
                             "_comment": "睡眠中",
                             "responses": [
                                 "com_sex_P_missionary_A_Climax_sleeping_1",
-                                "com_sex_P_missionary_A_Climax_sleeping_2"
+                                "com_sex_P_missionary_A_Climax_sleeping_2",
+                                "com_sex_P_missionary_A_Climax_sleeping_3"
                             ]
                         },
                         {
@@ -61,7 +63,8 @@
                             "_comment": "昏迷（非睡眠）",
                             "responses": [
                                 "com_sex_P_missionary_A_Climax_unconscious_1",
-                                "com_sex_P_missionary_A_Climax_unconscious_2"
+                                "com_sex_P_missionary_A_Climax_unconscious_2",
+                                "com_sex_P_missionary_A_Climax_unconscious_3"
                             ]
                         },
                         {
@@ -318,7 +321,9 @@
                                                 }
                                             ],
                                             "responses": [
-                                                "com_sex_P_missionary_A_Begin_FE_Player_4"
+                                                "com_sex_P_missionary_A_Begin_FE_Player_4",
+                                                "com_sex_P_missionary_A_Begin_FE_Player_5",
+                                                "com_sex_P_missionary_A_Begin_FE_Player_6"
                                             ]
                                         },
                                         {
@@ -467,7 +472,8 @@
                             ],
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_DoerFallback_1",
-                                "com_sex_P_missionary_A_Begin_DoerFallback_2"
+                                "com_sex_P_missionary_A_Begin_DoerFallback_2",
+                                "com_sex_P_missionary_A_Begin_DoerFallback_3"
                             ]
                         },
                         {
@@ -479,7 +485,8 @@
                             "_comment": "兜底分支",
                             "responses": [
                                 "com_sex_P_missionary_A_Begin_Fallback_1",
-                                "com_sex_P_missionary_A_Begin_Fallback_2"
+                                "com_sex_P_missionary_A_Begin_Fallback_2",
+                                "com_sex_P_missionary_A_Begin_Fallback_3"
                             ]
                         }
                     ],
@@ -597,7 +604,9 @@
                                             ],
                                             "_comment": "初体验 睡眠中 正面位A",
                                             "responses": [
-                                                "com_sex_P_missionary_A_FE_Sleep_1"
+                                                "com_sex_P_missionary_A_FE_Sleep_1",
+                                                "com_sex_P_missionary_A_53",
+                                                "com_sex_P_missionary_A_54"
                                             ]
                                         },
                                         {
@@ -647,6 +656,68 @@
                                         "com_sex_P_missionary_A_Fainted_1",
                                         "com_sex_P_missionary_A_Fainted_2",
                                         "com_sex_P_missionary_A_Fainted_3"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_sex_P_missionary_A_43",
+                                "com_sex_P_missionary_A_48",
+                                "com_sex_P_missionary_A_49"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_sex_P_missionary_A_44",
+                                        "com_sex_P_missionary_A_50",
+                                        "com_sex_P_missionary_A_51"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_A"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "missionary",
+                                                "anal"
+                                            ],
+                                            "_comment": "对方初体验 正面位A（插入的一方）",
+                                            "responses": [
+                                                "com_sex_P_missionary_A_FE_Partner_1",
+                                                "com_sex_P_missionary_A_FE_Partner_2",
+                                                "com_sex_P_missionary_A_FE_Partner_3"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_A"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "missionary",
+                                        "anal"
+                                    ],
+                                    "_comment": "对方初体验 正面位A（插入的一方）",
+                                    "responses": [
+                                        "com_sex_P_missionary_A_FE_Partner_1",
+                                        "com_sex_P_missionary_A_57",
+                                        "com_sex_P_missionary_A_58"
                                     ]
                                 }
                             ]
@@ -721,7 +792,8 @@
                                                     "_comment": "玩家专用（无允许兜底）",
                                                     "responses": [
                                                         "com_sex_P_missionary_A_FE_4",
-                                                        "com_sex_P_missionary_A_FE_5"
+                                                        "com_sex_P_missionary_A_FE_5",
+                                                        "com_sex_P_missionary_A_52"
                                                     ]
                                                 },
                                                 {
@@ -783,25 +855,6 @@
                                         {
                                             "requirement": {
                                                 "selfTags": [
-                                                    "firstexp_partner_A"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "missionary",
-                                                "anal"
-                                            ],
-                                            "_comment": "对方初体验 正面位A（插入的一方）",
-                                            "responses": [
-                                                "com_sex_P_missionary_A_FE_Partner_1",
-                                                "com_sex_P_missionary_A_FE_Partner_2",
-                                                "com_sex_P_missionary_A_FE_Partner_3"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
                                                     "justWokenUp"
                                                 ]
                                             },
@@ -830,7 +883,8 @@
                                                             "_comment": "2.1.5",
                                                             "responses": [
                                                                 "com_sex_P_missionary_A_15",
-                                                                "com_sex_P_missionary_A_16"
+                                                                "com_sex_P_missionary_A_16",
+                                                                "com_sex_P_missionary_A_64"
                                                             ]
                                                         },
                                                         {
@@ -850,7 +904,8 @@
                                                             "_comment": "2.2.7",
                                                             "responses": [
                                                                 "com_sex_P_missionary_A_17",
-                                                                "com_sex_P_missionary_A_18"
+                                                                "com_sex_P_missionary_A_18",
+                                                                "com_sex_P_missionary_A_59"
                                                             ]
                                                         }
                                                     ],
@@ -865,13 +920,15 @@
                                                     ],
                                                     "responses": [
                                                         "com_sex_P_missionary_A_19",
-                                                        "com_sex_P_missionary_A_20"
+                                                        "com_sex_P_missionary_A_55",
+                                                        "com_sex_P_missionary_A_56"
                                                     ]
                                                 }
                                             ],
                                             "responses": [
                                                 "com_sex_P_missionary_A_JustWoken_1",
-                                                "com_sex_P_missionary_A_JustWoken_2"
+                                                "com_sex_P_missionary_A_JustWoken_2",
+                                                "com_sex_P_missionary_A_JustWoken_3"
                                             ]
                                         },
                                         {
@@ -1058,14 +1115,17 @@
                                                     ],
                                                     "_comment": "初体验 玩家专用 正面位A 有允许",
                                                     "responses": [
-                                                        "com_sex_P_missionary_A_FE_Player_1"
+                                                        "com_sex_P_missionary_A_FE_Player_1",
+                                                        "com_sex_P_missionary_A_45",
+                                                        "com_sex_P_missionary_A_46"
                                                     ]
                                                 }
                                             ],
                                             "_comment": "玩家专用（无允许兜底）",
                                             "responses": [
                                                 "com_sex_P_missionary_A_FE_4",
-                                                "com_sex_P_missionary_A_FE_5"
+                                                "com_sex_P_missionary_A_FE_5",
+                                                "com_sex_P_missionary_A_47"
                                             ]
                                         },
                                         {
@@ -1083,7 +1143,8 @@
                                             "_comment": "初体验 正面位A 有允许（还在适应）",
                                             "responses": [
                                                 "com_sex_P_missionary_A_FE_1",
-                                                "com_sex_P_missionary_A_FE_2"
+                                                "com_sex_P_missionary_A_FE_2",
+                                                "com_sex_P_missionary_A_63"
                                             ]
                                         },
                                         {
@@ -1101,7 +1162,9 @@
                                             ],
                                             "_comment": "初体验 正面位A 未允许 好意（还在适应）",
                                             "responses": [
-                                                "com_sex_P_missionary_A_FE_3"
+                                                "com_sex_P_missionary_A_FE_3",
+                                                "com_sex_P_missionary_A_60",
+                                                "com_sex_P_missionary_A_61"
                                             ]
                                         }
                                     ],
@@ -1117,24 +1180,8 @@
                                     "_comment": "初体验 正面位A 未允许 敌意",
                                     "responses": [
                                         "com_sex_P_missionary_A_FE_4",
-                                        "com_sex_P_missionary_A_FE_5"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_A"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "missionary",
-                                        "anal"
-                                    ],
-                                    "_comment": "对方初体验 正面位A（插入的一方）",
-                                    "responses": [
-                                        "com_sex_P_missionary_A_FE_Partner_1"
+                                        "com_sex_P_missionary_A_FE_5",
+                                        "com_sex_P_missionary_A_62"
                                     ]
                                 },
                                 {
@@ -1189,7 +1236,8 @@
                             "_comment": "兜底分支",
                             "responses": [
                                 "com_sex_P_missionary_A_Fallback_1",
-                                "com_sex_P_missionary_A_Fallback_2"
+                                "com_sex_P_missionary_A_Fallback_2",
+                                "com_sex_P_missionary_A_Fallback_3"
                             ]
                         }
                     ],
@@ -1332,7 +1380,8 @@
                             "_comment": "兜底分支",
                             "responses": [
                                 "com_sex_P_missionary_A_Refuse_Fallback_1",
-                                "com_sex_P_missionary_A_Refuse_Fallback_2"
+                                "com_sex_P_missionary_A_Refuse_Fallback_2",
+                                "com_sex_P_missionary_A_Refuse_Fallback_3"
                             ],
                             "useActiveTags": false
                         }
@@ -1350,8 +1399,13 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
-                            "_comment": "TODO Doer 进行中",
-                            "responses": []
+                            "_comment": "施方 com_sex_P_missionary_A 进行中",
+                            "responses": [
+                                "com_sex_P_missionary_A_Ongoing_3"
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -1373,18 +1427,10 @@
                                         "com_sex_P_missionary_A_Ongoing_Player_3"
                                     ]
                                 }
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_missionary_A_Ongoing_Player_1"
-                            ]
+                                "requireSelfAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -1444,7 +1490,7 @@
                 "com_sex_P_missionary_A_Begin_FE_Timestop_2": "$self$脸上还停留着时停前的神情，初次被闯入的疼痛在静止的身体里蔓延，她对此一无所知。",
                 "com_sex_P_missionary_A_Begin_FE_Player_1": "\"后面……还是第一次……只有你可以……\" 被撑开的那一瞬疼得轻嘶一声，$self$还是抓着$target$的手没有放。",
                 "com_sex_P_missionary_A_Begin_FE_Player_2": "\"很紧张……你抱着我，慢点进来……\" $self$疼得浑身发颤，却把身上的$target$搂得更紧了。",
-                "com_sex_P_missionary_A_Begin_FE_1": "\"等、等一下……后面我是第一次，会很紧的……\" $self$疼得浑身一僵，眼泪一下子涌了出来。",
+                "com_sex_P_missionary_A_Begin_FE_1": "\"等、等一下……后面我是第一次，会很紧的……\" $self$疼得猛地屏住气，眼泪一下子涌了出来。",
                 "com_sex_P_missionary_A_Begin_FE_2": "\"呜……比想象中还要胀……\" 初次被撑开的地方火辣辣的，$self$抓紧了身下的支点。",
                 "com_sex_P_missionary_A_Begin_FE_3": "\"后面……真的可以吗……你轻一点……\" $self$紧张得双腿都在抖，手指攥紧了身侧。",
                 "com_sex_P_missionary_A_Begin_FE_4": "\"疼……好疼……我会忍的，你别停……\" $self$咬着下唇，眼角泛起了泪花。",
@@ -1537,14 +1583,49 @@
                 "com_sex_P_missionary_A_Refuse_Fallback_1": "$self$伸手抵住$target$的胸口，明确拒绝了后穴的接触。",
                 "com_sex_P_missionary_A_Refuse_Fallback_2": "$self$皱起眉头往后退开，毫不犹豫地回绝了$target$。",
                 "com_sex_P_missionary_A_JustWoken_1": "$self$刚从睡梦中醒来，迷迷糊糊地察觉到$target$正贴在身侧。",
-                "com_sex_P_missionary_A_JustWoken_2": "$self$揉了揉惺忪的睡眼，还没完全清醒便感受到了动作。",
-                "com_sex_P_missionary_A_Begin_FE_Player_4": "$self$看着近在咫尺的$target$，身体因为紧张微微颤抖：……后面还是第一次……别太粗暴……",
+                "com_sex_P_missionary_A_JustWoken_2": "$self$揉了揉惺忪的睡眼，还没完全清醒便感受到了后穴传来的抽插。",
+                "com_sex_P_missionary_A_Begin_FE_Player_4": "$self$看着近在咫尺的$target$，身体因为紧张微微颤抖：“……后面还是第一次……别太粗暴……”",
                 "com_sex_P_missionary_A_Climax_timestop_1": "$self$被定格在凝固的时间里，身体在毫无知觉的状态下迎来了剧烈的痉挛与高潮，眼神却依旧空洞静止。",
                 "com_sex_P_missionary_A_Climax_timestop_2": "时间静止之中，$self$的表情没有丝毫波动，唯有失控颤抖的躯体诚实地承受着攀上顶峰的快感。",
                 "com_sex_P_missionary_A_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_P_missionary_A_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_P_missionary_A_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_P_missionary_A_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_P_missionary_A_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_P_missionary_A_43": "$self$稍微放慢了挺腰的动作，低头看着$target$的反应：“……后面还太紧了吗？我缓一缓。”",
+                "com_sex_P_missionary_A_44": "紧致的后穴随着抽送渐渐软下来含住棒身，$self$双手扣紧$target$的腰，加快了往里顶撞的节奏：“后面……咬得真紧啊……”",
+                "com_sex_P_missionary_A_45": "$self$双手抱住$target$的后背，努力放松绷紧的双腿：\"嗯……能感觉到你在后面慢慢动，没有刚才那么吓人了……\"",
+                "com_sex_P_missionary_A_46": "\"因为是第一次用后面，夹得很紧吧……\" $self$羞赧地蹭了蹭$target$的颈侧，呼吸渐渐变得湿热。",
+                "com_sex_P_missionary_A_47": "每一次抽插都带来剧烈的撕扯感，$self$抵着$target$的肩膀浑身颤栗：\"唔……后面好痛，别再往里顶了……\"",
+                "com_sex_P_missionary_A_48": "“还是有点干涩啊……”$self$停顿了半拍，试探着调整了一下顶入的角度。",
+                "com_sex_P_missionary_A_49": "$self$撑起些上半身减轻压在$target$身上的重量，改为浅浅地抽送：“这样会好受一点吗？”",
+                "com_sex_P_missionary_A_Climax_sleeping_3": "腿根颤抖着泄出一股热流，$self$在梦里无意识地抓紧身下布料，脚趾蜷缩着颤了几下。",
+                "com_sex_P_missionary_A_50": "“就是这个角度吧？”$self$低头看着身下泛红的脸颊，挺腰稳稳撞向后穴深处。",
+                "com_sex_P_missionary_A_51": "肉棒在紧窄的褶皱间来回研磨，$self$吻了吻$target$的耳畔，大开大合地贯穿到底。",
+                "com_sex_P_missionary_A_52": "每一次抽插都带来剧烈的撕扯感，$self$咬紧牙关忍着痛哼，双腿止不住地打颤。",
+                "com_sex_P_missionary_A_Climax_unconscious_3": "高潮的抽搐让$self$的四肢短暂地绷紧了一瞬，后穴一缩一缩地绞紧柱身，她依然没有半分苏醒的迹象。",
+                "com_sex_P_missionary_A_Begin_FE_Player_5": "迎上$target$近在咫尺的视线，$self$耳根发烫，攥紧了身下的布料：“……我很紧张，慢一点进来。”",
+                "com_sex_P_missionary_A_Begin_FE_Player_6": "“唔……第一次要用后面吗……”$self$偏过头不敢直视$target$，声音压得很低。",
+                "com_sex_P_missionary_A_53": "$self$在沉睡中随着身下的抽插无意识地轻哼，初次受侵的内壁在梦里本能地收紧。",
+                "com_sex_P_missionary_A_54": "熟睡的$self$仰躺着呼吸微促，对后穴初次被反复进出的酸胀毫无知觉。",
+                "com_sex_P_missionary_A_55": "$self$流着泪默默承受着冲击，绷着身子任由后穴被反复顶弄：\"我醒了……我不会叫的……求你别弄伤我……\"",
+                "com_sex_P_missionary_A_56": "刚睡醒的虚弱让$self$无力推开身上的人，只能偏过头小声抽泣：\"呜……后面好痛……快点结束吧……\"",
+                "com_sex_P_missionary_A_Ongoing_1": "交合的声响清晰地传进耳中，$self$顶着$target$看过来的目光咬住下唇，耳根发烫。",
+                "com_sex_P_missionary_A_Ongoing_2": "察觉到$target$一直站在旁边看着，$self$羞耻地偏开视线，任由身上的动作继续。",
+                "com_sex_P_missionary_A_57": "$self$俯下身吻了吻$target$发颤的眼角，放缓了节奏：“还疼的话就抓紧我，我慢慢动。”",
+                "com_sex_P_missionary_A_58": "“第一次用后面能接纳到这个程度，已经很好了。”$self$撑着手臂控制着压下去的重量，克制着往里顶的幅度。",
+                "com_sex_P_missionary_A_Begin_Fallback_3": "呼吸在近距离交错，$self$没有多言，顺着当下的动作配合起来。",
+                "com_sex_P_missionary_A_Fallback_3": "相贴的身体随着抽插微微起伏，$self$没有出声，安静地配合着节奏。",
+                "com_sex_P_missionary_A_JustWoken_3": "“唔……你趁我睡着对后面做了什么……”$self$声音还带着刚醒的沙哑，一时间没能推开。",
+                "com_sex_P_missionary_A_Climax_timestop_3": "后穴在剧烈抽搐中紧紧咬住体内的柱身，$self$却连眨眼都做不到，整个人仍停在时间冻结前的瞬间。",
+                "com_sex_P_missionary_A_Refuse_Fallback_3": "“抱歉，后面不想被这样碰。”$self$合拢双腿护住身下，拉开了距离。",
+                "com_sex_P_missionary_A_59": "$self$红着脸把腿分得更开些，后穴主动夹了夹：\"唔……至少等我醒透了再进来啊……\"",
+                "com_sex_P_missionary_A_60": "$self$红着眼眶仰望着身上的$target$，后穴每次被顶到深处就忍不住轻颤：\"呜……第一次就用这种看着对方的姿势，太难为情了……\"",
+                "com_sex_P_missionary_A_61": "\"别突然用力顶啊……后面还紧得很……\" $self$慌乱地抵着$target$的胸口，双腿直发软。",
+                "com_sex_P_missionary_A_Begin_DoerFallback_3": "$self$双手撑在$target$肩侧，缓缓沉腰抵开后穴入口往里推进。",
+                "com_sex_P_missionary_A_62": "每一次抽插都带来剧烈的撕扯感，$self$抵着$target$的肩膀浑身颤栗：\"唔……后面好痛，别再往里顶了……\"",
+                "com_sex_P_missionary_A_63": "$self$随着温和的抽送慢慢舒展眉头，脸颊泛起红晕：\"唔……好像没有刚才那么胀痛了……\"",
+                "com_sex_P_missionary_A_64": "$self$在半梦半醒间主动放松了腰，双腿轻轻搭上$target$的腰侧：\"唔……还困着呢，你慢一点动哦……\"",
+                "com_sex_P_missionary_A_Ongoing_3": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_P_missionary_A_Climax_1": "$self$ thrusts deep into that tight hole to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",

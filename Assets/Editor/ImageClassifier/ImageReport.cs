@@ -275,7 +275,8 @@ public static class ImageReport
     // ---------------------------------------------------------------- HTML report
 
     /// <summary>Writes the HTML report next to reportPath's folder; image links are relative to it. Throws when the template is missing.
-    /// selectionFile: the file the page may save its image selection to (in the report's folder); null = no selection saving.</summary>
+    /// selectionFile: the database file (ImageWorkFolders.DatabaseFileName, in the report's folder) the page saves its image selection and
+    /// verified folders to, each into its own field; null = no saving.</summary>
     public static void WriteHtml(string reportPath, string title, List<ImageReportFolder> folders, string rulesPath, string selectionFile = null)
     {
         var templateFile = Path.GetFullPath(TemplatePath);
@@ -299,6 +300,7 @@ public static class ImageReport
     ///   lint: [string], unused: null | { categories: [string], names: [{ set, names: [string] }], variants: [string] },
     ///   overrideFile, overrides (with selectionFile only): the page's classification overrides, the "overrides" object of
     ///   ImageWorkFolders.OverrideFileName in the report folder ({} when there is none),
+    ///   verifiedFile, verifiedFolders (with selectionFile only): the database file and its verifiedFolders.folders,
     ///   portrait (with selectionFile only): the portrait handler view, shape on PortraitUsage.Write,
     ///   pairing (with selectionFile only): the character pairing view's characters and commands, shape on PortraitPairing.Write }
     /// </summary>
@@ -415,6 +417,15 @@ public static class ImageReport
                 w.WritePropertyName("overrideFile"); w.WriteValue(ImageWorkFolders.OverrideFileName);
                 w.WritePropertyName("overrides");
                 (overrides ?? new Newtonsoft.Json.Linq.JObject()).WriteTo(w);
+
+                var verifiedFolders = ImageWorkFolders.LoadVerifiedFolders(reportDir, out var verifiedError);
+                if (verifiedError != null)
+                    lint.Add(ImageWorkFolders.DatabaseFileName + " unreadable, verified folders are not shown (fix or remove it before saving from the page): " + verifiedError);
+                var sortedVerified = new List<string>(verifiedFolders);
+                sortedVerified.Sort(StringComparer.OrdinalIgnoreCase);
+                w.WritePropertyName("verifiedFile"); w.WriteValue(ImageWorkFolders.DatabaseFileName);
+                w.WritePropertyName("verifiedFolders");
+                WriteStrings(w, sortedVerified);
             }
 
             w.WritePropertyName("lint");

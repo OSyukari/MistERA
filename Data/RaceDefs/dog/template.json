@@ -12,6 +12,17 @@
                 "Appearance":"Male",
                 "useNameGen": true,
                 "nameGen_firstName": "dog"
+            },
+            {
+                "ID":"creature_animal_dog_large",
+                "title":"creature_animal_dog_large",
+                "targetBaseIDs":["creature_animal_dog_large_template_1","creature_animal_dog_large_template_2","creature_animal_dog_large_template_3"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "heightVariation": 6,
+                "weightVariation": 8,
+                "Appearance":"Male",
+                "useNameGen": true,
+                "nameGen_firstName": "dog"
             }
 
         ]
@@ -21,11 +32,13 @@
         "Entries": {
             "zh-cn": {
                 
-                "creature_animal_dog": "狗"
+                "creature_animal_dog": "狗",
+                "creature_animal_dog_large": "大型犬"
             },
             "en-us": {
                 
-                "creature_animal_dog": "Dog"
+                "creature_animal_dog": "Dog",
+                "creature_animal_dog_large": "Large Dog"
             }
         }
     }

@@ -114,6 +114,19 @@ public class Job_Recording : Job, I_CanEndJob, I_RequireSpecialTracker
             _cameramanRef = value == null ? -1 : value.RefID;
         }
     }
+    /// <summary>
+    /// Where this camera films room from (Room recording, Plan_DividerVisibility.md §2.4): the cameraman's scope (open
+    /// area or the divider they are in) while they are in room. False = no cameraman there - it films the whole room.
+    /// </summary>
+    public bool TryGetViewScope(Room_Instance room, out int scope)
+    {
+        scope = -1;
+        var c = cameraman;
+        if (c == null || room == null || !ReferenceEquals(c.CurrentRoom, room)) return false;
+        scope = c.ScopeRef;
+        return true;
+    }
+
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {
         if (c == cameraman && maxDuration >= 0)

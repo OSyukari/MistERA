@@ -1094,7 +1094,10 @@
                                 "com_furniture_takeShower_7",
                                 "com_furniture_takeShower_8",
                                 "com_furniture_takeShower_9"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -1103,27 +1106,32 @@
                                 "com_furniture_takeShower_4",
                                 "com_furniture_takeShower_5",
                                 "com_furniture_takeShower_6"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_takeShower_10",
-                                "com_furniture_takeShower_11",
-                                "com_furniture_takeShower_12"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_takeShower_Fallback_1",
-                                "com_furniture_takeShower_Fallback_2"
+                                "com_furniture_takeShower_13"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_takeShower_10",
+                                        "com_furniture_takeShower_11",
+                                        "com_furniture_takeShower_12"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -1190,27 +1198,262 @@
                             ],
                             "responses": [
                                 "com_furniture_takeShower_Ongoing_Fallback_1"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己（单人） → 玩家 ｜ 接受",
-                            "responses": [
-                                "com_furniture_takeShower_Ongoing_4",
-                                "com_furniture_takeShower_Ongoing_5",
-                                "com_furniture_takeShower_Ongoing_6"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_takeShower_Ongoing_Fallback_2",
-                                "com_furniture_takeShower_Ongoing_Fallback_3"
+                                "com_furniture_takeShower_Ongoing_7"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_takeShower_Ongoing_8"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己（单人） → 玩家 ｜ 接受",
+                                    "responses": [
+                                        "com_furniture_takeShower_Ongoing_4",
+                                        "com_furniture_takeShower_Ongoing_5",
+                                        "com_furniture_takeShower_Ongoing_6"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Group_Begin",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_group_begin"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Group_BathStart",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_group_bathstart"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Offer_Wash",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_offer_wash"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Chat",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_chat"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Intimacy_Stage1",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_intimacy_s1"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Intimacy_Stage2",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_intimacy_s2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Intimacy_Stage3",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_intimacy_s3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Sex_After",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_sex_after"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Group_Bath",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_group_bath"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "template": "none",
+                    "templateNote": "code-fetched kojo; dedicated template later",
+                    "ID": "Shower_Group_End",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused": false,
+                            "displayType": "AlwaysDisplay",
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "responses": [
+                                "kojo_shower_group_end"
                             ]
                         }
                     ]
@@ -1256,14 +1499,14 @@
                 "kojo_shower_helperbegin_couple": "$self$含着笑意问道：\"这样会痒吗？我再轻一点。\"",
                 "kojo_shower_helperbegin_fwb": "$self$向$target$确认：\"水温和力道都行吧？不合适就说。\"",
                 "kojo_shower_helperbegin_fallback": "$self$说道：\"我会慢慢洗，哪里不舒服请告诉我。\"",
-                "kojo_shower_expel_marriage": "$self$有些难为情地开口：\"等我缓一下……有你帮着，安心多了。\"",
-                "kojo_shower_expel_couple": "$self$小声对$target$说：\"有点不好意思，先让我缓口气。\"",
-                "kojo_shower_expel_fwb": "$self$认真地说道：\"先别开玩笑，让我把残留清理干净。\"",
-                "kojo_shower_expel_fallback": "$self$低声请求：\"麻烦等一下，让我自己清理这部分。\"",
-                "kojo_shower_helperexpel_marriage": "$self$温声安慰$target$：\"慢慢来，不用急。我在这儿。\"",
-                "kojo_shower_helperexpel_couple": "$self$放轻声音。\"不用不好意思，要我先转过身也可以。\"",
-                "kojo_shower_helperexpel_fwb": "$self$认真应道：\"不闹你，先清理干净。需要停就说。\"",
-                "kojo_shower_helperexpel_fallback": "$self$向$target$说道：\"我先等着，你准备好了再叫我。\"",
+                "kojo_shower_expel_marriage": "$self$红着脸靠向$target$：\"……谢谢你。被你这样帮着弄干净，还是有点难为情。\"",
+                "kojo_shower_expel_couple": "$self$别开视线，小声对$target$说：\"谢、谢谢……这种事让你帮忙，好丢人啊。\"",
+                "kojo_shower_expel_fwb": "$self$有些不自在地笑了笑：\"……谢啦。被你这么仔细地弄干净，反而让人不好意思。\"",
+                "kojo_shower_expel_fallback": "$self$低着头，声音细若蚊鸣：\"那个……谢谢你帮忙。真是麻烦你了。\"",
+                "kojo_shower_helperexpel_marriage": "$self$温柔地揉了揉$target$的头发：\"跟我还客气什么。洗干净了，舒服些了吧？\"",
+                "kojo_shower_helperexpel_couple": "$self$轻声笑道：\"不用不好意思，我很乐意帮你。\"",
+                "kojo_shower_helperexpel_fwb": "$self$满不在乎地摆摆手：\"小事一桩。下次也交给我吧。\"",
+                "kojo_shower_helperexpel_fallback": "$self$向$target$说道：\"不用客气，清理干净就好。\"",
                 "kojo_shower_rinse_marriage": "$self$轻声说道：\"肩膀后面再冲一下吧，那儿好像还有泡沫。\"",
                 "kojo_shower_rinse_couple": "$self$笑着提醒$target$：\"水别冲到脸上，其他地方都挺舒服的。\"",
                 "kojo_shower_rinse_fwb": "$self$说道：\"再冲一遍就好，别留着沐浴露。\"",
@@ -1355,7 +1598,20 @@
                 "com_furniture_takeShower_Fallback_1": "$self$擦干身上的水珠换好干净衣服，神清气爽地走出浴室。",
                 "com_furniture_takeShower_Fallback_2": "$self$拧干滴水的发梢，洗去一身疲乏后舒坦地呼了口气。",
                 "com_furniture_takeShower_Ongoing_Fallback_2": "温热的水流顺着肩背滑落，$self$闭上眼安静地冲刷着。",
-                "com_furniture_takeShower_Ongoing_Fallback_3": "$self$站在水柱下仔细清洗着，水声掩盖了外头的动静。"
+                "com_furniture_takeShower_Ongoing_Fallback_3": "$self$站在水柱下仔细清洗着，水声掩盖了外头的动静。",
+                "kojo_shower_group_begin": "$self$感受着温热的水雾，朝$target$笑了笑：\"一起洗暖和多了，水温刚好。\"",
+                "kojo_shower_group_bathstart": "$self$一边往身上打着泡沫一边朝$target$说道：\"你先泡着放松会儿吧，我冲完就过去。\"",
+                "kojo_shower_offer_wash": "$self$拿着浴巾凑近$target$，带着笑意问道：\"要不要我帮你搓搓背？你自己够不着吧。\"",
+                "kojo_shower_chat": "$self$听着水流声轻笑起来，顺着$target$的话头愉快地聊了起来：\"泡着热水聊聊天，真是难得的放松啊。\"",
+                "kojo_shower_intimacy_s1": "$self$微微一颤，脸颊染上几分热气，小声嘀咕道：\"嗯……手好滑，有点痒呢。\"",
+                "kojo_shower_intimacy_s2": "$self$的呼吸渐渐急促，眼神迷离地看向$target$：\"……你这哪里是在正经洗澡呀，手都往奇怪的地方滑了……\"",
+                "kojo_shower_intimacy_s3": "$self$咬着唇轻喘着贴近$target$，声音带着明显的颤意：\"再这样摸下去的话……我可忍不住了哦……\"",
+                "kojo_shower_sex_after": "$self$靠在墙边微微喘息着，朝$target$露出带着余韵的笑容：\"哈啊……在浴室里做这种事，感觉浑身都软掉了……\"",
+                "kojo_shower_group_bath": "$self$把肩膀浸进温热的池水里，满足地叹了口气：\"啊……果然洗完之后一起泡进浴池里最舒服了。\"",
+                "kojo_shower_group_end": "$self$起身擦干身上的水珠，笑着对$target$说道：\"洗得真痛快，早点擦干别着凉了哦。\"",
+                "com_furniture_takeShower_13": "(unimplemented)",
+                "com_furniture_takeShower_Ongoing_7": "(unimplemented)",
+                "com_furniture_takeShower_Ongoing_8": "(unimplemented)"
             },
             "en-us": {
                 "kojo_shower_accept_self": "$self$ agrees. \"Yes, I'll go take a shower.\"",
@@ -1393,14 +1649,14 @@
                 "kojo_shower_helperbegin_couple": "$self$ asks with a smile, \"Does that tickle? I'll be a little gentler.\"",
                 "kojo_shower_helperbegin_fwb": "$self$ checks with $target$. \"Temperature and pressure all right? Say if they're not.\"",
                 "kojo_shower_helperbegin_fallback": "$self$ says, \"I'll take it slowly. Please tell me if anything feels uncomfortable.\"",
-                "kojo_shower_expel_marriage": "$self$ sounds a little embarrassed. \"Give me a moment... Having you help makes this easier.\"",
-                "kojo_shower_expel_couple": "$self$ tells $target$ quietly, \"This is a little embarrassing. Let me catch my breath first.\"",
-                "kojo_shower_expel_fwb": "$self$ says seriously, \"No jokes for a moment. Let me clear out what's left.\"",
-                "kojo_shower_expel_fallback": "$self$ asks quietly, \"Please wait a moment. Let me take care of this part myself.\"",
-                "kojo_shower_helperexpel_marriage": "$self$ reassures $target$ gently. \"Take your time. There's no rush. I'm here.\"",
-                "kojo_shower_helperexpel_couple": "$self$ lowers their voice. \"No need to be embarrassed. I can turn away if you'd like.\"",
-                "kojo_shower_helperexpel_fwb": "$self$ answers seriously. \"No teasing. Let's get you clean first. Say if you need to stop.\"",
-                "kojo_shower_helperexpel_fallback": "$self$ tells $target$, \"I'll wait. Let me know when you're ready.\"",
+                "kojo_shower_expel_marriage": "$self$ leans against $target$, face flushed. \"...Thank you. Still, being cleaned out by you like that is a little embarrassing.\"",
+                "kojo_shower_expel_couple": "$self$ looks away and mumbles to $target$, \"Th-thanks... Having you help with something like this is so embarrassing.\"",
+                "kojo_shower_expel_fwb": "$self$ gives an awkward little laugh. \"...Thanks. You being that thorough about it is what makes it embarrassing.\"",
+                "kojo_shower_expel_fallback": "$self$ keeps their head down, voice barely a whisper. \"Um... thank you for helping. Sorry for the trouble.\"",
+                "kojo_shower_helperexpel_marriage": "$self$ gently ruffles $target$'s hair. \"No need to be so formal with me. Feeling better now that you're clean?\"",
+                "kojo_shower_helperexpel_couple": "$self$ laughs softly. \"Don't be embarrassed. I'm happy to help.\"",
+                "kojo_shower_helperexpel_fwb": "$self$ waves it off. \"No big deal. Leave it to me next time, too.\"",
+                "kojo_shower_helperexpel_fallback": "$self$ tells $target$, \"You're welcome. As long as you're clean.\"",
                 "kojo_shower_rinse_marriage": "$self$ says softly, \"Behind my shoulders once more, please. I think there's still some soap there.\"",
                 "kojo_shower_rinse_couple": "$self$ reminds $target$ with a smile, \"Keep the water off my face. Everything else feels lovely.\"",
                 "kojo_shower_rinse_fwb": "$self$ says, \"One more rinse should do it. Don't leave any body wash behind.\"",
@@ -1416,7 +1672,17 @@
                 "kojo_shower_helperend_marriage": "$self$ tells $target$ with concern, \"All done. Dry off before getting dressed; don't catch a chill.\"",
                 "kojo_shower_helperend_couple": "$self$ says with a smile, \"All clean. Come out slowly; don't slip.\"",
                 "kojo_shower_helperend_fwb": "$self$ tells $target$, \"Done. You're all clean. Remember to dry off.\"",
-                "kojo_shower_helperend_fallback": "$self$ says, \"That's the washing finished. Let me know if you need help again.\""
+                "kojo_shower_helperend_fallback": "$self$ says, \"That's the washing finished. Let me know if you need help again.\"",
+                "kojo_shower_group_begin": "$self$ smiles at $target$ in the warm steam. \"It feels nice washing together—the water is just right.\"",
+                "kojo_shower_group_bathstart": "$self$ lathers up and calls over to $target$. \"Go ahead and soak for a bit—I will join you once I rinse off.\"",
+                "kojo_shower_offer_wash": "$self$ steps up to $target$ with a towel and smiles. \"Want me to help wash your back? It is hard to reach on your own.\"",
+                "kojo_shower_chat": "$self$ laughs softly over the running water and chats easily with $target$. \"Talking like this in the warm steam is really relaxing.\"",
+                "kojo_shower_intimacy_s1": "$self$ shivers slightly, cheeks flushing in the steam. \"Mm... your hands are so slick, it tickles a little.\"",
+                "kojo_shower_intimacy_s2": "$self$'s breathing quickens, glancing at $target$ with hazy eyes. \"...Are you really just washing? Your hands keep wandering...\"",
+                "kojo_shower_intimacy_s3": "$self$ bites their lip and leans closer to $target$ with a trembling breath. \"If you keep touching me like that... I will not be able to hold back...\"",
+                "kojo_shower_sex_after": "$self$ leans against the wall catching their breath, giving $target$ a flushed smile. \"Haah... doing that in the shower left my legs all weak...\"",
+                "kojo_shower_group_bath": "$self$ sinks up to their shoulders in the warm bath with a contented sigh. \"Ah... soaking together after washing up really is the best.\"",
+                "kojo_shower_group_end": "$self$ steps out and towels off, smiling at $target$. \"That was refreshing—make sure to dry off so you do not catch a chill.\""
             }
         }
     }

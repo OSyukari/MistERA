@@ -1,0 +1,85 @@
+{
+    "_doc": "Sample ExpInitializer_Single definitions demonstrating experience plugs (Docs/Households/Plan_FactionGenerator.md §7). Standalone test initializers — not wired into any existing character template.",
+    "Experiences": {
+        "exp_initializers": [
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_plug_sample_girlfriend",
+                "randActor": ["exp_actor_boyfriend"],
+                "plugs": [
+                    {
+                        "plugID": "first_partner",
+                        "is": "girlfriend",
+                        "wants": ["boyfriend", "girlfriend"],
+                        "partnerReq": {
+                            "requireConscious": false,
+                            "requireAction": false
+                        },
+                        "relationship": {
+                            "personal": "relationship_couple",
+                            "personal_isA": false,
+                            "bio": "",
+                            "bio_isA": false
+                        },
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    {
+                        "experienceID": "experience_sex_V",
+                        "minAmount": 10,
+                        "maxAmount": 30
+                    }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "first_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["penetration"],
+                        "actionName": "com_sex_insert_V",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_plug_sample_boyfriend",
+                "randActor": ["exp_actor_girlfriend"],
+                "plugs": [
+                    {
+                        "plugID": "first_partner",
+                        "is": "boyfriend",
+                        "wants": ["girlfriend", "boyfriend"],
+                        "partnerReq": {
+                            "requireConscious": false,
+                            "requireAction": false
+                        },
+                        "relationship": {
+                            "personal": "relationship_couple",
+                            "personal_isA": false,
+                            "bio": "",
+                            "bio_isA": false
+                        },
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    {
+                        "experienceID": "experience_sex_P",
+                        "minAmount": 10,
+                        "maxAmount": 30
+                    }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "first_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["penetration"],
+                        "actionName": "com_sex_insert_V",
+                        "isConsensual": true
+                    }
+                ]
+            }
+        ]
+    }
+}

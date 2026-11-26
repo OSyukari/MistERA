@@ -1571,6 +1571,20 @@ public static class UtilityEX
                 Debug.Log($"debug_force_joinFaction_Agree = {scr_System_CentralControl.current.debug_force_joinFaction_Agree}");
                 parsedSuccessful = true;
                 break;
+            case "debug_activityChanceMult":
+            case "debug_activityChanceAdd":
+                if (parsed.Count() >= 3 && float.TryParse(parsed[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float chanceValue))
+                {
+                    if (parsed[0] == "debug_activityChanceMult") RecreationUtility.DebugSetActivityChanceMult(parsed[1], chanceValue);
+                    else RecreationUtility.DebugSetActivityChanceAdd(parsed[1], chanceValue);
+                    parsedSuccessful = true;
+                }
+                else Debug.LogError($"{parsed[0]}: expected [activityID] [float value]");
+                break;
+            case "debug_activityChanceClear":
+                RecreationUtility.DebugClearActivityChance(parsed.Count() >= 2 ? parsed[1] : "");
+                parsedSuccessful = true;
+                break;
             case "listallvalidbookings":
                 if (true)
                 {
@@ -1696,6 +1710,19 @@ public static class UtilityEX
                     parsedSuccessful = ResidenceUtility.SpawnResidents(residentIDs, parsed[2], parsed.Count() >= 4 ? parsed[3] : "");
                 }
                 else Debug.LogError("spawnResident <charaID[,charaID...]> <factionID> [homeTemplateID | memberTypeID]");
+                break;
+            case "genFaction":
+                // genFaction <generatorID> <mode> <loc1> [loc2] [worldID]
+                if (parsed.Count() >= 4)
+                {
+                    parsedSuccessful = FactionGeneratorUtility.RunConsoleGenFaction(
+                        parsed[1],
+                        parsed[2],
+                        parsed[3],
+                        parsed.Count() >= 5 ? parsed[4] : "",
+                        parsed.Count() >= 6 ? parsed[5] : "");
+                }
+                else Debug.LogError("genFaction <generatorID> <mode: own|district|existing> <loc1> [loc2] [worldID]");
                 break;
             case "spawnCharaPrisoner":
                 if (parsed.Count() >= 2)
@@ -1881,6 +1908,23 @@ public static class UtilityEX
                     parsedSuccessful = true;
                 }
 
+                break;
+            case "regenBody":
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("regenBody: error target null");
+                        break;
+                    }
+                    if (!target.CanRegenerateBody(out var regenReason))
+                    {
+                        Debug.LogError($"regenBody [{target.RefID} {target.FullName}] refused: {regenReason}");
+                        break;
+                    }
+                    target.RegenerateBody();
+                    parsedSuccessful = true;
+                }
                 break;
             case "setFactionMembertype":
                 if (parsed.Count() >= 3)

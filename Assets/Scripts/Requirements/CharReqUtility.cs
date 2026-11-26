@@ -246,6 +246,17 @@ public static class CharaReqUtility
             }
             return false;
         }
+        if (q.exceptJobFaction != FactionRelation.None && ValidateJobFaction(q.exceptJobFaction, c, jobFaction))
+        {
+            if (logging)
+            {
+                string key = q.exceptJobFaction == FactionRelation.CurrentActive ? "ui_COM_Requirements_exceptSameActiveFaction"
+                           : q.exceptJobFaction == FactionRelation.Home ? "ui_COM_Requirements_exceptHomeFaction"
+                           : "ui_COM_Requirements_exceptSameFaction";
+                _tooltip.Add(LocalizeDictionary.QueryThenParse(key).Replace("$faction$", jobFaction == null ? "-" : jobFaction.FactionDisplayName));
+            }
+            return false;
+        }
         if (q.requireMemberType.Count > 0 && !ValidateMemberType(q.requireMemberType, q.requireMemberTypeScope, c, jobFaction))
         {
             if (logging)
@@ -387,7 +398,9 @@ public static class CharaReqUtility
         switch (relation)
         {
             case FactionRelation.Any: return factions.BelongsToJobGiver(jobFaction);
-            case FactionRelation.CurrentActive: return factions.CurrentActiveJobGiver == jobFaction;
+            case FactionRelation.CurrentActive:
+                return factions.CurrentActiveJobGiver == jobFaction
+                    && (factions.CurrentActiveParty != null || factions.GetEffectiveBooking() == null);
             case FactionRelation.Home: return factions.HomeFactions.Count > 0 && factions.HomeFactions[0] == jobFaction;
             default: return true;
         }

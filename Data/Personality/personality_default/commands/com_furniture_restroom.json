@@ -29,7 +29,10 @@
                                 "com_furniture_restroom_Result_Receiver_1",
                                 "com_furniture_restroom_Result_Receiver_2",
                                 "com_furniture_restroom_Result_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -51,26 +54,32 @@
                                 "com_furniture_restroom_Result_Self_1",
                                 "com_furniture_restroom_Result_Self_2",
                                 "com_furniture_restroom_Result_Self_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "对象是玩家",
-                            "responses": [
-                                "com_furniture_restroom_Result_Player_1",
-                                "com_furniture_restroom_Result_Player_2",
-                                "com_furniture_restroom_Result_Player_3"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_restroom_Fallback_1"
+                                "com_furniture_restroom_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "对象是玩家",
+                                    "responses": [
+                                        "com_furniture_restroom_Result_Player_1",
+                                        "com_furniture_restroom_Result_Player_2",
+                                        "com_furniture_restroom_Result_Player_3"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -104,15 +113,29 @@
                                 "com_furniture_restroom_Begin_Receiver_1",
                                 "com_furniture_restroom_Begin_Receiver_2",
                                 "com_furniture_restroom_Begin_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_restroom_Begin_Fallback_1"
+                                "com_furniture_restroom_Begin_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_Begin_2"
                             ]
                         }
                     ]
@@ -197,26 +220,42 @@
                             "_comment": "受方 → 对方 ｜ 进行中",
                             "responses": [
                                 "com_furniture_restroom_Ongoing_Receiver_4"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "targetBaseID": "PLAYER"
-                            },
-                            "_comment": "自己 → 玩家 ｜ 进行中",
-                            "responses": [
-                                "com_furniture_restroom_Ongoing_Self_1",
-                                "com_furniture_restroom_Ongoing_Self_2",
-                                "com_furniture_restroom_Ongoing_Self_3"
-                            ]
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfOnly": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "独自（对象是自己）",
                             "responses": [
-                                "com_furniture_restroom_Ongoing_Fallback_1"
+                                "com_furniture_restroom_Ongoing_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_restroom_Ongoing_2"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER"
+                                    },
+                                    "_comment": "自己 → 玩家 ｜ 进行中",
+                                    "responses": [
+                                        "com_furniture_restroom_Ongoing_Self_1",
+                                        "com_furniture_restroom_Ongoing_Self_2",
+                                        "com_furniture_restroom_Ongoing_Self_3"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -512,7 +551,12 @@
                 "com_furniture_restroom_Ongoing_Fallback_1": "$self$正在洗手间里简单拾掇着。",
                 "com_furniture_restroom_Tryjoin_Fallback_1": "$self$在门边问了一句：“方便一起进去用一下吗？”",
                 "com_furniture_restroom_Joined_Fallback_1": "$self$走了进来，站在另一侧整理起来。",
-                "com_furniture_restroom_Join_Refused_Fallback_1": "$self$停下脚步：“那我等会儿再来。”"
+                "com_furniture_restroom_Join_Refused_Fallback_1": "$self$停下脚步：“那我等会儿再来。”",
+                "com_furniture_restroom_1": "(unimplemented)",
+                "com_furniture_restroom_Begin_1": "(unimplemented)",
+                "com_furniture_restroom_Begin_2": "(unimplemented)",
+                "com_furniture_restroom_Ongoing_1": "(unimplemented)",
+                "com_furniture_restroom_Ongoing_2": "(unimplemented)"
             }
         }
     }

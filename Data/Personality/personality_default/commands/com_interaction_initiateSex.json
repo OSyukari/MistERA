@@ -15,8 +15,7 @@
                             },
                             "variants": [
                                 {
-                                    "requireMaster": true,
-                                    "requireSelfNotMaster": true,
+                                    "requireSelfReceiver": true,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
@@ -47,8 +46,7 @@
                             },
                             "variants": [
                                 {
-                                    "requireMaster": true,
-                                    "requireSelfNotMaster": true,
+                                    "requireSelfReceiver": true,
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",

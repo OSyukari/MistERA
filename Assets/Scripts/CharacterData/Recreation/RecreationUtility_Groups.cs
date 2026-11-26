@@ -409,7 +409,9 @@ public static partial class RecreationUtility
         if (!f.Owner.AcceptBooking(b, null)) return false;
         var conflicts = FindBookingConflicts(f, b);
         if (!CanCommitActivityBooking(f, b, false, false, conflicts)) return false;
-        if (AwaitReplacementFee(f, b, approved =>
+        // the pre-commit wait is only for a visit that displaces bookings (nothing given up before the payer agrees); a
+        // waiting booking holds no time, so a plain visit books first and asks after (QueueSoloFee) - its time held meanwhile
+        if (conflicts.Count > 0 && AwaitReplacementFee(f, b, approved =>
         {
             if (b.AbsStart <= NowAbs()) return;
             if (approved && AddSolo(f, b)) f.RefreshSchedule();
@@ -2456,7 +2458,15 @@ public static partial class RecreationUtility
         bool isPublic = IsPublicSession(g) && (m.origin == RecreationMemberOrigin.Scope || groupInvites);
         var inviter = isPublic ? null : InviterOf(g, m);
         bool organizationInvite = !isPublic && g.source == RecreationBookingSource.Organization && inviter == null;
-        var ev = new EventInstance(c, isPublic ? Event_PublicInvite : organizationInvite ? "Recreation_OrganizationInvite" : Event_Invite, "");
+        var activity = ResolveActivity(g);
+        string approvalEventID = activity?.approvalEventID ?? "";
+        string targetEvent = isPublic ? Event_PublicInvite : organizationInvite ? "Recreation_OrganizationInvite" : Event_Invite;
+        var payer = p.fees.Count > 0 ? p.fees[0].payer : c.FactionManager?.GetWorkFactionSourceOrDefault(g.factionID);
+        var ev = new EventInstance(c, !string.IsNullOrEmpty(approvalEventID) ? approvalEventID : targetEvent, "");
+        ev.AppendStrings["approvalTargetEvent"] = new List<string>() { targetEvent };
+        ev.AppendStrings["approvalOptionsKey"] = new List<string>() { "inviteOptions" };
+        ev.AppendStrings["payerFactionID"] = new List<string>() { payer?.ID ?? "" };
+        ev.AppendStrings["venueFactionID"] = new List<string>() { g.factionID ?? "" };
         if (organizationInvite)
             ev.AppendStrings["organizationName"] = new List<string> { Organization(g.organizerFactionID)?.FactionDisplayName ?? g.organizerFactionID };
         if (inviter != null) ev.Targets["inviter"] = new List<Character_Trainable>() { inviter };
@@ -2473,11 +2483,47 @@ public static partial class RecreationUtility
         ev.AppendStrings["inviteFeeText"] = new List<string>() { "" };
         ev.AppendStrings["inviteMandatoryText"] = new List<string>() { "" };
         ev.AppendStrings["inviteConflictText"] = new List<string>() { "" };
+        ev.FunctionCalls["approve"] = new List<Action>() { () => AnswerPlayerPrompt(p, PromptAnswer.Participate) };
+        // an approvalEventID event's cost line (SetAppendString feeCostKey) replaces the fees / total in $inviteFeeText$
+        Func<string> costKey = () => ev.AppendStrings.TryGetValue("feeCostKey", out var keys) && keys != null && keys.Count > 0 ? keys[0] : "";
+        // approvalEventID event: fills the invitation's texts now and $approvalContextText$ = the target question's text,
+        // resolved, so a question asked before it (e.g. a token exchange) shows the whole invitation
+        ev.FunctionCalls["refreshRequestText"] = new List<Action>()
+        {
+            () =>
+            {
+                BuildInviteOptions(c, p, out var conflictText, out var feeText, out var mandatoryText, costKey());
+                ev.AppendStrings["inviteConflictText"] = new List<string>() { conflictText };
+                ev.AppendStrings["inviteFeeText"] = new List<string>() { feeText };
+                ev.AppendStrings["inviteMandatoryText"] = new List<string>() { mandatoryText };
+                string context = UtilityEX.ParseEventEntry(ev, targetEvent + "_question");
+                if (isPublic) context = UtilityEX.ParseEventEntry(ev, Event_PublicInvite + "_notice") + "\n" + context;
+                ev.AppendStrings["approvalContextText"] = new List<string>() { context };
+            }
+        };
         ev.FunctionCalls["buildOptions"] = new List<Action>()
         {
             () =>
             {
-                ev.StoredOptions["inviteOptions"] = BuildInviteOptions(c, p, out var conflictText, out var feeText, out var mandatoryText);
+                var defaultOpts = BuildInviteOptions(c, p, out var conflictText, out var feeText, out var mandatoryText, costKey());
+                if (ev.StoredOptions.TryGetValue("inviteOptions", out var preBuilt) && preBuilt != null && preBuilt.Count > 0)
+                {
+                    // Propagate player participation block (if any) to injected options, and keep [支付但不参加] if attached.
+                    string joinBlock = defaultOpts.Count > 0 ? (defaultOpts[0].disabledReasonKey ?? "") : "";
+                    if (!string.IsNullOrEmpty(joinBlock))
+                    {
+                        for (int i = 0; i < preBuilt.Count; i++)
+                        {
+                            preBuilt[i].disabledReasonKey = joinBlock;
+                            preBuilt[i].onSelect = null;
+                        }
+                    }
+                    for (int i = 1; i < defaultOpts.Count; i++) preBuilt.Add(defaultOpts[i]);
+                }
+                else
+                {
+                    ev.StoredOptions["inviteOptions"] = defaultOpts;
+                }
                 ev.AppendStrings["inviteConflictText"] = new List<string>() { conflictText };
                 ev.AppendStrings["inviteFeeText"] = new List<string>() { feeText };
                 ev.AppendStrings["inviteMandatoryText"] = new List<string>() { mandatoryText };
@@ -2548,7 +2594,8 @@ public static partial class RecreationUtility
     /// feeText = the player's own fee and every attached request (who takes part, who each payer pays for, total);
     /// mandatoryText = "refusing cancels it" when the session can't stand without the player. Empty when g is gone.
     /// </summary>
-    static List<Event.EventEntry.Options> BuildInviteOptions(Character_Trainable c, PlayerPrompt p, out string conflictText, out string feeText, out string mandatoryText)
+    static List<Event.EventEntry.Options> BuildInviteOptions(Character_Trainable c, PlayerPrompt p, out string conflictText, out string feeText, out string mandatoryText,
+        string costKey = "")
     {
         conflictText = "";
         feeText = "";
@@ -2557,7 +2604,7 @@ public static partial class RecreationUtility
         var g = p.session;
         var m = p.member;
         if (!g.IsOpen || p.answered) return options;
-        feeText = DescribePromptFees(p, c);
+        feeText = DescribePromptFees(p, c, costKey);
 
         string joinBlock = p.ineligibleReason ?? "";
         bool mandatory = false;

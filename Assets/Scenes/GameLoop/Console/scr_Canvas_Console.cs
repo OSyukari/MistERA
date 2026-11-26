@@ -149,7 +149,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "furnitureUnpack",
         "forceConscious",
         "advanceTime",
-        "setCalendar"
+        "setCalendar",
+        "regenBody"
     };
 
     string[] devConsoleCommands = new string[]
@@ -165,7 +166,11 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     {
         "debug_refuse_salary_payment",
         "debug_force_joinFaction_Agree",
+        "debug_activityChanceMult",
+        "debug_activityChanceAdd",
+        "debug_activityChanceClear",
         "listallvalidbookings",
+        "genFaction",
         "collectActorTags",
         "collectSceneTags",
         "collectScenePromptJson",

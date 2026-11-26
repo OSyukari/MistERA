@@ -50,7 +50,7 @@
                         "connects": [
                             { "ID": "riverside_entrance", "cost": 2.0 }
                         ],
-                        "furnitureIDs": ["furniture_jp_riverside_bench", "furniture_jp_riverside_viewing_spot", "furniture_jp_riverside_jogging_route"],
+                        "furnitureIDs": ["furniture_public_bench", "furniture_jp_riverside_viewing_spot", "furniture_marker_outdoor_path"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
                     },
@@ -59,7 +59,7 @@
                         "displayName": "jp_riverside_lawn",
                         "hideOnMap": true,
                         "connects": [{ "ID": "riverside_promenade", "cost": 3.0 }],
-                        "furnitureIDs": ["furniture_jp_riverside_lawn_route", "furniture_public_bench"],
+                        "furnitureIDs": ["furniture_marker_outdoor_path", "furniture_public_bench"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
                     }
@@ -118,15 +118,15 @@
                 "minHours": 2,
                 "maxHours": 2,
                 "daysInAdvance": 0,
-                "workModule": { "jobPostID": "jp_riverside_stroll", "workCommands": ["jp_riverside_relax"] },
-                "activityCommands": ["jp_riverside_relax"],
+                "workModule": { "jobPostID": "jp_riverside_stroll", "workCommands": ["com_furniture_stroll"] },
+                "activityCommands": ["com_furniture_stroll"],
                 "_comment_activity": "Job_Activity gathers at the promenade and launches once everyone attending is there (Private), firing Riverside_Stroll_Begin.",
                 "gatherRoomID": "riverside_promenade",
                 "launchEventID": "Riverside_Stroll_Begin",
                 "_comment_AcceptanceMods": "Applied while this visit is in effect (Character_Factions.CurrentActiveActivity): a stroller accepts being asked to stroll - the very thing they came for. treatReceiverAsDoer evaluates the asked character as a doer, hence isDoer true.",
                 "AcceptanceMods": [
                     {
-                        "Requirement_ActionPackage": { "targetComID": "jp_riverside_relax", "isDoer": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_furniture_stroll", "isDoer": true },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "jp_riverside_stroll_accept_reason" }
                     }
                 ],
@@ -165,8 +165,8 @@
                 "daysInAdvance": 0,
                 "weight": 1.0,
                 "minDaysBetween": 1,
-                "workModule": { "jobPostID": "recreation_offer_jp_riverside_jogging", "workCommands": ["jp_riverside_jogging"], "activeHours": [6,7,8,9,10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
-                "activityCommands": ["jp_riverside_jogging"],
+                "workModule": { "jobPostID": "recreation_offer_jp_riverside_jogging", "workCommands": ["com_furniture_jogging"], "activeHours": [6,7,8,9,10,11,12,13,14,15,16,17,18,19], "activeDays": [] },
+                "activityCommands": ["com_furniture_jogging"],
                 "gatherRoomID": "riverside_promenade"
             }
         ]
@@ -176,27 +176,6 @@
         "list":
         [
             {
-                "ID": "furniture_jp_riverside_bench",
-                "displayName": "jp_riverside_bench",
-                "recipe": [],
-                "furnitureSize": 0,
-                "value": 30000,
-                "Tags": [],
-                "givesJob": [ { "comID": ["jp_riverside_relax"] } ]
-            },
-            {
-                "ID": "furniture_jp_riverside_jogging_route",
-                "displayName": "jp_riverside_jogging_route",
-                "recipe": [], "furnitureSize": 0, "value": 0,
-                "givesJob": [{ "comID": ["jp_riverside_jogging"] }]
-            },
-            {
-                "ID": "furniture_jp_riverside_lawn_route",
-                "displayName": "jp_riverside_lawn_route",
-                "recipe": [], "furnitureSize": 0, "value": 0,
-                "givesJob": [{ "comID": ["jp_riverside_relax", "jp_riverside_jogging"] }]
-            },
-            {
                 "ID": "furniture_jp_riverside_viewing_spot",
                 "displayName": "jp_riverside_viewing_spot",
                 "recipe": [],
@@ -204,7 +183,7 @@
                 "furnitureSize": 0,
                 "value": 0,
                 "Tags": [],
-                "givesJob": [ { "comID": ["jp_riverside_relax", "jp_riverside_watch_fireworks"] } ]
+                "givesJob": [ { "comID": ["jp_riverside_watch_fireworks"] } ]
             }
         ]
     },
@@ -212,50 +191,6 @@
     {
         "list":
         [
-            {
-                "ID": "jp_riverside_relax",
-                "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "jp_riverside_relax_displayName",
-                "_comment": "Open to everyone at any time - found by the generic recreation search too.",
-                "timeScale": 30,
-                "comTags": ["furniture", "recreation", "jp_tourist_riverside", "activity_recreation_walk"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
-                "results_EP": {
-                    "results_character": [
-                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
-                    ]
-                },
-                "variants": [
-                    {
-                        "requirements": { "requirement": { "doerCount": 1 } },
-                        "displayName": "jp_riverside_relax_displayName"
-                    },
-                    {
-                        "requirements": { "requirement": { "doerCount": 99 } },
-                        "displayName": "jp_riverside_relax_displayName_2"
-                    }
-                ],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$沿着河边慢慢散步"] } ] },
-                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正望着河面吹风"] } ] },
-                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了河边"] } ] },
-                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在河边歇够了"] } ] }
-            },
-            {
-                "ID": "jp_riverside_jogging",
-                "ActionPackageClass": "ActionPackage_Interaction",
-                "displayName": "jp_riverside_jogging",
-                "timeScale": 30,
-                "comTags": ["furniture", "recreation", "jp_tourist_riverside"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "cost_ST": 6, "cost_EN": 2 } } },
-                "variants": [{ "displayName": "jp_riverside_jogging", "requirements": { "requirement": { "doerCount": 99 } } }],
-                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 5 },
-                "description_begin": { "Entries": [{ "texts": ["jp_riverside_jogging_begin"] }] },
-                "description_ongoing": { "Entries": [{ "texts": ["jp_riverside_jogging_ongoing"] }] },
-                "description_after": { "Entries": [{ "texts": ["jp_riverside_jogging_after"] }] }
-            },
             {
                 "ID": "jp_riverside_watch_fireworks",
                 "ActionPackageClass": "ActionPackage_Interaction",

@@ -25,7 +25,8 @@
                             "_comment": "时停中",
                             "responses": [
                                 "com_sex_oral_P_Force_Climax_timestop_1",
-                                "com_sex_oral_P_Force_Climax_timestop_2"
+                                "com_sex_oral_P_Force_Climax_timestop_2",
+                                "com_sex_oral_P_Force_Climax_timestop_3"
                             ]
                         },
                         {
@@ -42,7 +43,8 @@
                             "_comment": "睡眠中",
                             "responses": [
                                 "com_sex_oral_P_Force_Climax_sleeping_1",
-                                "com_sex_oral_P_Force_Climax_sleeping_2"
+                                "com_sex_oral_P_Force_Climax_sleeping_2",
+                                "com_sex_oral_P_Force_Climax_sleeping_3"
                             ]
                         },
                         {
@@ -61,7 +63,8 @@
                             "_comment": "昏迷（非睡眠）",
                             "responses": [
                                 "com_sex_oral_P_Force_Climax_unconscious_1",
-                                "com_sex_oral_P_Force_Climax_unconscious_2"
+                                "com_sex_oral_P_Force_Climax_unconscious_2",
+                                "com_sex_oral_P_Force_Climax_unconscious_3"
                             ]
                         },
                         {
@@ -680,6 +683,70 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_sex_oral_P_Force_45",
+                                "com_sex_oral_P_Force_47",
+                                "com_sex_oral_P_Force_48"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_46",
+                                        "com_sex_oral_P_Force_49",
+                                        "com_sex_oral_P_Force_50"
+                                    ],
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "selfTags": [
+                                                    "firstexp_partner_M"
+                                                ]
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "doer",
+                                                "irrumatio",
+                                                "blowjob",
+                                                "forced"
+                                            ],
+                                            "_comment": "对方初体验 被强制口交（使用对方嘴的一方）",
+                                            "responses": [
+                                                "com_sex_oral_P_Force_FE_Partner_1",
+                                                "com_sex_oral_P_Force_FE_Partner_2",
+                                                "com_sex_oral_P_Force_FE_Partner_3"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "firstexp_partner_M"
+                                        ]
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "doer",
+                                        "irrumatio",
+                                        "blowjob",
+                                        "forced"
+                                    ],
+                                    "_comment": "对方初体验 被强制口交（使用对方嘴的一方）",
+                                    "responses": [
+                                        "com_sex_oral_P_Force_FE_Partner_1",
+                                        "com_sex_oral_P_Force_FE_Partner_4",
+                                        "com_sex_oral_P_Force_FE_Partner_5"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
                             "requireSelfReceiver": true,
                             "requirement": {
                                 "requireSelfAction": false,
@@ -811,26 +878,6 @@
                                                 "com_sex_oral_P_Force_FE_4",
                                                 "com_sex_oral_P_Force_FE_5",
                                                 "com_sex_oral_P_Force_FE_6"
-                                            ]
-                                        },
-                                        {
-                                            "requirement": {
-                                                "selfTags": [
-                                                    "firstexp_partner_M"
-                                                ]
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "doer",
-                                                "irrumatio",
-                                                "blowjob",
-                                                "forced"
-                                            ],
-                                            "_comment": "对方初体验 被强制口交（使用对方嘴的一方）",
-                                            "responses": [
-                                                "com_sex_oral_P_Force_FE_Partner_1",
-                                                "com_sex_oral_P_Force_FE_Partner_2",
-                                                "com_sex_oral_P_Force_FE_Partner_3"
                                             ]
                                         },
                                         {
@@ -1179,26 +1226,6 @@
                                 },
                                 {
                                     "requirement": {
-                                        "selfTags": [
-                                            "firstexp_partner_M"
-                                        ]
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "doer",
-                                        "irrumatio",
-                                        "blowjob",
-                                        "forced"
-                                    ],
-                                    "_comment": "对方初体验 被强制口交（使用对方嘴的一方）",
-                                    "responses": [
-                                        "com_sex_oral_P_Force_FE_Partner_1",
-                                        "com_sex_oral_P_Force_FE_Partner_4",
-                                        "com_sex_oral_P_Force_FE_Partner_5"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
                                         "requirePermission": true
                                     },
                                     "extraSelfPortraitTags": [
@@ -1414,8 +1441,13 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
-                            "_comment": "TODO Doer 进行中",
-                            "responses": []
+                            "_comment": "施方 com_sex_oral_P_Force 进行中",
+                            "responses": [
+                                "com_sex_oral_P_Force_Ongoing_1"
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -1437,20 +1469,10 @@
                                         "com_sex_oral_P_Force_Ongoing_Player_3"
                                     ]
                                 }
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_oral_P_Force_Ongoing_Player_1",
-                                "com_sex_oral_P_Force_Ongoing_Player_4",
-                                "com_sex_oral_P_Force_Ongoing_Player_5"
-                            ]
+                                "requireSelfAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -1633,7 +1655,17 @@
                 "com_sex_oral_P_Force_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_oral_P_Force_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_oral_P_Force_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_oral_P_Force_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_oral_P_Force_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_oral_P_Force_45": "$self$稍微往后退了半寸，低头确认着$target$的喘息：“……呛到了吗？先用鼻子喘气。”",
+                "com_sex_oral_P_Force_46": "温热的喉咙一点点放松下来，顺从地吞吐着肉棒，$self$按着$target$后脑的力度也随之加快了节奏：“……吸得真紧。”",
+                "com_sex_oral_P_Force_Climax_unconscious_3": "高潮的抽搐让$self$的四肢短暂地绷紧了一瞬，喉咙一缩一缩地颤着，她依然没有半分苏醒的迹象。",
+                "com_sex_oral_P_Force_Climax_sleeping_3": "嘴角还含着未吞下的津液，$self$在梦里无意识地抓紧身下布料，脚趾蜷缩着颤了几下。",
+                "com_sex_oral_P_Force_47": "“别硬咬着牙关啊……”$self$停顿了一瞬，松开手让$target$缓了口气。",
+                "com_sex_oral_P_Force_48": "$self$放缓了挺腰的幅度，让龟头只含在$target$唇齿间：“这样应该没那么难受了吧。”",
+                "com_sex_oral_P_Force_Climax_timestop_3": "喉咙在顶弄下不受控地收紧抽搐着，$self$却连眨眼都做不到，整个人仍停在时间冻结前的瞬间。",
+                "com_sex_oral_P_Force_49": "“就是这样，别用牙齿。”$self$低头看着嘴角挂满津液的$target$，挺腰往更深处顶去。",
+                "com_sex_oral_P_Force_50": "湿滑的口腔包裹着柱身来回磨蹭，$self$喘了口气，干脆扣住$target$的脑袋连根送了进去。",
+                "com_sex_oral_P_Force_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_oral_P_Force_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

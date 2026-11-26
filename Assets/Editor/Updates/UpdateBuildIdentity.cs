@@ -15,6 +15,10 @@ public sealed class UpdateBuildIdentity : IPostprocessBuildWithReport
     {
         if (report.summary.platform != BuildTarget.StandaloneWindows64) return;
         string root = Path.GetDirectoryName(Path.GetFullPath(report.summary.outputPath));
+        // Releases are windows-x64 only. Packages that tag plugins Win64+ARM64 (unity.webp's win_arm64 libwebp) still get
+        // copied here; 7-Zip then packs them with its ARM64 filter, which many extractors cannot decode.
+        string arm64Plugins = Path.Combine(Path.ChangeExtension(Path.GetFullPath(report.summary.outputPath), null) + "_Data", "Plugins", "ARM64");
+        if (Directory.Exists(arm64Plugins)) Directory.Delete(arm64Plugins, true);
         long number = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var info = new BuildInfo
         {

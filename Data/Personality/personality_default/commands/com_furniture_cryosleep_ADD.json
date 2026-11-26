@@ -143,18 +143,21 @@
                                 "com_furniture_cryosleep_ADD_4",
                                 "com_furniture_cryosleep_ADD_5",
                                 "com_furniture_cryosleep_ADD_6"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_cryosleep_ADD_Fallback_1",
-                                "com_furniture_cryosleep_ADD_Fallback_2"
+                                "com_furniture_cryosleep_ADD_13"
                             ]
                         }
                     ]
@@ -220,18 +223,21 @@
                                 "com_furniture_cryosleep_ADD_Begin_7",
                                 "com_furniture_cryosleep_ADD_Begin_8",
                                 "com_furniture_cryosleep_ADD_Begin_9"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_cryosleep_ADD_Begin_Fallback_1",
-                                "com_furniture_cryosleep_ADD_Begin_Fallback_2"
+                                "com_furniture_cryosleep_ADD_Begin_10"
                             ]
                         }
                     ]
@@ -260,18 +266,21 @@
                             ],
                             "responses": [
                                 "com_furniture_cryosleep_ADD_Ongoing_Fallback_1"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_cryosleep_ADD_Ongoing_Fallback_2",
-                                "com_furniture_cryosleep_ADD_Ongoing_Fallback_3"
+                                "com_furniture_cryosleep_ADD_Ongoing_4"
                             ]
                         }
                     ]
@@ -539,7 +548,10 @@
                 "com_furniture_cryosleep_ADD_Ongoing_Fallback_2": "$self$隔着舱盖留意着外头的读数变化，安静地配合着流程。",
                 "com_furniture_cryosleep_ADD_Ongoing_Fallback_3": "$self$留在舱内保持姿势不动，等着程序一步步走完。",
                 "com_furniture_cryosleep_ADD_Join_Refused_Fallback_1": "\"行，那你一个人照看就行。\" $self$收回手，退到一旁。",
-                "com_furniture_cryosleep_ADD_Join_Refused_Fallback_2": "$self$朝$target$点点头，没再插手，转身忙别的事去了。"
+                "com_furniture_cryosleep_ADD_Join_Refused_Fallback_2": "$self$朝$target$点点头，没再插手，转身忙别的事去了。",
+                "com_furniture_cryosleep_ADD_13": "(unimplemented)",
+                "com_furniture_cryosleep_ADD_Begin_10": "(unimplemented)",
+                "com_furniture_cryosleep_ADD_Ongoing_4": "(unimplemented)"
             }
         }
     }

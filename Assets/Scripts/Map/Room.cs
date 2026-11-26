@@ -730,16 +730,50 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
     protected List<I_CanEndJob> recorders = new List<I_CanEndJob>();
-    protected MessageCollect kols = new MessageCollect(false, false);
+    /// <summary>
+    /// Parallel to recorders: what each one recorded this update, from its own viewpoint (Job_Recording.TryGetViewScope -
+    /// a divider blocking visibility hides its inside from a camera outside and the other way round).
+    /// Docs/Furniture/Plan_DividerVisibility.md §2.4
+    /// </summary>
+    protected List<RecorderBuffer> recorderBuffers = new List<RecorderBuffer>();
+    protected class RecorderBuffer
+    {
+        public MessageCollect kols = new MessageCollect(false, false);
+        public bool stored = false;
+    }
     //protected List<ActionPackageRecords> apRecords = new List<ActionPackageRecords>();
+
+    /// <summary> recorder i's viewpoint; false = it films the whole room </summary>
+    bool TryGetRecorderScope(int i, out int scope)
+    {
+        scope = -1;
+        return recorders[i] is Job_Recording rec && rec.TryGetViewScope(this, out scope);
+    }
+
+    bool RecorderSees(int i, I_Records r)
+    {
+        if (!TryGetRecorderScope(i, out int scope)) return true;
+        return !MapUtility.RecordHiddenFromScope(scope, this, r);
+    }
+
+    bool RecorderSees(int i, ActionPackage ap)
+    {
+        if (!FurnitureOccupancyUtility.AnyoneInBlockingDivider) return true;
+        if (!TryGetRecorderScope(i, out int scope)) return true;
+        return MapUtility.CanSeeScope(scope, MapUtility.PackageScope(ap));
+    }
 
     public void CaptureAPSnapshot(ActionPackage ap)
     {
         if (!this.HasRecording) return;
         if (ap == null) return;
-        var rec = new ActionPackageRecords(ap);
-        kols.apRecords.Add(rec);
-        hasStoredRecord = true;
+        for (int i = 0; i < recorders.Count; i++)
+        {
+            if (!RecorderSees(i, ap)) continue;
+            var buffer = recorderBuffers[i];
+            buffer.kols.apRecords.Add(new ActionPackageRecords(ap));
+            buffer.stored = true;
+        }
         // merge ap
         //this.kols.Merge(ap.mcol);
     }
@@ -747,20 +781,20 @@ public class Room_Instance: IDisposable, I_Disposable
     public void NotifyKojoCollect(KojoCollector kol, MessageCollect_Type type = MessageCollect_Type.kojo)
     {
         if (recorders.Count < 1) return;
-        switch (type)
+        if (type != MessageCollect_Type.kojo && type != MessageCollect_Type.kojo_after)
         {
-            case MessageCollect_Type.kojo:
-                kols.AddKojo(kol); break;
-            case MessageCollect_Type.kojo_after:
-                kols.AddKojoAfter(kol);
-                break;
-            default:
-                Debug.LogError($"error NotifyKojoCollect cannot add KojoCollector into other types [{type}]");
-                return;
+            Debug.LogError($"error NotifyKojoCollect cannot add KojoCollector into other types [{type}]");
+            return;
         }
-        hasStoredRecord = true;
+        for (int i = 0; i < recorders.Count; i++)
+        {
+            if (!RecorderSees(i, kol)) continue;
+            var buffer = recorderBuffers[i];
+            if (type == MessageCollect_Type.kojo) buffer.kols.AddKojo(kol);
+            else buffer.kols.AddKojoAfter(kol);
+            buffer.stored = true;
+        }
     }
-    protected bool hasStoredRecord = false;
     public void NotifyDescCollect(I_Records kol, MessageCollect_Type type = MessageCollect_Type.before)
     {
         if (recorders.Count < 1) return;
@@ -769,24 +803,32 @@ public class Room_Instance: IDisposable, I_Disposable
             Debug.LogError("error message invalid skipping");
             return;
         }
-
-        switch (type)
+        if (type != MessageCollect_Type.checks && type != MessageCollect_Type.results && type != MessageCollect_Type.before
+            && type != MessageCollect_Type.after && type != MessageCollect_Type.exp)
         {
-            case MessageCollect_Type.checks:
-                kols.AddMessage_Checks(kol, null); break;
-            case MessageCollect_Type.results:
-                kols.AddMessage_Results(kol, null); break;
-            case MessageCollect_Type.before:
-                kols.AddMessage_Before(kol, null); break;
-            case MessageCollect_Type.after:
-                kols.AddMessage_After(kol, null); break;
-            case MessageCollect_Type.exp:
-                kols.AddMessage_EXP(kol, null);  break;
-            default:
-                Debug.LogError($"error NotifyKojoCollect cannot add DescriptionCollector into other types [{type}]");
-                return;
+            Debug.LogError($"error NotifyKojoCollect cannot add DescriptionCollector into other types [{type}]");
+            return;
         }
-        hasStoredRecord = true;
+
+        for (int i = 0; i < recorders.Count; i++)
+        {
+            if (!RecorderSees(i, kol)) continue;
+            var kols = recorderBuffers[i].kols;
+            switch (type)
+            {
+                case MessageCollect_Type.checks:
+                    kols.AddMessage_Checks(kol, null); break;
+                case MessageCollect_Type.results:
+                    kols.AddMessage_Results(kol, null); break;
+                case MessageCollect_Type.before:
+                    kols.AddMessage_Before(kol, null); break;
+                case MessageCollect_Type.after:
+                    kols.AddMessage_After(kol, null); break;
+                case MessageCollect_Type.exp:
+                    kols.AddMessage_EXP(kol, null);  break;
+            }
+            recorderBuffers[i].stored = true;
+        }
     }
 
     public void AddCollector(I_CanEndJob job)
@@ -794,6 +836,7 @@ public class Room_Instance: IDisposable, I_Disposable
         if (!recorders.Contains(job))
         {
             recorders.Add(job);
+            recorderBuffers.Add(new RecorderBuffer());
             scr_System_CampaignManager.current.NotifyRoomSpecialUpdate(this);
         }
     }
@@ -809,8 +852,20 @@ public class Room_Instance: IDisposable, I_Disposable
     public void RecordLLMEntry(MessageCollect mc)
     {
         if (recorders.Count < 1 || mc == null) return;
-        kols.Merge(mc, false);
-        hasStoredRecord = true;
+        for (int i = 0; i < recorders.Count; i++)
+        {
+            var buffer = recorderBuffers[i];
+            if (FurnitureOccupancyUtility.AnyoneInBlockingDivider && TryGetRecorderScope(i, out int scope))
+            {
+                // this recorder's view of the entry only
+                var seen = new MessageCollect(false, false);
+                seen.Merge(mc, false);
+                seen.DropHiddenFromScope(scope, this);
+                buffer.kols.Merge(seen, false);
+            }
+            else buffer.kols.Merge(mc, false);
+            buffer.stored = true;
+        }
     }
 
     [JsonIgnore]
@@ -820,13 +875,20 @@ public class Room_Instance: IDisposable, I_Disposable
         } }
 
     /// <summary>
-    /// Each job collects a copy of the shared log. kols is cleared only once the last recorder has collected.
+    /// The job collects its own log (what it saw this update). Buffers are renewed by ClearRecords after every recorder
+    /// has collected; !renew_recording drops the recorder here.
     /// </summary>
     public MessageCollect Collect(I_CanEndJob job, bool renew_recording)
     {
-        if (!renew_recording) recorders.Remove(job);
-        if (hasStoredRecord) return kols;
-        else return null;
+        int i = recorders.IndexOf(job);
+        if (i < 0) return null;
+        var buffer = recorderBuffers[i];
+        if (!renew_recording)
+        {
+            recorders.RemoveAt(i);
+            recorderBuffers.RemoveAt(i);
+        }
+        return buffer.stored ? buffer.kols : null;
     }
     public List<I_CanEndJob> GetCollectors()
     {
@@ -834,8 +896,11 @@ public class Room_Instance: IDisposable, I_Disposable
     }
     public void ClearRecords()
     {
-        this.kols = new MessageCollect();
-        hasStoredRecord = false;
+        for (int i = 0; i < recorderBuffers.Count; i++)
+        {
+            recorderBuffers[i].kols = new MessageCollect(false, false);
+            recorderBuffers[i].stored = false;
+        }
     }
 
 

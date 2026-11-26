@@ -1,0 +1,1286 @@
+{
+    "_doc": "Chronological life-period NSFW sexual-history initializers & romantic plugs for Modern Japan (JP_World) NPCs (Docs/Households/Plan_LifePeriodExpPlugs.md). Skipped cleanly in safe mode. Past-partner plugs use scoreMod instead of adding new relationship types; work-period active partner plugs skip setting relationship_couple if either character is already married.",
+
+    "Experiences": {
+        "exp_initializers": [
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_middle_m",
+                "_comment": "Period 4 NSFW (male): mostly virgin/self-explore, rare early partner.",
+                "randActor": ["expinit_target_classmate_female"],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 6,
+                    "exp_jp_nsfw_middle_self_m": 3,
+                    "exp_jp_nsfw_middle_partner_m": 1
+                }
+            },
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_middle_f",
+                "_comment": "Period 4 NSFW (female): mostly virgin/self-explore, rare early partner.",
+                "randActor": ["expinit_target_classmate_male_1", "expinit_target_classmate_male_2", "expinit_target_classmate_male_3"],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 6,
+                    "exp_jp_nsfw_middle_self_f": 3,
+                    "exp_jp_nsfw_middle_partner_f": 1
+                }
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_none",
+                "_comment": "No sexual experience gained in this period.",
+                "experienceEntries": [],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_middle_self_m",
+                "_comment": "Middle school self-exploration (male).",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 8, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_C", "minAmount": 25, "maxAmount": 75 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 5, "maxAmount": 20 }
+                ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_middle_self_f",
+                "_comment": "Middle school self-exploration (female).",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 6, "maxAmount": 18 },
+                    { "experienceID": "experience_sex_C", "minAmount": 30, "maxAmount": 90 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 3, "maxAmount": 10 }
+                ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_middle_partner_m",
+                "_comment": "Rare middle school early partner (male). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "middle_partner",
+                        "is": "middle_ex_m",
+                        "wants": ["middle_ex_f"],
+                        "scoreMod": [20, 25, 30, 5, 0],
+                        "worldChance": 40
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 1, "maxAmount": 4 },
+                    { "experienceID": "experience_sex_C", "minAmount": 30, "maxAmount": 80 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 3, "maxAmount": 10 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "middle_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_middle_partner_f",
+                "_comment": "Rare middle school early partner (female). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "middle_partner",
+                        "is": "middle_ex_f",
+                        "wants": ["middle_ex_m"],
+                        "scoreMod": [20, 25, 30, 5, 0],
+                        "worldChance": 40
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 1, "maxAmount": 4 },
+                    { "experienceID": "experience_sex_V", "minAmount": 10, "maxAmount": 35 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 0, "maxAmount": 2 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "middle_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_hs_m",
+                "_comment": "Period 5 NSFW (male): high school.",
+                "randActor": ["expinit_target_girlfriend_female", "expinit_target_classmate_female"],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 5,
+                    "exp_jp_nsfw_hs_self_m": 3,
+                    "exp_jp_nsfw_hs_ex_m": 2
+                }
+            },
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_hs_f",
+                "_comment": "Period 5 NSFW (female): high school.",
+                "randActor": [
+                    "expinit_target_boyfriend_male_1", "expinit_target_boyfriend_male_2", "expinit_target_boyfriend_male_3",
+                    "expinit_target_classmate_male_1", "expinit_target_classmate_male_2", "expinit_target_classmate_male_3"
+                ],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 5,
+                    "exp_jp_nsfw_hs_self_f": 3,
+                    "exp_jp_nsfw_hs_ex_f": 2
+                }
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_hs_self_m",
+                "_comment": "High school self-pleasure (male).",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 15, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_C", "minAmount": 40, "maxAmount": 120 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 10, "maxAmount": 35 }
+                ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_hs_self_f",
+                "_comment": "High school self-pleasure (female).",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 15, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_C", "minAmount": 60, "maxAmount": 150 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_B", "minAmount": 10, "maxAmount": 35 }
+                ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_hs_ex_m",
+                "_comment": "High school romance / ex-girlfriend (male). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "hs_ex",
+                        "is": "hs_ex_m",
+                        "wants": ["hs_ex_f"],
+                        "scoreMod": [25, 20, 40, 15, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 3, "maxAmount": 12 },
+                    { "experienceID": "experience_sex_C", "minAmount": 50, "maxAmount": 140 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 8, "maxAmount": 25 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "hs_ex",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_hs_ex_f",
+                "_comment": "High school romance / ex-boyfriend (female). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "hs_ex",
+                        "is": "hs_ex_f",
+                        "wants": ["hs_ex_m"],
+                        "scoreMod": [25, 20, 40, 15, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 3, "maxAmount": 12 },
+                    { "experienceID": "experience_sex_V", "minAmount": 25, "maxAmount": 75 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 1, "maxAmount": 5 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 1, "maxAmount": 5 },
+                    { "experienceID": "experience_sex_M", "minAmount": 10, "maxAmount": 35 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "hs_ex",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "hs_ex",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_uni_m",
+                "_comment": "Period 6 NSFW (male): university.",
+                "randActor": ["expinit_target_girlfriend_female", "expinit_target_pickup_female"],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 4,
+                    "exp_jp_nsfw_uni_ex_m": 3,
+                    "exp_jp_nsfw_uni_active_m": 2
+                }
+            },
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_uni_f",
+                "_comment": "Period 6 NSFW (female): university.",
+                "randActor": [
+                    "expinit_target_boyfriend_male_1", "expinit_target_boyfriend_male_2", "expinit_target_boyfriend_male_3",
+                    "expinit_target_pickup_male_1", "expinit_target_pickup_male_2", "expinit_target_pickup_male_3"
+                ],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 4,
+                    "exp_jp_nsfw_uni_ex_f": 3,
+                    "exp_jp_nsfw_uni_active_f": 2
+                }
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_uni_ex_m",
+                "_comment": "University romance / ex-girlfriend (male). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "uni_ex",
+                        "is": "uni_ex_m",
+                        "wants": ["uni_ex_f"],
+                        "scoreMod": [25, 20, 45, 15, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_C", "minAmount": 100, "maxAmount": 250 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 20, "maxAmount": 60 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_ex",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_uni_ex_f",
+                "_comment": "University romance / ex-boyfriend (female). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "uni_ex",
+                        "is": "uni_ex_f",
+                        "wants": ["uni_ex_m"],
+                        "scoreMod": [25, 20, 45, 15, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_V", "minAmount": 60, "maxAmount": 160 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 4, "maxAmount": 15 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_M", "minAmount": 30, "maxAmount": 80 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 3, "maxAmount": 12 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_ex",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "uni_ex",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_uni_active_m",
+                "_comment": "Sexually active university life (male). Casual fling score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "uni_fling",
+                        "is": "uni_fling_m",
+                        "wants": ["uni_fling_f"],
+                        "scoreMod": [10, 10, 50, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 20, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_C", "minAmount": 180, "maxAmount": 400 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 40, "maxAmount": 100 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_fling",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_uni_active_f",
+                "_comment": "Sexually active university life (female). Casual fling score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "uni_fling",
+                        "is": "uni_fling_f",
+                        "wants": ["uni_fling_m"],
+                        "scoreMod": [10, 10, 50, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 20, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_V", "minAmount": 100, "maxAmount": 240 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 8, "maxAmount": 22 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_M", "minAmount": 50, "maxAmount": 130 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_C", "minAmount": 40, "maxAmount": 110 },
+                    { "experienceID": "experience_sex_B", "minAmount": 30, "maxAmount": 80 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_fling",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "uni_fling",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_m",
+                "_comment": "Period 7 NSFW (male): adult work life.",
+                "randActor": ["expinit_target_coworker_female", "expinit_target_girlfriend_female", "expinit_target_pickup_female"],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 4,
+                    "exp_jp_nsfw_work_ex_m": 2,
+                    "exp_jp_nsfw_work_partner_m": 2,
+                    "exp_jp_nsfw_work_fling_m": 1
+                }
+            },
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_f",
+                "_comment": "Period 7 NSFW (female): adult work life.",
+                "randActor": [
+                    "expinit_target_coworker_male",
+                    "expinit_target_boyfriend_male_1", "expinit_target_boyfriend_male_2", "expinit_target_boyfriend_male_3",
+                    "expinit_target_pickup_male_1", "expinit_target_pickup_male_2"
+                ],
+                "selectOne": {
+                    "exp_jp_nsfw_none": 4,
+                    "exp_jp_nsfw_work_ex_f": 2,
+                    "exp_jp_nsfw_work_partner_f": 2,
+                    "exp_jp_nsfw_work_fling_f": 1
+                }
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_ex_m",
+                "_comment": "Past workplace romance (male). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "work_ex",
+                        "is": "work_ex_m",
+                        "wants": ["work_ex_f"],
+                        "scoreMod": [25, 20, 45, 15, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_C", "minAmount": 100, "maxAmount": 250 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 20, "maxAmount": 60 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "work_ex",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_ex_f",
+                "_comment": "Past workplace romance (female). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "work_ex",
+                        "is": "work_ex_f",
+                        "wants": ["work_ex_m"],
+                        "scoreMod": [25, 20, 45, 15, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_V", "minAmount": 60, "maxAmount": 160 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 5, "maxAmount": 15 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_M", "minAmount": 30, "maxAmount": 80 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 3, "maxAmount": 12 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "work_ex",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "work_ex",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_partner_m",
+                "_comment": "Met partner at work (male). Sets relationship_couple unless either character is already married (in which case relationship is skipped and scoreMod still applies).",
+                "plugs": [
+                    {
+                        "plugID": "work_partner",
+                        "is": "work_bf",
+                        "wants": ["work_gf"],
+                        "relationship": { "personal": "relationship_couple", "personal_isA": false, "bio": "", "bio_isA": false },
+                        "skipRelationshipIfHasAny": ["relationship_marriage"],
+                        "scoreMod": [25, 25, 50, 0, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 15, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_C", "minAmount": 140, "maxAmount": 320 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 30, "maxAmount": 75 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "work_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_partner_f",
+                "_comment": "Met partner at work (female). Sets relationship_couple unless either character is already married (in which case relationship is skipped and scoreMod still applies).",
+                "plugs": [
+                    {
+                        "plugID": "work_partner",
+                        "is": "work_gf",
+                        "wants": ["work_bf"],
+                        "relationship": { "personal": "relationship_couple", "personal_isA": false, "bio": "", "bio_isA": false },
+                        "skipRelationshipIfHasAny": ["relationship_marriage"],
+                        "scoreMod": [25, 25, 50, 0, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 15, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_V", "minAmount": 80, "maxAmount": 200 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_M", "minAmount": 40, "maxAmount": 100 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 5, "maxAmount": 18 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "work_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "work_partner",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_fling_m",
+                "_comment": "Casual adult fling (male). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "work_fling",
+                        "is": "work_fling_m",
+                        "wants": ["work_fling_f"],
+                        "scoreMod": [10, 10, 50, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 25, "maxAmount": 65 },
+                    { "experienceID": "experience_sex_C", "minAmount": 200, "maxAmount": 450 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 45, "maxAmount": 110 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "work_fling",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_nsfw_work_fling_f",
+                "_comment": "Casual adult fling (female). Score-only plug.",
+                "plugs": [
+                    {
+                        "plugID": "work_fling",
+                        "is": "work_fling_f",
+                        "wants": ["work_fling_m"],
+                        "scoreMod": [10, 10, 50, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 25, "maxAmount": 65 },
+                    { "experienceID": "experience_sex_V", "minAmount": 110, "maxAmount": 260 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 10, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 12, "maxAmount": 35 },
+                    { "experienceID": "experience_sex_M", "minAmount": 55, "maxAmount": 140 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 8, "maxAmount": 22 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "work_fling",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "work_fling",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_married_husband",
+                "_comment": "Household marriage addon (husband). Priority 10 ensures spouse binds first inside the household; worldChance 0 prevents binding to strangers.",
+                "randActor": ["expinit_target_wife_female"],
+                "plugs": [
+                    {
+                        "plugID": "spouse",
+                        "is": "spouse_husband",
+                        "wants": ["spouse_wife"],
+                        "relationship": { "personal": "relationship_marriage", "personal_isA": false, "bio": "", "bio_isA": false },
+                        "skipRelationshipIfHasAny": ["relationship_marriage"],
+                        "priority": 10,
+                        "worldChance": 0
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 25, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_C", "minAmount": 180, "maxAmount": 400 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 40, "maxAmount": 100 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "spouse",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_married_wife",
+                "_comment": "Household marriage addon (wife). Priority 10 ensures spouse binds first inside the household; worldChance 0 prevents binding to strangers.",
+                "randActor": ["expinit_target_husband_male"],
+                "plugs": [
+                    {
+                        "plugID": "spouse",
+                        "is": "spouse_wife",
+                        "wants": ["spouse_husband"],
+                        "relationship": { "personal": "relationship_marriage", "personal_isA": false, "bio": "", "bio_isA": false },
+                        "skipRelationshipIfHasAny": ["relationship_marriage"],
+                        "priority": 10,
+                        "worldChance": 0
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 25, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_V", "minAmount": 120, "maxAmount": 280 },
+                    { "experienceID": "experience_sex_V_climax", "minAmount": 12, "maxAmount": 35 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 20, "maxAmount": 50 },
+                    { "experienceID": "experience_sex_M", "minAmount": 50, "maxAmount": 120 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 8, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_C", "minAmount": 60, "maxAmount": 150 },
+                    { "experienceID": "experience_sex_B", "minAmount": 40, "maxAmount": 100 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "spouse",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "spouse",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_hs_club_track_romance_m",
+                "_comment": "High school track club romance (male).",
+                "randActor": ["expinit_target_girlfriend_female", "expinit_target_classmate_female"],
+                "plugs": [
+                    {
+                        "plugID": "hs_track_partner",
+                        "is": "hs_track_ex_m",
+                        "wants": ["hs_track_ex_f"],
+                        "scoreMod": [20, 25, 35, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 3, "maxAmount": 10 },
+                    { "experienceID": "experience_sex_C", "minAmount": 40, "maxAmount": 120 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 6, "maxAmount": 20 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "hs_track_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_hs_club_track_romance_f",
+                "_comment": "High school track club romance (female).",
+                "randActor": ["expinit_target_boyfriend_male_1", "expinit_target_boyfriend_male_2", "expinit_target_classmate_male_1"],
+                "plugs": [
+                    {
+                        "plugID": "hs_track_partner",
+                        "is": "hs_track_ex_f",
+                        "wants": ["hs_track_ex_m"],
+                        "scoreMod": [20, 25, 35, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 3, "maxAmount": 10 },
+                    { "experienceID": "experience_sex_V", "minAmount": 20, "maxAmount": 65 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 1, "maxAmount": 4 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "hs_track_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_tennis_senpai_m",
+                "_comment": "Tennis circle romance (male).",
+                "randActor": ["expinit_target_girlfriend_female", "expinit_target_classmate_female"],
+                "plugs": [
+                    {
+                        "plugID": "uni_tennis_partner",
+                        "is": "uni_tennis_ex_m",
+                        "wants": ["uni_tennis_ex_f"],
+                        "scoreMod": [20, 20, 40, 10, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 5, "maxAmount": 18 },
+                    { "experienceID": "experience_sex_C", "minAmount": 60, "maxAmount": 160 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 12, "maxAmount": 35 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_tennis_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_tennis_senpai_f",
+                "_comment": "Tennis circle senpai romance (female).",
+                "randActor": ["expinit_target_boyfriend_male_1", "expinit_target_boyfriend_male_2", "expinit_target_classmate_male_2"],
+                "plugs": [
+                    {
+                        "plugID": "uni_tennis_partner",
+                        "is": "uni_tennis_ex_f",
+                        "wants": ["uni_tennis_ex_m"],
+                        "scoreMod": [20, 20, 40, 10, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 5, "maxAmount": 18 },
+                    { "experienceID": "experience_sex_V", "minAmount": 40, "maxAmount": 110 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 3, "maxAmount": 10 },
+                    { "experienceID": "experience_sex_M", "minAmount": 15, "maxAmount": 50 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_tennis_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "uni_tennis_partner",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_music_backstage_m",
+                "_comment": "Light music circle backstage fling (male).",
+                "randActor": ["expinit_target_girlfriend_female", "expinit_target_pickup_female"],
+                "plugs": [
+                    {
+                        "plugID": "uni_music_partner",
+                        "is": "uni_music_ex_m",
+                        "wants": ["uni_music_ex_f"],
+                        "scoreMod": [15, 20, 45, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_C", "minAmount": 70, "maxAmount": 180 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 15, "maxAmount": 40 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_music_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_music_backstage_f",
+                "_comment": "Light music circle backstage fling (female).",
+                "randActor": ["expinit_target_boyfriend_male_2", "expinit_target_pickup_male_2"],
+                "plugs": [
+                    {
+                        "plugID": "uni_music_partner",
+                        "is": "uni_music_ex_f",
+                        "wants": ["uni_music_ex_m"],
+                        "scoreMod": [15, 20, 45, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 6, "maxAmount": 20 },
+                    { "experienceID": "experience_sex_V", "minAmount": 45, "maxAmount": 120 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 4, "maxAmount": 12 },
+                    { "experienceID": "experience_sex_M", "minAmount": 20, "maxAmount": 60 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_music_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "uni_music_partner",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_party_hookup_m",
+                "_comment": "Drinking / party circle hookup (male).",
+                "randActor": ["expinit_target_pickup_female", "expinit_target_classmate_female"],
+                "plugs": [
+                    {
+                        "plugID": "uni_party_hookup",
+                        "is": "uni_party_hookup_m",
+                        "wants": ["uni_party_hookup_f"],
+                        "scoreMod": [10, 15, 50, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 8, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_C", "minAmount": 80, "maxAmount": 220 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 18, "maxAmount": 50 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_party_hookup",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_party_hookup_f",
+                "_comment": "Drinking / party circle hookup (female).",
+                "randActor": ["expinit_target_pickup_male_1", "expinit_target_pickup_male_2", "expinit_target_classmate_male_2"],
+                "plugs": [
+                    {
+                        "plugID": "uni_party_hookup",
+                        "is": "uni_party_hookup_f",
+                        "wants": ["uni_party_hookup_m"],
+                        "scoreMod": [10, 15, 50, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 8, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_V", "minAmount": 50, "maxAmount": 140 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 5, "maxAmount": 15 },
+                    { "experienceID": "experience_sex_M", "minAmount": 25, "maxAmount": 70 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_party_hookup",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    },
+                    {
+                        "plugID": "uni_party_hookup",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "service", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_study_romance_m",
+                "_comment": "Study club quiet romance (male).",
+                "randActor": ["expinit_target_girlfriend_female", "expinit_target_classmate_female"],
+                "plugs": [
+                    {
+                        "plugID": "uni_study_partner",
+                        "is": "uni_study_ex_m",
+                        "wants": ["uni_study_ex_f"],
+                        "scoreMod": [25, 30, 30, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 4, "maxAmount": 14 },
+                    { "experienceID": "experience_sex_C", "minAmount": 50, "maxAmount": 140 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 10, "maxAmount": 30 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_study_partner",
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_study_romance_f",
+                "_comment": "Study club quiet romance (female).",
+                "randActor": ["expinit_target_boyfriend_male_1", "expinit_target_classmate_male_1"],
+                "plugs": [
+                    {
+                        "plugID": "uni_study_partner",
+                        "is": "uni_study_ex_f",
+                        "wants": ["uni_study_ex_m"],
+                        "scoreMod": [25, 30, 30, 5, 0],
+                        "worldChance": 50
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 4, "maxAmount": 14 },
+                    { "experienceID": "experience_sex_V", "minAmount": 30, "maxAmount": 90 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 2, "maxAmount": 8 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "uni_study_partner",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_tennis_party_gangbang",
+                "_comment": "Got drunk at a tennis circle party and was taken away and gangbanged. Leaves 3 plugs for distinct male uni peers, each granting exp_jp_uni_club_party_perp to the bound partner.",
+                "randActor": ["expinit_target_classmate_male_1", "expinit_target_classmate_male_2", "expinit_target_classmate_male_3"],
+                "plugs": [
+                    {
+                        "plugID": "actor_1",
+                        "is": "uni_event_for_male",
+                        "wants": ["uni_male_peer"],
+                        "scoreMod": [0, 0, 10, 45, 50],
+                        "grantToPartnerInitID": "exp_jp_uni_club_party_perp",
+                        "worldChance": 80
+                    },
+                    {
+                        "plugID": "actor_2",
+                        "is": "uni_event_for_male",
+                        "wants": ["uni_male_peer"],
+                        "scoreMod": [0, 0, 10, 45, 50],
+                        "grantToPartnerInitID": "exp_jp_uni_club_party_perp",
+                        "worldChance": 80
+                    },
+                    {
+                        "plugID": "actor_3",
+                        "is": "uni_event_for_male",
+                        "wants": ["uni_male_peer"],
+                        "scoreMod": [0, 0, 10, 45, 50],
+                        "grantToPartnerInitID": "exp_jp_uni_club_party_perp",
+                        "worldChance": 80
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 3, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_raped", "minAmount": 3, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_V", "minAmount": 30, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 3, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_M", "minAmount": 20, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 2, "maxAmount": 4 },
+                    { "experienceID": "experience_sex_A", "minAmount": 10, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_A_cum", "minAmount": 1, "maxAmount": 3 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "actor_1",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_reverse", "position_equal"],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "plugID": "actor_2",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_Force_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "plugID": "actor_3",
+                        "bodyPartTags": ["anus"],
+                        "interactionTags": ["sex", "penetration", "position_reverse", "position_equal"],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_A_displayName_1",
+                        "isConsensual": false
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_party_gangbang",
+                "_comment": "Got drunk at a drinking circle party and was taken away and gangbanged. Leaves 3 plugs for distinct male uni peers, each granting exp_jp_uni_club_party_perp.",
+                "randActor": ["expinit_target_classmate_male_1", "expinit_target_classmate_male_2", "expinit_target_pickup_male_3"],
+                "plugs": [
+                    {
+                        "plugID": "actor_1",
+                        "is": "uni_event_for_male",
+                        "wants": ["uni_male_peer"],
+                        "scoreMod": [0, 0, 10, 45, 50],
+                        "grantToPartnerInitID": "exp_jp_uni_club_party_perp",
+                        "worldChance": 80
+                    },
+                    {
+                        "plugID": "actor_2",
+                        "is": "uni_event_for_male",
+                        "wants": ["uni_male_peer"],
+                        "scoreMod": [0, 0, 10, 45, 50],
+                        "grantToPartnerInitID": "exp_jp_uni_club_party_perp",
+                        "worldChance": 80
+                    },
+                    {
+                        "plugID": "actor_3",
+                        "is": "uni_event_for_male",
+                        "wants": ["uni_male_peer"],
+                        "scoreMod": [0, 0, 10, 45, 50],
+                        "grantToPartnerInitID": "exp_jp_uni_club_party_perp",
+                        "worldChance": 80
+                    }
+                ],
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_male", "minAmount": 3, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_raped", "minAmount": 3, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_V", "minAmount": 30, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_V_cum", "minAmount": 3, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_M", "minAmount": 20, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_M_cum", "minAmount": 2, "maxAmount": 4 },
+                    { "experienceID": "experience_sex_A", "minAmount": 10, "maxAmount": 25 },
+                    { "experienceID": "experience_sex_A_cum", "minAmount": 1, "maxAmount": 3 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "plugID": "actor_1",
+                        "bodyPartTags": ["vagina"],
+                        "interactionTags": ["sex", "penetration", "position_reverse", "position_equal"],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "plugID": "actor_2",
+                        "bodyPartTags": ["mouth"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_inequal", "external"],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_Force_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "plugID": "actor_3",
+                        "bodyPartTags": ["anus"],
+                        "interactionTags": ["sex", "penetration", "position_reverse", "position_equal"],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_A_displayName_1",
+                        "isConsensual": false
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "exp_jp_uni_club_party_perp",
+                "_comment": "Reciprocal initializer granted via grantToPartnerInitID to any male peer plugged into a university party gangbang event.",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 1, "maxAmount": 3 },
+                    { "experienceID": "experience_sex_C", "minAmount": 25, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 2, "maxAmount": 5 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_reverse", "position_equal"],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            }
+        ],
+
+        "exp_initializers_actor": [
+            { "ID": "expinit_target_coworker_male", "displayName": "expinit_target_coworker_male", "insertionName": "expinit_target_male_penis_medium" },
+            { "ID": "expinit_target_husband_male", "displayName": "expinit_target_husband_male", "insertionName": "expinit_target_male_penis_medium" },
+            { "ID": "expinit_target_wife_female", "displayName": "expinit_target_wife_female", "insertionName": "" }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "expinit_target_coworker_male": "男同事",
+                "expinit_target_wife_female": "妻子",
+                "expinit_desc_exp_jp_nsfw_middle_self_m": "初中时开始自我探索",
+                "expinit_desc_exp_jp_nsfw_middle_self_f": "初中时开始自我探索",
+                "expinit_desc_exp_jp_nsfw_middle_partner_m": "初中时有过青涩的早恋经历",
+                "expinit_desc_exp_jp_nsfw_middle_partner_f": "初中时有过青涩的早恋经历",
+                "expinit_desc_exp_jp_nsfw_hs_self_m": "高中时养成了自慰习惯",
+                "expinit_desc_exp_jp_nsfw_hs_self_f": "高中时养成了自慰习惯",
+                "expinit_desc_exp_jp_nsfw_hs_ex_m": "高中时谈过一段恋爱",
+                "expinit_desc_exp_jp_nsfw_hs_ex_f": "高中时谈过一段恋爱",
+                "expinit_desc_exp_jp_nsfw_uni_ex_m": "大学时谈过一段恋爱",
+                "expinit_desc_exp_jp_nsfw_uni_ex_f": "大学时谈过一段恋爱",
+                "expinit_desc_exp_jp_nsfw_uni_active_m": "大学期间私生活颇为活跃",
+                "expinit_desc_exp_jp_nsfw_uni_active_f": "大学期间私生活颇为活跃",
+                "expinit_desc_exp_jp_nsfw_work_ex_m": "工作后有过一段职场恋情",
+                "expinit_desc_exp_jp_nsfw_work_ex_f": "工作后有过一段职场恋情",
+                "expinit_desc_exp_jp_nsfw_work_partner_m": "在工作中结识了恋人",
+                "expinit_desc_exp_jp_nsfw_work_partner_f": "在工作中结识了恋人",
+                "expinit_desc_exp_jp_nsfw_work_fling_m": "工作后有过几段露水情缘",
+                "expinit_desc_exp_jp_nsfw_work_fling_f": "工作后有过几段露水情缘",
+                "expinit_desc_exp_jp_married_husband": "步入了婚姻生活",
+                "expinit_desc_exp_jp_married_wife": "步入了婚姻生活",
+                "expinit_desc_exp_jp_hs_club_track_romance_m": "在田径社谈过一段恋爱",
+                "expinit_desc_exp_jp_hs_club_track_romance_f": "在田径社谈过一段恋爱",
+                "expinit_desc_exp_jp_uni_club_tennis_senpai_m": "在网球社有过一段恋情",
+                "expinit_desc_exp_jp_uni_club_tennis_senpai_f": "在网球社和前辈有过一段恋情",
+                "expinit_desc_exp_jp_uni_club_music_backstage_m": "在轻音社演出后有过一段情缘",
+                "expinit_desc_exp_jp_uni_club_music_backstage_f": "在轻音社演出后有过一段情缘",
+                "expinit_desc_exp_jp_uni_club_party_hookup_m": "在联谊聚会后有过一夜情",
+                "expinit_desc_exp_jp_uni_club_party_hookup_f": "在联谊聚会后有过一夜情",
+                "expinit_desc_exp_jp_uni_club_study_romance_m": "在读书社谈过一段安静的恋爱",
+                "expinit_desc_exp_jp_uni_club_study_romance_f": "在读书社谈过一段安静的恋爱",
+                "expinit_desc_exp_jp_uni_club_tennis_party_gangbang": "在网球社聚会上被灌醉并被带走轮奸",
+                "expinit_desc_exp_jp_uni_club_party_gangbang": "在联谊社聚会上被灌醉并被带走轮奸",
+                "expinit_desc_exp_jp_uni_club_party_perp": "在大学社团聚会上趁醉带走并侵犯了女同学"
+            },
+            "en-us": {
+                "expinit_target_coworker_male": "Male Coworker",
+                "expinit_target_wife_female": "Wife",
+                "expinit_desc_exp_jp_nsfw_middle_self_m": "Began self-exploration in middle school",
+                "expinit_desc_exp_jp_nsfw_middle_self_f": "Began self-exploration in middle school",
+                "expinit_desc_exp_jp_nsfw_middle_partner_m": "Had an early romance in middle school",
+                "expinit_desc_exp_jp_nsfw_middle_partner_f": "Had an early romance in middle school",
+                "expinit_desc_exp_jp_nsfw_hs_self_m": "Developed a solo habit in high school",
+                "expinit_desc_exp_jp_nsfw_hs_self_f": "Developed a solo habit in high school",
+                "expinit_desc_exp_jp_nsfw_hs_ex_m": "Dated someone in high school",
+                "expinit_desc_exp_jp_nsfw_hs_ex_f": "Dated someone in high school",
+                "expinit_desc_exp_jp_nsfw_uni_ex_m": "Dated someone in university",
+                "expinit_desc_exp_jp_nsfw_uni_ex_f": "Dated someone in university",
+                "expinit_desc_exp_jp_nsfw_uni_active_m": "Had an active sex life in university",
+                "expinit_desc_exp_jp_nsfw_uni_active_f": "Had an active sex life in university",
+                "expinit_desc_exp_jp_nsfw_work_ex_m": "Had a past workplace romance",
+                "expinit_desc_exp_jp_nsfw_work_ex_f": "Had a past workplace romance",
+                "expinit_desc_exp_jp_nsfw_work_partner_m": "Met a romantic partner at work",
+                "expinit_desc_exp_jp_nsfw_work_partner_f": "Met a romantic partner at work",
+                "expinit_desc_exp_jp_nsfw_work_fling_m": "Had casual flings during working life",
+                "expinit_desc_exp_jp_nsfw_work_fling_f": "Had casual flings during working life",
+                "expinit_desc_exp_jp_married_husband": "Entered married life",
+                "expinit_desc_exp_jp_married_wife": "Entered married life",
+                "expinit_desc_exp_jp_hs_club_track_romance_m": "Dated a teammate in the Track Club",
+                "expinit_desc_exp_jp_hs_club_track_romance_f": "Dated a teammate in the Track Club",
+                "expinit_desc_exp_jp_uni_club_tennis_senpai_m": "Had a romance in the Tennis Circle",
+                "expinit_desc_exp_jp_uni_club_tennis_senpai_f": "Dated a senpai in the Tennis Circle",
+                "expinit_desc_exp_jp_uni_club_music_backstage_m": "Had a backstage fling in the Light Music Club",
+                "expinit_desc_exp_jp_uni_club_music_backstage_f": "Had a backstage fling in the Light Music Club",
+                "expinit_desc_exp_jp_uni_club_party_hookup_m": "Hooked up after a Party Circle mixer",
+                "expinit_desc_exp_jp_uni_club_party_hookup_f": "Hooked up after a Party Circle mixer",
+                "expinit_desc_exp_jp_uni_club_study_romance_m": "Had a quiet romance in the Study Club",
+                "expinit_desc_exp_jp_uni_club_study_romance_f": "Had a quiet romance in the Study Club",
+                "expinit_desc_exp_jp_uni_club_tennis_party_gangbang": "Got drunk at a Tennis Circle party and was taken away and gangbanged",
+                "expinit_desc_exp_jp_uni_club_party_gangbang": "Got drunk at a Party Circle mixer and was taken away and gangbanged",
+                "expinit_desc_exp_jp_uni_club_party_perp": "Took advantage of a drunk clubmate at a university party"
+            }
+        }
+    }
+}

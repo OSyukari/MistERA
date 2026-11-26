@@ -161,7 +161,7 @@ public static class FactionJoinUtility
     /// <summary>One random enabled option of options becomes isDefaultAccept (the NPC's pick, EventEntry_Question.npcDecides).</summary>
     public static void MarkRandomDefaultAccept(List<Event.EventEntry.Options> options)
     {
-        var enabled = options.FindAll(o => string.IsNullOrEmpty(o.disabledReasonKey));
+        var enabled = options.FindAll(o => !o.IsDisabled);
         if (enabled.Count > 0) Utility.GetRandomElement(enabled).isDefaultAccept = true;
     }
 
@@ -223,7 +223,7 @@ public static class FactionJoinUtility
                 string childPosts = type.Children.Count > 0 ? FormatChildPosts(type) : FormatHolidayPolicy(type.workModule);
                 foreach (var op in built)
                 {
-                    if (op == null || (!includeDisabled && !string.IsNullOrEmpty(op.disabledReasonKey))) continue;
+                    if (op == null || (!includeDisabled && op.IsDisabled)) continue;
                     // named after the type asked for (e.g. the parent post), not the child it resolves to
                     op.option = LocalizeDictionary.QueryThenParse(optionTextKey)
                         .Replace("$faction$", faction.FactionDisplayName)

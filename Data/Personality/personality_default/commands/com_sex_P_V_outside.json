@@ -207,66 +207,48 @@
                                         "com_sex_P_V_outside_Begin_14",
                                         "com_sex_P_V_outside_Begin_15"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "intercrural",
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被素股 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_P_V_outside_Begin_1",
+                                        "com_sex_P_V_outside_Begin_2",
+                                        "com_sex_P_V_outside_Begin_3"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "sex",
+                                        "receiver",
+                                        "intercrural",
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被素股 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_sex_P_V_outside_Begin_4",
+                                        "com_sex_P_V_outside_Begin_5",
+                                        "com_sex_P_V_outside_Begin_6"
+                                    ]
                                 }
                             ],
                             "responses": [
                                 "com_sex_P_V_outside_Begin_16",
                                 "com_sex_P_V_outside_Begin_17",
-                                "com_sex_P_V_outside_Begin_18"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            }
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被素股 有允许 口上文",
-                            "responses": [
-                                "com_sex_P_V_outside_Begin_1",
-                                "com_sex_P_V_outside_Begin_2",
-                                "com_sex_P_V_outside_Begin_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被素股 未允许 好意 口上文",
-                            "responses": [
-                                "com_sex_P_V_outside_Begin_4",
-                                "com_sex_P_V_outside_Begin_5",
-                                "com_sex_P_V_outside_Begin_6"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "fear",
-                                "trembling",
-                                "tearful",
-                                "pain"
-                            ],
-                            "_comment": "2.2.2 开始被素股 未允许 敌意 口上文",
-                            "responses": [
+                                "com_sex_P_V_outside_Begin_18",
                                 "com_sex_P_V_outside_Begin_7",
                                 "com_sex_P_V_outside_Begin_8",
                                 "com_sex_P_V_outside_Begin_9"
@@ -275,6 +257,16 @@
                                 "requireSelfAction": false,
                                 "requireTargetAction": false
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 开始 com_sex_P_V_outside",
+                            "responses": [
+                                "com_sex_P_V_outside_Begin_19"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -375,12 +367,35 @@
                                                 "com_sex_P_V_outside_47",
                                                 "com_sex_P_V_outside_48"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "intercrural",
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被素股 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_P_V_outside_37",
+                                                "com_sex_P_V_outside_38",
+                                                "com_sex_P_V_outside_39"
+                                            ]
                                         }
                                     ],
                                     "responses": [
                                         "com_sex_P_V_outside_58",
                                         "com_sex_P_V_outside_59",
-                                        "com_sex_P_V_outside_60"
+                                        "com_sex_P_V_outside_60",
+                                        "com_sex_P_V_outside_40",
+                                        "com_sex_P_V_outside_41",
+                                        "com_sex_P_V_outside_42"
                                     ]
                                 },
                                 {
@@ -399,50 +414,100 @@
                                                 "com_sex_P_V_outside_50",
                                                 "com_sex_P_V_outside_51"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "targetBaseID": "PLAYER",
+                                                "selfTags": [
+                                                    "justWokenUp"
+                                                ]
+                                            },
+                                            "_comment1": "玩家专用 刚睡醒时的 素股口上文",
+                                            "variants": [
+                                                {
+                                                    "requirement": {
+                                                        "requirePermission": true
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "intercrural",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被素股 有允许 口上文",
+                                                    "responses": [
+                                                        "com_sex_P_V_outside_22",
+                                                        "com_sex_P_V_outside_23",
+                                                        "com_sex_P_V_outside_24"
+                                                    ]
+                                                },
+                                                {
+                                                    "requirement": {
+                                                        "requireSelfAttitudeGTE": "Like"
+                                                    },
+                                                    "extraSelfPortraitTags": [
+                                                        "sex",
+                                                        "receiver",
+                                                        "intercrural",
+                                                        "sleep",
+                                                        "smile",
+                                                        "blush",
+                                                        "lazy"
+                                                    ],
+                                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被素股 无允许 好意 口上文",
+                                                    "responses": [
+                                                        "com_sex_P_V_outside_25",
+                                                        "com_sex_P_V_outside_26",
+                                                        "com_sex_P_V_outside_27"
+                                                    ]
+                                                }
+                                            ],
+                                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被素股 无允许 敌意 口上文",
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "intercrural",
+                                                "scared",
+                                                "submissive"
+                                            ],
+                                            "responses": [
+                                                "com_sex_P_V_outside_28",
+                                                "com_sex_P_V_outside_29",
+                                                "com_sex_P_V_outside_30"
+                                            ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "sex",
+                                                "receiver",
+                                                "intercrural",
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "_comment": "2.1.3 ($self$) 被素股 结果正面 有允许 口上文",
+                                            "responses": [
+                                                "com_sex_P_V_outside_31",
+                                                "com_sex_P_V_outside_32",
+                                                "com_sex_P_V_outside_33"
+                                            ]
                                         }
                                     ],
                                     "responses": [
                                         "com_sex_P_V_outside_61",
                                         "com_sex_P_V_outside_62",
-                                        "com_sex_P_V_outside_63"
+                                        "com_sex_P_V_outside_63",
+                                        "com_sex_P_V_outside_34",
+                                        "com_sex_P_V_outside_35",
+                                        "com_sex_P_V_outside_36"
                                     ]
                                 },
-                                {
-                                    "requirement": {
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "responses": [
-                                        "com_sex_P_V_outside_52",
-                                        "com_sex_P_V_outside_53",
-                                        "com_sex_P_V_outside_54"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_sex_P_V_outside_55",
-                                "com_sex_P_V_outside_56",
-                                "com_sex_P_V_outside_57"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false
-                            }
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
                                 {
                                     "requirement": {
                                         "targetBaseID": "PLAYER",
@@ -509,110 +574,33 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "intercrural",
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被素股 结果正面 有允许 口上文",
                                     "responses": [
-                                        "com_sex_P_V_outside_31",
-                                        "com_sex_P_V_outside_32",
-                                        "com_sex_P_V_outside_33"
+                                        "com_sex_P_V_outside_52",
+                                        "com_sex_P_V_outside_53",
+                                        "com_sex_P_V_outside_54"
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.5 ($self$) 被素股 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
                             "responses": [
-                                "com_sex_P_V_outside_34",
-                                "com_sex_P_V_outside_35",
-                                "com_sex_P_V_outside_36"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "targetBaseID": "PLAYER",
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment1": "玩家专用 刚睡醒时的 素股口上文",
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "intercrural",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.1.5  玩家专用的 刚睡醒时的 被素股 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_P_V_outside_22",
-                                        "com_sex_P_V_outside_23",
-                                        "com_sex_P_V_outside_24"
-                                    ]
-                                },
-                                {
-                                    "requirement": {
-                                        "requireSelfAttitudeGTE": "Like"
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "intercrural",
-                                        "sleep",
-                                        "smile",
-                                        "blush",
-                                        "lazy"
-                                    ],
-                                    "_comment": "2.2.7 玩家专用的 刚睡醒时的 被素股 无允许 好意 口上文",
-                                    "responses": [
-                                        "com_sex_P_V_outside_25",
-                                        "com_sex_P_V_outside_26",
-                                        "com_sex_P_V_outside_27"
-                                    ]
-                                }
+                                "com_sex_P_V_outside_55",
+                                "com_sex_P_V_outside_56",
+                                "com_sex_P_V_outside_57"
                             ],
-                            "_comment": "2.2.8 玩家专用 刚睡醒时的 被素股 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "sex",
-                                "receiver",
-                                "intercrural",
-                                "scared",
-                                "submissive"
-                            ],
-                            "responses": [
-                                "com_sex_P_V_outside_28",
-                                "com_sex_P_V_outside_29",
-                                "com_sex_P_V_outside_30"
-                            ]
-                        },
-                        {
                             "requirement": {
                                 "requireSelfAction": false,
                                 "requireTargetAction": false
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_P_V_outside 结果",
                             "responses": [
                                 "com_sex_P_V_outside_64",
                                 "com_sex_P_V_outside_65",
@@ -620,52 +608,13 @@
                             ],
                             "variants": [
                                 {
-                                    "variants": [
-                                        {
-                                            "requirement": {
-                                                "requirePermission": true
-                                            },
-                                            "extraSelfPortraitTags": [
-                                                "sex",
-                                                "receiver",
-                                                "intercrural",
-                                                "pain",
-                                                "bored",
-                                                "doubt",
-                                                "disappointed"
-                                            ],
-                                            "_comment": "2.1.4 ($self$) 被素股 结果负面 有允许 口上文",
-                                            "responses": [
-                                                "com_sex_P_V_outside_37",
-                                                "com_sex_P_V_outside_38",
-                                                "com_sex_P_V_outside_39"
-                                            ]
-                                        }
-                                    ],
-                                    "_comment": "2.2.6 ($self$) 被素股 结果负面 未允许 口上文",
-                                    "extraSelfPortraitTags": [
-                                        "sex",
-                                        "receiver",
-                                        "intercrural",
-                                        "angry",
-                                        "cry",
-                                        "glare",
-                                        "disgust",
-                                        "pouting",
-                                        "sad",
-                                        "troubled",
-                                        "silence"
-                                    ],
-                                    "responses": [
-                                        "com_sex_P_V_outside_40",
-                                        "com_sex_P_V_outside_41",
-                                        "com_sex_P_V_outside_42"
-                                    ],
                                     "requirement": {
-                                        "requireSelfAction": false,
-                                        "requireTargetAction": false,
-                                        "allowRecording": true
-                                    }
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_P_V_outside 结果正面",
+                                    "responses": [
+                                        "com_sex_P_V_outside_67"
+                                    ]
                                 }
                             ]
                         }
@@ -841,13 +790,17 @@
                                 "com_sex_P_V_outside_Ongoing_4",
                                 "com_sex_P_V_outside_Ongoing_5",
                                 "com_sex_P_V_outside_Ongoing_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方 com_sex_P_V_outside 进行中",
                             "responses": [
                                 "com_sex_P_V_outside_Ongoing_7",
                                 "com_sex_P_V_outside_Ongoing_8",
@@ -981,7 +934,9 @@
                 "com_sex_P_V_outside_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_P_V_outside_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_P_V_outside_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_P_V_outside_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_P_V_outside_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_P_V_outside_67": "(unimplemented)",
+                "com_sex_P_V_outside_Begin_19": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_P_V_outside_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

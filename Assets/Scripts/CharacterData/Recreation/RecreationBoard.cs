@@ -50,6 +50,8 @@ public class RecreationOfferDef
     public MapPlan.WorkModuleInit workModule = new MapPlan.WorkModuleInit();
     /// <summary>See RecreationActivity.entranceFee - the one-time price of a visit.</summary>
     public ItemEntry entranceFee = null;
+    /// <summary>See RecreationActivity.approvalEventID - custom entry event for activity approval/confirmation.</summary>
+    public string approvalEventID = "";
     /// <summary>See RecreationActivity.gatherRoomID - where Job_Activity gathers this offer's participants ("" = the venue's MainExit).</summary>
     public string gatherRoomID = "";
     /// <summary>See RecreationActivity.facility.</summary>
@@ -166,6 +168,7 @@ public class RecreationOfferDef
                     trustRewardEligible = trustRewardEligible,
                     invite = invite,
                     entranceFee = entranceFee,
+                    approvalEventID = approvalEventID,
                     gatherRoomID = gatherRoomID,
                     facility = facility,
                     eligibility = eligibility,

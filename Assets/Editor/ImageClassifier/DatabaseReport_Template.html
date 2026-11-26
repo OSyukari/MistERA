@@ -7,8 +7,9 @@
 <!--
   Template of Mods/_image_database.html (Tools/Image Classifier > Mods asset packs) and <folder>/_image_analysis.html (single folder).
   ImageReport.cs only replaces the REPORT_DATA slot below with the data as JSON (shape documented on ImageReport.BuildReportJson);
-  everything else - layout, styling, filters, hover preview, details panel, image selection (Mods report: Save selection writes
-  REPORT.selectionFile next to the page for Unity's "Select from report") - lives here and can be edited without recompiling.
+  everything else - layout, styling, filters, hover preview, details panel, image selection (Mods report: Save selection and Save verified
+  write the "selection" and "verifiedFolders" fields of REPORT.selectionFile, the database file next to the page, for Unity's
+  "Select from report" and OK toggles) - lives here and can be edited without recompiling.
   Apply a template change with "Update report only (no analysis)".
 -->
 <style>
@@ -38,6 +39,23 @@ table.grid th:first-child, table.grid td:first-child { text-align: left; }
 table.grid td.text { text-align: left; color: var(--muted); white-space: normal; }
 table.grid td.stale { text-align: left; color: var(--stale); white-space: normal; }
 table.grid tr.total td { font-weight: 600; border-bottom: none; }
+table.grid tr.f-group td { background: rgba(128, 128, 128, .06); color: var(--muted); }
+table.grid tr.f-group td:first-child { color: var(--text); font-weight: 600; }
+.f-cell { display: inline-flex; align-items: center; gap: 4px; }
+.f-exp { font: inherit; font-size: 11px; width: 18px; height: 18px; line-height: 16px; padding: 0; text-align: center; color: var(--muted);
+  background: transparent; border: 1px solid transparent; border-radius: 3px; cursor: pointer; flex: 0 0 auto; }
+.f-exp:hover { border-color: var(--line); color: var(--text); }
+.f-pad { display: inline-block; width: 18px; flex: 0 0 auto; }
+.verbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 4px 0 6px; font-size: 12px; color: var(--muted); }
+.verbar button { font: inherit; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 2px 10px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.verbar button.dirty { color: #fff; background: var(--pick); border-color: var(--pick); font-weight: 600; box-shadow: 0 0 0 2px var(--pick-bg); }
+.verbar button.saved { color: var(--pick); border-color: var(--pick); font-weight: 600; }
+.verbar button:disabled { opacity: .65; cursor: default; }
+.verbar .st.dirty { color: var(--pick); font-weight: 600; }
+.verbar .st.err { color: var(--unmatched); font-weight: 600; }
+.ver-btn { font: inherit; font-size: 12px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 8px; cursor: pointer; min-width: 78px; }
+.ver-btn.on { color: #fff; background: var(--pick); border-color: var(--pick); font-weight: 600; }
+.ver-btn.part { color: var(--low); border-color: var(--low); font-weight: 600; }
 ul.lint { margin: 4px 0; padding-left: 18px; font-size: 13px; }
 h4.sub { font-size: 13px; margin: 10px 0 2px; }
 .tagfreq { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; margin: 4px 0; }
@@ -512,30 +530,218 @@ window.REPORT = /*__REPORT_DATA__*/null;
   $("title").textContent = "Image analysis - " + R.title;
   $("meta").innerHTML = "Generated " + esc(R.generated) + " · rules " + esc(R.rules);
 
-  var t = { count: 0, confident: 0, low: 0, unmatched: 0, keptOut: 0, untagged: 0 }, analyzed = 0, stale = 0;
-  var fh = '<table class="grid"><tr><th>Folder</th><th>Analyzed</th><th>Images</th><th>Confident</th><th>Low</th><th>Unmatched</th><th>Kept out</th><th>Not tagged</th>' +
-           '<th title="Images that steps Move + Rename would still change (confident only / with low confidence)">Still to move or rename</th><th>State</th></tr>';
+  var hasVerified = !!R.verifiedFile;
+  var verBase = {}, verDelta = {}, folderCollapsed = {};
+  (R.verifiedFolders || []).forEach(function (name) {
+    var norm = String(name || "").trim().replace(/\\/g, "/");
+    if (norm) verBase[norm.toLowerCase()] = norm;
+  });
+  try { verDelta = JSON.parse(store.get("verDelta", "{}")) || {}; } catch (e) {}
+  try { folderCollapsed = JSON.parse(store.get("folderCollapsed", "{}")) || {}; } catch (e) {}
+  function verKey(name) { return String(name || "").trim().replace(/\\/g, "/").toLowerCase(); }
+  function isVerified(name) {
+    var k = verKey(name);
+    return Object.prototype.hasOwnProperty.call(verDelta, k) ? !!(verDelta[k] && verDelta[k].on) : !!verBase[k];
+  }
+  function setVerified(name, on) {
+    var k = verKey(name);
+    if (!!on === !!verBase[k]) delete verDelta[k];
+    else verDelta[k] = { on: !!on, name: name };
+  }
+  function verDirtyCount() {
+    var d = 0;
+    Object.keys(verDelta).forEach(function (k) {
+      if (!!(verDelta[k] && verDelta[k].on) !== !!verBase[k]) d++;
+    });
+    return d;
+  }
+  // baseList: the saved folders to apply the unsaved toggles to (default: the ones in the report)
+  function verMergedList(baseList) {
+    var merged = {};
+    if (baseList) baseList.forEach(function (name) { var n = String(name || "").trim().replace(/\\/g, "/"); if (n) merged[n.toLowerCase()] = n; });
+    else Object.keys(verBase).forEach(function (k) { merged[k] = verBase[k]; });
+    Object.keys(verDelta).forEach(function (k) {
+      if (verDelta[k] && verDelta[k].on) merged[k] = verDelta[k].name || verBase[k] || k;
+      else delete merged[k];
+    });
+    return Object.keys(merged).map(function (k) { return merged[k]; }).sort(function (a, b) {
+      return a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : 0;
+    });
+  }
+
+  // Build hierarchical folder tree from R.folders (split on '/')
+  var folderTree = { name: "", path: "", folder: null, children: [], descendants: [] };
+  var folderNodesByPath = {};
   R.folders.forEach(function (f) {
-    if (f.analyzed == null) {
-      fh += "<tr><td>" + esc(f.name) + '</td><td class="text" colspan="9">' + (f.hasTags ? "tagged, not analyzed (run 2. Analyze)" : "not tagged (run 1. Tag)") + "</td></tr>";
-      return;
-    }
+    var node = folderTree, rel = "";
+    f.name.split("/").forEach(function (part) {
+      rel = rel ? rel + "/" + part : part;
+      var child = null;
+      for (var i = 0; i < node.children.length; i++) {
+        if (node.children[i].name.toLowerCase() === part.toLowerCase()) { child = node.children[i]; break; }
+      }
+      if (!child) {
+        child = { name: part, path: rel, folder: null, children: [], descendants: [] };
+        node.children.push(child);
+        folderNodesByPath[rel.toLowerCase()] = child;
+      }
+      node = child;
+      node.descendants.push(f);
+    });
+    node.folder = f;
+  });
+  function sortTree(node) {
+    node.children.sort(function (a, b) { return cmp(a.name.toLowerCase(), b.name.toLowerCase()); });
+    node.children.forEach(sortTree);
+  }
+  sortTree(folderTree);
+
+  function verLeafButtonHtml(name) {
+    var on = isVerified(name);
+    return '<button type="button" class="ver-btn' + (on ? " on" : "") + '" data-ver-folder="' + esc(name) +
+           '" aria-pressed="' + (on ? "true" : "false") + '" title="Toggle whether this folder is verified as correctly classified">' +
+           (on ? "✓ Correct" : "Off") + "</button>";
+  }
+  function verGroupButtonHtml(node) {
+    var vc = 0, tot = node.descendants.length;
+    node.descendants.forEach(function (d) { if (isVerified(d.name)) vc++; });
+    var allOn = vc === tot && tot > 0, part = vc > 0 && vc < tot;
+    var cls = "ver-btn" + (allOn ? " on" : part ? " part" : "");
+    var label = allOn ? "✓ All (" + tot + ")" : part ? "◐ " + vc + "/" + tot : "Off (0/" + tot + ")";
+    return '<button type="button" class="' + cls + '" data-ver-group="' + esc(node.path) +
+           '" aria-pressed="' + (allOn ? "true" : part ? "mixed" : "false") +
+           '" title="Toggle all ' + tot + ' folder(s) under ' + esc(node.path) + '">' + label + "</button>";
+  }
+
+  var t = { count: 0, confident: 0, low: 0, unmatched: 0, keptOut: 0, untagged: 0 }, analyzed = 0, stale = 0;
+  R.folders.forEach(function (f) {
+    if (f.analyzed == null) return;
     analyzed++;
     if (f.stale) stale++;
     ["count", "confident", "low", "unmatched", "keptOut", "untagged"].forEach(function (k) { t[k] += f[k]; });
-    fh += "<tr><td>" + esc(f.name) + "</td><td>" + esc(f.analyzed) + "</td><td>" + f.count + "</td><td>" + f.confident + "</td><td>" + f.low + "</td><td>" + f.unmatched +
-          "</td><td>" + f.keptOut + "</td><td>" + f.untagged + "</td><td>" + f.firstPass + (f.lowPass !== f.firstPass ? " / " + f.lowPass + " with low" : "") + "</td>" +
-          (f.stale ? '<td class="stale">out of date: ' + esc(f.stale) + "</td>" : '<td class="text">up to date</td>') + "</tr>";
   });
-  fh += '<tr class="total"><td>Total</td><td></td><td>' + t.count + "</td><td>" + t.confident + "</td><td>" + t.low + "</td><td>" + t.unmatched + "</td><td>" + t.keptOut +
-        "</td><td>" + t.untagged + "</td><td></td><td></td></tr></table>";
   var created = [];
   R.folders.forEach(function (f) { (f.created || []).forEach(function (c) { created.push(f.name + "/" + c); }); });
-  if (created.length)
-    fh += '<p class="hint">Folders created by the last analysis: ' + esc(created.join(", ")) + ". Into a &lt;category&gt;_perform folder go, by hand, the images of a " +
-          'role "both" name (portrait_global.names, eg. cunnilingus) where the character performs the act; keep the file name.</p>';
-  $("folders").innerHTML = fh;
-  $("folders-title").textContent = "Folders (" + analyzed + " of " + R.folders.length + " analyzed" + (stale ? ", " + stale + " out of date" : "") + ")";
+
+  var foldersShell = "";
+  if (hasVerified) {
+    foldersShell += '<div class="verbar"><button type="button" id="ver-save" title="Write correctly classified folders to Mods/' + esc(R.verifiedFile) +
+                    '">Save verified</button><span class="st" id="ver-status"></span>' +
+                    '<span>Manually mark folders whose classification is verified as correct (new folders default to off).</span></div>';
+  }
+  foldersShell += '<div id="folders-table"></div>';
+  $("folders").innerHTML = foldersShell;
+
+  var verSavedFlashTimer = null;
+  function updateFoldersSummary(customStatus, isError) {
+    var verPart = "";
+    if (hasVerified) {
+      var vc = 0;
+      R.folders.forEach(function (f) { if (isVerified(f.name)) vc++; });
+      var d = verDirtyCount();
+      verPart = ", " + vc + " verified" + (d ? " · " + d + " unsaved" : "");
+      var st = $("ver-status");
+      if (st) {
+        st.className = "st" + (isError ? " err" : d ? " dirty" : "");
+        st.textContent = customStatus != null ? customStatus : (vc + " of " + R.folders.length + " verified" + (d ? " · " + d + " unsaved" : ""));
+      }
+      var btn = $("ver-save");
+      if (btn && !btn.disabled) {
+        if (d > 0) {
+          if (verSavedFlashTimer) { clearTimeout(verSavedFlashTimer); verSavedFlashTimer = null; }
+          btn.classList.add("dirty");
+          btn.classList.remove("saved");
+          btn.textContent = "Save verified (" + d + ")";
+        } else {
+          btn.classList.remove("dirty");
+          if (!btn.classList.contains("saved")) btn.textContent = "Save verified";
+        }
+      }
+    }
+    $("folders-title").textContent = "Folders (" + analyzed + " of " + R.folders.length + " analyzed" + (stale ? ", " + stale + " out of date" : "") + verPart + ")";
+  }
+
+  function renderFoldersTable() {
+    var fh = '<table class="grid"><tr><th>Folder</th>' +
+             (hasVerified ? '<th title="Manually mark folders whose classification is verified as correct">Correct</th>' : "") +
+             '<th>Analyzed</th><th>Images</th><th>Confident</th><th>Low</th><th>Unmatched</th><th>Kept out</th><th>Not tagged</th>' +
+             '<th title="Images that steps Move + Rename would still change (confident only / with low confidence)">Still to move or rename</th><th>State</th></tr>';
+    function walk(node, depth) {
+      var indent = ' style="padding-left:' + (depth * 18) + 'px"';
+      var hasKids = node.children.length > 0;
+      var collapsed = hasKids && !!folderCollapsed[node.path.toLowerCase()];
+      var expHtml = hasKids
+        ? '<button type="button" class="f-exp" data-f-exp="' + esc(node.path) + '" aria-expanded="' + (!collapsed) + '" title="' + (collapsed ? "Expand" : "Collapse") + '">' + (collapsed ? "▸" : "▾") + "</button>"
+        : '<span class="f-pad"></span>';
+      if (node.folder) {
+        var f = node.folder;
+        var verCell = hasVerified ? "<td>" + verLeafButtonHtml(f.name) + "</td>" : "";
+        var nameCell = '<td><span class="f-cell"' + indent + ' title="' + esc(f.name) + '">' + expHtml + "<span>" + esc(node.name) + "</span></span></td>";
+        if (f.analyzed == null) {
+          fh += "<tr>" + nameCell + verCell + '<td class="text" colspan="9">' + (f.hasTags ? "tagged, not analyzed (run 2. Analyze)" : "not tagged (run 1. Tag)") + "</td></tr>";
+        } else {
+          fh += "<tr>" + nameCell + verCell + "<td>" + esc(f.analyzed) + "</td><td>" + f.count + "</td><td>" + f.confident + "</td><td>" + f.low + "</td><td>" + f.unmatched +
+                "</td><td>" + f.keptOut + "</td><td>" + f.untagged + "</td><td>" + f.firstPass + (f.lowPass !== f.firstPass ? " / " + f.lowPass + " with low" : "") + "</td>" +
+                (f.stale ? '<td class="stale">out of date: ' + esc(f.stale) + "</td>" : '<td class="text">up to date</td>') + "</tr>";
+        }
+      } else {
+        var gt = { count: 0, confident: 0, low: 0, unmatched: 0, keptOut: 0, untagged: 0 }, gAn = 0, gSt = 0;
+        node.descendants.forEach(function (d) {
+          if (d.analyzed == null) return;
+          gAn++;
+          if (d.stale) gSt++;
+          ["count", "confident", "low", "unmatched", "keptOut", "untagged"].forEach(function (k) { gt[k] += d[k]; });
+        });
+        var gVerCell = hasVerified ? "<td>" + verGroupButtonHtml(node) + "</td>" : "";
+        var gNameCell = '<td><span class="f-cell"' + indent + ' title="' + esc(node.path) + '">' + expHtml + "<span>" + esc(node.name) + "</span></span></td>";
+        fh += '<tr class="f-group">' + gNameCell + gVerCell + "<td>" + gAn + "/" + node.descendants.length + "</td><td>" + gt.count + "</td><td>" + gt.confident +
+              "</td><td>" + gt.low + "</td><td>" + gt.unmatched + "</td><td>" + gt.keptOut + "</td><td>" + gt.untagged + "</td><td></td>" +
+              (gSt ? '<td class="stale">' + gSt + " out of date</td>" : '<td class="text">' + node.descendants.length + " folder" + (node.descendants.length === 1 ? "" : "s") + "</td>") + "</tr>";
+      }
+      if (!collapsed) node.children.forEach(function (child) { walk(child, depth + 1); });
+    }
+    folderTree.children.forEach(function (child) { walk(child, 0); });
+    fh += '<tr class="total"><td>Total</td>' + (hasVerified ? "<td></td>" : "") + "<td></td><td>" + t.count + "</td><td>" + t.confident + "</td><td>" + t.low + "</td><td>" + t.unmatched + "</td><td>" + t.keptOut +
+          "</td><td>" + t.untagged + "</td><td></td><td></td></tr></table>";
+    if (created.length)
+      fh += '<p class="hint">Folders created by the last analysis: ' + esc(created.join(", ")) + ". Into a &lt;category&gt;_perform folder go, by hand, the images of a " +
+            'role "both" name (portrait_global.names, eg. cunnilingus) where the character performs the act; keep the file name.</p>';
+    $("folders-table").innerHTML = fh;
+  }
+
+  renderFoldersTable();
+  updateFoldersSummary();
+
+  $("folders-table").addEventListener("click", function (e) {
+    var exp = e.target.closest("button[data-f-exp]");
+    if (exp) {
+      var p = exp.getAttribute("data-f-exp").toLowerCase();
+      if (folderCollapsed[p]) delete folderCollapsed[p]; else folderCollapsed[p] = true;
+      store.set("folderCollapsed", JSON.stringify(folderCollapsed));
+      renderFoldersTable();
+      return;
+    }
+    if (!hasVerified) return;
+    var leafBtn = e.target.closest("button[data-ver-folder]");
+    if (leafBtn) {
+      var name = leafBtn.getAttribute("data-ver-folder");
+      setVerified(name, !isVerified(name));
+      store.set("verDelta", JSON.stringify(verDelta));
+      renderFoldersTable();
+      updateFoldersSummary();
+      return;
+    }
+    var groupBtn = e.target.closest("button[data-ver-group]");
+    if (groupBtn) {
+      var node = folderNodesByPath[groupBtn.getAttribute("data-ver-group").toLowerCase()];
+      if (!node) return;
+      var allOn = node.descendants.length > 0 && node.descendants.every(function (d) { return isVerified(d.name); });
+      node.descendants.forEach(function (d) { setVerified(d.name, !allOn); });
+      store.set("verDelta", JSON.stringify(verDelta));
+      renderFoldersTable();
+      updateFoldersSummary();
+    }
+  });
 
   // the tagger vocabulary check (ImageRuleLinter) goes to the Unused panel, the rest of the lint stays in Rule check
   var vocabRe = /not in the tagger vocabulary/, lint = [], vocab = [], nVocab = 0;
@@ -1327,23 +1533,43 @@ window.REPORT = /*__REPORT_DATA__*/null;
     var reportFile = decodeURIComponent(location.pathname.split("/").pop() || "");
     function idb() {
       return new Promise(function (res, rej) {
-        var r = indexedDB.open("image-report", 1);
-        r.onupgradeneeded = function () { r.result.createObjectStore("handles"); };
-        r.onsuccess = function () { res(r.result); };
-        r.onerror = function () { rej(r.error); };
+        if (typeof indexedDB === "undefined") { rej(new Error("IndexedDB unavailable")); return; }
+        var done = false;
+        var timer = setTimeout(function () { if (!done) { done = true; rej(new Error("IndexedDB timeout")); } }, 1500);
+        try {
+          var r = indexedDB.open("image-report", 1);
+          r.onupgradeneeded = function () { if (!r.result.objectStoreNames.contains("handles")) r.result.createObjectStore("handles"); };
+          r.onsuccess = function () { if (done) { r.result.close(); return; } done = true; clearTimeout(timer); res(r.result); };
+          r.onerror = function () { if (!done) { done = true; clearTimeout(timer); rej(r.error); } };
+          r.onblocked = function () { if (!done) { done = true; clearTimeout(timer); rej(new Error("IndexedDB blocked")); } };
+        } catch (e) { if (!done) { done = true; clearTimeout(timer); rej(e); } }
       });
     }
-    function saveHandle(h) { return idb().then(function (db) { db.transaction("handles", "readwrite").objectStore("handles").put(h, "mods"); }).catch(function () {}); }
+    function saveHandle(h) {
+      return idb().then(function (db) {
+        return new Promise(function (res) {
+          var tx = db.transaction("handles", "readwrite");
+          tx.objectStore("handles").put(h, "mods");
+          tx.oncomplete = tx.onerror = tx.onabort = function () { try { db.close(); } catch (e) {} res(); };
+        });
+      }).catch(function () {});
+    }
     function loadHandle() {
       return idb().then(function (db) {
-        return new Promise(function (res) { var r = db.transaction("handles").objectStore("handles").get("mods"); r.onsuccess = function () { res(r.result); }; r.onerror = function () { res(null); }; });
+        return new Promise(function (res) {
+          var tx = db.transaction("handles", "readonly");
+          var r = tx.objectStore("handles").get("mods");
+          var finish = function (val) { try { db.close(); } catch (e) {} res(val); };
+          r.onsuccess = function () { finish(r.result); };
+          r.onerror = tx.onerror = tx.onabort = function () { finish(null); };
+        });
       }).catch(function () { return null; });
     }
     function nowStamp() {
       var now = new Date(), pad = function (n) { return (n < 10 ? "0" : "") + n; };
       return now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-" + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
     }
-    function selectionJson() {
+    function selectionValue() {
       var images = [], folders = [], seen = {};
       all.forEach(function (it) {
         if (!it.picked) return;
@@ -1352,45 +1578,88 @@ window.REPORT = /*__REPORT_DATA__*/null;
         if (!seen[name]) { seen[name] = true; folders.push(name); }
       });
       folders.sort();
-      return JSON.stringify({ saved: nowStamp(), report: R.generated, folders: folders, images: images }, null, 2) + "\n";
+      return { saved: nowStamp(), report: R.generated, folders: folders, images: images };
+    }
+    // every browser call that can stall (IndexedDB on file://, permission queries of restored handles) is raced against a timeout,
+    // so a save never sits on a status line; requestPermission() is not used: on file:// it can hang without showing a prompt.
+    function withTimeout(p, ms, fallback) {
+      return Promise.race([
+        Promise.resolve(p).catch(function () { return fallback; }),
+        new Promise(function (res) { setTimeout(function () { res(fallback); }, ms); })
+      ]);
+    }
+    // the remembered handle is loaded with the page, so a click reaches the folder picker while its user activation is still valid
+    var cachedDir = null;
+    var handleLoad = window.showDirectoryPicker
+      ? withTimeout(loadHandle(), 3000, null).then(function (h) { if (h && !cachedDir) cachedDir = h; return h; })
+      : Promise.resolve(null);
+    async function grantedDir() {
+      var dir = cachedDir || (await withTimeout(handleLoad, 500, null));
+      if (!dir || typeof dir.queryPermission !== "function") return null;
+      var perm = await withTimeout(dir.queryPermission({ mode: "readwrite" }), 1000, "prompt");
+      return perm === "granted" ? dir : null;
     }
     async function pickFolder(say) {
       var dir;
-      try { dir = await window.showDirectoryPicker({ id: "image-report", mode: "readwrite" }); } catch (e) { return null; }
+      try { dir = await window.showDirectoryPicker({ id: "image-report", mode: "readwrite" }); }
+      catch (e) {
+        if (e && e.name === "AbortError") say("Not saved: no folder picked.");
+        else say("Not saved: the folder picker did not open (" + (e && e.message ? e.message : e) + ") - click save again.");
+        return null;
+      }
       try { await dir.getFileHandle(reportFile); }
       catch (e) { say("Not saved: that folder has no " + reportFile + " - pick the folder this page is in (Mods)."); return null; }
-      await saveHandle(dir);
+      cachedDir = dir;
+      saveHandle(dir);
       return dir;
     }
-    // writes fileName next to this page; say(status) reports progress; resolves true only when the file was written
-    async function writeReportFile(fileName, text, say) {
+    // writes fileName next to this page: build(old text, "" when there is none) returns the new text, or throws to cancel the save.
+    // say(status) reports progress; resolves true only when the file was written
+    async function writeReportFile(fileName, build, say) {
       if (!window.showDirectoryPicker) {
         // no File System Access API (eg. Firefox): download it; it must then be moved into the page's folder by hand
         var link = document.createElement("a");
-        link.href = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+        link.href = URL.createObjectURL(new Blob([build("")], { type: "application/json" }));
         link.download = fileName;
         link.click();
-        say("Downloaded - move " + fileName + " into the folder of this page (Mods).");
+        say("Downloaded - move " + fileName + " into the folder of this page (Mods); replacing it there drops its other fields.");
         return false;
       }
-      var said = "";
-      var track = function (s) { said = s; say(s); };
-      var dir = await loadHandle();
-      if (dir) { try { if ((await dir.requestPermission({ mode: "readwrite" })) !== "granted") dir = null; } catch (e) { dir = null; } }
-      if (!dir) { track("Pick the folder this page is in (Mods)..."); dir = await pickFolder(track); }
-      if (!dir) { if (said.indexOf("Not saved") !== 0) say("Not saved."); return false; }
       try {
+        say("Checking saved folder access...");
+        var dir = await grantedDir();
+        if (!dir) { say("Pick the folder this page is in (Mods)..."); dir = await pickFolder(say); }
+        if (!dir) return false;
+        say("Writing " + fileName + "...");
         var fh = await dir.getFileHandle(fileName, { create: true });
+        var text = build(await (await fh.getFile()).text());
         var w = await fh.createWritable();
         await w.write(text);
         await w.close();
         say("Saved to " + dir.name + "/" + fileName);
         return true;
-      } catch (e) { say("Not saved: " + e.message); return false; }
+      } catch (e) {
+        if (e && (e.name === "NotAllowedError" || e.name === "SecurityError")) cachedDir = null;
+        say("Not saved: " + (e && e.message ? e.message : e));
+        return false;
+      }
+    }
+    // replaces one field of the database file (R.selectionFile), keeping the others; update(old field value or undefined) returns the new one
+    function writeDatabaseField(field, update, say) {
+      return writeReportFile(R.selectionFile, function (old) {
+        var db = {};
+        if (old.trim()) {
+          try { db = JSON.parse(old); } catch (e) { throw new Error(R.selectionFile + " is unreadable (" + e.message + ") - fix or remove it first"); }
+          if (!db || typeof db !== "object" || Array.isArray(db)) throw new Error(R.selectionFile + " is not a JSON object - fix or remove it first");
+        }
+        db[field] = update(db[field]);
+        return JSON.stringify(db, null, 2) + "\n";
+      }, say);
     }
     function setSaveStatus(s) { $("sel-status").textContent = s; }
     $("sel-save").addEventListener("click", async function () {
-      if (await writeReportFile(R.selectionFile, selectionJson(), setSaveStatus))
+      var value = selectionValue();
+      if (await writeDatabaseField("selection", function () { return value; }, setSaveStatus))
         setSaveStatus($("sel-status").textContent + " - in Unity: Select from report, then 2. Analyze.");
     });
 
@@ -1448,12 +1717,57 @@ window.REPORT = /*__REPORT_DATA__*/null;
         Object.keys(ovBase).forEach(function (k) { merged[k] = ovBase[k]; });
         Object.keys(ovDelta).forEach(function (k) { if (ovDelta[k]) merged[k] = ovDelta[k]; else delete merged[k]; });
         var text = JSON.stringify({ saved: nowStamp(), report: R.generated, overrides: merged }, null, 2) + "\n";
-        if (!(await writeReportFile(R.overrideFile, text, ovSay))) return;
+        if (!(await writeReportFile(R.overrideFile, function () { return text; }, ovSay))) return;
         var said = $("ov-status").textContent;
         ovBase = merged; ovDelta = {}; ovLegacy = 0;
         store.set("ovDelta", "{}");
         ovStatus();
         ovSay(said + " · " + $("ov-status").textContent);
+      });
+    }
+
+    // ---- manually verified (correctly classified) folders
+    if (hasVerified && $("ver-save")) {
+      var verBtn = $("ver-save");
+      var verSay = function (s) { var msg = String(s == null ? "" : s); updateFoldersSummary(msg, msg.indexOf("Not saved") === 0); };
+      verBtn.addEventListener("click", async function () {
+        var list = null;
+        verBtn.disabled = true;
+        verBtn.textContent = "Saving...";
+        var ok = false, errMsg = null;
+        try {
+          // the unsaved toggles go onto the file's current list (the window's OK toggles may have changed it since the report was written)
+          ok = await writeDatabaseField("verifiedFolders", function (old) {
+            list = verMergedList(old && Array.isArray(old.folders) ? old.folders : null);
+            return { updated: nowStamp(), folders: list };
+          }, verSay);
+        } catch (e) {
+          ok = false;
+          errMsg = "Not saved: " + (e && e.message ? e.message : String(e));
+        } finally {
+          verBtn.disabled = false;
+        }
+        if (!ok) {
+          var failText = errMsg || $("ver-status").textContent || "Not saved.";
+          verBtn.classList.remove("saved");
+          updateFoldersSummary(failText, failText.indexOf("Not saved") === 0);
+          return;
+        }
+        var said = $("ver-status").textContent;
+        verBase = {};
+        list.forEach(function (name) { verBase[verKey(name)] = name; });
+        verDelta = {};
+        store.set("verDelta", "{}");
+        verBtn.classList.remove("dirty");
+        verBtn.classList.add("saved");
+        verBtn.textContent = "✓ Saved";
+        if (verSavedFlashTimer) clearTimeout(verSavedFlashTimer);
+        verSavedFlashTimer = setTimeout(function () {
+          verSavedFlashTimer = null;
+          verBtn.classList.remove("saved");
+          updateFoldersSummary();
+        }, 2500);
+        updateFoldersSummary(said + " · " + list.length + " verified", false);
       });
     }
   }

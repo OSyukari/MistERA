@@ -169,9 +169,9 @@ public static class ResultFactionUtility
             }
             else if (!r.transferItem.collectFromRoom) 
             {
-                if (target != recycler && r.transferItem.matchByID != "")
+                if (!r.transferItem.sendToRecycler && faction.Inventory != null && r.transferItem.matchByID != "")
                 {
-                    target.AddItem(WorldManager.Instantiate(r.transferItem.matchByID, r.transferItem.nameOverride, r.transferItem.maxCount));
+                    faction.Inventory.AddItem(WorldManager.Instantiate(r.transferItem.matchByID, r.transferItem.nameOverride, r.transferItem.maxCount));
                 }
 
             }

@@ -1484,7 +1484,7 @@ public class Job : IDisposable, I_Disposable
         List<int> allActorsInRoom = scr_System_CampaignManager.current.CharaRefsInRoom(ap.RoomKey);
         // collect logs
         // Combination of AP.RemakePackages EP.Evaluate EP.Request
-        ap.ForceExecute1(currentTime);
+        ap.ForceExecute1(currentTime, m);
         // P tick
         // p collectLogs
         CollectLogs(ap, m);

@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary> why a character entered / left a furniture's occupancy - logging only, never branched on </summary>
+/// <summary> why a character entered / left a furniture's occupancy - logging only; branched on once: Carried / PutDown cross
+/// no divider door, so they print no enter / leave line (FurnitureOccupancyUtility.LogDividerMove) </summary>
 public enum OccupancyReason
 {
     Sleep,
@@ -200,7 +201,7 @@ public static class FurnitureOccupancyUtility
         return true;
     }
 
-    /// <summary> a scene may take place in scope: the open area, or a divider allowing sex (allowSexJob) </summary>
+    /// <summary> a scene may take place in scope: the open area, or any room divider </summary>
     public static bool ScopeAllowsSex(int scope)
     {
         if (scope < 0) return true;
@@ -517,7 +518,11 @@ public static class FurnitureOccupancyUtility
 
         furniture.Occupancy_Add(c.RefID);
         c.SetFurnitureLocation(furniture);
-        if (furniture.IsDivider) MarkDirty(c);
+        if (furniture.IsDivider)
+        {
+            MarkDirty(c, furniture.BlocksVisibility);
+            LogDividerMove(c, furniture, true, why);
+        }
 #if UNITY_EDITOR
         if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"[Occupancy] {c.FirstName} enters {furniture.DisplayName} ({why})");
 #endif
@@ -533,7 +538,11 @@ public static class FurnitureOccupancyUtility
 
         c.SetFurnitureLocation(null);
         RemoveOccupant(current, c.RefID);
-        if (current.IsDivider) MarkDirty(c);
+        if (current.IsDivider)
+        {
+            MarkDirty(c, current.BlocksVisibility);
+            LogDividerMove(c, current, false, why);
+        }
 #if UNITY_EDITOR
         if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log($"[Occupancy] {c.FirstName} leaves {current.DisplayName} ({why})");
 #endif
@@ -554,7 +563,7 @@ public static class FurnitureOccupancyUtility
         if (room == null) return;
         var jobs = room.Jobs;
         for (int i = 0; i < jobs.Count; i++)
-            if (jobs[i] is Job_Furniture f && RemoveOccupant(f, c.RefID) && f.IsDivider) MarkDirty(c);
+            if (jobs[i] is Job_Furniture f && RemoveOccupant(f, c.RefID) && f.IsDivider) MarkDirty(c, f.BlocksVisibility);
     }
 
     /// <summary> Every occupant leaves (furniture / room being removed). </summary>
@@ -648,22 +657,62 @@ public static class FurnitureOccupancyUtility
     }
 
     /// <summary>
-    /// a scope change alters who sees whom: let the room re-run interrupt / greeting checks for c. Divider enter / leave
-    /// only - lying down in / getting up from a bed or sofa changes nobody's view.
+    /// A divider enter / leave (lying down in / getting up from a bed or sofa changes nobody's view). sightChanged (the
+    /// divider blocks visibility): who sees whom changed - the room re-runs interrupt / greeting / OnEnterRoom checks for c
+    /// and its moodlets. A see-through divider (jail cell) changes no one's view, so no new greeting or interrupt
+    /// (Plan_DividerVisibility.md §2.3). Either way the player's target is re-checked: who can interact changed.
     /// </summary>
-    static void MarkDirty(Character_Trainable c)
+    static void MarkDirty(Character_Trainable c, bool sightChanged)
     {
         var campaign = scr_System_CampaignManager.current;
         var map = campaign.Map;
         if (map == null) return;
-        if (!map.dirtyCharaRef.Contains(c.RefID)) map.dirtyCharaRef.Add(c.RefID);
-        map.MarkMoodletsDirtyForChara(c.RefID);   // who sees whom changed
+        if (sightChanged)
+        {
+            if (!map.dirtyCharaRef.Contains(c.RefID)) map.dirtyCharaRef.Add(c.RefID);
+            map.MarkMoodletsDirtyForChara(c.RefID);   // who sees whom changed
+        }
         // the player's target may now be behind a stall's door (or the player behind one)
         if (c.RefID == 0 || c.RefID == campaign.CurrentTargetRef)
         {
             if (batchDepth > 0) batchTargetCheck = true;
             else campaign.UpdateCurrentTarget();
         }
+    }
+
+    /// <summary>
+    /// "X enters / leaves &lt;divider&gt;" (Docs/Furniture/Plan_DividerVisibility.md §6): whoever goes through a divider's door,
+    /// whatever moved them (command, event, cell lock, eviction...). Not for a carrier picking someone up / putting them
+    /// down inside: no door is crossed (the carried is where the carrier is) - the carried goes through with the carrier's
+    /// line instead. The line is stamped with its door: a viewer sees it when they see either side (MapUtility.RecordHiddenFrom,
+    /// cameras too); lines of one direction through same-named furniture merge in a flush (MessageCollect.AddMessage_Movement).
+    /// </summary>
+    static void LogDividerMove(Character_Trainable c, Job_Furniture divider, bool enter, OccupancyReason why)
+    {
+        if (why == OccupancyReason.Carried || why == OccupancyReason.PutDown) return;
+        var room = divider.ParentRoom;
+        if (room == null || scr_UpdateHandler.current == null) return;
+        // nobody to show it to: not the player's room, no camera there - don't build a line only to drop it
+        if (!room.HasRecording && !ReferenceEquals(room, scr_System_CampaignManager.current.CurrentRoom)) return;
+        string name = DividerName(divider);
+        if (name.Length < 1) return;
+        AppendDividerLine(c, divider, room, name, enter);
+        // the player carries someone (携带) through the door
+        if (c.RefID == 0 && c.IsCarrying) AppendDividerLine(c.Carried, divider, room, name, enter);
+    }
+
+    static void AppendDividerLine(Character_Trainable c, Job_Furniture divider, Room_Instance room, string name, bool enter)
+    {
+        if (c == null) return;
+        string line = LocalizeDictionary.QueryThenParse(enter ? "ui_movement_entersRoom" : "ui_movement_leavesRoom")
+            .Replace("$self$", c.FirstName).Replace("$room$", name);
+        var desc = new DescriptionCollector(line);
+        desc.message_excludeRelated = line;
+        desc.LoadActors(c.RefID, true, false);
+        desc.tooltip = line;
+        desc.autoAnimate = true;
+        desc.SetCrossing(room, divider);
+        scr_UpdateHandler.current.AppendMovementMessage(desc, room, enter, c.RefID, c.FirstName, line, true, name);
     }
 
     static int batchDepth = 0;

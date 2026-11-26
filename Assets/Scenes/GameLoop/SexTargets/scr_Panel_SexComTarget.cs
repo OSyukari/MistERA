@@ -56,6 +56,21 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         { SubPanel.Internals, -1 },
         { SubPanel.Schedule, -1 },
     };
+    // debug / x-ray view each data panel was last built in (ViewStamp): covered organs and traces show only in those views,
+    // and toggling them fires no observer, so a changed view counts as stale too
+    private Dictionary<SubPanel, int> builtForView = new Dictionary<SubPanel, int>()
+    {
+        { SubPanel.Equipment, -1 },
+        { SubPanel.History, -1 },
+        { SubPanel.Internals, -1 },
+        { SubPanel.Schedule, -1 },
+    };
+
+    private static int ViewStamp()
+    {
+        var campaign = scr_System_CampaignManager.current;
+        return (campaign.DebugMode ? 1 : 0) | (campaign.XrayMode ? 2 : 0);
+    }
 
     public List<scr_ScheduleBox> Schedules;
     protected override void Awake()
@@ -255,8 +270,10 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     private void RebuildIfStale(SubPanel p)
     {
         Character_Trainable c = scr_System_CampaignManager.current.CurrentTarget;
-        if (c == null || builtForRef[p] == c.RefID) return;
+        int view = ViewStamp();
+        if (c == null || (builtForRef[p] == c.RefID && builtForView[p] == view)) return;
         builtForRef[p] = c.RefID;
+        builtForView[p] = view;
 
         switch (p)
         {

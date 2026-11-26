@@ -221,6 +221,11 @@ public class Job_Furniture : Job
         parentRoomRef = parent;
     }
 
+    static readonly FurnitureBase.Furniture_COMGiver WaitCOMGiver = new FurnitureBase.Furniture_COMGiver
+    {
+        comTags = new List<string> { "furniture", "wait" }
+    };
+
     protected override List<COM> UpdateAllUsableCOMs()
     {
         var list = new List<COM>();
@@ -231,6 +236,15 @@ public class Job_Furniture : Job
         // commands generated for one furniture (COM.targetFurnitureID) match other furniture's tags too - only this one's stay
         var furnitureID = ParentInstance.FurnitureBase.ID;
         list.RemoveAll(x => !string.IsNullOrEmpty(x.targetFurnitureID) && x.targetFurnitureID != furnitureID);
+        // any furniture that allows resting also allows waiting (com_furniture_wait + children)
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i].comTags.Contains("rest"))
+            {
+                list.AddRange(MapUtility.GetFurnitureCOMs(WaitCOMGiver));
+                break;
+            }
+        }
         // a room divider (stall, private bathroom) is entered and left explicitly - its own Enter / Leave commands
         if (ParentInstance.FurnitureBase.occupancy != null && ParentInstance.FurnitureBase.occupancy.isRoomDivider)
         {
@@ -307,7 +321,7 @@ public class Job_Furniture : Job
     [JsonIgnore] public bool HoldsUnconscious { get { var d = OccupancyDef; return d != null && d.holdsUnconscious; } }
     [JsonIgnore] public bool IsDivider { get { var d = OccupancyDef; return d != null && d.isRoomDivider; } }
     [JsonIgnore] public bool BlocksVisibility { get { var d = OccupancyDef; return d != null && d.isRoomDivider && d.blocksVisibility; } }
-    [JsonIgnore] public bool AllowsSexJob { get { var d = OccupancyDef; return d != null && d.isRoomDivider && d.allowSexJob; } }
+    [JsonIgnore] public bool AllowsSexJob { get { return IsDivider; } }
     [JsonIgnore] public bool AssignsOwnership { get { var d = OccupancyDef; return d != null && d.assignOwnership; } }
     /// <summary> occupant / owner limit = (int)furnitureSize, the same number that limits actors per command (CanCOMAcceptMoreActor); size 0 = no limit (int.MaxValue). Only gates the find-job path; a direct entry is never blocked </summary>
     [JsonIgnore] public int Capacity
@@ -568,12 +582,13 @@ public class Job_Furniture : Job
         results.AddRange(MakePackages(c, doers, sleepers, -1, allowParent, allowChild, allowInvalid, sleepCOM, debug));
     }
 
-    public List<ActionPackage> MakePackagesJoinable(Character_Trainable c)
+    public List<ActionPackage> MakePackagesJoinable(Character_Trainable c, bool mutualOnly = false)
     {
         List<ActionPackage> pkgs = new List<ActionPackage>();
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_JoinAP;
         foreach(var pkg in this.ActivePackages)
         {
+            if (mutualOnly && (pkg.targetCOM == null || !pkg.targetCOM.requirements.TreatReceiverAsDoer)) continue;
             if (activityDispatchHints.TryGetValue(c.RefID, out var hintExecutionRef) && pkg.ActivityExecutionRef != hintExecutionRef) continue;
             if (!AllowsActivityCommand(c, pkg.targetCOM)) continue;
             if (!FurnitureOccupancyUtility.ScopeAllowsCommand(this, c, pkg.targetCOM)) continue;
@@ -777,7 +792,8 @@ public class Job_Furniture : Job
 
 
             var list1 = MakePackages(c, false, true);
-            var list2 = MakePackagesJoinable(c);
+            // NPCs only auto-join symmetric/mutual commands (TreatReceiverAsDoer); unequal/asymmetric commands stay player-joinable via UI
+            var list2 = MakePackagesJoinable(c, mutualOnly: true);
 
             var pl1 = list1.Count > 0 ? Utility.GetRandomElement(list1) : null;
             // join an ongoing package over starting one - the player's first (Job.PickJoinable / JoinPackage)

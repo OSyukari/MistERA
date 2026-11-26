@@ -105,6 +105,12 @@ public partial class Manageable : I_Disposable, I_IsJobGiver
     [JsonProperty] public int residenceCounter = 0;
     /// <summary>Generated home: the district it was built in, "" otherwise - all its rooms are locked (Room_Instance.CanBeAccessedBy).</summary>
     [JsonProperty] public string residentialDistrictID = "";
+    /// <summary>Generated household home: the FactionGenerator ID that created it, "" otherwise.</summary>
+    [JsonProperty] public string generatorID = "";
+    /// <summary>Generated household home: generator scopeKey -> character RefID.</summary>
+    [JsonProperty] public Dictionary<string, int> householdKeys = new Dictionary<string, int>();
+    /// <summary>Explicit world ID recorded on generated homes (checked first by ResolveWorldID).</summary>
+    public string worldID = "";
 
     /// <summary>MapPlan.showLockedFloors of this faction's template: its floor buttons are drawn even while hiddenOnWorldMap.</summary>
     [JsonIgnore] public bool ShowLockedFloors { get {
@@ -749,7 +755,21 @@ public partial class Manageable : I_Disposable, I_IsJobGiver
         // a parent is joined as its first child - that child's handler answers
         type = type?.ResolveJoinTarget();
         if (type == null || type.joinHandler == null || candidates == null) return new List<Event.EventEntry.Options>();
-        return type.joinHandler.BuildOptions(this, type, candidates, out errorKey);
+        var options = type.joinHandler.BuildOptions(this, type, candidates, out errorKey);
+        if (type.assignRequirements != null && options != null)
+        {
+            for (int i = 0; i < options.Count; i++)
+            {
+                var op = options[i];
+                if (op == null || op.IsDisabled || op.boundTarget == null) continue;
+                if (!type.assignRequirements.Check(op.boundTarget, this, type, out var reqTooltip))
+                {
+                    op.onSelect = null;
+                    op.disabledReasonText = reqTooltip;
+                }
+            }
+        }
+        return options;
     }
 
     /// <summary>
@@ -3196,6 +3216,7 @@ public partial class Manageable : I_Disposable, I_IsJobGiver
     public static string ResolveWorldID(Manageable faction, HashSet<Manageable> visited = null)
     {
         if (faction == null) return "";
+        if (!string.IsNullOrEmpty(faction.worldID)) return faction.worldID;
         if (faction.worldConnection.Count > 0) return faction.worldConnection[0];
         visited = visited ?? new HashSet<Manageable>();
         if (visited.Contains(faction)) return "";
@@ -4255,6 +4276,81 @@ public partial class Manageable : I_Disposable, I_IsJobGiver
         var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
         if (plan == null || !FactionUtility.TryGetMemberType(memberTypeID, out var type)) return false;
         return plan.joinableMemberTypes.Exists(id => type.IsOrDescendsFrom(id));
+    }
+
+    /// <summary>
+    /// Leaf MemberTypes offered by this faction for the requested PostKind, collected from joinableMemberTypes,
+    /// AssignableMemberTypes, and fallbackWorkers[].memberTypeID (deduplicated).
+    /// </summary>
+    public List<MemberType> OfferedPosts(PostKind kind)
+    {
+        var all = new List<MemberType>();
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        if (plan != null)
+        {
+            AddLeafPosts(all, plan.joinableMemberTypes);
+            if (plan.fallbackWorkers != null)
+            {
+                for (int i = 0; i < plan.fallbackWorkers.Count; i++)
+                {
+                    var fw = plan.fallbackWorkers[i];
+                    if (fw == null || string.IsNullOrEmpty(fw.memberTypeID)) continue;
+                    AddLeafPostByID(all, fw.memberTypeID);
+                }
+            }
+        }
+        var assignable = AssignableMemberTypes;
+        if (assignable != null)
+        {
+            for (int i = 0; i < assignable.Count; i++)
+            {
+                var t = assignable[i];
+                if (t != null && !all.Contains(t)) all.Add(t);
+            }
+        }
+
+        var result = new List<MemberType>();
+        for (int i = 0; i < all.Count; i++)
+        {
+            var t = all[i];
+            if (MatchesPostKind(t, kind)) result.Add(t);
+        }
+        return result;
+    }
+
+    static void AddLeafPosts(List<MemberType> target, List<string> ids)
+    {
+        if (ids == null) return;
+        for (int i = 0; i < ids.Count; i++) AddLeafPostByID(target, ids[i]);
+    }
+
+    static void AddLeafPostByID(List<MemberType> target, string id)
+    {
+        if (string.IsNullOrEmpty(id) || !FactionUtility.TryGetMemberType(id, out var listed) || listed == null) return;
+        var leaves = listed.GetLeafDescendants();
+        for (int i = 0; i < leaves.Count; i++)
+        {
+            var leaf = leaves[i];
+            if (leaf != null && !target.Contains(leaf)) target.Add(leaf);
+        }
+    }
+
+    static bool MatchesPostKind(MemberType type, PostKind kind)
+    {
+        if (type == null) return false;
+        switch (kind)
+        {
+            case PostKind.Work:
+                return type.workModule != null;
+            case PostKind.TempHome:
+                return type.joinHandler is JoinHandler_HospitalPatient
+                    || type.joinHandler is JoinHandler_TempHomeWithRoom
+                    || type.joinHandler is JoinHandler_HotelGuest;
+            case PostKind.Activity:
+                return type.recreation != null && type.joinHandler is JoinHandler_Recreation;
+            default:
+                return false;
+        }
     }
 
     /// <summary>

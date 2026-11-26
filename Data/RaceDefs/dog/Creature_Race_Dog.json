@@ -20,6 +20,23 @@
                     }
                 ],
                 "RaceType":["animal", "dog"]
+            },
+            {
+                "ID": "creature_beastRace_dog_large",
+                "bodyPartRoot":"head_beast_dog_base",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ],
+                "RaceType":["animal", "dog", "dog_large"]
             }
         ]
     },
@@ -91,11 +108,13 @@
         {
             "zh-cn":
             {
-"creature_beastRace_dog":"狗"
+"creature_beastRace_dog":"狗",
+"creature_beastRace_dog_large":"大型犬"
             },
             "en-us":
             {
-"creature_beastRace_dog":"Dog"
+"creature_beastRace_dog":"Dog",
+"creature_beastRace_dog_large":"Large Dog"
             }
         }
     }

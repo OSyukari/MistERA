@@ -47,6 +47,17 @@ public abstract class ActionPackage
 
     // Explicit event package only; never inherited by child/copied APs or persisted.
     [JsonIgnore] internal bool IgnoreStatCost = false;
+    // Explicit event package only (ExecuteAPOnSingleChara forceAccept): ForceExecute1 accepts every EP instead of rolling.
+    // The execution-time pair DC still rolls. Never inherited by child/copied APs or persisted.
+    [JsonIgnore] internal bool ForceAccept = false;
+    // Explicit event package only (ExecuteAPOnSingleChara permission mode "skip"): permission rules are not checked for
+    // its EPs (EvaluationPackage.ApplyPermissionRules) and hasPermission stays true - no missing permission, no penalty,
+    // no trust loss, no demand, no grant. Never inherited by child/copied APs or persisted.
+    [JsonIgnore] internal bool SkipPermissions = false;
+    // Explicit event package only (ExecuteAPOnSingleChara permission mode "request"): ForceExecute1 runs the normal in-act
+    // request phase (EvaluationPackage.RequestMissingPermissions) that event-run packages otherwise skip - granters are
+    // asked, grants and [id]_Granted / _Refused kojo as for a player command. Never inherited by child/copied APs or persisted.
+    [JsonIgnore] internal bool RequestPermissions = false;
 
     public AP_Status internalState = AP_Status.none;
     public bool timestopTick = false;
@@ -1935,6 +1946,22 @@ public abstract class ActionPackage
 
     //Dictionary<int, Dictionary<string, int>> result_experiences;
 
+    /// <summary>
+    /// Rebuilds this package's EPs and evaluates each one as a real Request does (Evaluate + ApplyPersonalityMods), without
+    /// any roll or permission request - for reading per-pair results such as MissingPermissions (event permission grants,
+    /// option previews). Validate() only evaluates throwaway EPs, so ListEP stays empty/stale until this or a Request.
+    /// </summary>
+    public IReadOnlyList<EvaluationPackage> EvaluatePackagesWithoutRoll()
+    {
+        RemakePackages();
+        foreach (var ep in packages)
+        {
+            ep.Evaluate(true);
+            ep.ApplyPersonalityMods();
+        }
+        return packages;
+    }
+
     protected void RemakePackages()
     {
         //result_stats = new Dictionary<int, Dictionary<string, int>>();
@@ -2056,13 +2083,17 @@ public abstract class ActionPackage
         }
     }
 
-    public void ForceExecute1(DateTime currentTime)
+    /// <param name="m">the injecting caller's collector: in "request" mode the permission kojo goes there, in order with the
+    /// event's own lines, instead of into the job's messages</param>
+    public void ForceExecute1(DateTime currentTime, MessageCollect m = null)
     {
         this.StartTime = currentTime;
         RemakePackages();
         foreach (var ep in packages)
         {
-            ep.ForceRespond();
+            // event "request" mode: ask for missing permissions first; ForceRespond re-evaluates, so grants count this round
+            if (RequestPermissions) ep.RequestMissingPermissions(Memory_Response.None, m);
+            ep.ForceRespond(ForceAccept);
         }
         requested = true;
         repeated = false;
@@ -2246,9 +2277,14 @@ public abstract class ActionPackage
         }
     }
 
+    /// <summary>The valid kojo the latest LogResultCheck picked - also loaded into its result description. Event-run packages
+    /// pass them to the executor's collector (ExecuteAPOnSingleChara), which takes only EXP from the package's own log.</summary>
+    [JsonIgnore] internal readonly List<KojoCollector> ResultKojo = new List<KojoCollector>();
+
     public void LogResultCheck(MessageCollect m = null)
     {
         if (isTemporaryAP) return;
+        ResultKojo.Clear();
         bool logging = true;
         if (m == null)
         {
@@ -2306,6 +2342,7 @@ public abstract class ActionPackage
             {
                 exist = exist || kol.isValid;
                 desc.Load(kol.collect, sexImageOnly);
+                if (kol.isValid) ResultKojo.Add(kol);
             }
             if (exist && single) break;
         }
@@ -3162,6 +3199,11 @@ public abstract class ActionPackage
             if (equipCOM.ApplyExecution(this.ListEP, COMVariantID, itemFaction,
                 !m.accumulateExperience && !isTemporaryAP ? m : null, RecordingRoom))
                 PackageRepeat = false;
+        }
+        if (targetCOM != null && targetCOM.requirements.requireInventory != null
+            && targetCOM.requirements.requireInventory.transferItemTo != InventoryTransferMode.None)
+        {
+            targetCOM.requirements.requireInventory.ExecuteTransfer(this.job, this.doer, this.receiver, this.Master);
         }
         if (targetCOM != null && targetCOM.ExitJobOnExecution)
         {
@@ -4497,6 +4539,9 @@ public abstract class ActionPackage
         if (copy != null && copy != this)
         {
             copy.IgnoreStatCost = false;
+            copy.ForceAccept = false;
+            copy.SkipPermissions = false;
+            copy.RequestPermissions = false;
             copy.roomRefOverride = roomRefOverride;
             copy.activityExecutionRef = activityExecutionRef;
             copy._room = null;

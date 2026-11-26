@@ -7,34 +7,51 @@
                     "ID": "com_touch_head_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_head_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_head_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -76,34 +93,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_head_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_head_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_head_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -129,7 +171,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_head_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -217,34 +261,51 @@
                     "ID": "com_touch_hair_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hair_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hair_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -286,34 +347,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_hair_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hair_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_hair_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -339,7 +425,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hair_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -427,34 +515,51 @@
                     "ID": "com_touch_cheek_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_cheek_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_cheek_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -496,34 +601,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_cheek_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_cheek_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_cheek_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -549,7 +679,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_cheek_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -637,34 +769,51 @@
                     "ID": "com_touch_ears_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_ears_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_ears_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -706,34 +855,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_ears_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_ears_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_ears_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -759,7 +933,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_ears_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -847,34 +1023,51 @@
                     "ID": "com_touch_fingers_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_fingers_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_fingers_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -916,34 +1109,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_fingers_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_fingers_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_fingers_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -969,7 +1187,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_fingers_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1057,34 +1277,51 @@
                     "ID": "com_touch_foot_toes_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_foot_toes_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_foot_toes_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -1126,34 +1363,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_foot_toes_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_foot_toes_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_foot_toes_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -1179,7 +1441,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_foot_toes_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1267,34 +1531,51 @@
                     "ID": "com_touch_abdomen_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_abdomen_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_abdomen_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -1336,34 +1617,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_abdomen_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_abdomen_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_abdomen_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -1389,7 +1695,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_abdomen_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1477,34 +1785,51 @@
                     "ID": "com_touch_butt_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_butt_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_butt_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -1546,34 +1871,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_butt_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_butt_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_butt_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -1599,7 +1949,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_butt_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1687,34 +2039,51 @@
                     "ID": "com_touch_thigh_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_thigh_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_thigh_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -1756,34 +2125,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_thigh_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_thigh_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_thigh_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -1809,7 +2203,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_thigh_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -1897,34 +2293,51 @@
                     "ID": "com_touch_shoulders_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_shoulders_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_shoulders_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -1966,34 +2379,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_shoulders_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_shoulders_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_shoulders_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -2019,7 +2457,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_shoulders_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -2107,34 +2547,51 @@
                     "ID": "com_touch_hug_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hug_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hug_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -2176,34 +2633,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_hug_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hug_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_hug_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -2229,7 +2711,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_hug_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -2317,34 +2801,51 @@
                     "ID": "com_touch_back_Begin",
                     "variants": [
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requirePermission": true
+                                "requireTargetAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_back_Begin_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
+                                "requireSelfAction": false
                             },
-                            "extraSelfPortraitTags": [
-                                "blush"
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "useActiveTags": false,
+                                    "responses": []
+                                }
                             ],
-                            "useActiveTags": false,
-                            "responses": []
-                        },
-                        {
                             "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_back_Begin_2"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -2386,34 +2887,59 @@
                             "responses": []
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccessGTE": "Success"
+                                "requireTargetAction": false
                             },
                             "variants": [
                                 {
                                     "requirement": {
-                                        "requirePermission": true
+                                        "requireEPSuccessGTE": "Success"
                                     },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "useActiveTags": false,
-                                    "responses": []
+                                    "responses": [
+                                        "pb_com_touch_back_2"
+                                    ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_back_1"
+                            ]
                         },
                         {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "variants": [
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "love",
+                                                "happy",
+                                                "relaxed"
+                                            ],
+                                            "useActiveTags": false,
+                                            "responses": []
+                                        }
+                                    ],
+                                    "extraSelfPortraitTags": [
+                                        "blush",
+                                        "shy",
+                                        "surprised",
+                                        "happy",
+                                        "aroused"
+                                    ],
+                                    "responses": [
+                                        "pb_com_touch_back_4"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true
@@ -2439,7 +2965,9 @@
                                 "silence"
                             ],
                             "useActiveTags": false,
-                            "responses": []
+                            "responses": [
+                                "pb_com_touch_back_3"
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -2573,7 +3101,79 @@
                 "pb_com_touch_thigh_Refuse_rec_1": "$self$避开了$target$伸向大腿的手。\n\"别碰我的腿，现在不太方便。\"",
                 "pb_com_touch_thigh_Refuse_rec_2": "$self$把腿往回一缩，摇头拒绝。\n\"不要随便摸这里。\"",
                 "pb_com_touch_thigh_Refuse_fb_1": "$self$皱起眉，护住自己的大腿。\n\"别乱碰。\"",
-                "pb_com_touch_thigh_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\""
+                "pb_com_touch_thigh_Refuse_fb_2": "$self$冷下脸推开那只手。\n\"我说过了，不行。\"",
+                "pb_com_touch_head_Begin_1": "(unimplemented)",
+                "pb_com_touch_head_Begin_2": "(unimplemented)",
+                "pb_com_touch_head_1": "(unimplemented)",
+                "pb_com_touch_head_2": "(unimplemented)",
+                "pb_com_touch_head_3": "(unimplemented)",
+                "pb_com_touch_head_4": "(unimplemented)",
+                "pb_com_touch_hair_Begin_1": "(unimplemented)",
+                "pb_com_touch_hair_Begin_2": "(unimplemented)",
+                "pb_com_touch_hair_1": "(unimplemented)",
+                "pb_com_touch_hair_2": "(unimplemented)",
+                "pb_com_touch_hair_3": "(unimplemented)",
+                "pb_com_touch_hair_4": "(unimplemented)",
+                "pb_com_touch_cheek_Begin_1": "(unimplemented)",
+                "pb_com_touch_cheek_Begin_2": "(unimplemented)",
+                "pb_com_touch_cheek_1": "(unimplemented)",
+                "pb_com_touch_cheek_2": "(unimplemented)",
+                "pb_com_touch_cheek_3": "(unimplemented)",
+                "pb_com_touch_cheek_4": "(unimplemented)",
+                "pb_com_touch_ears_Begin_1": "(unimplemented)",
+                "pb_com_touch_ears_Begin_2": "(unimplemented)",
+                "pb_com_touch_ears_1": "(unimplemented)",
+                "pb_com_touch_ears_2": "(unimplemented)",
+                "pb_com_touch_ears_3": "(unimplemented)",
+                "pb_com_touch_ears_4": "(unimplemented)",
+                "pb_com_touch_fingers_Begin_1": "(unimplemented)",
+                "pb_com_touch_fingers_Begin_2": "(unimplemented)",
+                "pb_com_touch_fingers_1": "(unimplemented)",
+                "pb_com_touch_fingers_2": "(unimplemented)",
+                "pb_com_touch_fingers_3": "(unimplemented)",
+                "pb_com_touch_fingers_4": "(unimplemented)",
+                "pb_com_touch_foot_toes_Begin_1": "(unimplemented)",
+                "pb_com_touch_foot_toes_Begin_2": "(unimplemented)",
+                "pb_com_touch_foot_toes_1": "(unimplemented)",
+                "pb_com_touch_foot_toes_2": "(unimplemented)",
+                "pb_com_touch_foot_toes_3": "(unimplemented)",
+                "pb_com_touch_foot_toes_4": "(unimplemented)",
+                "pb_com_touch_abdomen_Begin_1": "(unimplemented)",
+                "pb_com_touch_abdomen_Begin_2": "(unimplemented)",
+                "pb_com_touch_abdomen_1": "(unimplemented)",
+                "pb_com_touch_abdomen_2": "(unimplemented)",
+                "pb_com_touch_abdomen_3": "(unimplemented)",
+                "pb_com_touch_abdomen_4": "(unimplemented)",
+                "pb_com_touch_butt_Begin_1": "(unimplemented)",
+                "pb_com_touch_butt_Begin_2": "(unimplemented)",
+                "pb_com_touch_butt_1": "(unimplemented)",
+                "pb_com_touch_butt_2": "(unimplemented)",
+                "pb_com_touch_butt_3": "(unimplemented)",
+                "pb_com_touch_butt_4": "(unimplemented)",
+                "pb_com_touch_thigh_Begin_1": "(unimplemented)",
+                "pb_com_touch_thigh_Begin_2": "(unimplemented)",
+                "pb_com_touch_thigh_1": "(unimplemented)",
+                "pb_com_touch_thigh_2": "(unimplemented)",
+                "pb_com_touch_thigh_3": "(unimplemented)",
+                "pb_com_touch_thigh_4": "(unimplemented)",
+                "pb_com_touch_shoulders_Begin_1": "(unimplemented)",
+                "pb_com_touch_shoulders_Begin_2": "(unimplemented)",
+                "pb_com_touch_shoulders_1": "(unimplemented)",
+                "pb_com_touch_shoulders_2": "(unimplemented)",
+                "pb_com_touch_shoulders_3": "(unimplemented)",
+                "pb_com_touch_shoulders_4": "(unimplemented)",
+                "pb_com_touch_hug_Begin_1": "(unimplemented)",
+                "pb_com_touch_hug_Begin_2": "(unimplemented)",
+                "pb_com_touch_hug_1": "(unimplemented)",
+                "pb_com_touch_hug_2": "(unimplemented)",
+                "pb_com_touch_hug_3": "(unimplemented)",
+                "pb_com_touch_hug_4": "(unimplemented)",
+                "pb_com_touch_back_Begin_1": "(unimplemented)",
+                "pb_com_touch_back_Begin_2": "(unimplemented)",
+                "pb_com_touch_back_1": "(unimplemented)",
+                "pb_com_touch_back_2": "(unimplemented)",
+                "pb_com_touch_back_3": "(unimplemented)",
+                "pb_com_touch_back_4": "(unimplemented)"
             },
             "en-us": {}
         }

@@ -160,7 +160,11 @@
                                 "com_furniture_cryosleep_REMOVE_4",
                                 "com_furniture_cryosleep_REMOVE_5",
                                 "com_furniture_cryosleep_REMOVE_6"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
                         },
                         {
                             "requireSelfOnly": true,
@@ -168,18 +172,20 @@
                             "responses": [
                                 "com_furniture_cryosleep_REMOVE_Self_1",
                                 "com_furniture_cryosleep_REMOVE_Self_2"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_cryosleep_REMOVE_Fallback_1",
-                                "com_furniture_cryosleep_REMOVE_Fallback_2"
+                                "com_furniture_cryosleep_REMOVE_13"
                             ]
                         }
                     ]
@@ -245,18 +251,31 @@
                                 "com_furniture_cryosleep_REMOVE_Begin_7",
                                 "com_furniture_cryosleep_REMOVE_Begin_8",
                                 "com_furniture_cryosleep_REMOVE_Begin_9"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_cryosleep_REMOVE_Begin_10"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_cryosleep_REMOVE_Begin_Fallback_1",
-                                "com_furniture_cryosleep_REMOVE_Begin_Fallback_2"
+                                "com_furniture_cryosleep_REMOVE_Begin_11"
                             ]
                         }
                     ]
@@ -324,18 +343,31 @@
                             ],
                             "responses": [
                                 "com_furniture_cryosleep_REMOVE_Ongoing_Fallback_1"
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "allowRecording": true
+                            },
+                            "_comment": "独自（对象是自己）",
+                            "responses": [
+                                "com_furniture_cryosleep_REMOVE_Ongoing_4"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_furniture_cryosleep_REMOVE_Ongoing_Fallback_2",
-                                "com_furniture_cryosleep_REMOVE_Ongoing_Fallback_3"
+                                "com_furniture_cryosleep_REMOVE_Ongoing_5"
                             ]
                         }
                     ]
@@ -573,7 +605,12 @@
                 "com_furniture_cryosleep_REMOVE_JoinFailed_Fallback_1": "$self$看了眼操作台前的空位，对$target$摆摆手：\"这边人手够了，不用再挤过来。\"",
                 "com_furniture_cryosleep_REMOVE_JoinFailed_Fallback_2": "\"程序快走完了，这会儿加不进来，你先忙别的吧。\" $self$说了一句。",
                 "com_furniture_cryosleep_REMOVE_Join_Fallback_1": "$self$朝凑过来的$target$点点头：\"一起搭把手的话，解锁能快些。\"",
-                "com_furniture_cryosleep_REMOVE_Join_Fallback_2": "\"来得正好，帮忙盯着点那边的压力表。\" $self$开口招呼了一句。"
+                "com_furniture_cryosleep_REMOVE_Join_Fallback_2": "\"来得正好，帮忙盯着点那边的压力表。\" $self$开口招呼了一句。",
+                "com_furniture_cryosleep_REMOVE_13": "(unimplemented)",
+                "com_furniture_cryosleep_REMOVE_Begin_10": "(unimplemented)",
+                "com_furniture_cryosleep_REMOVE_Begin_11": "(unimplemented)",
+                "com_furniture_cryosleep_REMOVE_Ongoing_4": "(unimplemented)",
+                "com_furniture_cryosleep_REMOVE_Ongoing_5": "(unimplemented)"
             }
         }
     }

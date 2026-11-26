@@ -24,33 +24,14 @@
                         ]
                     }
                 ],
-                "assignableMemberTypes": [
-                    "membertype_otaku_arcade_clerk"
-                ],
-                "fallbackWorkers": [
-                    {
-                        "memberTypeID": "membertype_otaku_arcade_clerk",
-                        "headcount": 1,
-                        "maxFallback": 1,
-                        "templateID": "jp_store_clerk"
-                    }
-                ]
+                "assignableMemberTypes": [],
+                "fallbackWorkers": []
             }],
-        "memberTypes": [{ "ID": "membertype_otaku_arcade_clerk", "socialStandingKey": "membertype_otaku_arcade_clerk", "isMember": true, "workModule": { "jobPostID": "membertype_otaku_arcade_clerk", "workCommands": ["otaku_arcade_duty"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23], "activeDays": [], "hourlyPayout": [{ "itemID": "currency_JPY", "itemCount": 1250 }], "paymentCadence": "Daily" } }],
-        "recreationOffers": [{ "mainTypeTag": "gaming", "secondaryTags": ["indoor", "arcade", "amusement"], "ID": "recreation_offer_otaku_arcade", "mode": "Flexible", "factionID": "jp_arcade", "minHours": 2, "maxHours": 3, "daysInAdvance": 0, "minDaysBetween": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 }, "entranceFee": { "itemID": "currency_JPY", "itemCount": 600 }, "gatherRoomID": "arcade_floor", "launchEventID": "Otaku_Arcade_Begin", "activityCommands": ["otaku_arcade_play", "otaku_crane_play", "otaku_photo_booth"], "workModule": { "jobPostID": "otaku_arcade_visit", "workCommands": ["otaku_arcade_play", "otaku_crane_play", "otaku_photo_booth"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23], "activeDays": [] }, "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "requireRelationshipTags": ["rel_positive"], "chara_conditions": [{ "parameters": ["excludeSelf"] }], "maxTargetCount": 3, "stopAtMaxTargetCount": true, "required": false, "maxParticipants": 3 }] }, "_comment_fee": "Single visit credit budget; no extra charge per COM, no prize payout executor." }]
+        "memberTypes": [],
+        "recreationOffers": [{ "mainTypeTag": "gaming", "secondaryTags": ["indoor", "arcade", "amusement"], "ID": "recreation_offer_otaku_arcade", "mode": "Flexible", "factionID": "jp_arcade", "minHours": 2, "maxHours": 3, "daysInAdvance": 0, "minDaysBetween": 1, "allowWalkIn": true, "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 }, "gatherRoomID": "arcade_floor", "approvalEventID": "Otaku_Arcade_Approval", "launchEventID": "Otaku_Arcade_Begin", "activityCommands": ["com_furniture_arcade_play", "com_furniture_crane_play", "com_furniture_photo_booth"], "workModule": { "jobPostID": "otaku_arcade_visit", "workCommands": ["com_furniture_arcade_play", "com_furniture_crane_play", "com_furniture_photo_booth"], "activeHours": [10,11,12,13,14,15,16,17,18,19,20,21,22,23], "activeDays": [] }, "invite": { "visibility": "Private", "inviteChance": 0.6, "minParticipants": 1, "TargetValidators": [{ "refKeys": ["companion"], "baseScope": "SelfRelationships", "_comment": "Positive by score (Goodwill + Trust - Badwill - Fear > 0), not by relationship-type tag: family / housemates count.", "chara_conditions": [{ "parameters": ["excludeSelf"] }, { "selfRelationshipRequirement": { "requireRawScore": [{ "requireScoreID": "Positivity", "operand": "gt", "value": 0 }] } }], "maxTargetCount": 3, "stopAtMaxTargetCount": true, "orderBy": "friendliness", "required": false, "maxParticipants": 3 }] } }]
     },
-    "Furnitures": { "list": [
-        { "ID": "furniture_otaku_arcade_counter", "displayName": "otaku_arcade_counter", "recipe": [], "furnitureSize": 2, "value": 40000, "givesJob": [{ "comID": ["otaku_arcade_duty"] }, { "comTags": ["furniture", "retailTrade"] }] },
-        { "ID": "furniture_otaku_arcade_cabinets", "displayName": "otaku_arcade_cabinets", "recipe": [], "furnitureSize": 0, "value": 300000, "givesJob": [{ "comID": ["otaku_arcade_play"] }] },
-        { "ID": "furniture_otaku_crane_games", "displayName": "otaku_crane_games", "recipe": [], "furnitureSize": 0, "value": 200000, "givesJob": [{ "comID": ["otaku_crane_play"] }] },
-        { "ID": "furniture_otaku_photo_booth", "displayName": "otaku_photo_booth", "recipe": [], "furnitureSize": 0, "value": 200000, "givesJob": [{ "comID": ["otaku_photo_booth"] }] }
-    ] },
-    "COMs": { "list": [
-        { "ID": "otaku_arcade_duty", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_arcade_duty", "timeScale": 30, "comTags": ["job", "furniture"], "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction", "requireMemberType": ["membertype_otaku_arcade_clerk"] } } }, "variants": [{ "requirements": { "requirement": { "doerCount": 1 } }, "displayName": "otaku_arcade_duty" }], "AcceptanceCheck": { "baseAcceptanceValue": 0 }, "DifficultyCheck": { "baseD20Check": 0 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_arcade_working"] }] } },
-        { "ID": "otaku_arcade_play", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_arcade_play", "timeScale": 30, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "otaku_arcade_play" }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_arcade_playing"] }] } },
-        { "ID": "otaku_crane_play", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_crane_play", "timeScale": 20, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "otaku_crane_play" }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_crane_playing"] }] } },
-        { "ID": "otaku_photo_booth", "ActionPackageClass": "ActionPackage_Interaction", "displayName": "otaku_photo_booth", "timeScale": 15, "comTags": ["furniture", "recreation"], "requirements": { "requirement": { "treatReceiverAsDoer": true } }, "variants": [{ "requirements": { "requirement": { "doerCount": 99 } }, "displayName": "otaku_photo_booth" }], "AcceptanceCheck": { "baseAcceptanceValue": 10 }, "DifficultyCheck": { "baseD20Check": 5 }, "description_ongoing": { "Entries": [{ "texts": ["otaku_photo_booth_using"] }] } }
-    ] },
+    "Furnitures": { "list": [] },
+    "COMs": { "list": [] },
     "Dictionary": {
         "Entries": {
             "zh-cn": {

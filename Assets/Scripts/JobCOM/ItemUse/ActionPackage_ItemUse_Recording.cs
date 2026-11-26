@@ -296,7 +296,7 @@ public class ActionPackage_ItemUse_Recording : ActionPackage_ItemUse
             // respond to each entry in records? skip it for now, just replay record
 
             // directly log into updatehandler, will not be recorded
-            scr_UpdateHandler.current.NotifyJobDescriptions(NextRecord, false);
+            scr_UpdateHandler.current.NotifyJobDescriptions(NextRecord, false, false);
 
             //this.job.m.Merge(NextRecord, false);
             if (NextRecord.apRecords != null)

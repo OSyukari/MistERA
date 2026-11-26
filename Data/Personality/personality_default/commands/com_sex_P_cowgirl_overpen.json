@@ -1007,6 +1007,15 @@
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_P_cowgirl_overpen 结果正面",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_overpen_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_partner_V"
                                         ]
@@ -1034,18 +1043,10 @@
                                 "com_sex_P_cowgirl_overpen_FE_Partner_1",
                                 "com_sex_P_cowgirl_overpen_FE_Partner_2",
                                 "com_sex_P_cowgirl_overpen_FE_Partner_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_cowgirl_overpen_Fail_1"
-                            ]
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandResult",
@@ -1168,17 +1169,19 @@
                                 "com_sex_P_cowgirl_overpen_Ongoing_Player_1",
                                 "com_sex_P_cowgirl_overpen_Ongoing_Player_2",
                                 "com_sex_P_cowgirl_overpen_Ongoing_Player_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_P_cowgirl_overpen 进行中",
                             "responses": [
-                                "com_sex_P_cowgirl_overpen_Ongoing_Player_1"
+                                "com_sex_P_cowgirl_overpen_Ongoing_1"
                             ]
                         }
                     ],
@@ -1339,7 +1342,9 @@
                 "com_sex_P_cowgirl_overpen_Refuse_Case_3": "$self$往后撤开身子，皱起眉头制止了$target$：\"停下，我没答应让你这样骑上来。\"",
                 "com_sex_P_cowgirl_overpen_Ongoing_Player_1": "被骑在身下一路吞进深处的$self$转头看见一旁注视的$target$，耳根微热地移开视线：\"唔……别在旁边一直盯着看啊……\"",
                 "com_sex_P_cowgirl_overpen_Ongoing_Player_2": "上方重重坐到底的水声和晃动让$self$无处遮掩，只能喘着气朝旁观的$target$投去窘迫的一瞥：\"哈……你在那边看够了没有……\"",
-                "com_sex_P_cowgirl_overpen_Ongoing_Player_3": "察觉到$target$的目光落在两人紧密相连的腿间，$self$扶着身上人的腰，呼吸在旁观视线下变得更加粗重。"
+                "com_sex_P_cowgirl_overpen_Ongoing_Player_3": "察觉到$target$的目光落在两人紧密相连的腿间，$self$扶着身上人的腰，呼吸在旁观视线下变得更加粗重。",
+                "com_sex_P_cowgirl_overpen_1": "(unimplemented)",
+                "com_sex_P_cowgirl_overpen_Ongoing_1": "(unimplemented)"
             }
         }
     }

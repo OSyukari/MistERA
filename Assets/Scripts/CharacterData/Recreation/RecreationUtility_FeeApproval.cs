@@ -120,8 +120,11 @@ public static partial class RecreationUtility
     /// </summary>
     public static Manageable FeePayer(Character_Trainable c, RecreationActivity activity, Manageable venue)
     {
-        var fee = activity?.entranceFee;
-        if (c == null || c.RefID == 0 || venue == null || fee == null || string.IsNullOrEmpty(fee.itemID) || fee.itemCount <= 0) return null;
+        if (c == null || c.RefID == 0 || venue == null || activity == null) return null;
+        var fee = activity.entranceFee;
+        bool hasFee = fee != null && !string.IsNullOrEmpty(fee.itemID) && fee.itemCount > 0;
+        bool hasApprovalEvent = !string.IsNullOrEmpty(activity.approvalEventID);
+        if (!hasFee && !hasApprovalEvent) return null;
         var payer = c.FactionManager?.GetWorkFactionSourceOrDefault(venue.ID);
         if (payer == null || payer == venue) return null;
         return payer;
@@ -217,6 +220,7 @@ public static partial class RecreationUtility
             solo = session == null ? b : null, soloKey = b.factionID + "|" + b.sourceKey + "|" + b.AbsStart,
             answered = approved =>
             {
+                if (Traced(activity)) Trace($"Fee {TraceName(c)} {(session != null ? session.Label : DescribeBooking(b))}: answered {(approved ? "approved" : "declined")} by payer {payer.ID}");
                 var result = approved ? ReplacementFeeState.Approved : ReplacementFeeState.Declined;
                 if (session != null)
                 {
@@ -250,6 +254,7 @@ public static partial class RecreationUtility
                         || current.state != ReplacementFeeState.Pending) return;
                     soloReplacementFees.Remove(b);
                 }
+                if (Traced(activity)) Trace($"Fee {TraceName(c)} {(session != null ? session.Label : DescribeBooking(b))}: withdrawn - no longer fits ({ExplainCommitRefusal(f, b, false, FindBookingConflicts(f, b))})");
                 withdrawn?.Invoke();
             },
         });
@@ -464,15 +469,16 @@ public static partial class RecreationUtility
     /// Prompt p's fee text ("" when nothing is paid): the player's own entrance fee, then each attached request - who
     /// takes part, the members each payer pays for with their fee, and the total (FeeRequestText without the activity
     /// line the prompt already shows) - so every member whose booking waits for the answer is named.
+    /// costKey: an approvalEventID event's cost line (AppendStrings "feeCostKey") in place of each request's fees / total.
     /// </summary>
-    static string DescribePromptFees(PlayerPrompt p, Character_Trainable player)
+    static string DescribePromptFees(PlayerPrompt p, Character_Trainable player, string costKey = "")
     {
         var lines = new List<string>();
         var activity = ResolveActivity(p.session);
         var fee = activity?.entranceFee;
         if (HasEntranceFee(activity))
             lines.Add(LocalizeDictionary.QueryThenParse("ui_recreation_invite_ownFee").Replace("$name$", player.FullName).Replace("$fee$", FeeLabel(fee.itemID, fee.itemCount)));
-        for (int i = 0; i < p.fees.Count; i++) lines.Add(FeeRequestText(p.fees[i], "ui_recreation_fee_request_inline"));
+        for (int i = 0; i < p.fees.Count; i++) lines.Add(FeeRequestText(p.fees[i], "ui_recreation_fee_request_inline", costKey));
         return lines.Count == 0 ? "" : "\n" + string.Join("\n", lines);
     }
 
@@ -486,20 +492,36 @@ public static partial class RecreationUtility
     /// </summary>
     static void StartFeeRequest(FeeRequest request)
     {
+        var first = request.items[0];
+        string approvalEventID = first.activity?.approvalEventID ?? "";
         var approver = FeeApprover(request.payer);
+        if (approver == null && !string.IsNullOrEmpty(approvalEventID)) approver = first.chara;
         if (approver == null) { AnswerFeeRequest(request, true); return; }
         bool answered = false;
-        var ev = new EventInstance(approver, Event_FeeApproval, "");
+        string startEventID = !string.IsNullOrEmpty(approvalEventID) ? approvalEventID : Event_FeeApproval;
+        string venueID = first.session?.factionID ?? first.solo?.factionID ?? first.walkInJob?.FactionOwner?.Faction?.ID ?? "";
+        var ev = new EventInstance(approver, startEventID, "");
         ev.displayOverride = approver == Player;
+        ev.AppendStrings["approvalTargetEvent"] = new List<string>() { Event_FeeApproval };
+        ev.AppendStrings["approvalOptionsKey"] = new List<string>() { "feeOptions" };
+        ev.AppendStrings["payerFactionID"] = new List<string>() { request.payer?.ID ?? "" };
+        ev.AppendStrings["venueFactionID"] = new List<string>() { venueID };
         ev.AppendStrings["feeRequestText"] = new List<string>() { FeeRequestText(request) };
         ev.AppendStrings["feeConflictText"] = new List<string>() { "" };
         ev.AppendStrings["feeJoinTotal"] = new List<string>() { "" };
-        Action approve = () => { if (answered) return; answered = true; AnswerFeeRequest(request, true); };
+        Action approve = () =>
+        {
+            if (answered) return;
+            answered = true;
+            // read by Recreation_FeeApproval's "result" branch: the confirmation line after the pick
+            ev.AppendStrings["approvalResultText"] = new List<string>() { LocalizeDictionary.QueryThenParse("ui_recreation_fee_approved")
+                .Replace("$payer$", request.payer?.FactionDisplayName ?? "").Replace("$activity$", FeeActivityLine(first)) };
+            AnswerFeeRequest(request, true);
+        };
         Action payAndJoin = () =>
         {
             if (answered) return;
             answered = true;
-            var first = request.items[0];
             if (first.session != null)
             {
                 AnswerFeeRequest(request, true);
@@ -513,18 +535,47 @@ public static partial class RecreationUtility
             finally { EndAnnounceScope(false, true); }
             PlayerJoinSolo(first.chara, first.solo);
         };
+        ev.FunctionCalls["approve"] = new List<Action>() { approve };
+        // an approvalEventID event sets AppendStrings "feeCostKey" (SetAppendString) then calls this: $feeRequestText$
+        // shows that cost line instead of the per-participant fees and total
+        ev.FunctionCalls["refreshRequestText"] = new List<Action>()
+        {
+            () =>
+            {
+                string costKey = ev.AppendStrings.TryGetValue("feeCostKey", out var keys) && keys != null && keys.Count > 0 ? keys[0] : "";
+                ev.AppendStrings["feeRequestText"] = new List<string>() { FeeRequestText(request, "ui_recreation_fee_request", costKey) };
+                // $approvalContextText$ = this request's question text, resolved - shown by a question asked before it (e.g. a token exchange)
+                ev.AppendStrings["approvalContextText"] = new List<string>() { UtilityEX.ParseEventEntry(ev, "Recreation_FeeApproval_question") };
+            }
+        };
         ev.FunctionCalls["buildOptions"] = new List<Action>()
         {
             () =>
             {
-                ev.StoredOptions["feeOptions"] = BuildFeeOptions(request, approver, approve, payAndJoin, out var conflictText, out var joinTotal);
+                var defaultOpts = BuildFeeOptions(request, approver, approve, payAndJoin, out var conflictText, out var joinTotal);
+                if (ev.StoredOptions.TryGetValue("feeOptions", out var preBuilt) && preBuilt != null && preBuilt.Count > 0)
+                {
+                    // Keep custom options injected by approvalEventID; still append [支付并一同加入] if applicable,
+                    // labelled [批准并一同加入] - the approval event settled the cost itself.
+                    for (int i = 1; i < defaultOpts.Count; i++)
+                    {
+                        defaultOpts[i].option = LocalizeDictionary.QueryThenParse("ui_recreation_fee_approveJoin");
+                        preBuilt.Add(defaultOpts[i]);
+                    }
+                }
+                else
+                {
+                    ev.StoredOptions["feeOptions"] = defaultOpts;
+                }
                 ev.AppendStrings["feeConflictText"] = new List<string>() { conflictText };
                 ev.AppendStrings["feeJoinTotal"] = new List<string>() { joinTotal };
             }
         };
         ev.FunctionCalls["decline"] = new List<Action>() { () => { if (answered) return; answered = true; AnswerFeeRequest(request, false); } };
+        if (Traced(first.activity)) Trace($"Fee request {FeeActivityLine(first)}: payer {request.payer?.ID}, approver {TraceName(approver)}, event {startEventID}, items {request.items.Count}");
         if (!scr_UpdateHandler.current.EventHandler.StartEvent(ev, false) && !answered)
         {
+            if (Traced(first.activity)) Trace($"Fee request {FeeActivityLine(first)}: event {startEventID} failed to start - {(approver != Player ? "approved" : "declined")}");
             answered = true;
             AnswerFeeRequest(request, approver != Player);
         }
@@ -621,27 +672,17 @@ public static partial class RecreationUtility
     /// "activity @ venue, time" / participants: everyone taking part, then ($pending$ - PendingParticipantsText) those
     /// whose booking waits for this payment (pre-commit items) / paid by payer: each with their fee / total.
     /// templateKey: the layout (ui_recreation_fee_request; ui_recreation_fee_request_inline leaves the activity line out).
+    /// costKey: set by an approvalEventID event (AppendStrings "feeCostKey") - the per-participant fees and total are
+    /// replaced by this localized cost line (templateKey + "_cost", $cost$).
     /// </summary>
-    static string FeeRequestText(FeeRequest request, string templateKey = "ui_recreation_fee_request")
+    static string FeeRequestText(FeeRequest request, string templateKey = "ui_recreation_fee_request", string costKey = "")
     {
         var first = request.items[0];
-        string line;
+        string line = FeeActivityLine(first);
         List<Character_Trainable> participants;
-        if (first.session != null)
-        {
-            line = DescribeSessionLine(first.session);
-            participants = first.session.AttendingCharas();
-        }
-        else if (first.walkInJob != null)
-        {
-            line = first.walkInJob.FeeActivityLine();
-            participants = first.walkInJob.FeeParticipants();
-        }
-        else
-        {
-            line = DescribeBooking(first.solo);
-            participants = new List<Character_Trainable>();
-        }
+        if (first.session != null) participants = first.session.AttendingCharas();
+        else if (first.walkInJob != null) participants = first.walkInJob.FeeParticipants();
+        else participants = new List<Character_Trainable>();
         var pending = new List<Character_Trainable>();
         for (int i = 0; i < request.items.Count; i++)
         {
@@ -654,6 +695,15 @@ public static partial class RecreationUtility
 
         var names = new List<string>(participants.Count);
         for (int i = 0; i < participants.Count; i++) if (participants[i] != null) names.Add(participants[i].FullName);
+
+        string separator = LocalizeDictionary.QueryThenParse("event_heldMembership_separator");
+        if (!string.IsNullOrEmpty(costKey))
+            return LocalizeDictionary.QueryThenParse(templateKey + "_cost")
+                .Replace("$activity$", line)
+                .Replace("$participants$", string.Join(separator, names))
+                .Replace("$pending$", PendingParticipantsText(pending))
+                .Replace("$payer$", request.payer.FactionDisplayName)
+                .Replace("$cost$", LocalizeDictionary.QueryThenParse(costKey));
 
         var payees = new List<string>(request.items.Count);
         var totals = new List<ItemEntry>();
@@ -671,7 +721,6 @@ public static partial class RecreationUtility
         var totalLabels = new List<string>(totals.Count);
         for (int i = 0; i < totals.Count; i++) totalLabels.Add(FeeLabel(totals[i].itemID, totals[i].itemCount));
 
-        string separator = LocalizeDictionary.QueryThenParse("event_heldMembership_separator");
         return LocalizeDictionary.QueryThenParse(templateKey)
             .Replace("$activity$", line)
             .Replace("$participants$", string.Join(separator, names))
@@ -679,6 +728,14 @@ public static partial class RecreationUtility
             .Replace("$payer$", request.payer.FactionDisplayName)
             .Replace("$payees$", string.Join("\n", payees))
             .Replace("$total$", string.Join(separator, totalLabels));
+    }
+
+    /// <summary>"activity @ venue, time" of a fee item: its session, walk-in job or solo booking.</summary>
+    static string FeeActivityLine(FeeItem first)
+    {
+        if (first.session != null) return DescribeSessionLine(first.session);
+        if (first.walkInJob != null) return first.walkInJob.FeeActivityLine();
+        return DescribeBooking(first.solo);
     }
 
     /// <summary>

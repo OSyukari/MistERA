@@ -81,6 +81,7 @@ Tools/7z/*
 *.opendb
 *.VC.db
 *.jpg
+*.svg
 !Demo/*.png
 
 !Mods/

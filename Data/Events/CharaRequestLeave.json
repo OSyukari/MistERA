@@ -137,6 +137,34 @@
                                 ]
                             },
                             {
+                                "self_chara_conditions": [
+                                    { "parameters": [ "isPlayer" ] }
+                                ],
+                                "option": "silent branch: the player is asked with the join option, named after the variant they would join (hidden when it can't be joined)",
+                                "Results": [
+                                    { "Type": "SetJoinablePrivacyActionName", "arguments": [ "requestFrom", "join_ap_name", "join_ap_tooltip", "join_ap_block" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask_player" ] }
+                                ]
+                            },
+                            {
+                                "self_chara_conditions": [
+                                    { "parameters": [ "isPlayer" ] }
+                                ],
+                                "option": "silent fail branch: the player, nothing to join (the join option stays hidden)",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask_player" ] }
+                                ]
+                            },
+                            {
+                                "self_chara_conditions": [
+                                    { "parameters": [ "excludePlayer" ] }
+                                ],
+                                "option": "silent branch: an NPC always accepts - no question, the request line then select1 (whoever sees them)",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "npc_accept" ] }
+                                ]
+                            },
+                            {
                                 "option": "silent branch: ask",
                                 "Results": [
                                     {
@@ -158,6 +186,90 @@
                         },
                         "isLast": true,
                         "line": "event_CharaLeaveRoom_ev05"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_player",
+                        "question": "event_CharaLeaveRoom_ev01",
+                        "UISpec": {
+                            "portraitRefKey": "requestFrom",
+                            "selfTags": [
+                                "worry",
+                                "sorry"
+                            ]
+                        },
+                        "options": [
+                            {
+                                "option": "event_CharaLeaveRoom_ev01_op1",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "select1" ] }
+                                ]
+                            },
+                            {
+                                "option": "event_CharaLeaveRoom_ev01_op2",
+                                "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "CharaLeaveRoom", "self", "" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end2" ] }
+                                ]
+                            },
+                            {
+                                "option": "$join_ap_name$",
+                                "tooltip": "join_ap_tooltip",
+                                "hideIfInvalid": true,
+                                "disabledReasonAppendKey": "join_ap_block",
+                                "self_chara_conditions": [
+                                    { "parameters": [ "canJoinPrivacyAction", "requestFrom" ] }
+                                ],
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "try_join" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "try_join",
+                        "options": [
+                            {
+                                "option": "silent branch: join requestFrom's privacy action (no forced response - both sides' acceptance and permission requests roll)",
+                                "Results": [
+                                    { "Type": "TryJoinPrivacyAction", "arguments": [ "requestFrom" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "joined" ] }
+                                ]
+                            },
+                            {
+                                "option": "silent fail branch: refused - the leave request goes on",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "join_refused" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "joined",
+                        "UISpec": {
+                            "portraitRefKey": "requestFrom",
+                            "selfTags": [
+                                "happy",
+                                "blush"
+                            ]
+                        },
+                        "isLast": true,
+                        "line": "event_CharaLeaveRoom_ev06"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "join_refused",
+                        "UISpec": {
+                            "portraitRefKey": "requestFrom",
+                            "selfTags": [
+                                "awkward",
+                                "angry"
+                            ]
+                        },
+                        "line": "event_CharaLeaveRoom_ev07"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
@@ -210,6 +322,18 @@
                         },
                         "isLast": true,
                         "line": "event_CharaLeaveRoom_ev02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "npc_accept",
+                        "UISpec": {
+                            "portraitRefKey": "requestFrom",
+                            "selfTags": [
+                                "worry",
+                                "sorry"
+                            ]
+                        },
+                        "line": "event_CharaLeaveRoom_ev01"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -306,7 +430,9 @@
                 "event_CharaLeaveRoom_ev03": "$self.name$ left $self.room_name$",
                 "event_CharaLeaveRoom_ev02": "$self.name$ refuses to leave",
                 "event_CharaLeaveRoom_ev04": "$self.name$ was unable to leave $self.room_name$ due to current job cannot be interrupted.",
-                "event_CharaLeaveRoom_ev05": "$requestFrom.name$ asks $self.name$ to leave $self.room_name$, but $self.name$ is working and stays."
+                "event_CharaLeaveRoom_ev05": "$requestFrom.name$ asks $self.name$ to leave $self.room_name$, but $self.name$ is working and stays.",
+                "event_CharaLeaveRoom_ev06": "$self.name$ joined $requestFrom.name$ instead of leaving.\n$kojo_joined$",
+                "event_CharaLeaveRoom_ev07": "$requestFrom.name$ won't let $self.name$ join.\n$kojo_join_refused$"
             },
             "zh-cn": {
                 "event_CharaLeaveRoom_ev01": "$requestFrom.name$请求$self.name$离开$self.room_name$",
@@ -315,7 +441,9 @@
                 "event_CharaLeaveRoom_ev03": "$self.name$离开了$self.room_name$",
                 "event_CharaLeaveRoom_ev02": "$self.name$拒绝离开",
                 "event_CharaLeaveRoom_ev04": "由于当前的工作不可被中断，$self.name$没能离开$self.room_name$",
-                "event_CharaLeaveRoom_ev05": "$requestFrom.name$请求$self.name$离开$self.room_name$，但$self.name$正在工作，留了下来"
+                "event_CharaLeaveRoom_ev05": "$requestFrom.name$请求$self.name$离开$self.room_name$，但$self.name$正在工作，留了下来",
+                "event_CharaLeaveRoom_ev06": "$self.name$没有离开，而是加入了$requestFrom.name$\n$kojo_joined$",
+                "event_CharaLeaveRoom_ev07": "$requestFrom.name$不让$self.name$加入\n$kojo_join_refused$"
             }
         }
     }

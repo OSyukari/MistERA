@@ -84,47 +84,37 @@
                                         "com_touch_foot_toes_Begin_Restrained_2",
                                         "com_touch_foot_toes_Begin_Restrained_3"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被撫摸脚趾 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_Begin_01",
+                                        "com_touch_foot_toes_Begin_02",
+                                        "com_touch_foot_toes_Begin_03"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被撫摸脚趾 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_foot_toes_Begin_04",
+                                        "com_touch_foot_toes_Begin_05",
+                                        "com_touch_foot_toes_Begin_06"
+                                    ]
                                 }
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_foot_toes_Begin_Receiver_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被撫摸脚趾 有允许 口上文",
-                            "responses": [
-                                "com_touch_foot_toes_Begin_01",
-                                "com_touch_foot_toes_Begin_02",
-                                "com_touch_foot_toes_Begin_03"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被撫摸脚趾 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_foot_toes_Begin_04",
-                                "com_touch_foot_toes_Begin_05",
-                                "com_touch_foot_toes_Begin_06"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
                             ],
                             "_comment": "2.2.2 开始被撫摸脚趾 未允许 敌意 口上文",
                             "responses": [
@@ -132,11 +122,25 @@
                                 "com_touch_foot_toes_Begin_08",
                                 "com_touch_foot_toes_Begin_09"
                             ],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_foot_toes_Begin_10"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -335,6 +339,23 @@
                                                 "com_touch_foot_toes_restrained_fail_2",
                                                 "com_touch_foot_toes_restrained_fail_3"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被撫摸脚趾 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_foot_toes_BadPerm_01",
+                                                "com_touch_foot_toes_BadPerm_02",
+                                                "com_touch_foot_toes_BadPerm_03"
+                                            ]
                                         }
                                     ],
                                     "responses": [
@@ -360,93 +381,33 @@
                                 "com_touch_foot_toes_BadNoPerm_01",
                                 "com_touch_foot_toes_BadNoPerm_02",
                                 "com_touch_foot_toes_BadNoPerm_03"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被撫摸脚趾 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_foot_toes_SuccPerm_01",
-                                        "com_touch_foot_toes_SuccPerm_02",
-                                        "com_touch_foot_toes_SuccPerm_03"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被撫摸脚趾 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_foot_toes_SuccNoPerm_01",
-                                "com_touch_foot_toes_SuccNoPerm_02",
-                                "com_touch_foot_toes_SuccNoPerm_03"
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被撫摸脚趾 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_foot_toes_BadPerm_01",
-                                        "com_touch_foot_toes_BadPerm_02",
-                                        "com_touch_foot_toes_BadPerm_03"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被撫摸脚趾 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_touch_foot_toes_BadNoPerm_01",
-                                "com_touch_foot_toes_BadNoPerm_02",
-                                "com_touch_foot_toes_BadNoPerm_03"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_foot_toes_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_touch_foot_toes_2"
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -584,17 +545,21 @@
                                 "com_touch_foot_toes_Ongoing_NPC_1",
                                 "com_touch_foot_toes_Ongoing_NPC_2",
                                 "com_touch_foot_toes_Ongoing_NPC_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_foot_toes_Ongoing_Fallback_1"
+                                "com_touch_foot_toes_Ongoing_1"
                             ]
                         }
                     ]
@@ -677,7 +642,11 @@
                 "com_touch_foot_toes_Ongoing_NPC_2": "揉捏停下后，$self$看着$target$调侃道：\"就这么喜欢摸脚啊？\"",
                 "com_touch_foot_toes_Ongoing_NPC_3": "$self$语气带着点羞恼对$target$说道：\"行啦，下次别老往脚心上挠。\"",
                 "com_touch_foot_toes_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
-                "com_touch_foot_toes_Ongoing_Fallback_1": "$self$脚尖微微蜷了蜷，仍安静地待在原地。"
+                "com_touch_foot_toes_Ongoing_Fallback_1": "$self$脚尖微微蜷了蜷，仍安静地待在原地。",
+                "com_touch_foot_toes_Begin_10": "(unimplemented)",
+                "com_touch_foot_toes_1": "(unimplemented)",
+                "com_touch_foot_toes_2": "(unimplemented)",
+                "com_touch_foot_toes_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_foot_toes_Begin_01": "$self$ felt ticklish and couldn't help shrinking her foot back, but immediately extended it again with a doting smile. \"Seriously, do you like this place that much?\"",

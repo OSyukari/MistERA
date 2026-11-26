@@ -268,20 +268,18 @@ public class ActionPackage_DividerMove : ActionPackage_Interaction
         return tooltips + "\n" + String.Join("\n", previewLines);
     }
 
-    /// <summary> temporary packages log no begin line - the player's move names who came along and who stopped following </summary>
+    /// <summary>
+    /// temporary packages log no begin line - the player's move names who stopped following at launch. Who went in / came
+    /// out is the enter / leave line every divider move prints on completion (FurnitureOccupancyUtility.LogDividerMove).
+    /// </summary>
     protected override void PackageBegin(MessageCollect m = null)
     {
         base.PackageBegin(m);
         if (LoggedBegin || !IsPlayerMove) return;
         LoggedBegin = true;
-        var player = scr_System_CampaignManager.current.Player;
-        string names = Names(ReceiverRefs), stopped = Names(stoppedFollowing);
-        // alone: silent, as any transit step
-        if (names.Length < 1 && stopped.Length < 1) return;
-        string s = names.Length > 0
-            ? LocalizeDictionary.QueryThenParse(IsEnter ? "ui_divider_enter_together" : "ui_divider_leave_together").Replace("$player$", player.FirstName).Replace("$names$", names)
-            : LocalizeDictionary.QueryThenParse(IsEnter ? "com_furniture_divider_enter_begin_1" : "com_furniture_divider_leave_begin_1").Replace("$doer.firstname$", player.FirstName);
-        if (stopped.Length > 0) s += "\n" + StoppedLine(stopped);
+        string stopped = Names(stoppedFollowing);
+        if (stopped.Length < 1) return;
+        string s = StoppedLine(stopped);
 
         bool logging = m != null;
         if (!logging) m = mcol;

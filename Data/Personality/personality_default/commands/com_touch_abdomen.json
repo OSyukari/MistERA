@@ -84,49 +84,39 @@
                                         "com_touch_abdomen_Begin_Restrained_2",
                                         "com_touch_abdomen_Begin_Restrained_3"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被抚摸腹部 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_Begin_1",
+                                        "com_touch_abdomen_Begin_2",
+                                        "com_touch_abdomen_Begin_3",
+                                        "com_touch_abdomen_Begin_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被抚摸腹部 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_abdomen_Begin_2_2_1_1",
+                                        "com_touch_abdomen_Begin_2_2_1_2",
+                                        "com_touch_abdomen_Begin_2_2_1_3",
+                                        "com_touch_abdomen_Begin_2_2_1_4"
+                                    ]
                                 }
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_abdomen_Begin_Receiver_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被抚摸腹部 有允许 口上文",
-                            "responses": [
-                                "com_touch_abdomen_Begin_1",
-                                "com_touch_abdomen_Begin_2",
-                                "com_touch_abdomen_Begin_3",
-                                "com_touch_abdomen_Begin_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被抚摸腹部 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_abdomen_Begin_2_2_1_1",
-                                "com_touch_abdomen_Begin_2_2_1_2",
-                                "com_touch_abdomen_Begin_2_2_1_3",
-                                "com_touch_abdomen_Begin_2_2_1_4"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
                             ],
                             "_comment": "2.2.2 开始被抚摸腹部 未允许 敌意 口上文",
                             "responses": [
@@ -135,11 +125,25 @@
                                 "com_touch_abdomen_Begin_2_2_2_3",
                                 "com_touch_abdomen_Begin_2_2_2_4"
                             ],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_abdomen_Begin_7"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -344,6 +348,24 @@
                                                 "com_touch_abdomen_restrained_fail_2",
                                                 "com_touch_abdomen_restrained_fail_3"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被抚摸腹部 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_abdomen_2_1_4_1",
+                                                "com_touch_abdomen_2_1_4_2",
+                                                "com_touch_abdomen_2_1_4_3",
+                                                "com_touch_abdomen_2_1_4_4"
+                                            ]
                                         }
                                     ],
                                     "responses": [
@@ -371,97 +393,33 @@
                                 "com_touch_abdomen_2_2_6_2",
                                 "com_touch_abdomen_2_2_6_3",
                                 "com_touch_abdomen_2_2_6_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被抚摸腹部 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_abdomen_2_1_3_1",
-                                        "com_touch_abdomen_2_1_3_2",
-                                        "com_touch_abdomen_2_1_3_3",
-                                        "com_touch_abdomen_2_1_3_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被抚摸腹部 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_abdomen_2_2_5_1",
-                                "com_touch_abdomen_2_2_5_2",
-                                "com_touch_abdomen_2_2_5_3",
-                                "com_touch_abdomen_2_2_5_4"
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被抚摸腹部 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_abdomen_2_1_4_1",
-                                        "com_touch_abdomen_2_1_4_2",
-                                        "com_touch_abdomen_2_1_4_3",
-                                        "com_touch_abdomen_2_1_4_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被抚摸腹部 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_touch_abdomen_2_2_6_1",
-                                "com_touch_abdomen_2_2_6_2",
-                                "com_touch_abdomen_2_2_6_3",
-                                "com_touch_abdomen_2_2_6_4"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_abdomen_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_touch_abdomen_2"
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -602,17 +560,21 @@
                                 "com_touch_abdomen_Ongoing_NPC_1",
                                 "com_touch_abdomen_Ongoing_NPC_2",
                                 "com_touch_abdomen_Ongoing_NPC_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_abdomen_Ongoing_Fallback_1"
+                                "com_touch_abdomen_Ongoing_1"
                             ]
                         }
                     ]
@@ -722,7 +684,11 @@
                 "com_touch_abdomen_Ongoing_NPC_2": "揉按停下后，$self$看着$target$调侃道：\"摸够了吧？差点都要被你按睡着了。\"",
                 "com_touch_abdomen_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，这下舒服多了，谢了。\"",
                 "com_touch_abdomen_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
-                "com_touch_abdomen_Ongoing_Fallback_1": "$self$轻轻感受着腹部的触碰，一时没有说话。"
+                "com_touch_abdomen_Ongoing_Fallback_1": "$self$轻轻感受着腹部的触碰，一时没有说话。",
+                "com_touch_abdomen_Begin_7": "(unimplemented)",
+                "com_touch_abdomen_1": "(unimplemented)",
+                "com_touch_abdomen_2": "(unimplemented)",
+                "com_touch_abdomen_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_abdomen_Begin_1": "$self$ doesn't shy away, relaxing her abdominal muscles as $target$'s palm rests against her. \"Don't tickle me, I'm very ticklish.\"",

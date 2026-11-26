@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 /// <summary>
-/// How the job's owning faction/party must relate to the character (CharaReq.requireJobFaction).
+/// How the job's owning faction/party must relate to the character (CharaReq.requireJobFaction / exceptJobFaction).
 /// Any: one of the character's factions/parties. CurrentActive: the character's active party, else active
-/// faction (Character_Factions.CurrentActiveJobGiver). Home: the character's priority home faction.
+/// faction (Character_Factions.CurrentActiveJobGiver) excluding recreation bookings (so visiting a workplace on a
+/// booking does not count as being on shift there). Home: the character's priority home faction.
 /// </summary>
 public enum FactionRelation { None, Any, CurrentActive, Home }
 
@@ -92,6 +93,9 @@ public class CharaReq
     // must relate to the character as set here. Only checked where a job is available (COM validation);
     // fails when set but there is no owning job/faction.
     public FactionRelation requireJobFaction = FactionRelation.None;
+    // inverse of requireJobFaction: fails when the character matches this relation to the job's owning faction/party
+    // (e.g. CurrentActive to block on-duty staff from customer/visitor commands).
+    public FactionRelation exceptJobFaction = FactionRelation.None;
 
     public List<string> requireInflatedBodyTags = new List<string>();
     public List<string> requireExtremeInflatedBodyTags = new List<string>();
@@ -141,6 +145,7 @@ public class CharaReq
             if (this.requireMemberTypeScope == MemberTypeScope.Any) this.requireMemberTypeScope = req.requireMemberTypeScope;
         }
         if (this.requireJobFaction == FactionRelation.None) this.requireJobFaction = req.requireJobFaction;
+        if (this.exceptJobFaction == FactionRelation.None) this.exceptJobFaction = req.exceptJobFaction;
 
         requireUnconscious = requireUnconscious || req.requireUnconscious;
         requireFollowing = requireFollowing || req.requireFollowing;

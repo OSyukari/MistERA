@@ -1044,6 +1044,15 @@
                             "variants": [
                                 {
                                     "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 com_sex_P_missionary_A_overpen 结果正面",
+                                    "responses": [
+                                        "com_sex_P_missionary_A_overpen_1"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
                                         "selfTags": [
                                             "firstexp_partner_A"
                                         ]
@@ -1073,18 +1082,10 @@
                                 "com_sex_P_missionary_A_overpen_FE_Partner_1",
                                 "com_sex_P_missionary_A_overpen_FE_Partner_2",
                                 "com_sex_P_missionary_A_overpen_FE_Partner_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_missionary_A_overpen_Fail_1"
-                            ]
+                                "requireTargetAction": false
+                            }
                         }
                     ],
                     "template": "commandResult",
@@ -1231,17 +1232,19 @@
                                 "com_sex_P_missionary_A_overpen_Ongoing_Player_1",
                                 "com_sex_P_missionary_A_overpen_Ongoing_Player_2",
                                 "com_sex_P_missionary_A_overpen_Ongoing_Player_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "requireSelfAction": false
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
+                                "requireTargetAction": false
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 com_sex_P_missionary_A_overpen 进行中",
                             "responses": [
-                                "com_sex_P_missionary_A_overpen_Ongoing_Player_1"
+                                "com_sex_P_missionary_A_overpen_Ongoing_1"
                             ]
                         }
                     ],
@@ -1405,7 +1408,9 @@
                 "com_sex_P_missionary_A_overpen_Refuse_Case_3": "$self$侧身避开$target$压下来的动作，皱起眉头：\"停下，我没答应让你这样做。\"",
                 "com_sex_P_missionary_A_overpen_Ongoing_Player_1": "仰躺着被压在身下一路顶进直肠的$self$转头对上旁观的$target$的视线，羞得连忙用手臂遮住脸：\"唔……别在旁边盯着看啊……\"",
                 "com_sex_P_missionary_A_overpen_Ongoing_Player_2": "双腿大张着被顶到后穴最深处的水声清晰可闻，$self$眼角泛红地瞥了旁观的$target$一眼，声音被撞得发颤：\"哈啊……你、你在那边看够了没有……\"",
-                "com_sex_P_missionary_A_overpen_Ongoing_Player_3": "察觉到$target$的目光落在自己因深顶而起伏的身体与交合处，$self$难堪地偏过头去，耳根一直红到了脖颈。"
+                "com_sex_P_missionary_A_overpen_Ongoing_Player_3": "察觉到$target$的目光落在自己因深顶而起伏的身体与交合处，$self$难堪地偏过头去，耳根一直红到了脖颈。",
+                "com_sex_P_missionary_A_overpen_1": "(unimplemented)",
+                "com_sex_P_missionary_A_overpen_Ongoing_1": "(unimplemented)"
             }
         }
     }

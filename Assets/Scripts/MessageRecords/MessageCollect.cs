@@ -128,6 +128,8 @@ public class MessageCollect
     {
         public bool enter;
         public int roomRef;
+        /// <summary> a divider line: roomName is the furniture's name (AddMessage_Movement placeName) </summary>
+        public bool divider;
         public string roomName;
         public DescriptionCollector desc;
         public readonly List<string> names = new List<string>();
@@ -317,8 +319,11 @@ public class MessageCollect
     /// mergeable record joins this flush's line for the same room (enter: target room, leave: source room) - names on the
     /// line (capped, MovementLog.JoinNames), one tooltip line per character (detail). Not mergeable (the player's own line):
     /// added as is.
+    /// <br/>placeName set: a divider enter/leave line (FurnitureOccupancyUtility.LogDividerMove) through furniture of that
+    /// name in room - lines merge per (direction, room, name), so several same-named stalls share one line. Its visibility
+    /// comes from the record's door stamp (DescriptionCollector.SetCrossing), checked here before it merges.
     /// </summary>
-    public void AddMessage_Movement(DescriptionCollector record, Room_Instance room, bool enter, int actorRef, string name, string detail, bool mergeable)
+    public void AddMessage_Movement(DescriptionCollector record, Room_Instance room, bool enter, int actorRef, string name, string detail, bool mergeable, string placeName = null)
     {
         if (PresentationSuppressed || record == null || room == null) return;
         var player = scr_System_CampaignManager.current.Player;
@@ -333,11 +338,12 @@ public class MessageCollect
             return;
         }
 
+        bool divider = placeName != null;
         MovementMerge merge = null;
         for (int i = 0; i < movementMergeCount; i++)
         {
             var m = movementMerges[i];
-            if (m.enter == enter && m.roomRef == room.RefID) { merge = m; break; }
+            if (m.enter == enter && m.roomRef == room.RefID && m.divider == divider && (!divider || m.roomName == placeName)) { merge = m; break; }
         }
         if (merge == null)
         {
@@ -345,7 +351,8 @@ public class MessageCollect
             merge = movementMerges[movementMergeCount++];
             merge.enter = enter;
             merge.roomRef = room.RefID;
-            merge.roomName = room.DisplayNameShort;
+            merge.divider = divider;
+            merge.roomName = divider ? placeName : room.DisplayNameShort;
             merge.names.Clear();
             merge.details.Clear();
             merge.desc = new DescriptionCollector("");
@@ -357,6 +364,8 @@ public class MessageCollect
         if (!string.IsNullOrEmpty(detail)) merge.details.Add(detail);
         merge.desc.LoadActors(actorRef, true, false);
         merge.desc.message_excludeRelated = MovementLog.FormatLine(enter, merge.names, merge.roomName);
+        // a divider line may name the player (their own move merges too) - the same text then
+        if (divider) merge.desc.message = merge.desc.message_excludeRelated;
         merge.desc.tooltip = string.Join("\n", merge.details);
     }
 
@@ -818,6 +827,47 @@ public class MessageCollect
         AddReplaceString(m.replaceStrings);
 
         return added;
+    }
+
+    /// <summary>
+    /// Removes the records viewer cannot see across a room divider (MapUtility.RecordHiddenFrom) - job / AP logs on their
+    /// way to the player's log (scr_UpdateHandler.NotifyJobDescriptions). Enter / leave lines are checked when added.
+    /// Docs/Furniture/Plan_DividerVisibility.md §2.2
+    /// </summary>
+    public void DropHiddenFrom(Character_Trainable viewer)
+    {
+        if (viewer == null || !FurnitureOccupancyUtility.AnyoneInBlockingDivider) return;
+        DropHidden(viewer, viewer.ScopeRef, viewer.CurrentRoom);
+    }
+
+    /// <summary> Removes the records hidden by a divider seen from scope in room (a camera's viewpoint, Room recording) </summary>
+    public void DropHiddenFromScope(int scope, Room_Instance room)
+    {
+        if (room == null || !FurnitureOccupancyUtility.AnyoneInBlockingDivider) return;
+        DropHidden(null, scope, room);
+    }
+
+    void DropHidden(Character_Trainable viewer, int scope, Room_Instance room)
+    {
+        DropHidden(messages_checks, viewer, scope, room);
+        DropHidden(messages_before, viewer, scope, room);
+        DropHidden(messages_kojo, viewer, scope, room);
+        DropHidden(messages_results, viewer, scope, room);
+        DropHidden(messages_exp, viewer, scope, room);
+        DropHidden(messages_kojo_after, viewer, scope, room);
+        DropHidden(messages_after, viewer, scope, room);
+    }
+
+    static void DropHidden<T>(List<T> list, Character_Trainable viewer, int scope, Room_Instance room) where T : I_Records
+    {
+        for (int i = list.Count - 1; i >= 0; i--)
+        {
+            var r = list[i];
+            bool hidden = viewer != null ? MapUtility.RecordHiddenFrom(viewer, r) : MapUtility.RecordHiddenFromScope(scope, room, r);
+            if (!hidden) continue;
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Visibility) Debug.LogWarning($"[Visibility] {(viewer != null ? $"hidden from {viewer.FirstName}" : $"not recorded from scope {scope}")} (room divider): {r.Dump}");
+            list.RemoveAt(i);
+        }
     }
 
 

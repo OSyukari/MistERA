@@ -255,6 +255,44 @@ public class EventScope_Target
 /// If baseScope is target generation, then check the following<br/>
 /// -> see 
 /// </summary>
+/// <summary>
+/// One action package an option will run, previewed on the option's tooltip (Options.apPreviews,
+/// EventUtility.BuildAPPreviewTooltip): built and validated like a command button when the question is shown.
+/// doer / receiver are target keys ("self" = event self); the option's bindTargetKey resolves to its bound character.
+/// receiver_conditions: the preview is left out when the receiver fails one (e.g. wouldDeflate - the act won't run).
+/// </summary>
+public class EventAPPreview
+{
+    public string doer = "";
+    public string receiver = "";
+    public string com = "";
+    public List<Event_CharaCondition> receiver_conditions = new List<Event_CharaCondition>();
+    /// <summary>The run passes forceAccept (ExecuteAPOnSingleChara): say so instead of letting the rate read as a refusal chance.</summary>
+    public bool forceAccept = false;
+    /// <summary>The run's permission mode (ExecuteAPOnSingleChara): "grant" lists what it will grant and for how long;
+    /// "request" lists each permission it will ask for with the request decision;
+    /// "skip" previews with permissions skipped (rates without permission penalties, a no-permission-check note) instead
+    /// of the missing-permission trust warning. Tooltip only - the executor argument does the actual work.</summary>
+    public string permissions = "none";
+    /// <summary>An alternative to the preview before it (a branch that tries its APs in order, e.g. caress_C else finger_P):
+    /// shown only when the previous one is not shown valid; an invalid preview followed by an alternative is not listed.</summary>
+    public bool orPrevious = false;
+}
+
+/// <summary>
+/// A permission request an option makes, previewed on its tooltip (Options.permissionPreviews,
+/// EventUtility.BuildAPPreviewTooltip): already held, or the request decision the dialogue menu shows
+/// (PermissionService.RequestTooltip - pass/fail, unmet requirements, lifetime). granter / holder are target keys
+/// ("self" = event self); the option's bindTargetKey resolves to its bound character. Tooltip only - the option's
+/// Results make the request (acceptsPermissionRequest + GrantPermission ... Request).
+/// </summary>
+public class EventPermissionPreview
+{
+    public string granter = "";
+    public string holder = "";
+    public string permission = "";
+}
+
 public class Event_CharaCondition
 {
     public List<string> parameters = new List<string>();
@@ -617,11 +655,24 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>Runtime only: when set, the option is invalid (drawn disabled) and this localization key is
             /// appended to its tooltip as the reason.</summary>
             [JsonIgnore] public string disabledReasonKey = "";
+            /// <summary>Runtime only: pre-formatted disabled tooltip text (used in preference to disabledReasonKey).</summary>
+            [JsonIgnore] public string disabledReasonText = "";
+            /// <summary>Runtime only: whether this option is disabled by either disabledReasonKey or disabledReasonText.</summary>
+            [JsonIgnore] public bool IsDisabled { get { return !string.IsNullOrEmpty(disabledReasonKey) || !string.IsNullOrEmpty(disabledReasonText); } }
             /// <summary>
             /// Optional localization key appended to the option's tooltip only while the option is invalid (its
             /// conditions fail - EventUtility.isValid) - the authored "why it's greyed out" for a fixed option.
             /// </summary>
             public string invalidTooltip = "";
+            /// <summary>When true, ExpandOptions omits this option whenever EventUtility.isValid returns false.</summary>
+            public bool hideIfInvalid = false;
+            /// <summary>Optional AppendStrings key: when it holds non-empty text (e.g. SetJoinablePrivacyActionName's block reason),
+            /// ExpandOptions shows this option disabled with that text as the reason (after hideIfInvalid - it stays visible).</summary>
+            public string disabledReasonAppendKey = "";
+            /// <summary>Action packages this option runs, previewed on its tooltip (acceptance, DC, permission consequence).</summary>
+            public List<EventAPPreview> apPreviews = new List<EventAPPreview>();
+            /// <summary>Permission requests this option makes, previewed on its tooltip (held, or the request decision).</summary>
+            public List<EventPermissionPreview> permissionPreviews = new List<EventPermissionPreview>();
 
             public Options CloneForTarget(Character_Trainable target)
             {
@@ -819,8 +870,23 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             StartSexJobInParty,
             /// <summary>
-            /// [string doersKey, string receiverKey, string COMID, optional int repeatCount = 1, optional bool ignoreStatCost = false] <br/>
-            /// ignoreStatCost must be a valid bool string when supplied; invalid values fail before movement.
+            /// [string doersKey, string receiverKey, string COMID, optional int repeatCount = 1, optional bool ignoreStatCost = false,
+            /// optional bool forceAccept = false, optional string permissionMode = "none"] <br/>
+            /// ignoreStatCost / forceAccept must be valid bool strings and permissionMode none / grant / skip / request ("" = none)
+            /// when supplied; invalid values fail before movement.
+            /// The last package's result kojo (ActionPackage.ResultKojo) goes into this call's collector and prints with its
+            /// final flush, ahead of the EXP. Inside an EntryResultsSilent batch it is suppressed with the rest.
+            /// forceAccept: every EP of the package is accepted instead of rolling acceptance (package-only, like ignoreStatCost);
+            /// requirements and the execution-time pair DC still apply.
+            /// permissionMode "grant": each round, after validation and before execution, every permission the package is missing
+            /// is granted (PermissionGrantSource.Event) - Normal or today's Temporary as the pair's relationship allows
+            /// (PermissionService.ResolveGrantType) - and printed. Low-consciousness granters are skipped. The act then runs with permission.
+            /// permissionMode "skip": permission rules are not checked for this package (ActionPackage.SkipPermissions) - no missing
+            /// permission, no acceptance penalty, no Hard gate, no trust loss, no demand, nothing granted (requester grants included).
+            /// permissionMode "request": the in-act request phase a player command runs (RequestMissingPermissions), which event
+            /// packages otherwise skip - each able granter is asked for each missing requestable permission, decided by the
+            /// relationship (no roll); accepted = granted with [id]_Granted kojo, refused = [id]_Refused kojo and the act is
+            /// judged without it. The kojo go into this executor's collector, in order with the event.
             /// True bypasses only this package's stat-cost affordability and debit (including interaction energy).
             /// Anatomy, clothing, readiness, other requirements, difficulty, resource/item costs, EXP, climax stamina
             /// and mechanical aftermath remain active. No stat restoration or aftermath clearing, including coma.
@@ -1337,8 +1403,9 @@ public class Event : I_SerializationCallbackReceiver
             RequestFallbackWorkerFromLocalWorld,
 
             /// <summary>
-            /// [string doersKey, string receiverKey, string COMID, int maxIterations, string requiredClimaxKey, optional bool ignoreStatCost = false] <br/>
-            /// ignoreStatCost has the same package-only stat-cost semantics as ExecuteAPOnSingleChara;
+            /// [string doersKey, string receiverKey, string COMID, int maxIterations, string requiredClimaxKey, optional bool ignoreStatCost = false,
+            /// optional bool forceAccept = false, optional string permissionMode = "none"] <br/>
+            /// ignoreStatCost, forceAccept and permissionMode have the same semantics as ExecuteAPOnSingleChara;
             /// malformed bools fail before movement. It does not restore stats, clear coma/aftermath, bypass readiness,
             /// waive resource/item costs, suppress climax stamina effects, or propagate to child/followup APs.
             /// Both actor keys must be distinct non-null singletons (unlike player-facing group COMs).
@@ -1577,7 +1644,85 @@ public class Event : I_SerializationCallbackReceiver
             /// lock / unlock), prison_faction (faction ID), prison_memberType, prison_release (IntoType / SendHome /
             /// Recruit), prison_furniture (furniture job RefID). Run by the package a prison command saves (onResolve).
             /// </summary>
-            PrisonResolve
+            PrisonResolve,
+
+            /// <summary>
+            /// [string targetKey]<br/>
+            /// Registers each resolved plug-active character in ExpPlugRegistry and rolls worldChance for each unbound
+            /// experience plug to bind against open plugs in the character's world (re-rendering untouched texts on both sides).
+            /// </summary>
+            BindExpPlugs,
+
+            /// <summary>
+            /// [string generatorID, string mode ("own"|"district"|"existing"), string loc1, string loc2, optional string worldID, optional string outKey]<br/>
+            /// Generates a household from a registered FactionGenerator template. own: loc1=attachFactionID (or $key), loc2=attachRoomID;
+            /// district: loc1=districtID (or $key) or "auto", loc2=optional homeTemplateID; existing: loc1=factionID (or $key), loc2=memberTypeID.
+            /// Stores each character under Targets[scopeKey] and the home faction ID under AppendStrings[outKey]. False with nothing created on failure.
+            /// </summary>
+            GenerateFaction,
+
+            /// <summary>
+            /// [string targetKey, string mode ("own"|"district"|"existing"), string loc1, string loc2, optional string worldID, optional string outKey]<br/>
+            /// Backward-generates a matching household around the first character of targetKey (matched by baseTemplateID or BaseID
+            /// against generatorID / equivalentGeneratorIDs). Moves target into the new home while preserving its work/activity memberships,
+            /// binds its unbound experience plugs, and generates the rest of the household around it. Refuses player, fallback/temporary actors,
+            /// or characters already in a generated household.
+            /// </summary>
+            GenerateHouseholdFor,
+
+            /// <summary>[string factionIDOr$AppendKey, string itemID, int count] True when faction.Inventory has at least count of itemID.</summary>
+            FactionHasItem,
+            /// <summary>[string labelKey, optional bool isDefaultAccept] Appends a no-exchange approve option to StoredOptions[approvalOptionsKey].</summary>
+            AddApprovalOption,
+            /// <summary>[string storeKey, string labelKey, string payItemID, int payCount, string grantItemID, int grantCount, optional bool isDefaultAccept]
+            /// Appends an exchange-only option to StoredOptions[storeKey] (load it with a question's loadOptionsKey): the payer
+            /// faction (AppendStrings payerFactionID) pays payItemID x payCount to the venue (venueFactionID) and gains grantItemID x grantCount;
+            /// AppendStrings "exchangeResultText" = the localized result (ui_event_exchange_done). Disabled with the reason when the payer can't pay.
+/// A non-player payer (no money reserve; never charged - ChargeEntranceFee's rule) gets the grant without paying (ui_event_exchange_granted).</summary>
+            AddExchangeOption,
+            /// <summary>[string eventAppendKey, optional string label] Jumps to the event ID stored in AppendStrings[eventAppendKey].</summary>
+            JumpToAppendEvent,
+            /// <summary>
+            /// [string sourceKey, string destKey, string mode, ...args] <br/>
+            /// Filters sourceKey (TryResolveExecTargets) into owner.Targets[destKey] (replaces destKey, even if empty).
+            /// Modes: "canAct" (conscious &amp; not timestopped), "passive" (!canAct: timestopped or unconscious/sleeping),
+            /// "hasPermission" [permissionID, holderKey], "wouldDeflate" (shower-expellable internal contents),
+            /// "exclude" [excludeKey]. True iff at least one character matched.
+            /// </summary>
+            FilterTargets,
+            /// <summary>
+            /// [string queueKey, string destKey] <br/>
+            /// Removes the first non-null character from owner.Targets[queueKey] and binds it as singleton owner.Targets[destKey].
+            /// False (and clears destKey) when queueKey is missing or empty.
+            /// </summary>
+            PopFirstTarget,
+            /// <summary>[string key, string value] Sets AppendStrings[key] = [value]. Always true.</summary>
+            SetAppendString,
+            /// <summary>[string key, string delta] Adds finite double delta to AppendStrings[key] (default 0) and stores it with InvariantCulture.</summary>
+            ModAppendNumber,
+            /// <summary>
+            /// [string key, ...] Removes each AppendStrings[key] (missing keys are skipped), so a later ExistAppendStrings
+            /// on it is false again. Always true. Use it to reset a key that accumulates (e.g. DeflateInternal's
+            /// memoryStringKey) before the same flow runs again in one event.
+            /// </summary>
+            RemoveAppendStrings,
+            /// <summary>
+            /// [string ownerKey] <br/>
+            /// Self tries to join the privacy action of the first chara in ownerKey (RequestLeaveUtility.TryGetJoinablePrivacyAction -
+            /// the exact AP a leave request is about, interaction job or current job). No forced response: the AP's request is rolled
+            /// again with self added (both sides' acceptance, permission requests, grants when it runs). Stores the joined command's
+            /// kojo_tryjoin / kojo_joined / kojo_join_refused into AppendStrings (always set, empty when missing). True iff self joined.
+            /// </summary>
+            TryJoinPrivacyAction,
+            /// <summary>
+            /// [string ownerKey, string appendKey, optional string tooltipKey, optional string blockKey] <br/>
+            /// Sets AppendStrings[appendKey] to the display name of the command variant self would join (the privacy action of the
+            /// first chara in ownerKey with self added - RequestLeaveUtility.TryGetJoinablePrivacyAction), e.g. as a join option's
+            /// text, AppendStrings[tooltipKey] to that joined package's hover tooltip (EventUtility.BuildJoinPreviewTooltip - for an
+            /// option's "tooltip") and AppendStrings[blockKey] to why the join is sure to be refused under deterministic rolls, ""
+            /// otherwise (for an option's disabledReasonAppendKey). False (keys untouched) when self cannot join it.
+            /// </summary>
+            SetJoinablePrivacyActionName
 
         }
     }

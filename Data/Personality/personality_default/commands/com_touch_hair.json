@@ -84,49 +84,39 @@
                                         "com_touch_hair_Begin_Restrained_2",
                                         "com_touch_hair_Begin_Restrained_3"
                                     ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "closed_eyes",
+                                        "blush",
+                                        "affectionate"
+                                    ],
+                                    "_comment": "2.1.1 开始被抚摸头发 有允许 口上文",
+                                    "responses": [
+                                        "com_touch_hair_Begin_1",
+                                        "com_touch_hair_Begin_2",
+                                        "com_touch_hair_Begin_3",
+                                        "com_touch_hair_Begin_4"
+                                    ]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": [
+                                        "blush"
+                                    ],
+                                    "_comment": "2.2.1 开始被抚摸头发 未允许 好意 口上文",
+                                    "responses": [
+                                        "com_touch_hair_Begin_6",
+                                        "com_touch_hair_Begin_7",
+                                        "com_touch_hair_Begin_8",
+                                        "com_touch_hair_Begin_9"
+                                    ]
                                 }
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
-                            "responses": [
-                                "com_touch_hair_Begin_Receiver_1"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requirePermission": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "closed_eyes",
-                                "blush",
-                                "affectionate"
-                            ],
-                            "_comment": "2.1.1 开始被抚摸头发 有允许 口上文",
-                            "responses": [
-                                "com_touch_hair_Begin_1",
-                                "com_touch_hair_Begin_2",
-                                "com_touch_hair_Begin_3",
-                                "com_touch_hair_Begin_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAttitudeGTE": "Like"
-                            },
-                            "extraSelfPortraitTags": [
-                                "blush"
-                            ],
-                            "_comment": "2.2.1 开始被抚摸头发 未允许 好意 口上文",
-                            "responses": [
-                                "com_touch_hair_Begin_6",
-                                "com_touch_hair_Begin_7",
-                                "com_touch_hair_Begin_8",
-                                "com_touch_hair_Begin_9"
-                            ]
-                        },
-                        {
-                            "extraSelfPortraitTags": [
-                                "fear",
-                                "trembling"
                             ],
                             "_comment": "2.2.2 开始被抚摸头发 未允许 敌意 口上文",
                             "responses": [
@@ -135,11 +125,25 @@
                                 "com_touch_hair_Begin_12",
                                 "com_touch_hair_Begin_13"
                             ],
+                            "extraSelfPortraitTags": [
+                                "fear",
+                                "trembling"
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_hair_Begin_14"
+                            ]
                         }
                     ],
                     "template": "commandAct"
@@ -344,6 +348,24 @@
                                                 "com_touch_hair_restrained_fail_2",
                                                 "com_touch_hair_restrained_fail_3"
                                             ]
+                                        },
+                                        {
+                                            "requirement": {
+                                                "requirePermission": true
+                                            },
+                                            "extraSelfPortraitTags": [
+                                                "pain",
+                                                "bored",
+                                                "doubt",
+                                                "disappointed"
+                                            ],
+                                            "_comment": "2.1.4 ($self$) 被抚摸头发 结果负面 有允许 口上文",
+                                            "responses": [
+                                                "com_touch_hair_succ_neg_allow_1",
+                                                "com_touch_hair_succ_neg_allow_2",
+                                                "com_touch_hair_succ_neg_allow_3",
+                                                "com_touch_hair_succ_neg_allow_4"
+                                            ]
                                         }
                                     ],
                                     "responses": [
@@ -371,97 +393,33 @@
                                 "com_touch_hair_succ_neg_noallow_2",
                                 "com_touch_hair_succ_neg_noallow_3",
                                 "com_touch_hair_succ_neg_noallow_4"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccessGTE": "Success"
-                            },
-                            "_player only version": {
-                                "requirement": {
-                                    "targetBaseID": "PLAYER"
-                                }
-                            },
-                            "_strong com variant": {
-                                "requireCOMStrongVariant": true
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "love",
-                                        "happy",
-                                        "relaxed"
-                                    ],
-                                    "_comment": "2.1.3 ($self$) 被抚摸头发 结果正面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_hair_succ_allow_1",
-                                        "com_touch_hair_succ_allow_2",
-                                        "com_touch_hair_succ_allow_3",
-                                        "com_touch_hair_succ_allow_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.5 ($self$) 被抚摸头发 结果正面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "blush",
-                                "shy",
-                                "surprised",
-                                "happy",
-                                "aroused"
-                            ],
-                            "responses": [
-                                "com_touch_hair_succ_noallow_1",
-                                "com_touch_hair_succ_noallow_2",
-                                "com_touch_hair_succ_noallow_3",
-                                "com_touch_hair_succ_noallow_4"
-                            ]
-                        },
-                        {
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requirePermission": true
-                                    },
-                                    "extraSelfPortraitTags": [
-                                        "pain",
-                                        "bored",
-                                        "doubt",
-                                        "disappointed"
-                                    ],
-                                    "_comment": "2.1.4 ($self$) 被抚摸头发 结果负面 有允许 口上文",
-                                    "responses": [
-                                        "com_touch_hair_succ_neg_allow_1",
-                                        "com_touch_hair_succ_neg_allow_2",
-                                        "com_touch_hair_succ_neg_allow_3",
-                                        "com_touch_hair_succ_neg_allow_4"
-                                    ]
-                                }
-                            ],
-                            "_comment": "2.2.6 ($self$) 被抚摸头发 结果负面 未允许 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "cry",
-                                "glare",
-                                "disgust",
-                                "pouting",
-                                "sad",
-                                "troubled",
-                                "silence"
-                            ],
-                            "responses": [
-                                "com_touch_hair_succ_neg_noallow_1",
-                                "com_touch_hair_succ_neg_noallow_2",
-                                "com_touch_hair_succ_neg_noallow_3",
-                                "com_touch_hair_succ_neg_noallow_4"
                             ],
                             "requirement": {
                                 "requireSelfAction": false,
-                                "requireTargetAction": false,
                                 "allowRecording": true
                             }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_touch_hair_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_touch_hair_2"
+                                    ]
+                                }
+                            ]
                         }
                     ],
                     "template": "commandResult"
@@ -602,17 +560,21 @@
                                 "com_touch_hair_Ongoing_NPC_1",
                                 "com_touch_hair_Ongoing_NPC_2",
                                 "com_touch_hair_Ongoing_NPC_3"
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
                                 "requireSelfAction": false,
+                                "allowRecording": true
+                            }
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_touch_hair_Ongoing_Fallback_1"
+                                "com_touch_hair_Ongoing_1"
                             ]
                         }
                     ]
@@ -708,7 +670,11 @@
                 "com_touch_hair_Ongoing_NPC_2": "抚摸停下后，$self$看着$target$调侃道：\"手感就这么好啊？\"",
                 "com_touch_hair_Ongoing_NPC_3": "$self$语气轻松地对$target$说道：\"行啦，再摸下去我真要犯困了。\"",
                 "com_touch_hair_Begin_Receiver_1": "$self$顺从地配合着$target$的动作。",
-                "com_touch_hair_Ongoing_Fallback_1": "$self$任由发丝被轻抚着，神情显得颇为安静。"
+                "com_touch_hair_Ongoing_Fallback_1": "$self$任由发丝被轻抚着，神情显得颇为安静。",
+                "com_touch_hair_Begin_14": "(unimplemented)",
+                "com_touch_hair_1": "(unimplemented)",
+                "com_touch_hair_2": "(unimplemented)",
+                "com_touch_hair_Ongoing_1": "(unimplemented)"
             },
             "en-us": {
                 "com_touch_hair_Begin_1": "$self$ naturally leans her head into $target$'s palm as if accustomed to it, letting out a comfortable hum.",

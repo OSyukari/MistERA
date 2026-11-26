@@ -125,7 +125,7 @@
             },
             {
                 "id": "hair_length_none",
-                "keyword": "length",
+                "keyword": "length", "phraseKind": "length",
                 "displayName": "Unspecified",
                 "tooltip": "Length left to the style itself.",
                 "isDefault": false,
@@ -133,7 +133,7 @@
             },
             {
                 "id": "hair_length_short",
-                "keyword": "length",
+                "keyword": "length", "phraseKind": "length",
                 "displayName": "Short",
                 "tooltip": "Above the shoulders.",
                 "isDefault": false,
@@ -141,7 +141,7 @@
             },
             {
                 "id": "hair_length_medium",
-                "keyword": "length",
+                "keyword": "length", "phraseKind": "length",
                 "displayName": "Medium",
                 "tooltip": "Around the shoulders.",
                 "isDefault": false,
@@ -149,7 +149,7 @@
             },
             {
                 "id": "hair_length_long",
-                "keyword": "length",
+                "keyword": "length", "phraseKind": "length",
                 "displayName": "Long",
                 "tooltip": "Down the back.",
                 "isDefault": true,
@@ -157,7 +157,7 @@
             },
             {
                 "id": "hair_length_very_long",
-                "keyword": "length",
+                "keyword": "length", "phraseKind": "length",
                 "displayName": "Very Long",
                 "tooltip": "Down to the waist or longer.",
                 "isDefault": false,
@@ -205,19 +205,19 @@
                 "basePromptTokens": [ "ponytail", "hair tied" ],
                 "subCategories": [
                     {
-                        "id": "hairstyle_ponytail_high",
+                        "id": "hairstyle_ponytail_high", "phraseKind": "position",
                         "displayName": "High Ponytail",
                         "tooltip": "Tied high on the back of the head.",
                         "isDefault": true,
                         "promptTokens": [ "high ponytail" ]                    },
                     {
-                        "id": "hairstyle_ponytail_low",
+                        "id": "hairstyle_ponytail_low", "phraseKind": "position",
                         "displayName": "Low Ponytail",
                         "tooltip": "Tied low near the nape.",
                         "isDefault": false,
                         "promptTokens": [ "low ponytail" ]                    },
                     {
-                        "id": "hairstyle_ponytail_side",
+                        "id": "hairstyle_ponytail_side", "phraseKind": "position",
                         "displayName": "Side Ponytail",
                         "tooltip": "Tied to one side over the shoulder.",
                         "isDefault": false,
@@ -258,19 +258,19 @@
                 "basePromptTokens": [ "twintails", "two side up" ],
                 "subCategories": [
                     {
-                        "id": "hairstyle_twintails_high",
+                        "id": "hairstyle_twintails_high", "phraseKind": "position",
                         "displayName": "High Twin Tails",
                         "tooltip": "Tied high on the sides of the head.",
                         "isDefault": true,
                         "promptTokens": [ "high twintails" ]                    },
                     {
-                        "id": "hairstyle_twintails_low",
+                        "id": "hairstyle_twintails_low", "phraseKind": "position",
                         "displayName": "Low Twin Tails",
                         "tooltip": "Tied low near the nape.",
                         "isDefault": false,
                         "promptTokens": [ "low twintails" ]                    },
                     {
-                        "id": "hairstyle_twintails_short",
+                        "id": "hairstyle_twintails_short", "phraseKind": "length",
                         "displayName": "Short Twin Tails",
                         "tooltip": "Short tails on both sides of the head.",
                         "isDefault": false,

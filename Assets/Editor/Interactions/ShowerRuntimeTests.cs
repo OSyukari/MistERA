@@ -117,7 +117,32 @@ public static class ShowerRuntimeTests
                 "Same EP allowed duplicate immediate event dispatch");
             Require((int)Event.EventEntry.ExecutionType.WashTraces == (int)Event.EventEntry.ExecutionType.CheckOutHotelGuest + 1,
                 "WashTraces must be appended without shifting existing enum values");
-            Debug.Log("Shower runtime checks passed: scopes, receiver routing, trace cleanup, naked Undress, relationships, joining, acceptance and once-per-EP guard.");
+
+            // New shower flow helpers: SetAppendString, ModAppendNumber, FilterTargets, PopFirstTarget, hideIfInvalid
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.SetAppendString, "chatCount", "0")), "SetAppendString failed");
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.ModAppendNumber, "chatCount", "1")), "ModAppendNumber failed");
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.CompareAppendNumber, "chatCount", "eq", "1")), "CompareAppendNumber mismatch");
+            owner.Targets["queue"] = new List<Character_Trainable> { doer, receiver };
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.FilterTargets, "queue", "filtered", "exclude", "bather")), "FilterTargets exclude failed");
+            Require(owner.Targets["filtered"].Count == 1 && owner.Targets["filtered"][0] == doer, "FilterTargets exclude result mismatch");
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.PopFirstTarget, "queue", "popped")), "PopFirstTarget #1 failed");
+            Require(owner.Targets["popped"].Count == 1 && owner.Targets["popped"][0] == doer && owner.Targets["queue"].Count == 1, "PopFirstTarget #1 state mismatch");
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.PopFirstTarget, "queue", "popped")), "PopFirstTarget #2 failed");
+            Require(!EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.PopFirstTarget, "queue", "popped")), "PopFirstTarget on empty queue should fail");
+            var hiddenOpt = new Event.EventEntry.Options
+            {
+                option = "hidden",
+                hideIfInvalid = true,
+                target_chara_conditions = new Dictionary<string, List<Event_CharaCondition>>
+                {
+                    ["missing_key"] = new List<Event_CharaCondition> { new Event_CharaCondition { parameters = new List<string> { "exists" } } }
+                }
+            };
+            var visibleOpt = new Event.EventEntry.Options { option = "visible", hideIfInvalid = true };
+            var expanded = EventUtility.ExpandOptions(owner, new List<Event.EventEntry.Options> { hiddenOpt, visibleOpt });
+            Require(expanded.Count == 1 && expanded[0] == visibleOpt, "hideIfInvalid did not filter invalid option");
+
+            Debug.Log("Shower runtime checks passed: scopes, receiver routing, trace cleanup, naked Undress, relationships, joining, acceptance, once-per-EP guard, and multi-target shower helpers.");
         }
         finally
         {

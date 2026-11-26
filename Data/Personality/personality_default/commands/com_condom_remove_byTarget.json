@@ -32,13 +32,17 @@
                                 "com_condom_remove_byTarget_Begin_1",
                                 "com_condom_remove_byTarget_Begin_2",
                                 "com_condom_remove_byTarget_Begin_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_condom_remove_byTarget_Begin_7",
                                 "com_condom_remove_byTarget_Begin_8",
@@ -118,17 +122,32 @@
                                 "com_condom_remove_byTarget_16",
                                 "com_condom_remove_byTarget_17",
                                 "com_condom_remove_byTarget_18"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
-                                "com_condom_remove_byTarget_19",
-                                "com_condom_remove_byTarget_20",
-                                "com_condom_remove_byTarget_21"
+                                "com_condom_remove_byTarget_22"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受·判定成功",
+                                    "responses": [
+                                        "com_condom_remove_byTarget_19",
+                                        "com_condom_remove_byTarget_20",
+                                        "com_condom_remove_byTarget_21"
+                                    ]
+                                }
                             ]
                         }
                     ]
@@ -199,13 +218,17 @@
                                 "com_condom_remove_byTarget_Ongoing_1",
                                 "com_condom_remove_byTarget_Ongoing_2",
                                 "com_condom_remove_byTarget_Ongoing_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（接受，任何状态）",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_condom_remove_byTarget_Ongoing_7",
                                 "com_condom_remove_byTarget_Ongoing_8",
@@ -509,7 +532,8 @@
             "com_condom_remove_byTarget_Joined_6": "“行，别洒了啊。”$self$站定位置，小心地拿纸巾在下方接着。",
             "com_condom_remove_byTarget_Join_Refused_4": "“行吧，那我不插手了。”$self$收回伸出去的手，退回两步。",
             "com_condom_remove_byTarget_Join_Refused_5": "$self$听罢也不勉强，站在原地抱起胳膊：“那你们自己慢慢摘。”",
-            "com_condom_remove_byTarget_Join_Refused_6": "“不让帮忙就算了，我看着总行吧。”$self$耸耸肩，让出了位置。"
+            "com_condom_remove_byTarget_Join_Refused_6": "“不让帮忙就算了，我看着总行吧。”$self$耸耸肩，让出了位置。",
+            "com_condom_remove_byTarget_22": "(unimplemented)"
         },
         "en-us": {}
     }

@@ -75,6 +75,12 @@ public class Hairstyle_SubCategory
     public bool isDefault = false;
 
     public List<string> promptTokens = new List<string>();
+
+    /// <summary>
+    /// description: empty = the "&lt;id&gt;_desc" text replaces the hairstyle's head noun; set = it's a modifier of that kind
+    /// (length, position...), which wins over a slot option of the same kind (CharacterDescriptionUtility.GetHairParts)
+    /// </summary>
+    public string phraseKind = "";
 }
 
 [System.Serializable]
@@ -151,6 +157,9 @@ public class Hairstyle_SlotOption
 
     public List<string> promptTokens = new List<string>();
     public List<string> tags = new List<string>();
+
+    /// <summary> description: empty = the "&lt;id&gt;_desc" text is a detail clause; set = a modifier of that kind on the hair noun (length...) </summary>
+    public string phraseKind = "";
 }
 
 

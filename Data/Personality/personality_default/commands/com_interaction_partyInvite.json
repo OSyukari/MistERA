@@ -14,13 +14,17 @@
                                 "com_interaction_partyInvite_Result_Receiver_1",
                                 "com_interaction_partyInvite_Result_Receiver_2",
                                 "com_interaction_partyInvite_Result_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_interaction_partyInvite_Fallback_1"
                             ]
@@ -41,13 +45,17 @@
                                 "com_interaction_partyInvite_Begin_Receiver_1",
                                 "com_interaction_partyInvite_Begin_Receiver_2",
                                 "com_interaction_partyInvite_Begin_Receiver_3"
-                            ]
+                            ],
+                            "requirement": {
+                                "allowRecording": true
+                            }
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_interaction_partyInvite_Begin_Fallback_1"
                             ]

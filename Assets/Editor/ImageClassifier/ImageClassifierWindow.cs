@@ -31,6 +31,8 @@ public class ImageClassifierWindow : EditorWindow
 
     // Mods asset packs: every work folder (ImageWorkFolders), ticked ones are processed
     bool showMods = true;
+    HashSet<string> modsVerifiedFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    string modsVerifiedError;
     List<ImageReportFolder> modsFolders;
     ModsFolderNode modsTree;
     readonly HashSet<string> modsCollapsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -237,6 +239,7 @@ public class ImageClassifierWindow : EditorWindow
         modsUnselected.Clear();
         foreach (var line in ImageClassifierSettings.ModsUnselected.Split('\n'))
             if (line.Trim().Length > 0) modsUnselected.Add(line.Trim());
+        modsVerifiedFolders = ImageWorkFolders.LoadVerifiedFolders(ModsRoot, out modsVerifiedError);
         UpdateModsSearch();
     }
 
@@ -253,16 +256,14 @@ public class ImageClassifierWindow : EditorWindow
     void SaveModsSelection() => ImageClassifierSettings.ModsUnselected = string.Join("\n", modsUnselected);
 
     /// <summary>
-    /// Ticks exactly the work folders listed in Mods/_image_selection.json { saved, report, folders: [Mods-relative work folder], images: [folder/path] },
-    /// written by the report page's Save selection. Returns the status line.
+    /// Ticks exactly the work folders listed in the selection field of Mods/_image_database.json
+    /// { saved, report, folders: [Mods-relative work folder], images: [folder/path] }, written by the report page's Save selection. Returns the status line.
     /// </summary>
     string ApplyReportSelection()
     {
-        var path = Path.Combine(ModsRoot, ImageWorkFolders.SelectionFileName);
-        if (!File.Exists(path)) return $"No Mods/{ImageWorkFolders.SelectionFileName} - select images in the report and press Save selection there first.";
-        Newtonsoft.Json.Linq.JObject sel;
-        try { sel = Newtonsoft.Json.Linq.JObject.Parse(File.ReadAllText(path)); }
-        catch (Exception e) { return ImageWorkFolders.SelectionFileName + " unreadable: " + e.Message; }
+        var sel = ImageWorkFolders.LoadDatabaseField(ModsRoot, ImageWorkFolders.SelectionField, out var selError);
+        if (selError != null) return ImageWorkFolders.DatabaseFileName + " unreadable: " + selError;
+        if (sel == null) return $"No selection in Mods/{ImageWorkFolders.DatabaseFileName} - select images in the report and press Save selection there first.";
 
         var wanted = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         if (sel["folders"] is Newtonsoft.Json.Linq.JArray folders)
@@ -364,9 +365,71 @@ public class ImageClassifierWindow : EditorWindow
             {
                 var f = node.folder;
                 EditorGUILayout.LabelField(new GUIContent(ModsRowState(f), f.stale ?? ""), EditorStyles.miniLabel, GUILayout.Width(250));
+                bool isVerified = modsVerifiedFolders.Contains(f.name);
+                var prevColor = GUI.backgroundColor;
+                if (isVerified) GUI.backgroundColor = new Color(0.55f, 0.9f, 0.6f);
+                using (new EditorGUI.DisabledScope(!string.IsNullOrEmpty(modsVerifiedError)))
+                {
+                    bool nextVerified = GUILayout.Toggle(isVerified,
+                        new GUIContent(isVerified ? "✓ OK" : "OK", "Manually mark this folder as correctly classified (saved to Mods/" + ImageWorkFolders.DatabaseFileName + ")"),
+                        EditorStyles.miniButton, GUILayout.Width(48));
+                    if (nextVerified != isVerified)
+                    {
+                        if (nextVerified) modsVerifiedFolders.Add(f.name);
+                        else modsVerifiedFolders.Remove(f.name);
+                        try
+                        {
+                            ImageWorkFolders.SaveVerifiedFolders(ModsRoot, modsVerifiedFolders);
+                            modsVerifiedError = null;
+                        }
+                        catch (Exception e)
+                        {
+                            modsVerifiedError = "Failed to save: " + e.Message;
+                            Debug.LogException(e);
+                        }
+                    }
+                }
+                GUI.backgroundColor = prevColor;
                 if (GUILayout.Button(new GUIContent("Open", "Open this folder in the file browser"), EditorStyles.miniButton, GUILayout.Width(40))) EditorUtility.OpenWithDefaultApp(Path.GetFullPath(f.path));
             }
-            else EditorGUILayout.LabelField($"{selectedCount} of {shownCount} selected", EditorStyles.miniLabel, GUILayout.Width(294));
+            else
+            {
+                EditorGUILayout.LabelField($"{selectedCount} of {shownCount} selected", EditorStyles.miniLabel, GUILayout.Width(250));
+                int verifiedCount = 0;
+                foreach (var f in node.descendants) if (modsVerifiedFolders.Contains(f.name)) verifiedCount++;
+                bool allVerified = node.descendants.Count > 0 && verifiedCount == node.descendants.Count;
+                bool partVerified = verifiedCount > 0 && !allVerified;
+                var prevColor = GUI.backgroundColor;
+                if (allVerified) GUI.backgroundColor = new Color(0.55f, 0.9f, 0.6f);
+                else if (partVerified) GUI.backgroundColor = new Color(0.95f, 0.85f, 0.45f);
+                using (new EditorGUI.DisabledScope(!string.IsNullOrEmpty(modsVerifiedError)))
+                {
+                    var label = allVerified ? "✓ All" : partVerified ? $"{verifiedCount}/{node.descendants.Count}" : "OK";
+                    bool nextAll = GUILayout.Toggle(allVerified,
+                        new GUIContent(label, $"Toggle all {node.descendants.Count} folder(s) under {node.relativePath} as correctly classified (saved to Mods/{ImageWorkFolders.DatabaseFileName})"),
+                        EditorStyles.miniButton, GUILayout.Width(48));
+                    if (nextAll != allVerified)
+                    {
+                        foreach (var f in node.descendants)
+                        {
+                            if (nextAll) modsVerifiedFolders.Add(f.name);
+                            else modsVerifiedFolders.Remove(f.name);
+                        }
+                        try
+                        {
+                            ImageWorkFolders.SaveVerifiedFolders(ModsRoot, modsVerifiedFolders);
+                            modsVerifiedError = null;
+                        }
+                        catch (Exception e)
+                        {
+                            modsVerifiedError = "Failed to save: " + e.Message;
+                            Debug.LogException(e);
+                        }
+                    }
+                }
+                GUI.backgroundColor = prevColor;
+                GUILayout.Space(44);
+            }
         }
         if (expanded)
             foreach (var child in node.children) DrawModsFolder(child, depth + 1);
@@ -377,6 +440,8 @@ public class ImageClassifierWindow : EditorWindow
         showMods = EditorGUILayout.Foldout(showMods, "Mods asset packs (Mods/Assetpacks, Mods/<mod>/Assetpacks)", true);
         if (!showMods) return;
         if (modsFolders == null) RefreshMods();
+        if (!string.IsNullOrEmpty(modsVerifiedError))
+            EditorGUILayout.HelpBox(ImageWorkFolders.DatabaseFileName + ": " + modsVerifiedError + "\nFix or remove the file, then click Refresh list before toggling.", MessageType.Error);
         EditorGUILayout.LabelField("Work folder = the first folder, from Assetpacks down, that has a tag file or images of its own; folders below it are " +
                                    "classified within it. _x, .x and unsorted folders are skipped. All results go to one report: Mods/" +
                                    ImageWorkFolders.ReportFileName + ".", EditorStyles.wordWrappedMiniLabel);
@@ -405,7 +470,7 @@ public class ImageClassifierWindow : EditorWindow
                     SaveModsSelection();
                 }
                 if (GUILayout.Button(new GUIContent("Select from report", "Tick exactly the work folders of the images selected in the report page " +
-                        "(Save selection there writes Mods/" + ImageWorkFolders.SelectionFileName + "); every other folder is unticked"), GUILayout.Width(120)))
+                        "(Save selection there writes the selection of Mods/" + ImageWorkFolders.DatabaseFileName + "); every other folder is unticked"), GUILayout.Width(120)))
                     modsStatus = ApplyReportSelection();
                 if (GUILayout.Button(new GUIContent("Refresh list", "Find the work folders again and re-read their analysis state"), GUILayout.Width(90))) RefreshMods();
                 GUILayout.FlexibleSpace();
@@ -484,7 +549,7 @@ public class ImageClassifierWindow : EditorWindow
     {
         modsReportError = null;
         RefreshMods();
-        try { ImageReport.WriteHtml(ModsReportPath, "Mods asset packs", modsFolders, ImageClassifierSettings.RulesPath, ImageWorkFolders.SelectionFileName); }
+        try { ImageReport.WriteHtml(ModsReportPath, "Mods asset packs", modsFolders, ImageClassifierSettings.RulesPath, ImageWorkFolders.DatabaseFileName); }
         catch (Exception e)
         {
             modsReportError = e.Message;

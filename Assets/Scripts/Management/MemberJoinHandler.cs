@@ -161,6 +161,8 @@ public abstract class MemberLeaveHandler : MemberOptionHandler
 /// </summary>
 public class LeaveHandler_HospitalPatient : MemberLeaveHandler
 {
+    public string permanentPatientErrorKey = "jp_hospital_patient_err_permanent";
+
     public override List<Event.EventEntry.Options> BuildOptions(Manageable hospital, MemberType patientType, List<Character_Trainable> candidates, out string errorKey)
     {
         errorKey = "";
@@ -168,7 +170,8 @@ public class LeaveHandler_HospitalPatient : MemberLeaveHandler
         foreach (var c in candidates)
         {
             if (c == null || !hospital.isManagedChara(c.RefID) || hospital.GetMemberType(c) != patientType) continue;
-            result.Add(MakeOption(c, ev => Discharge(ev, hospital, c)));
+            bool isTemp = c.FactionManager.Faction_Home_Temporary == hospital;
+            result.Add(MakeOption(c, ev => Discharge(ev, hospital, c), isTemp ? "" : permanentPatientErrorKey));
         }
         return result;
     }
@@ -319,7 +322,8 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
         bool leftParty = c.RefID != 0 && party.MemberRefIDs.Contains(c.RefID);
         if (leftParty) party.RemoveFromParty(c);
         SuspendWorkPost(hospital, c);
-        c.FactionManager.SetTempHomeFaction(hospital.ID, patientType);
+        if (c.FactionManager.Faction_Home != null) c.FactionManager.SetTempHomeFaction(hospital.ID, patientType);
+        else c.FactionManager.SetHomeFaction(hospital.ID, patientType);
         if (hospital.isManagedChara(c.RefID)) hospital.AddRoomOwnership(c.RefID, room.RefID);
         AppendFactionChange(ev, c, hospital, leftParty);
         AddFamilyVisitors(ev, hospital, c);
@@ -473,7 +477,8 @@ public class JoinHandler_TempHomeWithRoom : MemberJoinHandler
         var party = scr_System_CampaignManager.current.party;
         bool leftParty = leavePlayerParty && c.RefID != 0 && party.MemberRefIDs.Contains(c.RefID);
         if (leftParty) party.RemoveFromParty(c);
-        c.FactionManager.SetTempHomeFaction(faction.ID, type);
+        if (c.FactionManager.Faction_Home != null) c.FactionManager.SetTempHomeFaction(faction.ID, type);
+        else c.FactionManager.SetHomeFaction(faction.ID, type);
         if (faction.isManagedChara(c.RefID)) faction.AddRoomOwnership(c.RefID, room.RefID);
         AppendFactionChange(ev, c, faction, leftParty);
     }

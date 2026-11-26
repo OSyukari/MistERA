@@ -203,7 +203,7 @@ public class PermissionDefinition
         if (q.requireNoTeammate || q.requireFollowing || q.requireNotFollowing || q.addPartyMembers) live.Add("party fields");
         if (q.requireTimestopped) live.Add("requireTimestopped");
         if (q.requireCombat || q.requireFullHP || q.requireMissingHP || q.requireBedRest) live.Add("combat/HP/bed rest");
-        if (q.requireMemberType?.Count > 0 || q.requireJobFaction != FactionRelation.None) live.Add("faction fields");
+        if (q.requireMemberType?.Count > 0 || q.requireJobFaction != FactionRelation.None || q.exceptJobFaction != FactionRelation.None) live.Add("faction fields");
         if (q.requireActorTags?.Count > 0) live.Add("requireActorTags");
         if (q.requireAbsentJobwithCOMTag.Count > 0 || q.requireExistingJobwithCOMTag.Count > 0) live.Add("job fields");
         if (q.requireStatusValue.Count > 0) live.Add("requireStatusValue");

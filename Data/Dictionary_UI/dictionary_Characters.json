@@ -13,6 +13,8 @@
                 "relationship_goodwill": "好感",
                 "relationship_goodwill_base": "基础好感",
                 "relationship_goodwill_final": "当前好感",
+                "relationship_positivity_base": "基础正面关系（好感+信赖-厌恶-恐惧）",
+                "relationship_positivity_final": "当前正面关系（好感+信赖-厌恶-恐惧）",
                 "relationship_goodwill_tooltip": "%%relationship_usedtocalculate_attitude%%\n角色心情好时好感数值取更高，反之取更低\n角色紧张时好感数值取更高（但放松时不会取低）\n当角色的当前恐惧超过当前好感时，好感数值取0",
                 "relationship_badwill": "厌恶",
                 "relationship_badwill_base": "基础厌恶",
@@ -93,6 +95,7 @@
                 "stats_base_Psyche_tooltip": "%%notimplemented%%\n\nRepresent traditional Intelligence.\nRepresent how one feels about his environment.\nDetermine MP value and PSY-based skills (starting level and max level).",
                 "stats_base_Willpower": "意志",
                 "stats_base_Willpower_tooltip": "%%notimplemented%%\n\nRepresent traditional Wisdom.\nRepresent how one express himself.\nDetermine Stress cap, and WIL-based skills.",
+                "statmod_training": "锻炼",
                 
                 "statsEX_capModded": "该属性的上限和下限不会超过最高和最低的单项数值调整",
 
@@ -195,6 +198,7 @@
                 "stats_base_Psyche_tooltip": "%%notimplemented%%\n\nRepresent traditional Intelligence.\nRepresent how one feels about his environment.\nDetermine MP value and PSY-based skills (starting level and max level).",
                 "stats_base_Willpower": "Willpower",
                 "stats_base_Willpower_tooltip": "%%notimplemented%%\n\nRepresent traditional Wisdom.\nRepresent how one express himself.\nDetermine Stress cap, and WIL-based skills.",
+                "statmod_training": "Training",
                 
                 "statsEX_capModded": "This stat's final value will not go above or below any of its single maximum or minimum score value adjustments.",
 
@@ -222,6 +226,8 @@
 
                 "relationship_goodwill_base": "Base Goodwill",
                 "relationship_goodwill_final": "Current Goodwill",
+                "relationship_positivity_base": "Base Positivity (Goodwill + Trust - Aversion - Fear)",
+                "relationship_positivity_final": "Current Positivity (Goodwill + Trust - Aversion - Fear)",
 
                 "relationship_badwill_base": "Base Aversion",
                 "relationship_badwill_final": "Current Aversion",

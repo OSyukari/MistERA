@@ -123,7 +123,7 @@ public class KojoCollector : I_ResultStorage, I_Records
         // said behind a stall's door (room divider blocking visibility) - no actor of it is seen
         if (room != null && MapUtility.NoneVisibleTo(c, actlist))
         {
-            Debug.LogWarning($"[Visibility] kojo hidden from {c.FirstName} (no actor visible across a room divider): {collect?.message}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Visibility) Debug.LogWarning($"[Visibility] kojo hidden from {c.FirstName} (no actor visible across a room divider): {collect?.message}");
             return false;
         }
         return actlist.Count < 1 || actlist.Contains(c.RefID);

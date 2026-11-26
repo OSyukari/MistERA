@@ -176,6 +176,16 @@
                                         "idle"
                                     ],
                                     "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）"
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 受方 时停中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_Begin_10"
+                                    ]
                                 }
                             ]
                         },
@@ -228,6 +238,16 @@
                                         "relaxed"
                                     ],
                                     "_comment": "2.3.4 开始 睡眠中 口上文（开工时已睡着）"
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "开始 受方 睡眠中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_Begin_11"
+                                    ]
                                 }
                             ]
                         },
@@ -537,6 +557,16 @@
                                             ]
                                         }
                                     ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方 时停中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_43"
+                                    ]
                                 }
                             ]
                         },
@@ -606,6 +636,16 @@
                                                 "com_sex_P_cowgirl_FE_Sleep_3"
                                             ]
                                         }
+                                    ]
+                                },
+                                {
+                                    "requireSelfReceiver": true,
+                                    "requirement": {
+                                        "requireSelfAction": false
+                                    },
+                                    "_comment": "受方 睡眠中",
+                                    "responses": [
+                                        "com_sex_P_cowgirl_44"
                                     ]
                                 }
                             ]
@@ -1356,8 +1396,13 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
-                            "_comment": "TODO Doer 进行中",
-                            "responses": []
+                            "_comment": "施方 com_sex_P_cowgirl 进行中",
+                            "responses": [
+                                "com_sex_P_cowgirl_Ongoing_1"
+                            ],
+                            "requirement": {
+                                "requireTargetAction": false
+                            }
                         },
                         {
                             "requireSelfReceiver": true,
@@ -1379,18 +1424,10 @@
                                         "com_sex_P_cowgirl_Ongoing_Player_3"
                                     ]
                                 }
-                            ]
-                        },
-                        {
+                            ],
                             "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_cowgirl_Ongoing_Player_1"
-                            ]
+                                "requireSelfAction": false
+                            }
                         }
                     ],
                     "template": "commandAct"
@@ -1559,7 +1596,12 @@
                 "com_sex_P_cowgirl_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_P_cowgirl_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_P_cowgirl_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_P_cowgirl_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_P_cowgirl_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_P_cowgirl_Ongoing_1": "(unimplemented)",
+                "com_sex_P_cowgirl_Begin_10": "(unimplemented)",
+                "com_sex_P_cowgirl_Begin_11": "(unimplemented)",
+                "com_sex_P_cowgirl_43": "(unimplemented)",
+                "com_sex_P_cowgirl_44": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_P_cowgirl_Climax_1": "$self$'s hips jerk to a halt, her whole body going rigid, then trembling violently.\n\n\"Ah—! Cumming...! Haa...!\"\n\nShe sits on him twitching nonstop, her pussy clamping the cock death-tight, slick running down where they join, her legs too weak to stay clamped.",
