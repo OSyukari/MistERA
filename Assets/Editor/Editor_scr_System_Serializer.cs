@@ -21,7 +21,8 @@ public class Editor_scr_System_Serializer : Editor
             }
 
             var zhCn = LocalizeDictionary.Instance.Index.Entries["zh-cn"];
-            string snapshotPath = Application.dataPath + "/dict_zh_cn_snapshot.json";
+            string snapshotPath = scr_System_Serializer.DebugDumpPath + "/dict_zh_cn_snapshot.json";
+            Directory.CreateDirectory(scr_System_Serializer.DebugDumpPath);
             File.WriteAllText(snapshotPath, JsonConvert.SerializeObject(zhCn, Formatting.Indented));
             Debug.Log($"[SourceTracking] Snapshot saved with {zhCn.Count} entries to {snapshotPath}");
         }

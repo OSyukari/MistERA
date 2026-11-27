@@ -13,19 +13,39 @@
     "floors": [],
     "mealHours": [],
     "salesCurrency": "currency_JPY",
-    "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-    "salesInventory": [],
+    "_comment_salesInventory": "The DECATHL○N line (Items/Clothing/Shop_Decathlon_sports.json): sportswear (exercise commands' clothingFit) and swimwear (com_furniture_swim); plus sports furniture (packed furniture tagged sports_equipment - only sold here, the furniture store excludes it).",
+    "salesInventory": [
+        {
+            "matchByTags": [
+                "sportswear",
+                "rarity_common"
+            ]
+        },
+        {
+            "matchByTags": [
+                "swimwear",
+                "rarity_common"
+            ]
+        },
+        {
+            "matchByTags": [
+                "furniture_packed",
+                "sports_equipment",
+                "rarity_common"
+            ]
+        }
+    ],
     "workModules": [],
     "managerBaseIDs": [
         ""
     ],
                 "activeHoursStart":10,
                 "activeHoursEnd":21,
-    "_comment_assignableMemberTypes": "Shared mall clerk shift - see _doc_staff. Not in joinableMemberTypes: NPC-only, the player can't join it.",
-    "assignableMemberTypes": [ "membertype_jp_mall_clerk" ],
-    "_comment_fallbackWorkers": "One fallback front desk clerk.",
+    "_comment_assignableMemberTypes": "As store_furniture.json: regular part-time clerks use six-hour early/late shifts with complementary 14-day A/B schedules. The old all-day leaf is reserved for fallback generation; no recruiting UI is added.",
+    "assignableMemberTypes": [ "membertype_jp_mall_clerk_parttime" ],
+    "_comment_fallbackWorkers": "Minimum coverage 1, fallback cap 1; on-duty regular clerks count toward coverage.",
     "fallbackWorkers": [
-        { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" }
+        { "memberTypeID": "membertype_jp_mall_clerk", "coversMemberTypes": ["membertype_jp_mall_clerk_parttime"], "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
     ],
     "workHours": [],
     "workAssignment": [],
@@ -36,10 +56,14 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "jp_mall_sportswear_room": "运动用品店（施工中）"
+                "jp_mall_sportswear": "%%shop_jp_dkn_name%%",
+                "jp_mall_sportswear_room": "运动用品店「%%shop_jp_dkn_name%%」",
+                "jp_mall_sportswear_room_tooltip": "运动服、跑鞋、泳装"
             },
             "en-us": {
-                "jp_mall_sportswear_room": "Sportswear Store"
+                "jp_mall_sportswear": "%%shop_jp_dkn_name%%",
+                "jp_mall_sportswear_room": "Sportswear Store %%shop_jp_dkn_name%%",
+                "jp_mall_sportswear_room_tooltip": "Sportswear, running shoes, swimwear"
             }
         }
     }

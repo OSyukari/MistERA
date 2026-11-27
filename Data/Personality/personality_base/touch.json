@@ -185,9 +185,21 @@
                     "ID": "com_touch_head_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_head_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -195,17 +207,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_head_Refuse_rec_1",
-                                "pb_com_touch_head_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -239,16 +241,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_head_Refuse_rec_1",
+                                "pb_com_touch_head_Refuse_rec_2",
                                 "pb_com_touch_head_Refuse_fb_1",
                                 "pb_com_touch_head_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_head_Refuse_2"
                             ]
                         }
                     ],
@@ -439,9 +447,21 @@
                     "ID": "com_touch_hair_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_hair_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -449,17 +469,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_hair_Refuse_rec_1",
-                                "pb_com_touch_hair_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -493,16 +503,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_hair_Refuse_rec_1",
+                                "pb_com_touch_hair_Refuse_rec_2",
                                 "pb_com_touch_hair_Refuse_fb_1",
                                 "pb_com_touch_hair_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_hair_Refuse_2"
                             ]
                         }
                     ],
@@ -693,9 +709,21 @@
                     "ID": "com_touch_cheek_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_cheek_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -703,17 +731,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_cheek_Refuse_rec_1",
-                                "pb_com_touch_cheek_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -747,16 +765,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_cheek_Refuse_rec_1",
+                                "pb_com_touch_cheek_Refuse_rec_2",
                                 "pb_com_touch_cheek_Refuse_fb_1",
                                 "pb_com_touch_cheek_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_cheek_Refuse_2"
                             ]
                         }
                     ],
@@ -947,9 +971,21 @@
                     "ID": "com_touch_ears_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_ears_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -957,17 +993,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_ears_Refuse_rec_1",
-                                "pb_com_touch_ears_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1001,16 +1027,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_ears_Refuse_rec_1",
+                                "pb_com_touch_ears_Refuse_rec_2",
                                 "pb_com_touch_ears_Refuse_fb_1",
                                 "pb_com_touch_ears_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_ears_Refuse_2"
                             ]
                         }
                     ],
@@ -1201,9 +1233,21 @@
                     "ID": "com_touch_fingers_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_fingers_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -1211,17 +1255,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_fingers_Refuse_rec_1",
-                                "pb_com_touch_fingers_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1255,16 +1289,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_fingers_Refuse_rec_1",
+                                "pb_com_touch_fingers_Refuse_rec_2",
                                 "pb_com_touch_fingers_Refuse_fb_1",
                                 "pb_com_touch_fingers_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_fingers_Refuse_2"
                             ]
                         }
                     ],
@@ -1455,9 +1495,21 @@
                     "ID": "com_touch_foot_toes_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_foot_toes_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -1465,17 +1517,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_foot_toes_Refuse_rec_1",
-                                "pb_com_touch_foot_toes_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1509,16 +1551,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_foot_toes_Refuse_rec_1",
+                                "pb_com_touch_foot_toes_Refuse_rec_2",
                                 "pb_com_touch_foot_toes_Refuse_fb_1",
                                 "pb_com_touch_foot_toes_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_foot_toes_Refuse_2"
                             ]
                         }
                     ],
@@ -1709,9 +1757,21 @@
                     "ID": "com_touch_abdomen_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_abdomen_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -1719,17 +1779,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_abdomen_Refuse_rec_1",
-                                "pb_com_touch_abdomen_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1763,16 +1813,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_abdomen_Refuse_rec_1",
+                                "pb_com_touch_abdomen_Refuse_rec_2",
                                 "pb_com_touch_abdomen_Refuse_fb_1",
                                 "pb_com_touch_abdomen_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_abdomen_Refuse_2"
                             ]
                         }
                     ],
@@ -1963,9 +2019,21 @@
                     "ID": "com_touch_butt_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_butt_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -1973,17 +2041,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_butt_Refuse_rec_1",
-                                "pb_com_touch_butt_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -2017,16 +2075,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_butt_Refuse_rec_1",
+                                "pb_com_touch_butt_Refuse_rec_2",
                                 "pb_com_touch_butt_Refuse_fb_1",
                                 "pb_com_touch_butt_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_butt_Refuse_2"
                             ]
                         }
                     ],
@@ -2217,9 +2281,21 @@
                     "ID": "com_touch_thigh_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_thigh_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -2227,17 +2303,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_thigh_Refuse_rec_1",
-                                "pb_com_touch_thigh_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -2271,16 +2337,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_thigh_Refuse_rec_1",
+                                "pb_com_touch_thigh_Refuse_rec_2",
                                 "pb_com_touch_thigh_Refuse_fb_1",
                                 "pb_com_touch_thigh_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_thigh_Refuse_2"
                             ]
                         }
                     ],
@@ -2471,9 +2543,21 @@
                     "ID": "com_touch_shoulders_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_shoulders_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -2481,17 +2565,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_shoulders_Refuse_rec_1",
-                                "pb_com_touch_shoulders_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -2525,16 +2599,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_shoulders_Refuse_rec_1",
+                                "pb_com_touch_shoulders_Refuse_rec_2",
                                 "pb_com_touch_shoulders_Refuse_fb_1",
                                 "pb_com_touch_shoulders_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_shoulders_Refuse_2"
                             ]
                         }
                     ],
@@ -2725,9 +2805,21 @@
                     "ID": "com_touch_hug_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_hug_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -2735,17 +2827,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_hug_Refuse_rec_1",
-                                "pb_com_touch_hug_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -2779,16 +2861,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_hug_Refuse_rec_1",
+                                "pb_com_touch_hug_Refuse_rec_2",
                                 "pb_com_touch_hug_Refuse_fb_1",
                                 "pb_com_touch_hug_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_hug_Refuse_2"
                             ]
                         }
                     ],
@@ -2979,9 +3067,21 @@
                     "ID": "com_touch_back_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_touch_back_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -2989,17 +3089,7 @@
                                 "surprised"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_touch_back_Refuse_rec_1",
-                                "pb_com_touch_back_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -3033,16 +3123,22 @@
                                     "responses": []
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_touch_back_Refuse_rec_1",
+                                "pb_com_touch_back_Refuse_rec_2",
                                 "pb_com_touch_back_Refuse_fb_1",
                                 "pb_com_touch_back_Refuse_fb_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_touch_back_Refuse_2"
                             ]
                         }
                     ],
@@ -3173,7 +3269,31 @@
                 "pb_com_touch_back_1": "(unimplemented)",
                 "pb_com_touch_back_2": "(unimplemented)",
                 "pb_com_touch_back_3": "(unimplemented)",
-                "pb_com_touch_back_4": "(unimplemented)"
+                "pb_com_touch_back_4": "(unimplemented)",
+                "com_touch_fingers_Refuse_1": "(unimplemented)",
+                "com_touch_foot_toes_Refuse_1": "(unimplemented)",
+                "com_touch_hair_Refuse_1": "(unimplemented)",
+                "com_touch_cheek_Refuse_1": "(unimplemented)",
+                "com_touch_head_Refuse_1": "(unimplemented)",
+                "com_touch_back_Refuse_1": "(unimplemented)",
+                "com_touch_shoulders_Refuse_1": "(unimplemented)",
+                "com_touch_ears_Refuse_1": "(unimplemented)",
+                "com_touch_hug_Refuse_1": "(unimplemented)",
+                "com_touch_butt_Refuse_1": "(unimplemented)",
+                "com_touch_abdomen_Refuse_1": "(unimplemented)",
+                "com_touch_thigh_Refuse_1": "(unimplemented)",
+                "com_touch_back_Refuse_2": "(unimplemented)",
+                "com_touch_abdomen_Refuse_2": "(unimplemented)",
+                "com_touch_head_Refuse_2": "(unimplemented)",
+                "com_touch_fingers_Refuse_2": "(unimplemented)",
+                "com_touch_foot_toes_Refuse_2": "(unimplemented)",
+                "com_touch_shoulders_Refuse_2": "(unimplemented)",
+                "com_touch_hug_Refuse_2": "(unimplemented)",
+                "com_touch_hair_Refuse_2": "(unimplemented)",
+                "com_touch_ears_Refuse_2": "(unimplemented)",
+                "com_touch_butt_Refuse_2": "(unimplemented)",
+                "com_touch_thigh_Refuse_2": "(unimplemented)",
+                "com_touch_cheek_Refuse_2": "(unimplemented)"
             },
             "en-us": {}
         }

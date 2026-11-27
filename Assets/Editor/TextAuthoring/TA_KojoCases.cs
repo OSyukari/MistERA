@@ -74,6 +74,12 @@ public abstract partial class TA_DocBuilderBase
         return true;
     }
 
+    /// <summary>
+    /// Personality pid must have its own kojo for this unit (command units: the "dedicated kojo" flag on a fallback command):
+    /// what it inherits or reuses from another command doesn't cover its cases, and its gaps count even on optional cases.
+    /// </summary>
+    protected virtual bool RequiresDedicated(string pid) { return false; }
+
     protected static JObject StateDef(string state) { return state == null || state == "awake" ? null : TA_CaseTemplate.States[state] as JObject; }
 
     static List<string> Tags(JObject state)
@@ -131,6 +137,8 @@ public abstract partial class TA_DocBuilderBase
         // customFrom = what it uses now. This explicit obligation is independent of own / inherited ownership.
         var custom = new JArray();
         var customFrom = new JObject();
+        // personalities asked for dedicated kojo (RequiresDedicated) with no entry / branch: a gap for them even when optional
+        var requiredFor = new JArray();
         JObject tierSet = c.tierSet == null ? null : TA_CaseTemplate.Tiers(c.tierSet);
         var tierItems = tierSet?["tiers"] as JArray;
         var tierCov = new List<JArray>();
@@ -167,7 +175,8 @@ public abstract partial class TA_DocBuilderBase
             resolvedViaSource = null;
             var found = resolve(p, out var provider, out var entryID);
             var viaSource = resolvedViaSource;
-            if (found == null) { missing.Add(p.ID); continue; }
+            bool dedicated = RequiresDedicated(p.ID);
+            if (found == null) { missing.Add(p.ID); if (dedicated) requiredFor.Add(p.ID); continue; }
             if (lookupProvenance != null)
                 lookupProvenance[p.ID] = new JObject { ["route"] = lookupRoute(), ["provider"] = provider, ["entry"] = entryID };
             var leaves = new List<List<ResponseEntry.Variant>>();
@@ -175,8 +184,8 @@ public abstract partial class TA_DocBuilderBase
             var fit = new List<List<ResponseEntry.Variant>>();
             for (int l = 0; l < leaves.Count; l++)
                 if (Specific(leaves[l], specificSelf, specificTarget, c)) fit.Add(leaves[l]);
-            if (fit.Count == 0) { noBranch.Add(p.ID); branchIn[p.ID] = entryID; continue; }
-            if ((viaSource != null || provider != p.ID) && TA_CaseTemplate.RequiresCustom(p.ID, c.id))
+            if (fit.Count == 0) { noBranch.Add(p.ID); branchIn[p.ID] = entryID; if (dedicated) requiredFor.Add(p.ID); continue; }
+            if ((viaSource != null || provider != p.ID) && (dedicated || TA_CaseTemplate.RequiresCustom(p.ID, c.id)))
             {
                 custom.Add(p.ID);
                 customFrom[p.ID] = $"{provider} {entryID}";
@@ -217,6 +226,7 @@ public abstract partial class TA_DocBuilderBase
             o["cov"]["custom"] = custom;
             o["customFrom"] = customFrom;
         }
+        if (requiredFor.Count > 0) o["requiredFor"] = requiredFor;
         if (c.fallback != null) o["fallback"] = c.fallback;
         if (tierItems != null)
         {

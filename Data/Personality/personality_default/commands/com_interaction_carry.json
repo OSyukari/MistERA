@@ -228,41 +228,55 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 拒绝",
-                            "responses": [
-                                "com_interaction_carry_Refuse_Woken_1",
-                                "com_interaction_carry_Refuse_Woken_2",
-                                "com_interaction_carry_Refuse_Woken_3"
-                            ]
-                        },
-                        {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_interaction_carry_Refuse_1",
-                                "com_interaction_carry_Refuse_2",
-                                "com_interaction_carry_Refuse_3"
+                                "com_interaction_carry_Refuse_4"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_interaction_carry_Refuse_Woken_1",
+                                        "com_interaction_carry_Refuse_Woken_2",
+                                        "com_interaction_carry_Refuse_Woken_3"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_interaction_carry_Refuse_1",
+                                "com_interaction_carry_Refuse_2",
+                                "com_interaction_carry_Refuse_3",
                                 "com_interaction_carry_Refuse_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_interaction_carry_Refuse_5"
                             ]
                         }
                     ]
@@ -541,7 +555,9 @@
                 "com_interaction_carry_Tryjoin_Fallback_1": "$self$走近一步：“需要我一起搭把手吗？”",
                 "com_interaction_carry_Joined_Fallback_1": "$self$上前伸手托住一侧，帮着一起稳住。",
                 "com_interaction_carry_Begin_Fallback_1": "$self$稳住重心，准备把人抱起来。",
-                "com_interaction_carry_Join_Refused_Fallback_1": "$self$停住脚步：“好吧，那你自己小心点。”"
+                "com_interaction_carry_Join_Refused_Fallback_1": "$self$停住脚步：“好吧，那你自己小心点。”",
+                "com_interaction_carry_Refuse_4": "(unimplemented)",
+                "com_interaction_carry_Refuse_5": "(unimplemented)"
             }
         }
     }

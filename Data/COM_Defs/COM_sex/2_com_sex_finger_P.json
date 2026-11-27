@@ -43,7 +43,7 @@
                         ]
                     }
                 },
-                "DifficultyCheck":{ "baseD20Check":10 },
+                "DifficultyCheck":{ "baseD20Check":10, "SkillBonus_Doer":["skill_sexSkill_service"] },
                 "variants":[
                     {
                         "requirements":{

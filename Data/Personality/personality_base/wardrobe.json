@@ -174,26 +174,28 @@
                     "ID": "com_undress_outer_Refuse",
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_undress_outer_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_undress_outer_Refuse_rec_1",
-                                "pb_com_undress_outer_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -226,14 +228,33 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "glare"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_undress_outer_Refuse_rec_1",
+                                "pb_com_undress_outer_Refuse_rec_2",
                                 "pb_com_undress_outer_H_1",
                                 "pb_com_undress_outer_H_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_outer_Refuse_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_outer_Refuse_3"
                             ]
                         }
                     ],
@@ -419,26 +440,28 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_undress_inner_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_undress_inner_Refuse_rec_1",
-                                "pb_com_undress_inner_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -471,14 +494,33 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_undress_inner_Refuse_rec_1",
+                                "pb_com_undress_inner_Refuse_rec_2",
                                 "pb_com_undress_inner_H_1",
                                 "pb_com_undress_inner_H_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_inner_Refuse_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_inner_Refuse_3"
                             ]
                         }
                     ],
@@ -666,26 +708,28 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_undress_skin_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "pb_com_undress_skin_Refuse_rec_1",
-                                "pb_com_undress_skin_Refuse_rec_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -718,15 +762,33 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "glare",
-                                "disgust"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "pb_com_undress_skin_Refuse_rec_1",
+                                "pb_com_undress_skin_Refuse_rec_2",
                                 "pb_com_undress_skin_H_1",
                                 "pb_com_undress_skin_H_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_skin_Refuse_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_skin_Refuse_3"
                             ]
                         }
                     ],
@@ -998,7 +1060,16 @@
                 "pb_com_undress_skin_Begin_1": "(unimplemented)",
                 "pb_com_undress_skin_Begin_2": "(unimplemented)",
                 "pb_com_undress_skin_1": "(unimplemented)",
-                "pb_com_undress_skin_2": "(unimplemented)"
+                "pb_com_undress_skin_2": "(unimplemented)",
+                "com_undress_inner_Refuse_1": "(unimplemented)",
+                "com_undress_outer_Refuse_1": "(unimplemented)",
+                "com_undress_skin_Refuse_1": "(unimplemented)",
+                "com_undress_inner_Refuse_2": "(unimplemented)",
+                "com_undress_inner_Refuse_3": "(unimplemented)",
+                "com_undress_skin_Refuse_2": "(unimplemented)",
+                "com_undress_skin_Refuse_3": "(unimplemented)",
+                "com_undress_outer_Refuse_2": "(unimplemented)",
+                "com_undress_outer_Refuse_3": "(unimplemented)"
             },
             "en-us": {
                 "pb_com_undress_outer_Begin_A_1": "$self$ spreads his arms easily. \"Sure, it's a bit warm anyway.\"",

@@ -125,17 +125,6 @@
                                 "com_furniture_changeOutfit_Interrupt_5",
                                 "com_furniture_changeOutfit_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_furniture_changeOutfit_Interrupt_7",
-                                "com_furniture_changeOutfit_Interrupt_8",
-                                "com_furniture_changeOutfit_Interrupt_9"
-                            ],
-                            "requirement": {
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -225,18 +214,6 @@
                                 "com_furniture_changeOutfit_JoinFailed_8",
                                 "com_furniture_changeOutfit_JoinFailed_9"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_furniture_changeOutfit_JoinFailed_1",
-                                "com_furniture_changeOutfit_JoinFailed_2",
-                                "com_furniture_changeOutfit_JoinFailed_3"
-                            ]
                         }
                     ]
                 }
@@ -247,18 +224,6 @@
                     "ID": "com_furniture_changeOutfit_Refuse",
                     "template": "commandRefuse",
                     "variants": [
-                        {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                            "responses": [
-                                "com_furniture_changeOutfit_Refuse_1",
-                                "com_furniture_changeOutfit_Refuse_2",
-                                "com_furniture_changeOutfit_Refuse_3"
-                            ]
-                        },
                         {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
@@ -283,14 +248,41 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
+                                "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "responses": [
+                                "com_furniture_changeOutfit_Refuse_1",
+                                "com_furniture_changeOutfit_Refuse_2",
+                                "com_furniture_changeOutfit_Refuse_3",
                                 "com_furniture_changeOutfit_Refuse_Fallback_2",
                                 "com_furniture_changeOutfit_Refuse_Fallback_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_furniture_changeOutfit_Refuse_7"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_changeOutfit_Refuse_8"
                             ]
                         }
                     ]
@@ -319,17 +311,6 @@
                                 "com_furniture_changeOutfit_Join_5",
                                 "com_furniture_changeOutfit_Join_6"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_furniture_changeOutfit_Join_7",
-                                "com_furniture_changeOutfit_Join_8",
-                                "com_furniture_changeOutfit_Join_9"
-                            ],
-                            "requirement": {
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -551,7 +532,9 @@
                 "com_furniture_changeOutfit_Begin_7": "(unimplemented)",
                 "com_furniture_changeOutfit_Begin_8": "(unimplemented)",
                 "com_furniture_changeOutfit_Ongoing_7": "(unimplemented)",
-                "com_furniture_changeOutfit_Ongoing_8": "(unimplemented)"
+                "com_furniture_changeOutfit_Ongoing_8": "(unimplemented)",
+                "com_furniture_changeOutfit_Refuse_7": "(unimplemented)",
+                "com_furniture_changeOutfit_Refuse_8": "(unimplemented)"
             }
         }
     }

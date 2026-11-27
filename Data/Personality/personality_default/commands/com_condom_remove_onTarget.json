@@ -318,43 +318,57 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                            "responses": [
-                                "com_condom_remove_onTarget_Refuse_4",
-                                "com_condom_remove_onTarget_Refuse_5",
-                                "com_condom_remove_onTarget_Refuse_6"
-                            ]
-                        },
-                        {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_condom_remove_onTarget_Refuse_1",
-                                "com_condom_remove_onTarget_Refuse_2",
-                                "com_condom_remove_onTarget_Refuse_3"
+                                "com_condom_remove_onTarget_Refuse_10"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_condom_remove_onTarget_Refuse_4",
+                                        "com_condom_remove_onTarget_Refuse_5",
+                                        "com_condom_remove_onTarget_Refuse_6"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_condom_remove_onTarget_Refuse_1",
+                                "com_condom_remove_onTarget_Refuse_2",
+                                "com_condom_remove_onTarget_Refuse_3",
                                 "com_condom_remove_onTarget_Refuse_7",
                                 "com_condom_remove_onTarget_Refuse_8",
                                 "com_condom_remove_onTarget_Refuse_9"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_condom_remove_onTarget_Refuse_1"
                             ]
                         }
                     ]
@@ -742,8 +756,16 @@
             "com_condom_remove_onTarget_Join_Refused_4": "“行吧，那你们自己弄。”$self$把伸出去的手收回来，退开两步。",
             "com_condom_remove_onTarget_Join_Refused_5": "$self$听罢也不勉强，站在原地抱起胳膊：“那我就在旁边看着好了。”",
             "com_condom_remove_onTarget_Join_Refused_6": "“不让帮忙就算了。”$self$小声嘀咕了一句，转身挪到不碍事的地方。",
-            "com_condom_remove_onTarget_34": "(unimplemented)"
+            "com_condom_remove_onTarget_34": "(unimplemented)",
+            "com_condom_remove_onTarget_Refuse_10": "(unimplemented)"
         },
         "en-us": {}
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_condom_remove_onTarget_Refuse_1": "(unimplemented)"
+            }
+        }
     }
 }

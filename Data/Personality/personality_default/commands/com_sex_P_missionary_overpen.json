@@ -11,6 +11,9 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "_comment": "施方 com_sex_P_missionary_overpen 高潮",
                             "responses": [
                                 "com_sex_P_missionary_overpen_Climax_Doer_1",
@@ -397,6 +400,9 @@
                         },
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "variants": [
                                 {
                                     "requirement": {
@@ -429,17 +435,6 @@
                                 "com_sex_P_missionary_overpen_Begin_FE_Partner_1",
                                 "com_sex_P_missionary_overpen_Begin_FE_Partner_2",
                                 "com_sex_P_missionary_overpen_Begin_FE_Partner_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_P_missionary_overpen_Begin_Hostile_1"
                             ]
                         }
                     ],
@@ -1065,11 +1060,30 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "useActiveTags": false,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_P_missionary_overpen_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "受方拒绝 com_sex_P_missionary_overpen",
                             "variants": [
                                 {
                                     "useActiveTags": false,
@@ -1109,13 +1123,6 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "_comment": "受方拒绝 com_sex_P_missionary_overpen",
                             "responses": [
                                 "com_sex_P_missionary_overpen_Refuse_Hostile_1",
                                 "com_sex_P_missionary_overpen_Refuse_Hostile_2",
@@ -1126,15 +1133,14 @@
                             ]
                         },
                         {
-                            "useActiveTags": false,
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底（拒绝）",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_sex_P_missionary_overpen_Refuse_Hostile_1"
+                                "com_sex_P_missionary_overpen_Refuse_2"
                             ]
                         }
                     ],
@@ -1344,7 +1350,9 @@
                 "com_sex_P_missionary_overpen_Ongoing_Player_2": "双腿大张着被顶到最深处的水声清晰可闻，$self$眼角泛红地瞥了旁观的$target$一眼，声音被撞得发颤：\"哈啊……你、你在那边看够了没有……\"",
                 "com_sex_P_missionary_overpen_Ongoing_Player_3": "察觉到$target$的目光落在自己因深顶而微凸的小腹上，$self$难堪地偏过头去，耳根一直红到了脖颈。",
                 "com_sex_P_missionary_overpen_1": "(unimplemented)",
-                "com_sex_P_missionary_overpen_Ongoing_1": "(unimplemented)"
+                "com_sex_P_missionary_overpen_Ongoing_1": "(unimplemented)",
+                "com_sex_P_missionary_overpen_Refuse_1": "(unimplemented)",
+                "com_sex_P_missionary_overpen_Refuse_2": "(unimplemented)"
             }
         }
     }

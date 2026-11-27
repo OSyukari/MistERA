@@ -62,7 +62,7 @@
                         ]
                     }
                 },
-                "DifficultyCheck": { "baseD20Check": 10 },
+                "DifficultyCheck": { "baseD20Check": 10, "SkillBonus_Doer": ["skill_sexSkill_service"] },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
@@ -104,7 +104,7 @@
                         ]
                     } 
                 },
-                "DifficultyCheck": { "baseD20Check": 15 },
+                "DifficultyCheck": { "baseD20Check": 15, "SkillBonus_Doer": ["skill_sexSkill_service", "skill_sensitivity_M"] },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
@@ -147,7 +147,7 @@
                         ]
                     }
                 },
-                "DifficultyCheck": { "baseD20Check": 10 },
+                "DifficultyCheck": { "baseD20Check": 10, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
@@ -190,7 +190,7 @@
                         ]
                     } 
                 },
-                "DifficultyCheck": { "baseD20Check": 15 },
+                "DifficultyCheck": { "baseD20Check": 15, "SkillBonus_Doer": ["skill_sexSkill_service", "skill_sensitivity_M"] },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
@@ -253,7 +253,7 @@
                     }
                 },
                 "AcceptanceCheck": { "baseAcceptanceValue": 19, "SkillBonus_Doer": ["skill_sexSkill_service"] },
-                "DifficultyCheck": { "baseD20Check": 10 },
+                "DifficultyCheck": { "baseD20Check": 10, "SkillBonus_Doer": ["skill_sexSkill_service"] },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
@@ -286,7 +286,7 @@
                     }
                 },
                 "AcceptanceCheck": { "baseAcceptanceValue": 19, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
-                "DifficultyCheck": { "baseD20Check": 10 },
+                "DifficultyCheck": { "baseD20Check": 10, "SkillBonus_Receiver": ["skill_sexSkill_service"] },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },

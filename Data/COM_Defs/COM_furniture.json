@@ -908,7 +908,10 @@
                 ],
                 "requirements": {
                     "requirement": {
-                        "doerCount": 1
+                        "doerCount": 1,
+                        "req_Doers": {
+                            "requireSlots": ["Hand"]
+                        }
                     }
                 },
                 "variants": [
@@ -1279,6 +1282,14 @@
                             }
                         },
                         "displayName": "com_furniture_getmeal_displayName_base_2"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 99
+                            }
+                        },
+                        "displayName": "com_furniture_getmeal_displayName_base_2"
                     }
                 ],
                 "results_EP": {
@@ -1308,6 +1319,10 @@
                     "permissionBonus": [ { "permissions": ["Follow"], "bonus": 3 } ]
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
+                "_comment_results_AP": "Mealtime chat (Data/Events/COM_Triggers/OnMealChat.json, flow graph OnMealChat_flow.svg): diners are paired 1:1 for com_interaction_talk; a player at the table answers the question (playerAsSelf).",
+                "results_AP": {
+                    "result_event": { "id_overwrite": "com_furniture_getmeal_event", "requireSuccess": true, "playerAsSelf": true, "printOrder": "BeforeCompletion" }
+                },
                 "description_begin":{ "Entries":[{"conditions":[{"validatePackage":{"existsMaster_NonActor":true}}], "texts":["com_furniture_getmeal_begin_ordered_1","com_furniture_getmeal_begin_ordered_2","com_furniture_getmeal_begin_ordered_3"]}, {"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1", "com_furniture_getmeal_ongoing_2", "com_furniture_getmeal_ongoing_3"]}], "keepLooking":false },
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_onComplete_1", "com_furniture_getmeal_onComplete_2", "com_furniture_getmeal_onComplete_3"]}] },
@@ -1737,6 +1752,10 @@
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck": { "baseD20Check": 5 },
+                "clothingFit": [
+                    { "slots": ["Torso", "Lower", "Thigh", "Leg"], "fitTags": ["sportswear"], "fit": 1, "unfit": -2, "bare": 0 },
+                    { "slots": ["Feet"], "fitTags": ["sportswear"], "fit": 1, "unfit": -2, "bare": -2, "bareLabel": "ui_diceroll_clothing_barefoot" }
+                ],
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_jogging_begin_1"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_jogging_ongoing_1"] } ] },
                 "description_after": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_jogging_after_1"] } ] }
@@ -1760,6 +1779,9 @@
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck": { "baseD20Check": 10 },
+                "clothingFit": [
+                    { "slots": ["Torso", "Lower", "Thigh", "Leg"], "fitTags": ["sportswear"], "fit": 1, "unfit": -2, "bare": 0 }
+                ],
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_weights_begin_1"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_weights_ongoing_1"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_weights_remove_1"] } ] },
@@ -1784,6 +1806,9 @@
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck": { "baseD20Check": 5 },
+                "clothingFit": [
+                    { "slots": ["Torso", "Lower", "Thigh", "Leg"], "fitTags": ["sportswear"], "fit": 1, "unfit": -2, "bare": 0 }
+                ],
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_yoga_begin_1"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_yoga_ongoing_1"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_yoga_remove_1"] } ] },
@@ -1845,6 +1870,8 @@
                 "displayName": "com_furniture_swim_displayName_1",
                 "timeScale": 45,
                 "comTags": ["furniture", "recreation", "pool_swim", "exercise"],
+                "_comment_staminaTraces": "in the water: no sweat despite the ST rate (TraceDefs trace_sweat leaveOnStaminaCost)",
+                "staminaTraces": { "trace_sweat": { "amountPerST": 0 } },
                 "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "results_EP": {
                     "results_character": [
@@ -1857,6 +1884,9 @@
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck": { "baseD20Check": 8 },
+                "clothingFit": [
+                    { "slots": ["Torso", "Lower"], "layers": ["Skin", "Inner", "Outer"], "fitTags": ["swimwear"], "fit": 1, "unfit": -3, "bare": 0 }
+                ],
                 "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_swim_begin_1"] } ] },
                 "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_swim_ongoing_1"] } ] },
                 "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["com_furniture_swim_remove_1"] } ] },

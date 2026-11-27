@@ -1,0 +1,78 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_recording_begin",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_recording_begin_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_recording_begin_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_recording_begin_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_recording_begin_Ongoing_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_recording_begin_Ongoing_2"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_recording_begin_1": "(unimplemented)",
+                "com_recording_begin_2": "(unimplemented)",
+                "com_recording_begin_Ongoing_1": "(unimplemented)",
+                "com_recording_begin_Ongoing_2": "(unimplemented)"
+            }
+        }
+    }
+}

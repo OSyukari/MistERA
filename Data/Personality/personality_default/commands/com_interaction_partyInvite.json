@@ -70,25 +70,39 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_interaction_partyInvite_Refuse_4"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "responses": [
                                 "com_interaction_partyInvite_Refuse_1",
                                 "com_interaction_partyInvite_Refuse_2",
-                                "com_interaction_partyInvite_Refuse_3"
+                                "com_interaction_partyInvite_Refuse_3",
+                                "com_interaction_partyInvite_Refuse_Fallback_1"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_interaction_partyInvite_Refuse_Fallback_1"
+                                "com_interaction_partyInvite_Refuse_5"
                             ]
                         }
                     ]
@@ -331,7 +345,9 @@
                 "com_interaction_partyInvite_Tryjoin_Fallback_1": "$self$走上前问：“我也一起加入，可以吗？”",
                 "com_interaction_partyInvite_Refuse_Fallback_1": "$self$摇头婉拒道：“抱歉，我现在不太方便同行。”",
                 "com_interaction_partyInvite_Fallback_1": "$self$看了一眼身旁，神色平静。",
-                "com_interaction_partyInvite_Begin_Fallback_1": "$self$朝$target$示意了一下，打算同行。"
+                "com_interaction_partyInvite_Begin_Fallback_1": "$self$朝$target$示意了一下，打算同行。",
+                "com_interaction_partyInvite_Refuse_4": "(unimplemented)",
+                "com_interaction_partyInvite_Refuse_5": "(unimplemented)"
             }
         }
     }

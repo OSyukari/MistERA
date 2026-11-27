@@ -927,10 +927,30 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_finger_caress_B_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.4 指令失败拒绝 被B抚摸 无允许 敌意 口上文",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1024,24 +1044,30 @@
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.4 指令失败拒绝 被B抚摸 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
                                 "com_sex_finger_caress_B_9",
                                 "com_sex_finger_caress_B_67",
-                                "com_sex_finger_caress_B_68"
+                                "com_sex_finger_caress_B_68",
+                                "com_sex_finger_caress_B_28",
+                                "com_sex_finger_caress_B_29"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Refuse_2"
                             ]
                         },
                         {
                             "requireSelfOnly": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false
                             },
                             "useActiveTags": false,
                             "variants": [
@@ -1063,25 +1089,6 @@
                                 "com_sex_finger_caress_B_Self_8"
                             ],
                             "_comment": "2.5.8 拒绝独自B自慰的指令 无允许 口上文"
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_sex_finger_caress_B_9",
-                                "com_sex_finger_caress_B_28",
-                                "com_sex_finger_caress_B_29"
-                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1307,7 +1314,9 @@
                 "com_sex_finger_caress_B_76": "(unimplemented)",
                 "com_sex_finger_caress_B_77": "(unimplemented)",
                 "com_sex_finger_caress_B_Begin_19": "(unimplemented)",
-                "com_sex_finger_caress_B_Ongoing_10": "(unimplemented)"
+                "com_sex_finger_caress_B_Ongoing_10": "(unimplemented)",
+                "com_sex_finger_caress_B_Refuse_1": "(unimplemented)",
+                "com_sex_finger_caress_B_Refuse_2": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_finger_caress_B_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

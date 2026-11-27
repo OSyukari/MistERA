@@ -186,8 +186,12 @@ public static class TraceUtility
             foreach (var existing in list)
             {
                 if (existing.traceID != def.ID || existing.slot != slot || GetDisplayName(existing, holder) != name) continue;
+                float before = existing.amount;
                 existing.amount += amount;
                 if (amountCap > 0 && existing.amount > amountCap) existing.amount = Math.Max(amountCap, existing.amount - amount);
+                // old saves (0): start from what is there now
+                existing.landedAmount = Math.Max(existing.landedAmount, before) + amount;
+                if (amountCap > 0 && existing.landedAmount > amountCap) existing.landedAmount = amountCap;
                 existing.appliedTick = t.appliedTick;
                 var fresh = new TraceInstance() { amount = existing.amount };
                 def.OnCreate(fresh);
@@ -198,6 +202,7 @@ public static class TraceUtility
         }
 
         if (amountCap > 0 && t.amount > amountCap) t.amount = amountCap;
+        t.landedAmount = t.amount;
         def.OnCreate(t);
         list.Add(t);
 
@@ -228,6 +233,63 @@ public static class TraceUtility
         if (body == null) return;
         body.NotifyTracesChanged();
         body.NotifyInternalsContentChange();
+    }
+
+    //---- stamina (sweat) ----
+
+    static List<TraceDefinition> _staminaDefs = null;
+    static List<TraceDefinition> _staminaDefsSource = null;
+
+    /// <summary> definitions with leaveOnStaminaCost, rebuilt when the loaded trace list changes </summary>
+    static List<TraceDefinition> StaminaDefinitions()
+    {
+        var all = scr_System_Serializer.current?.MasterList?.BodyPartBases?.Traces;
+        if (all == null) return null;
+        if (_staminaDefs == null || _staminaDefsSource != all)
+        {
+            _staminaDefs = new List<TraceDefinition>();
+            foreach (var def in all) if (def != null && def.leaveOnStaminaCost != null) _staminaDefs.Add(def);
+            _staminaDefsSource = all;
+        }
+        return _staminaDefs;
+    }
+
+    /// <summary>
+    /// c paid costST for a round of com (CharReqUtility.ApplyCost): every trace with a leaveOnStaminaCost rule whose
+    /// ST-per-minute threshold (cost_ST / com.TimeScale) the round reaches lands amountPerST * costST on a random one of its
+    /// slots on c. com.staminaTraces overrides the rule per trace (null fields = the definition's).
+    /// </summary>
+    public static void LeaveStaminaTraces(Character_Trainable c, float costST, COM com)
+    {
+        if (c == null || c.Body == null || com == null || costST <= 0 || com.TimeScale <= 0) return;
+        var defs = StaminaDefinitions();
+        if (defs == null || defs.Count == 0) return;
+        float perMinute = costST / com.TimeScale;
+        List<TraceSpot> candidates = null;
+        foreach (var def in defs)
+        {
+            var rule = def.leaveOnStaminaCost;
+            StaminaTraceOverride own = null;
+            if (com.staminaTraces != null) com.staminaTraces.TryGetValue(def.ID, out own);
+            float minPerMinute = own?.minSTPerMinute ?? rule.minSTPerMinute;
+            float amountPerST = own?.amountPerST ?? rule.amountPerST;
+            var slots = own?.slots ?? rule.slots;
+            if (perMinute < minPerMinute) continue;
+            float amount = costST * amountPerST;
+            if (amount <= 0) continue;
+            if (candidates == null) candidates = new List<TraceSpot>();
+            else candidates.Clear();
+            bool filterSlots = slots != null && slots.Count > 0;
+            foreach (var part in c.Body.Body)
+            {
+                if (part == null || !part.AllowTraces) continue;
+                foreach (var slot in part.TraceSlots)
+                    if (!filterSlots || slots.Contains(slot)) candidates.Add(new TraceSpot(part, slot));
+            }
+            if (candidates.Count == 0) continue;
+            var spot = Utility.GetRandomElement(candidates);
+            Add(spot.holder, def, amount, TraceSource.From(c), spot.slot);
+        }
     }
 
     //---- contact ----
@@ -396,8 +458,9 @@ public static class TraceUtility
             raceName = liquid.sourceRaceName,
             partID = liquid.sourcePartID,
         };
-        // evaporated to 0: the dried mark keeps the size the liquid had when it landed
-        float amount = Math.Max(liquid.amount, driedDef.defaultAmount) * Math.Max(0.01f, temp.driedAmountRatio);
+        // wiped or evaporated to 0: the dried mark is as big as everything that landed (old saves without it: the old sizing)
+        float size = liquid.landedAmount > 0 ? liquid.landedAmount : Math.Max(liquid.amount, driedDef.defaultAmount);
+        float amount = size * Math.Max(0.01f, temp.driedAmountRatio);
         Add(holder, driedDef, amount, src, liquid.slot);
     }
 

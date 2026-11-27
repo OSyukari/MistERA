@@ -1,0 +1,135 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "jp_convenience_store_frontDesk",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "jp_convenience_store_frontDesk_1"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "施方 ｜ 接受 ｜ 判定成功",
+                                    "responses": [
+                                        "jp_convenience_store_frontDesk_2"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "jp_convenience_store_frontDesk_3"
+                            ],
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccessGTE": "Success"
+                                    },
+                                    "_comment": "独自（对象是自己） ｜ 接受 ｜ 判定成功",
+                                    "responses": [
+                                        "jp_convenience_store_frontDesk_4"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "jp_convenience_store_frontDesk_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "jp_convenience_store_frontDesk_Begin_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "jp_convenience_store_frontDesk_Begin_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "jp_convenience_store_frontDesk_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "jp_convenience_store_frontDesk_Ongoing_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "jp_convenience_store_frontDesk_Ongoing_2"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_convenience_store_frontDesk_1": "(unimplemented)",
+                "jp_convenience_store_frontDesk_2": "(unimplemented)",
+                "jp_convenience_store_frontDesk_3": "(unimplemented)",
+                "jp_convenience_store_frontDesk_4": "(unimplemented)",
+                "jp_convenience_store_frontDesk_Begin_1": "(unimplemented)",
+                "jp_convenience_store_frontDesk_Begin_2": "(unimplemented)",
+                "jp_convenience_store_frontDesk_Ongoing_1": "(unimplemented)",
+                "jp_convenience_store_frontDesk_Ongoing_2": "(unimplemented)"
+            }
+        }
+    }
+}

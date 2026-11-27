@@ -47,8 +47,10 @@
     { "path": ["self"], "when": ["solo"] },
     { "path": ["doer", "success"], "when": ["pair", "d20"] },
     { "path": ["receiver", "success"], "when": ["pair", "d20"] },
-    { "path": ["self", "success"], "when": ["solo", "d20"] }
+    { "path": ["self", "success"], "when": ["solo", "d20"] },
+    { "path": ["doer"], "when": ["pair", "receiverUnaware"], "fallback": { "requireTargetAction": false }, "label": "施方兜底（受方无法行动时也成立）" }
   ],
+  "_comment_required_fallback": "fallback: the role branch must be a fallback for that role with these fields. A doer whose receiver can't act (asleep, time-stopped …) fails a default doer branch (requireTargetAction true) and would fall through to the shared fallback, written from the receiver's side.",
 
   "misplaced": [
     { "requirement": { "requireEPFailure": true }, "label": "拒绝分支", "moveTo": "_Refuse" }

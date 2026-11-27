@@ -461,19 +461,6 @@
                                 "com_sex_P_missionary_Begin_DoerFallback_2",
                                 "com_sex_P_missionary_Begin_DoerFallback_3"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_sex_P_missionary_Begin_Fallback_1",
-                                "com_sex_P_missionary_Begin_Fallback_2",
-                                "com_sex_P_missionary_Begin_Fallback_3"
-                            ]
                         }
                     ],
                     "template": "commandAct",
@@ -645,6 +632,9 @@
                         },
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_sex_P_missionary_50",
@@ -1190,19 +1180,6 @@
                                 "com_sex_P_missionary_40",
                                 "com_sex_P_missionary_41"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_sex_P_missionary_Fallback_1",
-                                "com_sex_P_missionary_Fallback_2",
-                                "com_sex_P_missionary_Fallback_3"
-                            ]
                         }
                     ],
                     "template": "commandResult",
@@ -1221,13 +1198,29 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
-                            "useActiveTags": false,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
-                                "requireEPSuccess": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_P_missionary_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
                                 "requireTargetAction": false,
+                                "requireEPSuccess": false,
                                 "allowRecording": true
                             },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1321,33 +1314,27 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "serious"
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
                             "responses": [
                                 "com_sex_P_missionary_Refuse_Receiver_3",
                                 "com_sex_P_missionary_Refuse_Receiver_4",
                                 "com_sex_P_missionary_19",
                                 "com_sex_P_missionary_20",
-                                "com_sex_P_missionary_21"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
+                                "com_sex_P_missionary_21",
                                 "com_sex_P_missionary_Refuse_Fallback_1",
                                 "com_sex_P_missionary_Refuse_Fallback_2",
                                 "com_sex_P_missionary_Refuse_Fallback_3"
-                            ],
-                            "useActiveTags": false
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_P_missionary_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1600,7 +1587,9 @@
                 "com_sex_P_missionary_70": "“别突然用力顶啊……里面还在痛呢……”$self$慌乱地抵着$target$的胸口，双腿直发软。",
                 "com_sex_P_missionary_Begin_FE_Player_5": "迎上$target$近在咫尺的视线，$self$耳根发烫，攥紧了身下的布料：“……我有点紧张，慢一点进来。”",
                 "com_sex_P_missionary_Begin_FE_Player_6": "“唔……第一次就要这样面对面吗……”$self$偏过头不敢直视$target$，声音压得很低。",
-                "com_sex_P_missionary_Ongoing_3": "(unimplemented)"
+                "com_sex_P_missionary_Ongoing_3": "(unimplemented)",
+                "com_sex_P_missionary_Refuse_1": "(unimplemented)",
+                "com_sex_P_missionary_Refuse_2": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_P_missionary_Climax_1": "$self$ thrusts his hips deep to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",

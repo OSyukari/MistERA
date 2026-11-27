@@ -22,6 +22,11 @@
     }
   ],
 
+  "_comment_required": "fallback: the role branch must be a fallback for that role with these fields. A doer climaxing on a receiver who can't act (asleep, time-stopped …) fails a default doer branch (requireTargetAction true) and would fall through to the shared fallback, written from the receiver's side. An entry with no doer branch at all is flagged too: a pair command's doer can climax.",
+  "required": [
+    { "path": ["doer"], "when": ["pair", "receiverUnaware"], "fallback": { "requireTargetAction": false }, "label": "施方兜底（受方无法行动时也成立）" }
+  ],
+
   "misplaced": [
     { "requirement": { "requireEPFailure": true }, "label": "拒绝分支（高潮口上不会在拒绝时取）" }
   ]

@@ -755,7 +755,9 @@ public static class FactionUtility
     /// <br/>The destination is next hour's schedule FACTION, not its commands: a command-less schedule (hospital
     /// visitor, board duty, a recreation booking driven by a behavior_job override) is still somewhere to be.
     /// </summary>
-    public static bool ShouldTravelForNextHourSchedule(Character_Trainable c, I_IsJobGiver currentLocaleFaction, int currentHour, out Manageable nextFaction, out float travelMinutes)
+    /// <param name="extraLeadMinutes">something c would do first (e.g. a shower, TryFindShowerNode): true already when
+    /// the minutes left this hour don't cover it plus the travel</param>
+    public static bool ShouldTravelForNextHourSchedule(Character_Trainable c, I_IsJobGiver currentLocaleFaction, int currentHour, out Manageable nextFaction, out float travelMinutes, int extraLeadMinutes = 0)
     {
         nextFaction = null;
         travelMinutes = 0f;
@@ -791,6 +793,6 @@ public static class FactionUtility
         if (!scr_System_CampaignManager.current.Map.TryGetWorldMapTravelMinutes(fromRoot, toRoot, out travelMinutes, out var worldID)) return false;
 
         int minutesLeftInHour = 60 - scr_System_Time.current.getCurrentTime().Minute;
-        return minutesLeftInHour <= travelMinutes + NextHourTravelBuffer;
+        return minutesLeftInHour <= travelMinutes + NextHourTravelBuffer + extraLeadMinutes;
     }
 }

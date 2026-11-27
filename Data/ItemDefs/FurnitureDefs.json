@@ -71,6 +71,23 @@
             { "comID":["com_furniture_changeOutfit"] } ]
         },
         {
+            "ID":"furniture_bed_booth_luxury",
+            "displayName":"隔间单间",
+            "recipe":[],
+            "furnitureSize":4,
+            "value":60000,
+            "Tags":["rarity_common","plumbing"],
+            "_comments_occupancy":"luxury partitioned sleeping booth: a room divider that is bed, computer, wardrobe, toilet and shower in one. Gets owners from room ownership like any bed (Docs/Furniture/Plan_FurnitureOccupancy.md)",
+            "occupancy": { "isRoomDivider": true, "blocksVisibility": true, "allowSexJob": true, "holdsUnconscious": true, "assignOwnership": true },
+            "givesJob":
+            [ { "comTags":["furniture","bed"] },
+            { "comTags":["furniture","computer"] },
+            { "comTags":["furniture","bathroom"] },
+            { "comTags":["furniture","shower"] },
+            { "comID":["com_furniture_restroom_fix"] },
+            { "comID":["com_furniture_changeOutfit"] } ]
+        },
+        {
             "ID":"furniture_sofa_3",
             "recipe":[],
             "furnitureSize":4,

@@ -137,6 +137,10 @@ public class TryFindShowerNode : TryFindJobByIDNode
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         if (!IsFreeTime(c, currentHour) || !c.needsShower) return false;
+        // lateness guard: no shower that would make c leave too late for next hour's schedule elsewhere
+        var com = scr_System_Serializer.current.MasterList.COMs.GetByID(targetID);
+        int showerMinutes = com == null ? 30 : com.TimeScale;
+        if (FactionUtility.ShouldTravelForNextHourSchedule(c, currentLocaleFaction, currentHour, out _, out _, showerMinutes)) return false;
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
     }
 
@@ -161,19 +165,41 @@ public class TryFindMealNode : TryFindNonJobByTagNode
     }
 }
 
+public enum LocaleRouteMode
+{
+    /// <summary> every move (the old single node) </summary>
+    All,
+    /// <summary> only toward something claiming the hour - an active party, a booking, a work post, a home schedule - and the next-hour early departure </summary>
+    Scheduled,
+    /// <summary> only the free-time move (nothing claims the hour: toward the home faction) - placed after the shower node so a free character showers where they are first </summary>
+    FreeTime,
+}
+
 public class TryChangeLocaleNode : FindJobNode
 {
+    public LocaleRouteMode mode = LocaleRouteMode.All;
+
     public TryChangeLocaleNode()
     {
     }
+
+    /// <summary> something claims this hour (Character_Factions.CurrentJobScheduleFaction: booking, work, home schedule) or c is in an active party </summary>
+    public static bool IsHourScheduled(Character_Trainable c, int currentHour)
+    {
+        var fm = c?.FactionManager;
+        return fm != null && (fm.CurrentActiveParty != null || fm.CurrentJobScheduleFaction(currentHour) != null);
+    }
+
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         var activity = c?.FactionManager?.GetEffectiveBooking(currentHour)?.Session?.ActivityJob as Job_Activity;
         if (activity != null && activity.OverridesLocaleRouting(c)) return false;
+        bool scheduled = mode != LocaleRouteMode.All && IsHourScheduled(c, currentHour);
+        bool moveToCurrent = mode == LocaleRouteMode.All || (mode == LocaleRouteMode.Scheduled) == scheduled;
         // if working, currentjob is not home
         // if not working, currentjob is home
         // if currentjobfaction != currentlocalefaction && currentlocale is not home, go to currentjob -> specific job for rallying?
-        if (currentJobFaction != null && currentJobFaction.MainExit != null && currentJobFaction.FactionRallyJob != null
+        if (moveToCurrent && currentJobFaction != null && currentJobFaction.MainExit != null && currentJobFaction.FactionRallyJob != null
             && currentJobFaction != currentLocaleFaction)// && !c.FactionManager.HomeFactions.Contains(currentLocaleFaction))
         {
             var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
@@ -189,8 +215,9 @@ public class TryChangeLocaleNode : FindJobNode
         // Not yet due at currentJobFaction (or already there / nothing scheduled this hour) - peek at next
         // hour. If whatever's scheduled next hour is at a faction only reachable via world-map travel and
         // it's time to start heading out, rally there early so the NPC arrives on time instead of
-        // departing late.
-        if (FactionUtility.ShouldTravelForNextHourSchedule(c, currentLocaleFaction, currentHour, out var nextFaction, out var travelMinutes)
+        // departing late. A schedule, so not the free-time node's.
+        if (mode != LocaleRouteMode.FreeTime
+            && FactionUtility.ShouldTravelForNextHourSchedule(c, currentLocaleFaction, currentHour, out var nextFaction, out var travelMinutes)
             && nextFaction.MainExit != null && nextFaction.FactionRallyJob != null)
         {
             var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);

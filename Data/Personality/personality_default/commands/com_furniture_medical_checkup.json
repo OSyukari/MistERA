@@ -278,10 +278,23 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_furniture_medical_checkup_Refuse_7"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -301,19 +314,20 @@
                             "responses": [
                                 "com_furniture_medical_checkup_Refuse_4",
                                 "com_furniture_medical_checkup_Refuse_5",
-                                "com_furniture_medical_checkup_Refuse_6"
+                                "com_furniture_medical_checkup_Refuse_6",
+                                "com_furniture_medical_checkup_Refuse_Fallback_1",
+                                "com_furniture_medical_checkup_Refuse_Fallback_2"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_furniture_medical_checkup_Refuse_Fallback_1",
-                                "com_furniture_medical_checkup_Refuse_Fallback_2"
+                                "com_furniture_medical_checkup_Refuse_8"
                             ]
                         }
                     ]
@@ -585,7 +599,9 @@
                 "com_furniture_medical_checkup_Begin_Fallback_2": "$self$放松肩膀配合着检查姿势，安静地等着流程开始。",
                 "com_furniture_medical_checkup_16": "(unimplemented)",
                 "com_furniture_medical_checkup_Begin_13": "(unimplemented)",
-                "com_furniture_medical_checkup_Ongoing_4": "(unimplemented)"
+                "com_furniture_medical_checkup_Ongoing_4": "(unimplemented)",
+                "com_furniture_medical_checkup_Refuse_7": "(unimplemented)",
+                "com_furniture_medical_checkup_Refuse_8": "(unimplemented)"
             }
         }
     }

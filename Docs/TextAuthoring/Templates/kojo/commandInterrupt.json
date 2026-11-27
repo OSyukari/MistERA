@@ -4,6 +4,8 @@
   "label": "被撞见口上",
   "inner": "interaction",
   "bindCommand": ["_Interrupt"],
+  "_comment_speakers": "The speaker is always its EP's doer or receiver (Job.GetActorEPs), the listener the newcomer: a doer + receiver split (alone: a doer branch) covers every speaker, so no generic fallback is needed after it.",
+  "listenerNeverSelf": true,
 
   "fallback": {
     "label": "兜底（被撞见）",

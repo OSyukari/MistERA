@@ -67,6 +67,14 @@ public abstract class TraceDefinition
     public float dirtiness = 1;
     public float dirtinessPerAmount = 0;
 
+    /// <summary> left on its own payer by spending stamina fast (sweat, TraceUtility.LeaveStaminaTraces), null = never </summary>
+    public StaminaTraceRule leaveOnStaminaCost = null;
+    /// <summary>
+    /// false = never sends anyone to the restroom (Character_Trainable.needsRestroom) - a restroom wipe made for other
+    /// reasons still cleans / dries it. Other trips (face wash, shower) are unaffected.
+    /// </summary>
+    public bool triggersRestroomTrip = true;
+
     public float GetDirtiness(TraceInstance t)
     {
         float d = dirtiness + dirtinessPerAmount * (t == null ? 0 : t.amount);
@@ -184,6 +192,31 @@ public class TraceDefinition_Temporary : TraceDefinition
     }
 }
 
+/// <summary>
+/// TraceDefinition.leaveOnStaminaCost: a command round whose stamina cost per minute (cost_ST / the command's timeScale)
+/// is at least minSTPerMinute leaves amountPerST * cost_ST of the trace on a random one of slots of the payer
+/// (CharReqUtility.ApplyCost, doers and receivers alike; event packages that ignore stat costs leave none).
+/// </summary>
+public class StaminaTraceRule
+{
+    public float minSTPerMinute = 0.5f;
+    public float amountPerST = 0.1f;
+    /// <summary> candidate trace slots; empty = any trace slot of the body </summary>
+    public List<BodyPartEquipSlot> slots = new List<BodyPartEquipSlot>();
+}
+
+/// <summary>
+/// A command's own setting for one stamina trace (COM.staminaTraces, keyed by trace id): each field left null uses the
+/// definition's leaveOnStaminaCost. E.g. sauna sweats at any rate (minSTPerMinute 0), a calm command never does
+/// (amountPerST 0). Only for traces that have a leaveOnStaminaCost rule.
+/// </summary>
+public class StaminaTraceOverride
+{
+    public float? minSTPerMinute = null;
+    public float? amountPerST = null;
+    public List<BodyPartEquipSlot> slots = null;
+}
+
 /// <summary> checked on the character leaving the trace </summary>
 public class TraceLeaveCondition
 {
@@ -248,6 +281,12 @@ public class TraceInstance
     /// <summary> trace slot of its holder it sits on (holder's traceSlots); None = old save, fixed on load </summary>
     public BodyPartEquipSlot slot = BodyPartEquipSlot.None;
     public float amount = 1;
+    /// <summary>
+    /// everything that ever landed on this instance (merges add, capped like amount) - a liquid's dried mark keeps this
+    /// size when it is wiped or evaporates (TraceUtility.AddDried). 0 = an old save, the dried mark falls back to the
+    /// old sizing.
+    /// </summary>
+    public float landedAmount = 0;
     /// <summary> minutes left (permanent heal timer / solid fade) </summary>
     public float remaining = 0;
     public long appliedTick = 0;

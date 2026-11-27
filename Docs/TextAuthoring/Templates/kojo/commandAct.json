@@ -30,9 +30,11 @@
     }
   ],
 
+  "_comment_required": "fallback: the role branch must be a fallback for that role with these fields. A doer whose receiver can't act (asleep, time-stopped …) fails a default doer branch (requireTargetAction true) and would fall through to the shared fallback, written from the receiver's side.",
   "required": [
     { "path": ["doer"], "when": ["pair"] },
-    { "path": ["receiver"], "when": ["pair"] }
+    { "path": ["receiver"], "when": ["pair"] },
+    { "path": ["doer"], "when": ["pair", "receiverUnaware"], "fallback": { "requireTargetAction": false }, "label": "施方兜底（受方无法行动时也成立）" }
   ],
 
   "misplaced": [

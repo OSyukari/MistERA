@@ -74,6 +74,13 @@ public static class TA_KojoTemplate
     {
         public List<string> path = new List<string>();
         public List<string> when = new List<string>();
+        /// <summary>
+        /// Set: the path's last branch must be a fallback for its role (template fallback shape, role flag only) carrying
+        /// these requirement fields - the role's speaker lands there in every state the `when` facts allow.
+        /// </summary>
+        public JObject fallback;
+        /// <summary>Optional name in findings (default: the path's leaf labels).</summary>
+        public string label;
     }
 
     public class Template
@@ -84,6 +91,8 @@ public static class TA_KojoTemplate
         /// <summary>Command kojo suffixes this template claims ("" = the command's own key).</summary>
         public List<string> bindCommand = new List<string>();
         public bool notWired;
+        /// <summary>The listener is always another character (a joiner, a newcomer): a solo speaker is a plain doer, no self role.</summary>
+        public bool listenerNeverSelf;
         public JObject fallbackRequirement;
         /// <summary>Requirement fields every branch must carry (refusal keys: requireEPSuccess false).</summary>
         public JObject everyBranch;
@@ -184,6 +193,7 @@ public static class TA_KojoTemplate
                     placeholder = (string)o["placeholder"] ?? "(unimplemented)",
                     inner = (string)o["inner"],
                     notWired = (bool?)o["notWired"] ?? false,
+                    listenerNeverSelf = (bool?)o["listenerNeverSelf"] ?? false,
                     fallbackRequirement = o["fallback"]?["requirement"] as JObject ?? new JObject(),
                     everyBranch = o["everyBranch"]?["requirement"] as JObject,
                     stamp = TA_DocBuilderBase.Sha1Hex(text).Substring(0, 8),
@@ -236,6 +246,8 @@ public static class TA_KojoTemplate
                         var r = new Required();
                         if (rq[k]["path"] is JArray rp) for (int g = 0; g < rp.Count; g++) r.path.Add((string)rp[g]);
                         if (rq[k]["when"] is JArray rw) for (int g = 0; g < rw.Count; g++) r.when.Add((string)rw[g]);
+                        r.fallback = rq[k]["fallback"] as JObject;
+                        r.label = (string)rq[k]["label"];
                         t.required.Add(r);
                     }
                 templates[t.id] = t;
@@ -360,7 +372,10 @@ public static class TA_KojoTemplate
             {
                 var labels = new List<string>();
                 for (int g = 0; g < t.required[k].path.Count; g++) labels.Add(FindLeaf(t, t.required[k].path[g])?.label ?? t.required[k].path[g]);
-                required.Add(new JObject { ["path"] = new JArray(t.required[k].path.ToArray()), ["labels"] = new JArray(labels.ToArray()), ["when"] = new JArray(t.required[k].when.ToArray()) });
+                var ro = new JObject { ["path"] = new JArray(t.required[k].path.ToArray()), ["labels"] = new JArray(labels.ToArray()), ["when"] = new JArray(t.required[k].when.ToArray()) };
+                if (t.required[k].fallback != null) ro["fallback"] = t.required[k].fallback.DeepClone();
+                if (!string.IsNullOrEmpty(t.required[k].label)) ro["label"] = t.required[k].label;
+                required.Add(ro);
             }
             var misplaced = new JArray();
             for (int k = 0; k < t.misplaced.Count; k++)
@@ -782,20 +797,19 @@ public static class TA_KojoTemplate
         {
             var r = c.tpl.required[i];
             bool applies = true;
-            for (int k = 0; k < r.when.Count && applies; k++)
-            {
-                var w = r.when[k];
-                applies = w == "pair" ? c.cmd.pair : w == "solo" ? c.cmd.solo : w == "d20" ? c.cmd.d20 : false;
-            }
+            for (int k = 0; k < r.when.Count && applies; k++) applies = Fact(c.tpl, c.cmd, r.when[k]);
             if (!applies || r.path.Count == 0) continue;
             // an override speaks for one side only: a path for the other side doesn't apply, its own side's role leaf
             // is the entry itself
             int start = 0;
+            string role = c.cmd.side;
+            for (int k = 0; k < r.path.Count && role == null; k++) if (IsRoleLeaf(c.tpl, r.path[k])) role = r.path[k];
             if (c.cmd.side != null && IsRoleLeaf(c.tpl, r.path[0]))
             {
                 if (r.path[0] != c.cmd.side) continue;
                 start = 1;
-                if (r.path.Count == 1) continue;
+                // a role fallback of the override's own side: the entry's top-level fallback
+                if (r.path.Count == 1 && r.fallback == null) continue;
             }
             var leaves = new List<Leaf>();
             var labels = new List<string>();
@@ -806,13 +820,91 @@ public static class TA_KojoTemplate
                 leaves.Add(leaf);
                 labels.Add(leaf.label);
             }
-            if (leaves == null || FindPath(c.tpl, top, leaves, 0)) continue;
+            if (leaves == null) continue;
+            var label = string.IsNullOrEmpty(r.label) ? string.Join(" › ", labels) : r.label;
+            if (r.fallback != null)
+            {
+                RequiredFallback(c, top, leaves, role == c.cmd.side && start == 1 ? null : role, r, label);
+                continue;
+            }
+            if (FindPath(c.tpl, top, leaves, 0)) continue;
             // Shipped refusal entries can still satisfy the legacy receiver requirement by role.
             if (c.tpl.id == "commandRefuse" && r.path.Count == 1 && r.path[0] == "receiver"
                 && FindPath(c.tpl, top, new List<Leaf> { FindLeaf(c.tpl, "receiverDeclined") }, 0)) continue;
             c.into.Add(Finding("templateRequiredLeaf", c.provider, c.entryID, null, "template", c.tpl.id,
-                "leaf", string.Join(" › ", labels), "when", string.Join("、", r.when)));
+                "leaf", label, "when", string.Join("、", r.when)));
         }
+    }
+
+    /// <summary>
+    /// A required role fallback: among the branches at the path (an override's own side: the top-level branches, the
+    /// entry speaks for that side only) one shaped as a fallback for the role must carry the template's fields.
+    /// None at all → templateRequiredLeaf; only ones without the fields → templateFallbackFields on the last of them.
+    /// </summary>
+    static void RequiredFallback(Ctx c, List<ResponseEntry.Variant> top, List<Leaf> leaves, string role, Required r, string label)
+    {
+        var found = new List<ResponseEntry.Variant>();
+        var paths = new List<string>();
+        if (leaves.Count == 0)
+        {
+            for (int i = 0; i < top.Count; i++) if (top[i] != null && !top[i].disabled) { found.Add(top[i]); paths.Add($"variants[{i}]"); }
+        }
+        else CollectPath(c.tpl, top, leaves, 0, "", found, paths);
+        int last = -1;
+        for (int i = 0; i < found.Count; i++)
+        {
+            if (!FallbackShape(c.tpl, found[i], role)) continue;
+            last = i;
+            bool ok = true;
+            var cur = Req(found[i]);
+            foreach (var p in r.fallback.Properties()) if (!JToken.DeepEquals(cur[p.Name], p.Value)) ok = false;
+            if (ok) return;
+        }
+        if (last < 0)
+        {
+            c.into.Add(Finding("templateRequiredLeaf", c.provider, c.entryID, null, "template", c.tpl.id,
+                "leaf", label, "when", string.Join("、", r.when)));
+            return;
+        }
+        FallbackFields(c.tpl, c.provider, c.entryID, found[last], paths[last], r.fallback, c.into);
+    }
+
+    /// <summary>FindPath collecting every branch the path ends at (with own lines) and its variant path.</summary>
+    static void CollectPath(Template tpl, List<ResponseEntry.Variant> list, List<Leaf> leaves, int idx, string prefix,
+        List<ResponseEntry.Variant> found, List<string> paths)
+    {
+        if (list == null) return;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var v = list[i];
+            if (v == null || v.disabled || MatchMisplaced(tpl, v) != null) continue;
+            var axes = Classify(tpl, v);
+            if (axes.Count == 0 || tpl.axes[axes[0]].kind != "ep") continue;
+            var path = prefix == "" ? $"variants[{i}]" : $"{prefix}.variants[{i}]";
+            if (LeafMatches(leaves[idx], v))
+            {
+                if (idx == leaves.Count - 1) { if (HasOwnLines(v)) { found.Add(v); paths.Add(path); } }
+                else CollectPath(tpl, v.variants, leaves, idx + 1, path, found, paths);
+            }
+            else CollectPath(tpl, v.variants, leaves, idx, path, found, paths);
+        }
+    }
+
+    /// <summary>A `when` fact of the key's commands (TA_KojoIndex.AddFacts); unknown names never hold.</summary>
+    static bool Fact(Template tpl, CommandKey cmd, string w)
+    {
+        switch (w)
+        {
+            case "pair": return cmd.pair;
+            case "solo": return cmd.solo;
+            case "d20": return cmd.d20;
+            case "mutual": return cmd.mutual;
+            case "allDoers": return cmd.allDoers;
+            case "doerUnaware": return cmd.doerUnaware;
+            case "receiverUnaware": return cmd.receiverUnaware;
+        }
+        warnings.Add($"{tpl.id} required: unknown fact {w}");
+        return false;
     }
 
     static readonly HashSet<string> UnawareSelfStatusTags = new HashSet<string> { "timestop", "timestopped", "sleeping", "unconscious" };
@@ -933,7 +1025,8 @@ public static class TA_KojoTemplate
             var roles = new List<string>();
             if (cmd.pair || (cmd.mutual && !cmd.allDoers)) { roles.Add("doer"); roles.Add("receiver"); }
             if (cmd.mutual && cmd.allDoers && !roles.Contains("doer")) roles.Add("doer");
-            if (cmd.solo) { if (!roles.Contains("doer")) roles.Add("doer"); roles.Add("self"); }
+            // listenerNeverSelf (_Join / _Interrupt: the listener is the joiner / newcomer): alone is a plain doer, no self
+            if (cmd.solo) { if (!roles.Contains("doer")) roles.Add("doer"); if (!tpl.listenerNeverSelf) roles.Add("self"); }
             var covered = new Dictionary<string, int>();
             for (int i = 0; i < e.variants.Count; i++)
             {

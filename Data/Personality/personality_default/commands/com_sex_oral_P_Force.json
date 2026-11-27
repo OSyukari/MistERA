@@ -488,19 +488,6 @@
                                 "com_sex_oral_P_Force_Begin_DoerFallback_2",
                                 "com_sex_oral_P_Force_Begin_DoerFallback_3"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_sex_oral_P_Force_Begin_Fallback_1",
-                                "com_sex_oral_P_Force_Begin_Fallback_2",
-                                "com_sex_oral_P_Force_Begin_Fallback_3"
-                            ]
                         }
                     ],
                     "template": "commandAct",
@@ -684,6 +671,9 @@
                         },
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_sex_oral_P_Force_45",
@@ -1268,19 +1258,6 @@
                                 "com_sex_oral_P_Force_41",
                                 "com_sex_oral_P_Force_42"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_sex_oral_P_Force_Fallback_1",
-                                "com_sex_oral_P_Force_Fallback_2",
-                                "com_sex_oral_P_Force_Fallback_3"
-                            ]
                         }
                     ],
                     "template": "commandResult",
@@ -1299,13 +1276,29 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
-                            "useActiveTags": false,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
-                                "requireEPSuccess": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_oral_P_Force_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
                                 "requireTargetAction": false,
+                                "requireEPSuccess": false,
                                 "allowRecording": true
                             },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2.4 指令失败拒绝 被强制口交 无允许 敌意 口上文",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1399,33 +1392,27 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "serious"
-                            ],
-                            "_comment": "2.2.4 指令失败拒绝 被强制口交 无允许 敌意 口上文",
                             "responses": [
                                 "com_sex_oral_P_Force_Refuse_Receiver_1",
                                 "com_sex_oral_P_Force_Refuse_Receiver_2",
                                 "com_sex_oral_P_Force_19",
                                 "com_sex_oral_P_Force_20",
-                                "com_sex_oral_P_Force_21"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
+                                "com_sex_oral_P_Force_21",
                                 "com_sex_oral_P_Force_Refuse_Fallback_1",
                                 "com_sex_oral_P_Force_Refuse_Fallback_2",
                                 "com_sex_oral_P_Force_Refuse_Fallback_3"
-                            ],
-                            "useActiveTags": false
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_oral_P_Force_Refuse_2"
+                            ]
                         }
                     ],
                     "template": "commandRefuse"
@@ -1665,7 +1652,9 @@
                 "com_sex_oral_P_Force_Climax_timestop_3": "喉咙在顶弄下不受控地收紧抽搐着，$self$却连眨眼都做不到，整个人仍停在时间冻结前的瞬间。",
                 "com_sex_oral_P_Force_49": "“就是这样，别用牙齿。”$self$低头看着嘴角挂满津液的$target$，挺腰往更深处顶去。",
                 "com_sex_oral_P_Force_50": "湿滑的口腔包裹着柱身来回磨蹭，$self$喘了口气，干脆扣住$target$的脑袋连根送了进去。",
-                "com_sex_oral_P_Force_Ongoing_1": "(unimplemented)"
+                "com_sex_oral_P_Force_Ongoing_1": "(unimplemented)",
+                "com_sex_oral_P_Force_Refuse_1": "(unimplemented)",
+                "com_sex_oral_P_Force_Refuse_2": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_oral_P_Force_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

@@ -2547,7 +2547,8 @@ public abstract class ActionPackage
             if (!_rescueCandidates.TryGetValue(ep.Doer.RefID, out var existingAmount) || doerAmount > existingAmount) _rescueCandidates[ep.Doer.RefID] = doerAmount;
         }
 
-        foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
+        // the DC stage's own skill lists (AcceptanceCheck's lists are for the AC stage: EvaluationPackage / Modifiers)
+        foreach (var i in targetCOM.DifficultyCheck.SkillBonus_Doer)
         {
             var j = ep.Doer.GetSkill(i);
             if (j == null)
@@ -2564,7 +2565,7 @@ public abstract class ActionPackage
 
         if (ep.Receiver != null && ep.Receiver != ep.Doer)
         {
-            foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
+            foreach (var i in targetCOM.DifficultyCheck.SkillBonus_Receiver)
             {
                 var j = ep.Receiver.GetSkill(i);
                 if (j == null)
@@ -2578,6 +2579,10 @@ public abstract class ActionPackage
                 dcMods.AddModifier(ep.Receiver.RefID, j.DisplayName, k);
             }
         }
+
+        // dressed for it or not (COM.clothingFit, e.g. exercise: sportswear, running shoes)
+        bonus += targetCOM.GetClothingFitMod(ep.Doer, dcMods);
+        if (ep.Receiver != null && ep.Receiver != ep.Doer) bonus += targetCOM.GetClothingFitMod(ep.Receiver, dcMods);
         return bonus;
     }
 
@@ -2586,7 +2591,7 @@ public abstract class ActionPackage
     /// picked, so each pair's own experience (skills) and the penetrated organ's lubrication count. Other commands keep
     /// one shared group roll.
     /// </summary>
-    [JsonIgnore] protected bool UsesPairDC { get { return this is ActionPackage_Sex && targetCOM != null && targetCOM.baseD20Check > 0; } }
+    [JsonIgnore] protected bool UsesPairDC { get { return this is ActionPackage_Sex && targetCOM != null && targetCOM.HasAutoDC; } }
     readonly List<string> pairCheckResults = new List<string>(), pairCheckResultsShort = new List<string>(), pairCheckTooltips = new List<string>();
 
     /// <summary> Resolves one EP's DC (UsesPairDC). An LLM-forced result on that EP replaces the roll. </summary>
@@ -2729,7 +2734,8 @@ public abstract class ActionPackage
 
         if (this.targetCOM != null)
         {
-            if (targetCOM.baseD20Check == 0)
+            // no DC, or one only an event rolls (Difficulty.noAutoRoll): the accepted package just succeeds
+            if (!targetCOM.HasAutoDC)
             {
                 checkResults_result = "";
                 checkResults_result_short = "";
@@ -2742,7 +2748,7 @@ public abstract class ActionPackage
                 pairCheckResultsShort.Clear();
                 pairCheckTooltips.Clear();
             }
-            else if (targetCOM.baseD20Check > 0)
+            else
             {
                 if (CollectMods(out var dcMods, out int bonus, out int baseDC))
                 {
@@ -3315,6 +3321,11 @@ public abstract class ActionPackage
     MessageCollect temporaryM = null;
     string checkResults_result = "";
     string checkResults_tooltips = "";
+    /// <summary> the last execution's DC result line / its bonus tooltip ("" without a DC roll) - e.g. an event-run package (ExecuteAPOnSingleChara withCheck) </summary>
+    /// <summary> set at completion by an event printing before it (Result_Event.printOrder): Job.PostUpdateTime hands that round's job log to it </summary>
+    [JsonIgnore] public CompletionLogHold CompletionLogHold = null;
+    [JsonIgnore] public string CheckResultText { get { return checkResults_result; } }
+    [JsonIgnore] public string CheckResultTooltip { get { return checkResults_tooltips; } }
     string checkResults_result_short = "";
 
     /// <summary>

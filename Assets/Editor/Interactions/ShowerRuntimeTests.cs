@@ -142,7 +142,25 @@ public static class ShowerRuntimeTests
             var expanded = EventUtility.ExpandOptions(owner, new List<Event.EventEntry.Options> { hiddenOpt, visibleOpt });
             Require(expanded.Count == 1 && expanded[0] == visibleOpt, "hideIfInvalid did not filter invalid option");
 
-            Debug.Log("Shower runtime checks passed: scopes, receiver routing, trace cleanup, naked Undress, relationships, joining, acceptance, once-per-EP guard, and multi-target shower helpers.");
+            // Hand-based pet vs humanoid shower partitioning
+            var handPart = new BodyPart_Instance();
+            var handBase = new BodyPart_Base();
+            handBase.AvailableSlots.Add(BodyPartEquipSlot.Hand);
+            Set(handPart, "basePointer", handBase);
+            doer.Body = new Character_Body();
+            Set(doer.Body, "body", new List<BodyPart_Instance> { handPart });
+            Require(doer.Body.HasHand && !receiver.Body.HasHand, "HasHand check failed for humanoid vs handless body");
+            var hasHandCond = new Event_CharaCondition { parameters = new List<string> { "hasHand" } };
+            var noHandCond = new Event_CharaCondition { parameters = new List<string> { "hasHand", "false" } };
+            Require(EventUtility.isValid(hasHandCond, owner, doer) && !EventUtility.isValid(hasHandCond, owner, receiver), "hasHand condition failed");
+            Require(!EventUtility.isValid(noHandCond, owner, doer) && EventUtility.isValid(noHandCond, owner, receiver), "hasHand false condition failed");
+            owner.Targets["mixed"] = new List<Character_Trainable> { doer, receiver };
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.FilterTargets, "mixed", "withHand", "hasHand")), "FilterTargets hasHand failed");
+            Require(owner.Targets["withHand"].Count == 1 && owner.Targets["withHand"][0] == doer, "FilterTargets hasHand result mismatch");
+            Require(EventUtility.Execute(owner, Exec(Event.EventEntry.ExecutionType.FilterTargets, "mixed", "withoutHand", "noHand")), "FilterTargets noHand failed");
+            Require(owner.Targets["withoutHand"].Count == 1 && owner.Targets["withoutHand"][0] == receiver, "FilterTargets noHand result mismatch");
+
+            Debug.Log("Shower runtime checks passed: scopes, receiver routing, trace cleanup, naked Undress, relationships, joining, acceptance, once-per-EP guard, multi-target shower helpers, and hand/pet filters.");
         }
         finally
         {

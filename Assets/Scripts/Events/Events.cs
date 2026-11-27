@@ -871,9 +871,12 @@ public class Event : I_SerializationCallbackReceiver
             StartSexJobInParty,
             /// <summary>
             /// [string doersKey, string receiverKey, string COMID, optional int repeatCount = 1, optional bool ignoreStatCost = false,
-            /// optional bool forceAccept = false, optional string permissionMode = "none"] <br/>
+            /// optional bool forceAccept = false, optional string permissionMode = "none", optional string outputMode = "full"] <br/>
             /// ignoreStatCost / forceAccept must be valid bool strings and permissionMode none / grant / skip / request ("" = none)
             /// when supplied; invalid values fail before movement.
+            /// outputMode (EventUtility.OutputMode*): "full" ("" too) = result kojo + EXP; "kojoOnly" = result kojo only - EXP is
+            /// still granted but not shown nor fed to an AP batch / the event's EXP summary (e.g. NPC pairs the player watches);
+            /// "withCheck" = full plus the package's DC result line (ActionPackage.CheckResultText, bonus tooltip) ahead of the kojo.
             /// The last package's result kojo (ActionPackage.ResultKojo) goes into this call's collector and prints with its
             /// final flush, ahead of the EXP. Inside an EntryResultsSilent batch it is suppressed with the rest.
             /// forceAccept: every EP of the package is accepted instead of rolling acceptance (package-only, like ignoreStatCost);
@@ -1687,7 +1690,7 @@ public class Event : I_SerializationCallbackReceiver
             /// Filters sourceKey (TryResolveExecTargets) into owner.Targets[destKey] (replaces destKey, even if empty).
             /// Modes: "canAct" (conscious &amp; not timestopped), "passive" (!canAct: timestopped or unconscious/sleeping),
             /// "hasPermission" [permissionID, holderKey], "wouldDeflate" (shower-expellable internal contents),
-            /// "exclude" [excludeKey]. True iff at least one character matched.
+            /// "exclude" [excludeKey], "player" / "nonPlayer" (is / is not the player). True iff at least one character matched.
             /// </summary>
             FilterTargets,
             /// <summary>
@@ -1722,7 +1725,30 @@ public class Event : I_SerializationCallbackReceiver
             /// option's "tooltip") and AppendStrings[blockKey] to why the join is sure to be refused under deterministic rolls, ""
             /// otherwise (for an option's disabledReasonAppendKey). False (keys untouched) when self cannot join it.
             /// </summary>
-            SetJoinablePrivacyActionName
+            SetJoinablePrivacyActionName,
+            /// <summary>
+            /// [string actorKey, string comID, string storeKey] <br/>
+            /// Rolls comID's DifficultyCheck (baseD20Check - usually flagged noAutoRoll, so the package itself never rolled it)
+            /// for the first character of actorKey (TryResolveExecTargets, "self" included), with the same skill bonus a solo
+            /// package's own roll gets (ActionPackage.CollectPairMods: validUse skills on the command's tags + the command's
+            /// DifficultyCheck.SkillBonus_Doer). Natural 20 = CriticalSuccess, natural 1 = CriticalFailure. Stores the Memory_Response name in
+            /// AppendStrings[storeKey] (branch with AppendStringEquals: CriticalFailure / Failure / Success / CriticalSuccess),
+            /// the check line in [storeKey + "_text"] and the bonus lines in [storeKey + "_tooltip"]. No experience here: the
+            /// command's own execution already granted it. False when the actor or the command (with a DC) is missing.
+            /// </summary>
+            RollCommandDC,
+            /// <summary>[string actorKey, string comID, string prefix] Crane machine: fill the 3x3 grid from the owner's prize pool (CraneMachineUtility.Setup). False when empty.</summary>
+            CraneSetup,
+            /// <summary>[string prefix] Crane machine: sets [prefix]_cell_name; true when the picked cell holds a prize (CraneMachineUtility.CellHasPrize).</summary>
+            CraneCellHasPrize,
+            /// <summary>[string actorKey, string prefix, "one" | "all"] Crane machine: give one random / every prize of the picked cell to the actor's home faction (CraneMachineUtility.Grab).</summary>
+            CraneGrab,
+            /// <summary>
+            /// [string queueKey, string destKey] <br/>
+            /// Like PopFirstTarget, but removes a random non-null character from owner.Targets[queueKey] and binds it as
+            /// singleton owner.Targets[destKey] (random 1:1 pairing: pop twice). False (and clears destKey) when empty.
+            /// </summary>
+            PopRandomTarget
 
         }
     }

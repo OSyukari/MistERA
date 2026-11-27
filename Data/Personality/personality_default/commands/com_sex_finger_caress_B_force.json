@@ -12,6 +12,10 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            },
                             "_comment": "受方 → 对方（玩家或 NPC） ｜ 接受",
                             "responses": [
                                 "com_sex_finger_caress_B_force_Climax_1",
@@ -20,16 +24,14 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（任何状态）",
+                            "_comment": "施方兜底（受方无法行动时也成立）",
                             "responses": [
-                                "com_sex_finger_caress_B_force_Climax_4",
-                                "com_sex_finger_caress_B_force_Climax_5",
-                                "com_sex_finger_caress_B_force_Climax_6"
+                                "com_sex_finger_caress_B_force_Climax_7"
                             ]
                         }
                     ]
@@ -391,44 +393,58 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                            "responses": [
-                                "com_sex_finger_caress_B_force_Refuse_1",
-                                "com_sex_finger_caress_B_force_Refuse_2",
-                                "com_sex_finger_caress_B_force_Refuse_3"
-                            ]
-                        },
-                        {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_sex_finger_caress_B_force_Refuse_4",
-                                "com_sex_finger_caress_B_force_Refuse_5",
-                                "com_sex_finger_caress_B_force_Refuse_6"
+                                "com_sex_finger_caress_B_force_Refuse_10"
                             ]
                         },
                         {
-                            "useActiveTags": false,
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（拒绝，任何状态）",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "useActiveTags": false,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_sex_finger_caress_B_force_Refuse_1",
+                                        "com_sex_finger_caress_B_force_Refuse_2",
+                                        "com_sex_finger_caress_B_force_Refuse_3"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_sex_finger_caress_B_force_Refuse_4",
+                                "com_sex_finger_caress_B_force_Refuse_5",
+                                "com_sex_finger_caress_B_force_Refuse_6",
                                 "com_sex_finger_caress_B_force_Refuse_7",
                                 "com_sex_finger_caress_B_force_Refuse_8",
                                 "com_sex_finger_caress_B_force_Refuse_9"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_finger_caress_B_force_Refuse_11"
                             ]
                         }
                     ]
@@ -514,7 +530,10 @@
                 "com_sex_finger_caress_B_force_31": "(unimplemented)",
                 "com_sex_finger_caress_B_force_32": "(unimplemented)",
                 "com_sex_finger_caress_B_force_Begin_19": "(unimplemented)",
-                "com_sex_finger_caress_B_force_Ongoing_10": "(unimplemented)"
+                "com_sex_finger_caress_B_force_Ongoing_10": "(unimplemented)",
+                "com_sex_finger_caress_B_force_Refuse_10": "(unimplemented)",
+                "com_sex_finger_caress_B_force_Climax_7": "(unimplemented)",
+                "com_sex_finger_caress_B_force_Refuse_11": "(unimplemented)"
             }
         }
     }

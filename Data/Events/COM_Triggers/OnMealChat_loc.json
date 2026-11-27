@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "English localization companion for OnMealChat.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "meal_question": "The food is served, and the others at the table are already chatting over their meal. What will you do?",
+                "meal_opt_chat_with": "Chat with $firstname$",
+                "meal_opt_silent": "Eat quietly (listen in)",
+                "meal_opt_quick": "Finish quickly (stay out of it)",
+                "meal_chat_player": "$me.firstname$ eats and chats with $picked.firstname$.",
+                "meal_silent": "$me.firstname$ keeps their head down and eats quietly, listening to the talk around the table.",
+                "meal_quick": "$me.firstname$ wolfs down the meal and stays out of the conversation.",
+                "meal_chat_approach": "$npc.firstname$ notices $me.firstname$ eating quietly and leans over to strike up a conversation.",
+                "meal_chat_pair": "$pair_a.firstname$ and $pair_b.firstname$ chat over their meal."
+            }
+        }
+    }
+}

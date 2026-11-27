@@ -199,6 +199,33 @@
                 "maxAmount": 30,
                 "matter": "Solid",
                 "durationMinutes": 180
+            },
+            {
+                "$type": "TraceDefinition_Temporary, Assembly-CSharp",
+                "id": "trace_sweat",
+                "_comment": "Sweat (code: TraceUtility.LeaveStaminaTraces from CharReqUtility.ApplyCost): a command round costing at least 0.5 ST per minute (cost_ST / timeScale: jogging, weights, swimming, farm work, training, sex; not desk work, cleaning, yoga, sauna) leaves 0.1 per ST on the payer's face / torso / lower body. Never sends anyone to the restroom (triggersRestroomTrip false) - a restroom wipe made for other reasons dries it; a face wash removes it from the face; a shower removes it. Evaporates into trace_sweat_dried, as big as all the sweat that landed. Counts toward the shower need like other washable traces.",
+                "dirtiness": 0, "dirtinessPerAmount": 1,
+                "tags": ["liquid", "sweat"],
+                "mergeMode": "Merge",
+                "defaultAmount": 1,
+                "maxAmount": 10,
+                "matter": "Liquid",
+                "evaporationPerMinute": 0.02,
+                "driedTraceID": "trace_sweat_dried",
+                "driedAmountRatio": 1,
+                "triggersRestroomTrip": false,
+                "_comment_leaveOnStaminaCost": "Commands override any field with COM.staminaTraces.",
+                "leaveOnStaminaCost": { "minSTPerMinute": 0.5, "amountPerST": 0.1, "slots": ["Face", "Torso", "Lower", "Thigh", "Leg"] }
+            },
+            {
+                "$type": "TraceDefinition_Temporary, Assembly-CSharp",
+                "id": "trace_sweat_dried",
+                "_comment": "Dried sweat: no timer, only a shower removes it.",
+                "dirtiness": 0, "dirtinessPerAmount": 1,
+                "tags": ["dried", "sweat"],
+                "mergeMode": "Merge",
+                "maxAmount": 10,
+                "matter": "Dried"
             }
         ]
     },
@@ -250,7 +277,10 @@
                 "trace_lube_tooltip": "黏滑的润滑液。",
                 "trace_sand": "沙子",
                 "trace_sand_tooltip": "沾在身上的细沙，拍拍就能掸掉。",
-                "trace_clean_removed": "$location$上的$trace$",
+                "trace_sweat": "汗水",
+                "trace_sweat_tooltip": "运动后渗出的汗水，擦过或晾干后会留下汗渍。",
+                "trace_sweat_dried": "汗渍",
+                "trace_sweat_dried_tooltip": "汗水干后留下的黏腻汗渍，只能洗澡洗掉。",                "trace_clean_removed": "$location$上的$trace$",
                 "trace_clean_dried": "$location$上的$trace$（擦过后干在了皮肤上）",
                 "trace_clean_separator": "、"
             }

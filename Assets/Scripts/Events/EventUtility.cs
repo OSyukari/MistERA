@@ -27,6 +27,10 @@ public class EventLineSnapshot
 
 public static class EventUtility
 {
+    static readonly string[] SexualRelationshipTypeIDs = new[]
+    {
+        "relationship_couple", "relationship_marriage", "relationship_fwb", "relationship_slave"
+    };
     /// <summary>
     /// This function does not automatically register and start this event in handler
     /// </summary>
@@ -1097,6 +1101,41 @@ public static class EventUtility
                 return c.isTimeStopped;
             case "wouldDeflateAny":
                 return HasShowerExpellableContents(c);
+            case "hasHand":
+            {
+                bool wantHand = r.parameters.Count < 2 || !r.parameters[1].Equals("false", StringComparison.OrdinalIgnoreCase);
+                return (c.Body != null && c.Body.HasHand) == wantHand;
+            }
+            case "needsShower":
+            {
+                bool wantShower = r.parameters.Count < 2 || !r.parameters[1].Equals("false", StringComparison.OrdinalIgnoreCase);
+                return c.needsShower == wantShower;
+            }
+            case "statusEXGte":
+            {
+                if (r.parameters.Count < 3 || string.IsNullOrEmpty(r.parameters[1])) return false;
+                if (!float.TryParse(r.parameters[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float minVal)) return false;
+                var st = c.Stats?.FindStatusEXByExactID(r.parameters[1]);
+                return st != null && st.Severity >= minVal;
+            }
+            case "hasSexualRelationshipWith":
+            {
+                if (r.parameters.Count < 2 || !TryResolveExecTargets(ev, r.parameters[1], out var relTargets)
+                    || relTargets == null || relTargets.Count != 1 || relTargets[0] == null || relTargets[0] == c) return false;
+                var rel = c.Relationships?.PeekRelationshipWith(relTargets[0]);
+                return rel != null && (rel.HasRelationshipType(SexualRelationshipTypeIDs) || rel.HasPermission_Intimacy_High());
+            }
+            case "petCanShowerSex":
+            {
+                if ((c.Stats?.Lust?.Severity ?? 0f) >= 1f) return true;
+                if (r.parameters.Count >= 2 && TryResolveExecTargets(ev, r.parameters[1], out var ownerTargets)
+                    && ownerTargets != null && ownerTargets.Count == 1 && ownerTargets[0] != null && ownerTargets[0] != c)
+                {
+                    var rel = c.Relationships?.PeekRelationshipWith(ownerTargets[0]);
+                    if (rel != null && (rel.HasRelationshipType(SexualRelationshipTypeIDs) || rel.HasPermission_Intimacy_High())) return true;
+                }
+                return false;
+            }
             case "canExecuteCOM":
             {
                 // canExecuteCOM [comID, receiverKey ("" or "none" for solo)]
@@ -2431,6 +2470,53 @@ public static class EventUtility
 
     /// <summary>ExecuteAPOnSingleChara / EventAPPreview permission modes (default "none": normal permission rules).</summary>
     public const string PermissionModeGrant = "grant", PermissionModeSkip = "skip", PermissionModeRequest = "request";
+    /// <summary> ExecuteAPOnSingleChara output: kojo + EXP (default) / kojo only (EXP still granted, not shown) / kojo + EXP + the DC result line </summary>
+    public const string OutputModeFull = "full", OutputModeKojoOnly = "kojoOnly", OutputModeWithCheck = "withCheck";
+
+    /// <summary>
+    /// ExecutionType.RollCommandDC: an event's own roll of a command's DC (Difficulty.noAutoRoll), with the bonus of a solo
+    /// package's roll (ActionPackage.CollectPairMods, no receiver) and its natural 1 / 20 rule (ActionPackage.Execution).
+    /// </summary>
+    static bool RollCommandDC(EventInstance owner, Event.EventEntry.Executor exec)
+    {
+        if (exec.arguments.Count < 3 || string.IsNullOrEmpty(exec.arguments[2])) return false;
+        if (!TryResolveExecTargets(owner, exec.arguments[0], out var actors) || actors == null) return false;
+        Character_Trainable actor = null;
+        foreach (var c in actors) if (c != null) { actor = c; break; }
+        if (actor == null) return false;
+        var com = scr_System_Serializer.current.MasterList.COMs.GetByID(exec.arguments[1]);
+        if (com == null || com.baseD20Check <= 0) return false;
+
+        var dcMods = new EvaluationPackage.Modifiers();
+        var tags = new List<string>(com.comTags);
+        Utility.DistinctInPlace(tags);
+        int bonus = actor.Skills.GetRelevantSkills(null, tags, dcMods);
+        foreach (var skillID in com.DifficultyCheck.SkillBonus_Doer)
+        {
+            var skill = actor.GetSkill(skillID);
+            if (skill == null) continue;
+            int level = skill.GetSkillLevel;
+            if (level <= 0) continue;
+            bonus += level;
+            dcMods.AddModifier(actor.RefID, skill.DisplayName, level);
+        }
+        bonus += com.GetClothingFitMod(actor, dcMods);
+
+        int baseDC = com.baseD20Check;
+        int diceRoll = Utility.Dice(1, 20);
+        Memory_Response result;
+        if (diceRoll >= 20) result = Memory_Response.CriticalSuccess;
+        else if (diceRoll <= 1) result = Memory_Response.CriticalFailure;
+        else result = diceRoll + bonus >= baseDC ? Memory_Response.Success : Memory_Response.Failure;
+
+        var mods = dcMods.GetAllModifiers();
+        string storeKey = exec.arguments[2];
+        owner.AppendStrings[storeKey] = new List<string>() { result.ToString() };
+        owner.AppendStrings[storeKey + "_text"] = new List<string>() {
+            $"{com.DisplayName(-1)} ({actor.FirstName}) D20 = {diceRoll}{(mods.Count > 0 ? $" + {bonus}" : "")} = {diceRoll + bonus} {(result >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{result}")}" };
+        owner.AppendStrings[storeKey + "_tooltip"] = new List<string>() { String.Join("\n", mods) };
+        return true;
+    }
 
     static bool ExecuteAPOnSingleChara(EventInstance owner, Event.EventEntry.Executor exec)
     {
@@ -2444,6 +2530,7 @@ public static class EventUtility
         bool ignoreStatCost = false;
         bool forceAccept = false;
         string permissionMode = "none";
+        string outputMode = OutputModeFull;
 
         string Refs(IEnumerable<Character_Trainable> actors, int argument = -1)
         {
@@ -2511,6 +2598,14 @@ public static class EventUtility
                 && permissionMode != PermissionModeRequest)
                 return Fail("invalid permission mode (none / grant / skip / request)");
         }
+        if (exec.arguments.Count > flagIndex + 3 && !string.IsNullOrEmpty(exec.arguments[flagIndex + 3]))
+        {
+            outputMode = exec.arguments[flagIndex + 3];
+            if (outputMode != OutputModeFull && outputMode != OutputModeKojoOnly && outputMode != OutputModeWithCheck)
+                return Fail("invalid output mode (full / kojoOnly / withCheck)");
+        }
+        bool showExp = outputMode != OutputModeKojoOnly;
+        bool showCheck = outputMode == OutputModeWithCheck;
         if (!TryResolveExecTargets(owner, exec.arguments[0], out doers) || doers == null)
             return Fail("unresolved doer targets");
         if (isSolo)
@@ -2551,8 +2646,9 @@ public static class EventUtility
         var campaign = scr_System_CampaignManager.current;
         var collector = owner.EntryResultsSilentActive ? owner.message
             : new MessageCollect(true) { accumulateExperience = true };
-        if (!owner.EntryResultsSilentActive) collector.exp.numericSink = owner.APExperienceBatch;
-        owner.TrackExperience(collector.exp);
+        // kojoOnly: this call's EXP is granted but neither shown nor fed to a batch / the event's EXP summary
+        if (!owner.EntryResultsSilentActive) collector.exp.numericSink = showExp ? owner.APExperienceBatch : null;
+        if (showExp || owner.EntryResultsSilentActive) owner.TrackExperience(collector.exp);
         var participantRefs = participants.Select(c => c.RefID).ToList();
         var doerRefs = doers.Select(c => c.RefID).ToList();
         var previousJobs = doers.ToDictionary(c => c, c => c.CurrentJob);
@@ -2562,12 +2658,14 @@ public static class EventUtility
         // the result kojo of the last package run (repeats / until-climax iterations replace it): added to the collector
         // before the final flush, which prints kojo ahead of the EXP
         List<KojoCollector> lastKojo = null;
+        DescriptionCollector lastCheck = null;
 
         void Flush()
         {
             if (owner.EntryResultsSilentActive) return;
             collector.FinalizeEXP(participantRefs, out var desc);
-            if (desc != null)
+            if (!showExp) collector.messages_exp.Clear();
+            else if (desc != null)
             {
                 collector.messages_exp.Add(desc);
                 job.ParentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
@@ -2618,6 +2716,14 @@ public static class EventUtility
                     job.InjectPackageAndExecute(ap, collector);
                     // the collector takes only EXP from the package's own log, so its result kojo are carried over separately
                     lastKojo = new List<KojoCollector>(ap.ResultKojo);
+                    // withCheck: the package's DC result line (with its bonus tooltip) - kept like the kojo and added for the
+                    // final flush, so the check, kojo and EXP print together in that order (adding it now would flush the EXP early)
+                    if (showCheck && !string.IsNullOrEmpty(ap.CheckResultText))
+                    {
+                        lastCheck = new DescriptionCollector(ap.CheckResultText, participantRefs);
+                        lastCheck.message_excludeRelated = ap.CheckResultText;
+                        lastCheck.tooltip = ap.CheckResultTooltip;
+                    }
                     if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
 
                     // An internal check may already have granted the climax. Compare occurrences, not the
@@ -2665,6 +2771,7 @@ public static class EventUtility
         {
             owner.AppendStrings[exec.arguments[0] + "_climaxed"] = new List<string>() { doers.Any(completed.Contains) ? "true" : "false" };
             if (!isSolo) owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { receivers.Any(completed.Contains) ? "true" : "false" };
+            if (lastCheck != null) collector.AddMessage_Checks(lastCheck);
             if (lastKojo != null) foreach (var kol in lastKojo) collector.AddKojo(kol);
             try { Flush(); }
             finally
@@ -5383,9 +5490,31 @@ public static class EventUtility
                     {
                         foreach (var c in sourceList) if (c != null && !c.canAct && !matched.Contains(c)) matched.Add(c);
                     }
+                    else if (mode == "hasHand")
+                    {
+                        foreach (var c in sourceList) if (c != null && c.Body != null && c.Body.HasHand && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "noHand")
+                    {
+                        foreach (var c in sourceList) if (c != null && (c.Body == null || !c.Body.HasHand) && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "canActWithHand")
+                    {
+                        foreach (var c in sourceList) if (c != null && c.canAct && c.Body != null && c.Body.HasHand && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "passiveWithHand")
+                    {
+                        foreach (var c in sourceList) if (c != null && !c.canAct && c.Body != null && c.Body.HasHand && !matched.Contains(c)) matched.Add(c);
+                    }
                     else if (mode == "wouldDeflate")
                     {
                         foreach (var c in sourceList) if (c != null && HasShowerExpellableContents(c) && !matched.Contains(c)) matched.Add(c);
+                    }
+                    else if (mode == "player" || mode == "nonPlayer")
+                    {
+                        var player = scr_System_CampaignManager.current.Player;
+                        bool wantPlayer = mode == "player";
+                        foreach (var c in sourceList) if (c != null && (c == player) == wantPlayer && !matched.Contains(c)) matched.Add(c);
                     }
                     else if (mode == "hasPermission" && exec.arguments.Count >= 5)
                     {
@@ -5441,6 +5570,36 @@ public static class EventUtility
                 owner.Targets[destKey] = new List<Character_Trainable>() { first };
                 return true;
             }
+            case Event.EventEntry.ExecutionType.PopRandomTarget:
+            {
+                if (exec.arguments.Count < 2 || string.IsNullOrEmpty(exec.arguments[0]) || string.IsNullOrEmpty(exec.arguments[1]))
+                    return false;
+                string destKey = exec.arguments[1];
+                if (!owner.Targets.TryGetValue(exec.arguments[0], out var queue) || queue == null)
+                {
+                    owner.Targets[destKey] = new List<Character_Trainable>();
+                    return false;
+                }
+                for (int i = queue.Count - 1; i >= 0; i--) if (queue[i] == null) queue.RemoveAt(i);
+                if (queue.Count == 0)
+                {
+                    owner.Targets[destKey] = new List<Character_Trainable>();
+                    return false;
+                }
+                int index = UnityEngine.Random.Range(0, queue.Count);
+                var picked = queue[index];
+                queue.RemoveAt(index);
+                owner.Targets[destKey] = new List<Character_Trainable>() { picked };
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.RollCommandDC:
+                return RollCommandDC(owner, exec);
+            case Event.EventEntry.ExecutionType.CraneSetup:
+                return CraneMachineUtility.Setup(owner, exec);
+            case Event.EventEntry.ExecutionType.CraneCellHasPrize:
+                return CraneMachineUtility.CellHasPrize(owner, exec);
+            case Event.EventEntry.ExecutionType.CraneGrab:
+                return CraneMachineUtility.Grab(owner, exec);
             case Event.EventEntry.ExecutionType.SetAppendString:
             {
                 if (exec.arguments.Count < 2 || string.IsNullOrEmpty(exec.arguments[0])) return false;

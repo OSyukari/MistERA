@@ -11,6 +11,10 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "allowRecording": true
+                            },
                             "_comment": "受方 com_sex_tribadism 高潮",
                             "responses": [
                                 "com_sex_tribadism_Climax_RecvCase_1",
@@ -19,14 +23,14 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底（任何状态）",
+                            "_comment": "施方兜底（受方无法行动时也成立）",
                             "responses": [
-                                "com_sex_tribadism_Climax_RecvCase_1"
+                                "com_sex_tribadism_Climax_1"
                             ]
                         }
                     ],
@@ -390,11 +394,24 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "useActiveTags": false,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_tribadism_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "受方拒绝 com_sex_tribadism",
                             "variants": [
                                 {
                                     "useActiveTags": false,
@@ -412,7 +429,6 @@
                                     ]
                                 }
                             ],
-                            "_comment": "受方拒绝 com_sex_tribadism",
                             "responses": [
                                 "com_sex_tribadism_Refuse_Case_1",
                                 "com_sex_tribadism_Refuse_Case_2",
@@ -420,15 +436,14 @@
                             ]
                         },
                         {
-                            "useActiveTags": false,
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底（拒绝）",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_sex_tribadism_Refuse_Case_1"
+                                "com_sex_tribadism_Refuse_2"
                             ]
                         }
                     ],
@@ -494,7 +509,10 @@
                 "com_sex_tribadism_1": "(unimplemented)",
                 "com_sex_tribadism_2": "(unimplemented)",
                 "com_sex_tribadism_Begin_1": "(unimplemented)",
-                "com_sex_tribadism_Ongoing_1": "(unimplemented)"
+                "com_sex_tribadism_Ongoing_1": "(unimplemented)",
+                "com_sex_tribadism_Refuse_1": "(unimplemented)",
+                "com_sex_tribadism_Climax_1": "(unimplemented)",
+                "com_sex_tribadism_Refuse_2": "(unimplemented)"
             }
         }
     }

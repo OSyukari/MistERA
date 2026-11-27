@@ -43,7 +43,30 @@
                         }
                     },
                     {
-                        "$type": "TryChangeLocaleNode, Assembly-CSharp"
+                        "$type": "TryChangeLocaleNode, Assembly-CSharp",
+                        "_comment":"Scheduled: only toward what claims the hour (party, booking, work post, home schedule) and the next-hour early departure - before the shower, so a shower never beats a schedule",
+                        "mode":"Scheduled"
+                    },
+                    {
+                        "$type": "TryFindShowerNode, Assembly-CSharp",
+                        "_comment":"behaviorOverrideID/Tags are hardcoded in the C# ctor (behavior_shower / nsfw). Free time only, when body traces (sweat included) pass the cleanliness tolerance (needsShower); skipped when it would make the character late for next hour's schedule elsewhere. Between the two locale nodes: free after the gym = shower there (current locale) before heading home",
+                        "cooldownHours": 3,
+                        "cooldownID": "com_furniture_takeShower",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "matchCOMID":"com_furniture_takeShower",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true,
+                            "respectRoomGender":true
+                        }
+                    },
+                    {
+                        "$type": "TryChangeLocaleNode, Assembly-CSharp",
+                        "_comment":"FreeTime: the free-time move (nothing claims the hour: home), after the shower",
+                        "mode":"FreeTime"
                     },
                     {
                         "$type": "TryFindSleepNode, Assembly-CSharp",
@@ -94,22 +117,6 @@
                         "$type": "TryFindScheduledJobNode, Assembly-CSharp",
                         "behaviorOverrideID":"behavior_job",
                         "_comment":"hardcoded job search parameter"
-                    },
-                    {
-                        "$type": "TryFindShowerNode, Assembly-CSharp",
-                        "_comment":"behaviorOverrideID/Tags are hardcoded in the C# ctor (behavior_shower / nsfw). Free time only, when body traces pass the cleanliness tolerance (needsShower)",
-                        "cooldownHours": 3,
-                        "cooldownID": "com_furniture_takeShower",
-                        "evaluationHeuristic":"closest",
-                        "filter": {
-                            "matchCOMID":"com_furniture_takeShower",
-                            "checkBlacklist": true,
-                            "skipPrivateRoom":false,
-                            "searchJobList":false,
-                            "searchNonJobList":true,
-                            "excludePrisonRooms":true,
-                            "respectRoomGender":true
-                        }
                     },
                     {
                         "$type": "TryFindRestNode, Assembly-CSharp",

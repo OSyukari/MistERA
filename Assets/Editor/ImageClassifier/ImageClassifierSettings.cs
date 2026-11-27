@@ -76,13 +76,18 @@ public static class ImageClassifierSettings
         set => EditorPrefs.SetString(Prefix + "RulesPath", value);
     }
 
-    public const string DefaultMasterListPath = "Assets/MasterList.json";
+    public const string DefaultMasterListPath = "DebugDumps/MasterList.json";
+    const string OldMasterListPath = "Assets/MasterList.json";
     public const string DefaultCharacterDbPath = "Mods/Assetpacks/characterDBs.json";
 
     /// <summary>The game's MasterList dump (written at boot in the editor): the commands of the report's character pairing view.</summary>
     public static string MasterListPath
     {
-        get => EditorPrefs.GetString(Prefix + "MasterListPath", DefaultMasterListPath);
+        get
+        {
+            var path = EditorPrefs.GetString(Prefix + "MasterListPath", DefaultMasterListPath);
+            return path.Replace('\\', '/') == OldMasterListPath ? DefaultMasterListPath : path;
+        }
         set => EditorPrefs.SetString(Prefix + "MasterListPath", value);
     }
 

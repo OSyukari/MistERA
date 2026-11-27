@@ -37,6 +37,9 @@ public class scr_System_Serializer : MonoBehaviour
 
     public static string AssetPacksPath { get { return $"{ModsPath}/Assetpacks"; } }
 
+    // editor debug dumps (MasterList, untranslated dict, source tracking): outside Assets so Unity never imports them
+    public static string DebugDumpPath { get { return Directory.GetParent(Application.dataPath).FullName + "/DebugDumps"; } }
+
     // filled at boot by AssetPackLoader.Scan, in load order
     public List<AssetPackInfo> AssetPacks = new List<AssetPackInfo>();
     // filled at boot by ModLoader.Scan, in load order (valid mods only, enabled or not)
@@ -456,7 +459,7 @@ public class scr_System_Serializer : MonoBehaviour
             }
         }
 
-        string untransDictPath = Application.dataPath + "/untranslatedDict.json";
+        string untransDictPath = DebugDumpPath + "/untranslatedDict.json";
 
         var s2 = JsonConvert.SerializeObject(untranslated, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
         if (File.Exists(untransDictPath)) File.Delete(untransDictPath);
@@ -467,8 +470,8 @@ public class scr_System_Serializer : MonoBehaviour
         Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
 
         // source string tracking: compare current zh-cn against snapshot
-        string snapshotPath = Application.dataPath + "/dict_zh_cn_snapshot.json";
-        string reportPath = Application.dataPath + "/dict_source_updated.json";
+        string snapshotPath = DebugDumpPath + "/dict_zh_cn_snapshot.json";
+        string reportPath = DebugDumpPath + "/dict_source_updated.json";
 
         if (File.Exists(snapshotPath))
         {
@@ -518,7 +521,7 @@ public class scr_System_Serializer : MonoBehaviour
         {
             MasterList.RemoveNonExisting();
 
-            string safeListpath = Application.dataPath + " /safeMasterList.json";
+            string safeListpath = DebugDumpPath + "/safeMasterList.json";
             var s = JsonConvert.SerializeObject(SafeList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
             if (File.Exists(safeListpath)) File.Delete(safeListpath);
 
@@ -529,7 +532,7 @@ public class scr_System_Serializer : MonoBehaviour
         }
         else
         {
-            string safeListpath = Application.dataPath + " /MasterList.json";
+            string safeListpath = DebugDumpPath + "/MasterList.json";
             var s = JsonConvert.SerializeObject(MasterList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
             if (File.Exists(safeListpath)) File.Delete(safeListpath);
 

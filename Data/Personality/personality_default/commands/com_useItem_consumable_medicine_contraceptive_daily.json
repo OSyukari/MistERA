@@ -1,0 +1,102 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_useItem_consumable_medicine_contraceptive_daily",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_useItem_consumable_medicine_contraceptive_daily_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_useItem_consumable_medicine_contraceptive_daily_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_useItem_consumable_medicine_contraceptive_daily_3"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_useItem_consumable_medicine_contraceptive_daily_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_useItem_consumable_medicine_contraceptive_daily_Begin_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_useItem_consumable_medicine_contraceptive_daily_Begin_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_useItem_consumable_medicine_contraceptive_daily_Begin_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_useItem_consumable_medicine_contraceptive_daily_1": "(unimplemented)",
+                "com_useItem_consumable_medicine_contraceptive_daily_2": "(unimplemented)",
+                "com_useItem_consumable_medicine_contraceptive_daily_3": "(unimplemented)",
+                "com_useItem_consumable_medicine_contraceptive_daily_Begin_1": "(unimplemented)",
+                "com_useItem_consumable_medicine_contraceptive_daily_Begin_2": "(unimplemented)",
+                "com_useItem_consumable_medicine_contraceptive_daily_Begin_3": "(unimplemented)"
+            }
+        }
+    }
+}

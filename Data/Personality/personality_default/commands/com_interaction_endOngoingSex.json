@@ -397,6 +397,48 @@
                     ],
                     "template": "commandResult"
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_endOngoingSex_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "受方 ｜ 接受",
+                            "responses": [
+                                "com_interaction_endOngoingSex_Begin_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_interaction_endOngoingSex_Begin_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_interaction_endOngoingSex_Begin_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -439,7 +481,10 @@
                 "com_interaction_endOngoingSex_NoConsent_Satisfied_1": "$self$有些慌乱地整理着凌乱的衣领，脸上还带着没褪去的潮红。\n\n哪怕心里清楚这不对，可刚才那阵背德的快感确实让她爽到了顶。\n\n她不敢看$target$的眼睛，只低头匆匆说了句\"忘掉刚才的事\"。",
                 "com_interaction_endOngoingSex_NoConsent_Satisfied_2": "$self$背靠着门板大口喘着，想压下狂跳的心。\n\n这次越界竟然意外地合拍，让她在事后的清醒里既后悔，又隐隐盼着再犯同样的错。\n\n腿根还湿着，提醒她刚才发生的都是真的。",
                 "com_interaction_endOngoingSex_NoConsent_Desire_1": "$self$飞快地扣好扣子，脸上恢复了平日的冷淡。\n\n既然只是次意外的冲动，又没爽到，那就没必要纠缠。\n\n她若无其事地整理好裙摆，全当刚才那个赤身裸体的人不是自己。\"以后别再提这件事了。\"",
-                "com_interaction_endOngoingSex_NoConsent_Desire_2": "$self$有些尴尬地避开$target$的视线，空气里弥漫着说不出的别扭。\n\n既然双方都没得到想要的结果，那这场荒唐的闹剧就到此为止。\n\n她拿起包，头也不回地离开了现场。"
+                "com_interaction_endOngoingSex_NoConsent_Desire_2": "$self$有些尴尬地避开$target$的视线，空气里弥漫着说不出的别扭。\n\n既然双方都没得到想要的结果，那这场荒唐的闹剧就到此为止。\n\n她拿起包，头也不回地离开了现场。",
+                "com_interaction_endOngoingSex_Begin_1": "(unimplemented)",
+                "com_interaction_endOngoingSex_Begin_2": "(unimplemented)",
+                "com_interaction_endOngoingSex_Begin_3": "(unimplemented)"
             },
             "en-us": {
                 "com_interaction_endOngoingSex_Sleeping_Semen_1": "As $self$ turns over, warm sticky fluid slides from her crotch, trailing down her inner thigh onto the sheet.\n\nShe shifts her legs restlessly in her sleep, mumbling something unintelligible, unaware it's semen leaking from her pussy.\n\nHer used, softened pussy won't close, and more of the cloudy white keeps seeping out.",

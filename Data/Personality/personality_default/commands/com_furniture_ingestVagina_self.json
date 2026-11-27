@@ -1,0 +1,155 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_ingestVagina_self",
+                    "template": "commandResult",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_ingestVagina_self_Begin",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Begin_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Begin_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_ingestVagina_self_Ongoing",
+                    "template": "commandAct",
+                    "variants": [
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "施方 ｜ 接受",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Ongoing_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "requireTargetAction": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 接受",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Ongoing_2"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_ingestVagina_self_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Refuse_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_ingestVagina_self_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_ingestVagina_self_1": "(unimplemented)",
+                "com_furniture_ingestVagina_self_2": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Begin_1": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Begin_2": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Ongoing_1": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Ongoing_2": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Refuse_1": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Refuse_2": "(unimplemented)",
+                "com_furniture_ingestVagina_self_Refuse_3": "(unimplemented)"
+            }
+        }
+    }
+}

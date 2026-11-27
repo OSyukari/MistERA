@@ -491,18 +491,6 @@
                                 "com_sex_P_cowgirl_A_Begin_14",
                                 "com_sex_P_cowgirl_A_Begin_15"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_sex_P_cowgirl_A_Begin_Fallback_1",
-                                "com_sex_P_cowgirl_A_Begin_Fallback_2"
-                            ]
                         }
                     ],
                     "template": "commandAct",
@@ -1266,18 +1254,6 @@
                                 "com_sex_P_cowgirl_A_52",
                                 "com_sex_P_cowgirl_A_53"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_sex_P_cowgirl_A_Fallback_1",
-                                "com_sex_P_cowgirl_A_Fallback_2"
-                            ]
                         }
                     ],
                     "template": "commandResult",
@@ -1295,6 +1271,16 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Refuse_1"
+                            ]
+                        },
                         {
                             "requireSelfReceiver": true,
                             "useActiveTags": false,
@@ -1685,7 +1671,8 @@
                 "com_sex_P_cowgirl_A_Begin_18": "(unimplemented)",
                 "com_sex_P_cowgirl_A_Begin_19": "(unimplemented)",
                 "com_sex_P_cowgirl_A_60": "(unimplemented)",
-                "com_sex_P_cowgirl_A_61": "(unimplemented)"
+                "com_sex_P_cowgirl_A_61": "(unimplemented)",
+                "com_sex_P_cowgirl_A_Refuse_1": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_P_cowgirl_A_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

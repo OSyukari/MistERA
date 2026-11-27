@@ -476,7 +476,7 @@ public class Job_Furniture : Job
     /// Find-job gate of the soft container (ValidateActor only - the player path never reaches it, so the player is
     /// never blocked). Sleep on a bed: its owners pass within capacity; an owned bed takes nobody else; an unowned bed takes
     /// nobody while someone sleeps in it (NPCs join a sleeper only in their own bed - user decision D1), nor once the
-    /// actors already heading there fill it.
+    /// actors already heading there fill it. Any other command on an owned divider: owners only (occupants pass).
     /// </summary>
     public bool OccupancyAllowsSeeker(Character_Trainable c, COM com)
     {
@@ -494,6 +494,8 @@ public class Job_Furniture : Job
             // those registered on their way; a direct Enter is never blocked. Enter / Leave alone are no reason to come.
             if (FurnitureOccupancyUtility.IsDividerMoveCOM(com)) return false;
             if (occupantRefs.Contains(c.RefID)) return true;
+            // an owned divider (booth with its own toilet / shower) is its owners' alone, like its bed
+            if (AssignsOwnership && HasOwners && !IsOwner(c.RefID)) return false;
             return CountSeekers(c.RefID, null) < Capacity;
         }
         return true;

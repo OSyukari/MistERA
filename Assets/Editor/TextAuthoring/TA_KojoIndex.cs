@@ -415,7 +415,7 @@ public class TA_KojoIndex : TA_DocBuilderBase
         var label = k.ToString();
         if (ck.participants == null) ck.participants = label;
         else if (!(", " + ck.participants + ",").Contains(", " + label + ",")) ck.participants += ", " + label;
-        if (com.baseD20Check > 0) ck.d20 = true;
+        if (com.HasAutoDC) ck.d20 = true;
         if (req == null) return;
         bool du = CanBeUnaware(req.req_Doers, "doer");
         if (du) ck.doerUnaware = true;
@@ -424,7 +424,7 @@ public class TA_KojoIndex : TA_DocBuilderBase
         if (receivers ? CanBeUnaware(req.req_Receivers, "receiver") : du) ck.receiverUnaware = true;
     }
 
-    static bool CanBeUnaware(CharaReq q, string side)
+    internal static bool CanBeUnaware(CharaReq q, string side)
     {
         if (q == null) return false;
         if (TA_CaseTemplate.States.Count == 0) TA_CaseTemplate.Load();

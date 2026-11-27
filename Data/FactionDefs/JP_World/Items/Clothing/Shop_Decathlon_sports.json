@@ -6,7 +6,7 @@
             "id":"clothing_jp_dkn_sports_bra",
             "promptTags":["sports bra","athletic wear"],
             "displayName":"DECATHL○N Compression Sports Bra",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":2800,
             "itemComps_Template":[
                 {
@@ -28,7 +28,7 @@
             "id":"clothing_jp_dkn_racerback_tank",
             "promptTags":["tank top","racerback tank","sleeveless shirt","athletic wear"],
             "displayName":"DECATHL○N Racerback Tank Top",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":2200,
             "itemComps_Template":[
                 {
@@ -51,7 +51,7 @@
             "id":"clothing_jp_dkn_running_shorts",
             "promptTags":["shorts","short shorts","athletic wear"],
             "displayName":"DECATHL○N Running Shorts",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":2500,
             "itemComps_Template":[
                 {
@@ -68,7 +68,7 @@
             "id":"clothing_jp_dkn_yoga_leggings",
             "promptTags":["leggings","yoga pants","tight pants","high-waist"],
             "displayName":"DECATHL○N Yoga Leggings",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":4200,
             "itemComps_Template":[
                 {
@@ -92,7 +92,7 @@
             "id":"clothing_jp_dkn_jersey_top",
             "promptTags":["jersey","mesh","see-through","athletic wear"],
             "displayName":"DECATHL○N Mesh Jersey Top",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":3500,
             "itemComps_Template":[
                 {
@@ -109,7 +109,7 @@
             "id":"clothing_jp_dkn_compression_shirt",
             "promptTags":["compression shirt","tight shirt","long sleeves","athletic wear"],
             "displayName":"DECATHL○N Compression Shirt",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":3800,
             "itemComps_Template":[
                 {
@@ -133,7 +133,7 @@
             "id":"clothing_jp_dkn_training_pants",
             "promptTags":["track pants","sweatpants","athletic wear"],
             "displayName":"DECATHL○N Training Pants",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":4600,
             "itemComps_Template":[
                 {
@@ -160,7 +160,7 @@
             "id":"clothing_jp_dkn_running_shoes",
             "promptTags":["sneakers","running shoes","athletic wear"],
             "displayName":"DECATHL○N Cushion Running Shoes",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":8900,
             "itemComps_Template":[
                 {
@@ -194,7 +194,7 @@
             "id":"clothing_jp_dkn_sweat_headband",
             "promptTags":["headband","sweatband"],
             "displayName":"DECATHL○N Sweat Headband",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":1200,
             "itemComps_Template":[
                 {
@@ -211,7 +211,7 @@
             "id":"clothing_jp_dkn_wrist_bands",
             "promptTags":["wristband","sweatband"],
             "displayName":"DECATHL○N Pair of Wrist Bands",
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","sportswear"],
             "value":900,
             "itemComps_Template":[
                 {
@@ -220,6 +220,93 @@
                         "equipSlot":["Hand"],
                         "equipLayer":"Inner",
                         "coverSlot":["Hand"]
+                    }
+                }
+            ]
+        },
+        {
+            "_comment":"Swimwear (tag swimwear): worn at the Skin layer like underwear; com_furniture_swim's clothingFit checks Skin + Inner + Outer on Torso / Lower for it.",
+            "id":"clothing_jp_dkn_swimsuit_onepiece",
+            "promptTags":["one-piece swimsuit","swimsuit"],
+            "displayName":"DECATHL○N One-Piece Swimsuit",
+            "Tags":["rarity_common","swimwear"],
+            "value":4800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Skin",
+                        "coverSlot":["Lower"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_bikini_top",
+            "promptTags":["bikini top","bikini"],
+            "displayName":"DECATHL○N Bikini Top",
+            "Tags":["rarity_common","swimwear"],
+            "value":2600,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Skin",
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_bikini_bottom",
+            "promptTags":["bikini bottom","bikini"],
+            "displayName":"DECATHL○N Bikini Bottom",
+            "Tags":["rarity_common","swimwear"],
+            "value":2400,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Skin",
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_swim_trunks",
+            "promptTags":["swim trunks","board shorts"],
+            "displayName":"DECATHL○N Swim Trunks",
+            "Tags":["rarity_common","swimwear"],
+            "value":2800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Skin"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_rash_guard",
+            "promptTags":["rash guard","long-sleeve swim top"],
+            "displayName":"DECATHL○N Rash Guard",
+            "Tags":["rarity_common","swimwear"],
+            "value":3800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"],
+                        "revealing":"ShapeReveal"
                     }
                 }
             ]
@@ -273,7 +360,22 @@
         "clothing_jp_dkn_sweat_headband_tooltip":"毛圈布的运动发带，紧紧箍在额头上接住滑落的汗珠。运动到酣处，发带下缘浸出的汗水顺着鬓角滑向脖颈、没进衣领深处——那条若有似无的汗痕，比任何搭讪都更能让心跳加速。",
 
         "clothing_jp_dkn_wrist_bands":"护腕",
-        "clothing_jp_dkn_wrist_bands_tooltip":"一对毛圈布护腕，松紧口牢牢箍住手腕最细的地方。抬手擦汗时它会蹭过脸颊和嘴唇，吸饱汗水与体温的布料带着微妙的湿热——互相帮忙戴护腕这个动作，在健身房里被公认是最接近暧昧的瞬间。"
+        "clothing_jp_dkn_wrist_bands_tooltip":"一对毛圈布护腕，松紧口牢牢箍住手腕最细的地方。抬手擦汗时它会蹭过脸颊和嘴唇，吸饱汗水与体温的布料带着微妙的湿热——互相帮忙戴护腕这个动作，在健身房里被公认是最接近暧昧的瞬间。",
+
+        "clothing_jp_dkn_swimsuit_onepiece":"连体泳衣",
+        "clothing_jp_dkn_swimsuit_onepiece_tooltip":"「迪卡○」的连体泳衣，弹力面料，适合游泳训练。",
+
+        "clothing_jp_dkn_bikini_top":"比基尼上衣",
+        "clothing_jp_dkn_bikini_top_tooltip":"系带式比基尼上衣。",
+
+        "clothing_jp_dkn_bikini_bottom":"比基尼泳裤",
+        "clothing_jp_dkn_bikini_bottom_tooltip":"系带式比基尼泳裤。",
+
+        "clothing_jp_dkn_swim_trunks":"沙滩泳裤",
+        "clothing_jp_dkn_swim_trunks_tooltip":"宽松的及膝泳裤，速干面料。",
+
+        "clothing_jp_dkn_rash_guard":"防晒泳衣",
+        "clothing_jp_dkn_rash_guard_tooltip":"长袖防晒泳衣，防晒也防擦伤。"
             },
             "en-us":
             {
@@ -320,7 +422,22 @@
         "clothing_jp_dkn_sweat_headband_tooltip":"A terry headband cinched tight across the forehead to catch falling sweat. Mid-workout, the overflow wicks along the temples, down the neck, and into the depths of the collar — that faint damp trail quickens the heart more than any pickup line.",
 
         "clothing_jp_dkn_wrist_bands":"Pair of Wrist Bands",
-        "clothing_jp_dkn_wrist_bands_tooltip":"A pair of terry wristbands, elastic cuffs gripping the narrowest part of the wrist. Raised to wipe sweat they brush cheek and lips, the fabric soaked through with warmth and a subtle humid heat — and helping someone put their wristbands on is, by gym consensus, the moment closest to an affair."
+        "clothing_jp_dkn_wrist_bands_tooltip":"A pair of terry wristbands, elastic cuffs gripping the narrowest part of the wrist. Raised to wipe sweat they brush cheek and lips, the fabric soaked through with warmth and a subtle humid heat — and helping someone put their wristbands on is, by gym consensus, the moment closest to an affair.",
+
+        "clothing_jp_dkn_swimsuit_onepiece":"One-Piece Swimsuit",
+        "clothing_jp_dkn_swimsuit_onepiece_tooltip":"A DECATHL○N one-piece swimsuit in stretch fabric, made for swim training.",
+
+        "clothing_jp_dkn_bikini_top":"Bikini Top",
+        "clothing_jp_dkn_bikini_top_tooltip":"A string-tie bikini top.",
+
+        "clothing_jp_dkn_bikini_bottom":"Bikini Bottom",
+        "clothing_jp_dkn_bikini_bottom_tooltip":"A string-tie bikini bottom.",
+
+        "clothing_jp_dkn_swim_trunks":"Swim Trunks",
+        "clothing_jp_dkn_swim_trunks_tooltip":"Loose knee-length swim trunks in quick-dry fabric.",
+
+        "clothing_jp_dkn_rash_guard":"Rash Guard",
+        "clothing_jp_dkn_rash_guard_tooltip":"A long-sleeve rash guard that protects against sun and scrapes."
             }
         }
     }

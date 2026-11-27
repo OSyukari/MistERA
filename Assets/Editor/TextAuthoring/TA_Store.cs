@@ -277,7 +277,9 @@ public static class TA_Store
             var c = cases[i] as JObject;
             if (c == null) continue;
             // a personality flagged "require custom" that only inherits the case (Plan_CommandCases.md §6.2): a gap for it
-            if (((c["cov"]?["custom"] as JArray)?.Count ?? 0) > 0) custom++;
+            // likewise a personality asked for dedicated kojo on a fallback command that has no entry / branch (requiredFor)
+            if (((c["cov"]?["custom"] as JArray)?.Count ?? 0) > 0
+                || !((bool?)c["required"] ?? false) && ((c["requiredFor"] as JArray)?.Count ?? 0) > 0) custom++;
             if (!((bool?)c["required"] ?? false)) continue;
             required++;
             if ((string)c["layer"] == "narration") { if (!((bool?)c["covered"] ?? false)) missingNarr++; continue; }

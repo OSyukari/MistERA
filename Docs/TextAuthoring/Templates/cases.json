@@ -23,7 +23,7 @@
     { "id": "onComplete", "field": "onComplete", "required": true, "label": "完成旁白（旁观者看到）" },
     { "id": "after",      "field": "after",      "required": true, "onlyIfPresent": true, "label": "结束旁白（成功后）", "_comment": "user 2026-11-18: a command without after narration doesn't get one (no case, no new-entry slot); one that has it is reviewed" },
     { "id": "abort",      "field": "remove",     "required": false, "label": "中止旁白（被替换或停止）" },
-    { "id": "ordered",    "field": "begin",      "required": false, "package": { "existsMaster_NonActor": true }, "label": "第三方下令时的开始旁白" },
+    { "id": "ordered",    "field": "begin",      "required": false, "package": { "existsMaster_NonActor": true }, "when": ["orderable"], "label": "第三方下令时的开始旁白" },
     { "id": "climax",     "field": "after",      "required": true, "onlyIfPresent": true, "when": ["sex"], "perSide": true, "condition": { "statID": "climaxed", "operand": "eq", "value": "true" }, "label": "高潮后旁白" },
     { "id": "group",      "field": "begin",      "required": false, "when": ["group"], "label": "多人版开始旁白" },
     { "id": "strong",     "field": "begin",      "required": false, "when": ["strong"], "label": "强力版开始旁白" },
@@ -31,14 +31,16 @@
     { "id": "execFailure", "field": "execution_failure", "required": true, "when": ["itemExec"], "variantOnly": true, "label": "使用失败" }
   ],
 
-  "_comment_kojo": "Kojo cases (kojo task). suffix: lookup key = <command kojo key><suffix>. speakers: pair roles doer / receiver, solo role self. outcomes: accept / refuse (refuse only where the receiver can refuse). d20: an accepted result splits into Success / Failure when the command has a D20 check. states: the speaker's and the listener's reachable states each make a case. requireState / selfTags: woken = the receiver was asleep and woke (justWokenUp). fallback: a plain key that also covers the case (generic Interrupt). seen: MapUtility.CheckReverseInterrupt fetches <COM>_Interrupt for anyone walked in on, solo actors included (speaker self). joinReact: EvaluationPackage.LogMessage_Join - the act's doer and receiver (solo: the actor) react to the joiner (listener newcomer), with the action package; not while the doer is time-stopped. tiers: the relationship tier template inserted into each accepted case (tiers.json). order: ordered = a third party (the player in sex mode, the command panel's master) ordered the act - kojo sees masterRef = Package.Master, else the doer (KojoCollector.LoadEP), so an ordered doer / solo self is not the master and its branch needs requireSelfNotMaster; the receiver has no flag that tells an ordered act apart. outcome refuseOrder: the ordered doer refuses the order and speaks to the master (EvaluationPackage.LogMessage_Kojo); a doer acting on its own says nothing when it declines. First experience is not a command case (user, 2026-11-16: no position dependency) - it is the per-part OnFirstExperience_<class> kojo.",
+  "_comment_kojo": "Kojo cases (kojo task). suffix: lookup key = <command kojo key><suffix>. speakers: pair roles doer / receiver, solo role self. outcomes: accept / refuse (refuse only where the receiver can refuse). d20: an accepted result splits into Success / Failure when the command has a D20 check. states: the speaker's and the listener's reachable states each make a case. requireState / selfTags: woken = the receiver was asleep and woke (justWokenUp). fallback: a plain key that also covers the case (generic Interrupt). seen: MapUtility.CheckReverseInterrupt fetches <COM>_Interrupt for anyone walked in on, solo actors included (speaker self). joinReact: EvaluationPackage.LogMessage_Join - the act's doer and receiver (solo: the actor) react to the joiner (listener newcomer), with the action package; not while the doer is time-stopped. tiers: the relationship tier template inserted into each accepted case (tiers.json). order: ordered = a third party (the player in sex mode, the command panel's master) ordered the act - kojo sees masterRef = Package.Master, else the doer (KojoCollector.LoadEP), so an ordered doer / solo self is not the master and its branch needs requireSelfNotMaster; the receiver has no flag that tells an ordered act apart. outcome refuseOrder: the ordered doer refuses the order and speaks to the master (EvaluationPackage.LogMessage_Kojo); a doer acting on its own says nothing when it declines. orderable: the player can give the act to an NPC only in sex mode (Job_Sex.isCOMValid: comTag sex or allowedDuringSex; user, 2026-11-26: non-sex commands can't be ordered), so every ordered case needs it. whenByCase: [{ match: { speaker, listener, outcome }, when: [facts] }] - a case matching all given fields also needs those facts. First experience is not a command case (user, 2026-11-16: no position dependency) - it is the per-part OnFirstExperience_<class> kojo.",
   "kojo": [
-    { "id": "begin",   "suffix": "_Begin", "speakers": ["receiver", "doer"], "outcomes": ["accept"], "states": true, "tiers": "relationship", "label": "开始口上", "_comment": "accept only: _Begin is fetched by PackageBegin on the accept path; a refusal prints only the generic refuse narration (LogMessage_Begin_Refuse) and the result kojo" },
-    { "id": "result",  "suffix": "",       "speakers": ["receiver", "doer", "self"], "outcomes": ["accept", "refuse"], "d20": true, "states": true, "tiers": "relationship", "label": "结果口上", "context": [
+    { "id": "begin",   "suffix": "_Begin", "speakers": ["receiver", "doer", "self"], "listenersBySpeaker": { "self": ["player"] }, "outcomes": ["accept"], "when": ["!temporaryAP"], "whenByListener": { "player": ["coDoers"] }, "states": true, "tiers": "relationship", "label": "开始口上", "_comment": "accept only: _Begin is fetched by PackageBegin on the accept path; a refusal prints only the generic refuse narration (LogMessage_Begin_Refuse) and the result kojo. A solo actor says _Begin only to the player acting alongside it in the same package (ActionPackage.LogMessage_Begin injects the player as listener): coDoers. Alone or ordered, it has no listener and no _Begin. A temporary package (temporaryAP: divider moves, activity wait, wait until next hour) never begins with kojo (ActionPackage.PackageBegin / LogMessage_Begin return early)." },
+    { "id": "result",  "suffix": "",       "speakers": ["receiver", "doer", "self"], "outcomes": ["accept", "refuse"], "d20": true, "states": true, "tiers": "relationship", "label": "结果口上", "whenByCase": [
+      { "match": { "speaker": "self", "listener": "player", "outcome": "refuse" }, "when": ["orderable"] }
+    ], "context": [
       { "match": { "speaker": "self", "listener": "player", "outcome": "refuse" }, "who": { "self": "接到指令的 NPC", "target": "下令的玩家", "doer": "NPC（玩家下令）", "situation": "NPC 拒绝执行玩家的指令；玩家不参与动作。" } }
     ] },
     { "id": "woken",   "suffix": "",       "speakers": ["receiver"], "outcomes": ["accept", "refuse"], "requireState": "sleeping", "selfTags": ["justWokenUp"], "label": "被弄醒后" },
-    { "id": "ongoing", "suffix": "_Ongoing", "speakers": ["receiver", "doer", "self"], "listeners": ["player", "npc"], "listenersBySpeaker": { "self": ["player"] }, "outcomes": ["accept"], "whenByListener": { "player": ["ongoing"], "npc": ["partnerEnding"] }, "label": "进行中口上", "labelsByListener": { "npc": "结束口上（对另一方）" }, "_comment": "whenByListener requires these command facts for each listener. The player watches an action still in progress; the NPC partner hears a successful finish fallback, independent of duration and never for COM_Sex.", "context": [
+    { "id": "ongoing", "suffix": "_Ongoing", "speakers": ["receiver", "doer", "self"], "listeners": ["player", "npc"], "listenersBySpeaker": { "self": ["player"] }, "outcomes": ["accept"], "whenByListener": { "player": ["ongoing", "!temporaryAP"], "npc": ["partnerEnding", "!temporaryAP"] }, "label": "进行中口上", "labelsByListener": { "npc": "结束口上（对另一方）" }, "_comment": "whenByListener requires these command facts for each listener (\"!fact\": must not have it). The player watches an action still in progress; the NPC partner hears a successful finish fallback, independent of duration and never for COM_Sex. A temporary package prints neither (LogMessage_Ongoing / LogMessage_After return early).", "context": [
       { "match": { "listener": "player" }, "who": { "target": "旁观的玩家", "situation": "动作还在进行；玩家在旁观看，不参与。" } },
       { "match": { "listener": "player", "speaker": "receiver" }, "who": { "doer": "施方 NPC" } },
       { "match": { "listener": "player", "speaker": "doer" }, "who": { "receiver": "受方 NPC" } },
@@ -62,12 +64,12 @@
       { "who": { "target": "未能加入的人", "situation": "加入未成；原参与者对未能加入的人说话。不预设是谁拒绝，也不预设原参与者独处。" } },
       { "match": { "speaker": "self" }, "who": { "self": "原参与者 NPC", "doer": "原参与者 NPC" } }
     ] },
-    { "id": "orderedBegin",  "suffix": "_Begin", "order": "ordered", "speakers": ["receiver", "doer"], "outcomes": ["accept"], "listeners": ["npc"], "when": ["pair"], "required": false, "label": "第三方下令·开始口上" },
-    { "id": "orderedResult", "suffix": "",       "order": "ordered", "speakers": ["receiver", "doer"], "outcomes": ["accept", "refuse"], "d20": true, "listeners": ["npc"], "when": ["pair"], "required": false, "label": "第三方下令·结果口上" },
-    { "id": "orderedRefuse", "suffix": "",       "order": "ordered", "speakers": ["doer"], "outcomes": ["refuseOrder"], "listeners": ["player"], "when": ["pair"], "required": false, "label": "拒绝下令的玩家", "context": [
+    { "id": "orderedBegin",  "suffix": "_Begin", "order": "ordered", "speakers": ["receiver", "doer"], "outcomes": ["accept"], "listeners": ["npc"], "when": ["pair", "orderable", "!temporaryAP"], "required": false, "label": "第三方下令·开始口上" },
+    { "id": "orderedResult", "suffix": "",       "order": "ordered", "speakers": ["receiver", "doer"], "outcomes": ["accept", "refuse"], "d20": true, "listeners": ["npc"], "when": ["pair", "orderable"], "required": false, "label": "第三方下令·结果口上" },
+    { "id": "orderedRefuse", "suffix": "",       "order": "ordered", "speakers": ["doer"], "outcomes": ["refuseOrder"], "listeners": ["player"], "when": ["pair", "orderable"], "required": false, "label": "拒绝下令的玩家", "context": [
       { "who": { "self": "接到指令的施方 NPC", "target": "下令的玩家", "doer": "施方 NPC（玩家下令）", "receiver": "受方 NPC", "situation": "施方 NPC 拒绝执行玩家的指令；玩家不参与动作。" } }
     ] },
-    { "id": "orderedSelf",   "suffix": "",       "order": "ordered", "speakers": ["self"], "outcomes": ["accept"], "d20": true, "listeners": ["self"], "when": ["solo"], "required": false, "label": "玩家下令·独自进行" }
+    { "id": "orderedSelf",   "suffix": "",       "order": "ordered", "speakers": ["self"], "outcomes": ["accept"], "d20": true, "listeners": ["self"], "when": ["solo", "orderable"], "required": false, "label": "玩家下令·独自进行" }
   ],
 
   "_comment_kojoContext": "Writer context only. Apply kojoContext in order, then phase.context in order. match supports speaker, listener, outcome, suffix and ordered; omitted fields match any case. who merges self, target, doer, receiver and situation; null removes a field. This does not change runtime conditions.",
@@ -103,11 +105,11 @@
     "com_touch_head": "sexTouch"
   },
 
-  "_comment_roles": "Whether a speaker role's kojo cases are required (D43: the reacting side must speak, the doer may).",
+  "_comment_roles": "Whether a speaker role's kojo cases are required (D43: the reacting side must speak, the doer may). reachableIf: fields of the role's CharaRequirement (doer / self: req_Doers, receiver: req_Receivers) that must have these values for the role to have kojo cases at all (allowNPC false: only the player takes that side, who has no kojo).",
   "roles": {
-    "receiver": { "required": true, "label": "受方" },
-    "self":     { "required": true, "label": "自己（单人）" },
-    "doer":     { "required": false, "label": "施方" },
+    "receiver": { "required": true, "reachableIf": { "allowNPC": true }, "label": "受方" },
+    "self":     { "required": true, "reachableIf": { "allowNPC": true }, "label": "自己（单人）" },
+    "doer":     { "required": false, "reachableIf": { "allowNPC": true }, "label": "施方" },
     "joiner":   { "required": false, "label": "加入者" }
   },
 
@@ -120,6 +122,13 @@
 
   "_comment_overrides": "Per command ID or comTag: { \"drop\": [case id prefixes], \"optional\": [case id prefixes], \"require\": [case id prefixes] }. Case ids look like kojo.result.receiver.awake.player.success or narr.begin.",
   "overrides": {
-    "com_interaction_initiateSex": { "require": ["kojo.orderedRefuse.doer.awake.player.refuseOrder"] }
+    "com_interaction_initiateSex": { "require": ["kojo.orderedRefuse.doer.awake.player.refuseOrder"] },
+    "_com_interaction_work": "ActionPackage_PathTo family: no evaluation package (Request returns isValid, Execution only moves), temporary - no kojo at all; Work's 'work as' launches the shift command instead.",
+    "com_interaction_work": { "drop": ["kojo."] },
+    "com_interaction_goto_schedule": { "drop": ["kojo."] },
+    "_com_useItem": "Template the per-item folders com_useItem_<item> are copied from (Index_COM.BuildItemFolders); children fall back to the folder's own ID, never to this key. Applies to every per-item folder too (TA_CommandCases.ApplyOverrides): a folder is never executed (COM_ItemFolder: clicking opens the child panel), so it has no kojo cases of its own - its children's units trace their chains through it.",
+    "com_useItem": { "drop": ["kojo."] },
+    "_debugOnly": "Debug commands stay silent (user, 2026-11-26).",
+    "debugOnly": { "drop": ["kojo."] }
   }
 }

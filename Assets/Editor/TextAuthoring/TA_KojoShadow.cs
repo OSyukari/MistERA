@@ -121,7 +121,7 @@ public static class TA_KojoShadow
     static HashSet<string> unawareTags;
 
     /// <summary>The node requires the speaker in a state that can't act (cases.json states with canAct false: its tags).</summary>
-    static bool RequiresUnaware(ResponseEntry.Variant v)
+    internal static bool RequiresUnaware(ResponseEntry.Variant v)
     {
         var tags = v.requirement?.selfTags;
         if (tags == null || tags.Count == 0) return false;

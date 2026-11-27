@@ -1,0 +1,314 @@
+{
+    "_comment": "Mealtime chat (com_furniture_getmeal results_AP, requireSuccess, playerAsSelf - the player answers when at the table). Flow graph: OnMealChat_flow.svg. Diners who can act are paired 1:1 at random (PopRandomTarget x2) and each pair runs com_interaction_talk; an odd one out eats alone. Player options: [chat with X] = player pairs with X, the rest pair at random; [eat silently] = the player joins the random pairing, and a diner paired with them starts the conversation (doer = the diner); [finish quickly] = the player sits out. NPC-only tables skip the question. Kojo: Meal_Chat (listener reacts to the talker), Meal_Chat_Approach (the diner who starts talking to the player) - no reaction when missing.",
+    "Events": {
+        "list": [
+            {
+                "ID": "com_furniture_getmeal_event",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "player at the table",
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["self", "me", "player"] },
+                                    { "Type": "FilterTargets", "arguments": ["actor", "others", "nonPlayer"] },
+                                    { "Type": "FilterTargets", "arguments": ["others", "others", "canAct"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "player_q"] }
+                                ]
+                            },
+                            {
+                                "option": "npc table",
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["actor", "pair_pool", "canAct"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "pair_loop"] }
+                                ]
+                            },
+                            {
+                                "option": "nobody to talk to",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "done"] } ]
+                            }
+                        ]
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "player_q",
+                        "question": "meal_question",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "meal_opt_chat_with",
+                                "forEachTargetKey": "others",
+                                "bindTargetKey": "picked",
+                                "apPreviews": [ { "doer": "self", "receiver": "picked", "com": "com_interaction_talk" } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "player_chat_line"] } ]
+                            },
+                            {
+                                "option": "meal_opt_silent",
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["actor", "pair_pool", "canAct"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "silent_line"] }
+                                ]
+                            },
+                            {
+                                "option": "meal_opt_quick",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["others", "pair_pool", "canAct"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "quick_line"] }
+                                ]
+                            }
+                        ]
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "player_chat",
+                        "options": [
+                            {
+                                "option": "run talk",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["me", "picked", "com_interaction_talk", "1", "true", "false", "none", "withCheck"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "player_chat_kojo"] }
+                                ]
+                            },
+                            {
+                                "option": "talk failed",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "player_chat_kojo"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "player_chat_line",
+                        "UISpec": { "portraitRefKey": "picked", "selfTags": ["relaxed", "happy"] },
+                        "line": "meal_chat_player",
+                        "nextEntryLabel": "player_chat"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "player_chat_kojo",
+                        "options": [
+                            {
+                                "option": "reaction",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": ["picked", "me", "Meal_Chat", "mealChatKojo"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "player_chat_kojo_line"] }
+                                ]
+                            },
+                            {
+                                "option": "no reaction",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "player_rest"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "player_chat_kojo_line",
+                        "UISpec": { "portraitRefKey": "picked" },
+                        "line": "$mealChatKojo$",
+                        "nextEntryLabel": "player_rest"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "player_rest",
+                        "options": [
+                            {
+                                "option": "pair the rest",
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["others", "pair_pool", "exclude", "picked"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "pair_loop"] }
+                                ]
+                            },
+                            {
+                                "option": "nobody left",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "done"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "silent_line",
+                        "UISpec": { "portraitRefKey": "me" },
+                        "line": "meal_silent",
+                        "nextEntryLabel": "pair_loop"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "quick_line",
+                        "UISpec": { "portraitRefKey": "me" },
+                        "line": "meal_quick",
+                        "nextEntryLabel": "pair_loop"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pair_loop",
+                        "options": [
+                            {
+                                "option": "next pair",
+                                "Results": [
+                                    { "Type": "PopRandomTarget", "arguments": ["pair_pool", "pair_a"] },
+                                    { "Type": "PopRandomTarget", "arguments": ["pair_pool", "pair_b"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "pair_check"] }
+                                ]
+                            },
+                            {
+                                "option": "no pair left (odd one eats alone)",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "done"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pair_check",
+                        "options": [
+                            {
+                                "option": "first is the player",
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["pair_a", "pair_player", "player"] },
+                                    { "Type": "FilterTargets", "arguments": ["pair_b", "npc", "nonPlayer"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "approach_line"] }
+                                ]
+                            },
+                            {
+                                "option": "second is the player",
+                                "Results": [
+                                    { "Type": "FilterTargets", "arguments": ["pair_b", "pair_player", "player"] },
+                                    { "Type": "FilterTargets", "arguments": ["pair_a", "npc", "nonPlayer"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "approach_line"] }
+                                ]
+                            },
+                            {
+                                "option": "two npcs",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "pair_line"] } ]
+                            }
+                        ]
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "approach",
+                        "options": [
+                            {
+                                "option": "diner talks to the player",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["npc", "me", "com_interaction_talk", "1", "true", "false", "none", "withCheck"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "approach_kojo"] }
+                                ]
+                            },
+                            {
+                                "option": "talk failed",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "approach_kojo"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "approach_line",
+                        "UISpec": { "portraitRefKey": "npc", "selfTags": ["relaxed", "happy"] },
+                        "line": "meal_chat_approach",
+                        "nextEntryLabel": "approach"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "approach_kojo",
+                        "options": [
+                            {
+                                "option": "reaction",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": ["npc", "me", "Meal_Chat_Approach", "mealApproachKojo"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "approach_kojo_line"] }
+                                ]
+                            },
+                            {
+                                "option": "no reaction",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "pair_loop"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "approach_kojo_line",
+                        "UISpec": { "portraitRefKey": "npc" },
+                        "line": "$mealApproachKojo$",
+                        "nextEntryLabel": "pair_loop"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "talk_pair",
+                        "options": [
+                            {
+                                "option": "run talk",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["pair_a", "pair_b", "com_interaction_talk", "1", "true", "false", "none", "kojoOnly"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "pair_kojo"] }
+                                ]
+                            },
+                            {
+                                "option": "talk failed",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "pair_kojo"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pair_line",
+                        "UISpec": { "portraitRefKey": "pair_b", "selfTags": ["relaxed", "happy"] },
+                        "line": "meal_chat_pair",
+                        "nextEntryLabel": "talk_pair"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pair_kojo",
+                        "options": [
+                            {
+                                "option": "reaction",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": ["pair_b", "pair_a", "Meal_Chat", "mealChatKojo"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "pair_kojo_line"] }
+                                ]
+                            },
+                            {
+                                "option": "no reaction",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "pair_loop"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pair_kojo_line",
+                        "UISpec": { "portraitRefKey": "pair_b" },
+                        "line": "$mealChatKojo$",
+                        "nextEntryLabel": "pair_loop"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "done",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "meal_question": "饭菜上桌，同桌的人已经边吃边聊了起来。要怎么做？",
+                "meal_opt_chat_with": "和$firstname$聊天",
+                "meal_opt_silent": "默默吃饭（听大家聊）",
+                "meal_opt_quick": "三两口吃完（不参与聊天）",
+                "meal_chat_player": "$me.firstname$一边吃，一边和$picked.firstname$聊了起来。",
+                "meal_silent": "$me.firstname$低头默默吃着饭，听着桌上的闲谈。",
+                "meal_quick": "$me.firstname$三两口扒完了饭，没有加入桌上的谈话。",
+                "meal_chat_approach": "$npc.firstname$注意到一直安静吃饭的$me.firstname$，主动凑过来搭起了话。",
+                "meal_chat_pair": "$pair_a.firstname$和$pair_b.firstname$一边吃饭，一边聊了起来。"
+            }
+        }
+    }
+}

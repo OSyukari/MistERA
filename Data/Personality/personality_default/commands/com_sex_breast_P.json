@@ -687,9 +687,21 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_breast_P_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -697,18 +709,7 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "com_sex_breast_P_Refuse_Receiver_3",
-                                "com_sex_breast_P_Refuse_Receiver_4",
-                                "com_sex_breast_P_Refuse_Receiver_5"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -802,18 +803,24 @@
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.4 指令失败拒绝 乳交 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "com_sex_breast_P_Refuse_Receiver_3",
+                                "com_sex_breast_P_Refuse_Receiver_4",
+                                "com_sex_breast_P_Refuse_Receiver_5",
                                 "com_sex_breast_P_14",
                                 "com_sex_breast_P_15",
                                 "com_sex_breast_P_36"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_breast_P_Refuse_2"
                             ]
                         }
                     ],
@@ -996,7 +1003,9 @@
                 "com_sex_breast_P_Climax_sleeping_1": "沉睡中的$self$猛地绷紧了身子，在梦呓般的短促喘息里迎来了高潮，眉头微蹙却始终没有醒来。",
                 "com_sex_breast_P_Climax_sleeping_2": "$self$在睡梦中发出一声压抑的轻吟，身体无意识地剧烈颤抖着到达了顶峰，随后又软软地陷入沉睡。",
                 "com_sex_breast_P_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
-                "com_sex_breast_P_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。"
+                "com_sex_breast_P_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
+                "com_sex_breast_P_Refuse_1": "(unimplemented)",
+                "com_sex_breast_P_Refuse_2": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_breast_P_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

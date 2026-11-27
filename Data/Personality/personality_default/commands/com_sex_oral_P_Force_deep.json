@@ -11,6 +11,9 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "_comment": "施方 com_sex_oral_P_Force_deep 高潮",
                             "responses": [
                                 "com_sex_oral_P_Force_deep_Climax_Doer_1",
@@ -422,6 +425,9 @@
                         },
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "variants": [
                                 {
                                     "requirement": {
@@ -458,17 +464,6 @@
                                 "com_sex_oral_P_Force_deep_Begin_FE_Partner_1",
                                 "com_sex_oral_P_Force_deep_Begin_FE_Partner_2",
                                 "com_sex_oral_P_Force_deep_Begin_FE_Partner_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底（接受，任何状态）",
-                            "responses": [
-                                "com_sex_oral_P_Force_deep_Begin_Hostile_1"
                             ]
                         }
                     ],
@@ -1140,11 +1135,30 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "useActiveTags": false,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_oral_P_Force_deep_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "angry",
+                                "disgust",
+                                "surprised",
+                                "serious"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "受方拒绝 com_sex_oral_P_Force_deep",
                             "variants": [
                                 {
                                     "useActiveTags": false,
@@ -1184,13 +1198,6 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "_comment": "受方拒绝 com_sex_oral_P_Force_deep",
                             "responses": [
                                 "com_sex_oral_P_Force_deep_Refuse_Hostile_1",
                                 "com_sex_oral_P_Force_deep_Refuse_Hostile_2",
@@ -1201,15 +1208,14 @@
                             ]
                         },
                         {
-                            "useActiveTags": false,
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底（拒绝）",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_sex_oral_P_Force_deep_Refuse_Hostile_1"
+                                "com_sex_oral_P_Force_deep_Refuse_2"
                             ]
                         }
                     ],
@@ -1419,7 +1425,9 @@
                 "com_sex_oral_P_Force_deep_Ongoing_Player_2": "$self$连咽喉都被塞得满满当当，呛出泪水的眼睛望向旁观的$target$，鼻腔里漏出断续的呜咽：\"呜……唔……\"",
                 "com_sex_oral_P_Force_deep_Ongoing_Player_3": "察觉到$target$正看着自己整根吞入的狼狈模样，$self$难堪地闭紧眼，只能被动承受着眼前的深顶。",
                 "com_sex_oral_P_Force_deep_1": "(unimplemented)",
-                "com_sex_oral_P_Force_deep_Ongoing_1": "(unimplemented)"
+                "com_sex_oral_P_Force_deep_Ongoing_1": "(unimplemented)",
+                "com_sex_oral_P_Force_deep_Refuse_1": "(unimplemented)",
+                "com_sex_oral_P_Force_deep_Refuse_2": "(unimplemented)"
             }
         }
     }

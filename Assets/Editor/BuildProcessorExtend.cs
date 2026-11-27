@@ -108,7 +108,7 @@ class BuildProcessorExtend : IPostprocessBuildWithReport, IPreprocessBuildWithRe
         if (buildSafe)
         {
             CopyDataFrom($"{appPath}/Data/", $"{rootDir}/Data/", safeExtensiosn, nsfwKeywords);
-            CopyDataTo($"{Application.dataPath}/", $"{rootDir}/Data/", "safeMasterList.json");
+            CopyDataTo($"{scr_System_Serializer.DebugDumpPath}/", $"{rootDir}/Data/", "safeMasterList.json");
         }
         else
         {

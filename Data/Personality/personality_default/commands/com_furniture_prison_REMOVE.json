@@ -471,10 +471,23 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_furniture_prison_REMOVE_Refuse_7"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -494,19 +507,31 @@
                             "responses": [
                                 "com_furniture_prison_REMOVE_Refuse_4",
                                 "com_furniture_prison_REMOVE_Refuse_5",
-                                "com_furniture_prison_REMOVE_Refuse_6"
+                                "com_furniture_prison_REMOVE_Refuse_6",
+                                "com_furniture_prison_REMOVE_Refuse_Fallback_1",
+                                "com_furniture_prison_REMOVE_Refuse_Fallback_2"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_furniture_prison_REMOVE_Refuse_Fallback_1",
-                                "com_furniture_prison_REMOVE_Refuse_Fallback_2"
+                                "com_furniture_prison_REMOVE_Refuse_8"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_prison_REMOVE_Refuse_9"
                             ]
                         }
                     ]
@@ -660,7 +685,10 @@
                 "com_furniture_prison_REMOVE_Begin_14": "(unimplemented)",
                 "com_furniture_prison_REMOVE_16": "(unimplemented)",
                 "com_furniture_prison_REMOVE_Ongoing_4": "(unimplemented)",
-                "com_furniture_prison_REMOVE_Ongoing_5": "(unimplemented)"
+                "com_furniture_prison_REMOVE_Ongoing_5": "(unimplemented)",
+                "com_furniture_prison_REMOVE_Refuse_7": "(unimplemented)",
+                "com_furniture_prison_REMOVE_Refuse_8": "(unimplemented)",
+                "com_furniture_prison_REMOVE_Refuse_9": "(unimplemented)"
             }
         }
     }

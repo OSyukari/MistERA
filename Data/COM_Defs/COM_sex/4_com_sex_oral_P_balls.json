@@ -41,7 +41,7 @@
                             {"source":"PartnerDesire", "appliesTo":"BothDeciders", "scale":0.04, "offset":-4.8, "min":0, "max":11}
                         ]
                     } },
-                "DifficultyCheck":{ "baseD20Check":10 },
+                "DifficultyCheck":{ "baseD20Check":10, "SkillBonus_Doer":["skill_sensitivity_M"] },
                 "variants":[
                     {
                         "requirements":{

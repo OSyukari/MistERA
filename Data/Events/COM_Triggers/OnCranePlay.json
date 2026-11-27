@@ -1,0 +1,429 @@
+{
+    "_comment": "Crane machine prize game (com_furniture_crane_play results_AP, requireSuccess). Flow graph: OnCranePlay_flow.svg. Pool = machine owner's salesInventory stock + its real items tagged by the command's requireCranePrize.inventoryTags (CraneMachineUtility), each unit in a random cell of a 3x3 grid. Two aiming questions (column, row): a picked option is applied only when the command's DC (noAutoRoll, RollCommandDC with its DC skills) succeeds, else the claw ends up at a random position; [random] (isDefaultCancel - the NPC pick, npcDecides) skips the check. A cell with prizes is grabbed with one more DC roll: success = one random prize of the cell, natural 20 = every prize of the cell; prizes go to the doer's home faction.",
+    "Events": {
+        "list": [
+            {
+                "ID": "com_furniture_crane_play_event",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "fill machine",
+                                "Results": [
+                                    { "Type": "CraneSetup", "arguments": ["doer", "com_furniture_crane_play", "crane"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "intro"] }
+                                ]
+                            },
+                            {
+                                "option": "no prize",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "machine_empty"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "machine_empty",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_machine_empty",
+                        "nextEntryLabel": "done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "intro",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_intro",
+                        "nextEntryLabel": "q_x"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "q_x",
+                        "question": "crane_q_x",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "crane_opt_left",
+                                "Results": [
+                                    { "Type": "SetAppendString", "arguments": ["crane_x", "0"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "crane_opt_center",
+                                "Results": [
+                                    { "Type": "SetAppendString", "arguments": ["crane_x", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "crane_opt_right",
+                                "Results": [
+                                    { "Type": "SetAppendString", "arguments": ["crane_x", "2"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "crane_opt_random",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "x_random"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "x_roll",
+                        "options": [
+                            {
+                                "option": "skill check",
+                                "Results": [
+                                    { "Type": "RollCommandDC", "arguments": ["doer", "com_furniture_crane_play", "crane_aim"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_judge"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "x_judge",
+                        "options": [
+                            {
+                                "option": "success",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["crane_aim", "Success"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_ok"] }
+                                ]
+                            },
+                            {
+                                "option": "critical success",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["crane_aim", "CriticalSuccess"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_ok"] }
+                                ]
+                            },
+                            {
+                                "option": "failed - random column",
+                                "Results": [
+                                    { "Type": "RollWeighted", "arguments": ["crane_x", "0", "1", "1", "1", "2", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_slip"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "x_ok",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_x_ok",
+                        "nextEntryLabel": "q_y"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "x_slip",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_x_slip",
+                        "nextEntryLabel": "q_y"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "x_random",
+                        "options": [
+                            {
+                                "option": "random column",
+                                "Results": [
+                                    { "Type": "RollWeighted", "arguments": ["crane_x", "0", "1", "1", "1", "2", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "x_random_line"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "x_random_line",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_x_random",
+                        "nextEntryLabel": "q_y"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "q_y",
+                        "question": "crane_q_y",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "crane_opt_front",
+                                "Results": [
+                                    { "Type": "SetAppendString", "arguments": ["crane_y", "0"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "crane_opt_middle",
+                                "Results": [
+                                    { "Type": "SetAppendString", "arguments": ["crane_y", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "crane_opt_back",
+                                "Results": [
+                                    { "Type": "SetAppendString", "arguments": ["crane_y", "2"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "crane_opt_random",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "y_random"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "y_roll",
+                        "options": [
+                            {
+                                "option": "skill check",
+                                "Results": [
+                                    { "Type": "RollCommandDC", "arguments": ["doer", "com_furniture_crane_play", "crane_aim"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_judge"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "y_judge",
+                        "options": [
+                            {
+                                "option": "success",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["crane_aim", "Success"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_ok"] }
+                                ]
+                            },
+                            {
+                                "option": "critical success",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["crane_aim", "CriticalSuccess"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_ok"] }
+                                ]
+                            },
+                            {
+                                "option": "failed - random row",
+                                "Results": [
+                                    { "Type": "RollWeighted", "arguments": ["crane_y", "0", "1", "1", "1", "2", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_slip"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "y_ok",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_y_ok",
+                        "nextEntryLabel": "cell_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "y_slip",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_y_slip",
+                        "nextEntryLabel": "cell_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "y_random",
+                        "options": [
+                            {
+                                "option": "random row",
+                                "Results": [
+                                    { "Type": "RollWeighted", "arguments": ["crane_y", "0", "1", "1", "1", "2", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "y_random_line"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "y_random_line",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_y_random",
+                        "nextEntryLabel": "cell_check"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "cell_check",
+                        "options": [
+                            {
+                                "option": "prize in cell",
+                                "Results": [
+                                    { "Type": "CraneCellHasPrize", "arguments": ["crane"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "grab_roll"] }
+                                ]
+                            },
+                            {
+                                "option": "empty cell",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "cell_empty"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "cell_empty",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_cell_empty_line",
+                        "nextEntryLabel": "done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "grab_roll",
+                        "options": [
+                            {
+                                "option": "grab check",
+                                "Results": [
+                                    { "Type": "RollCommandDC", "arguments": ["doer", "com_furniture_crane_play", "crane_grab"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "grab_judge"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "grab_judge",
+                        "options": [
+                            {
+                                "option": "natural 20 - whole cell",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["crane_grab", "CriticalSuccess"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "grab_all"] }
+                                ]
+                            },
+                            {
+                                "option": "success - one prize",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["crane_grab", "Success"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "grab_one"] }
+                                ]
+                            },
+                            {
+                                "option": "failed",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "grab_miss"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "grab_all",
+                        "options": [
+                            {
+                                "option": "take every prize",
+                                "Results": [
+                                    { "Type": "CraneGrab", "arguments": ["doer", "crane", "all"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "grab_all_line"] }
+                                ]
+                            },
+                            {
+                                "option": "stock gone",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "grab_lost"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "grab_one",
+                        "options": [
+                            {
+                                "option": "take one prize",
+                                "Results": [
+                                    { "Type": "CraneGrab", "arguments": ["doer", "crane", "one"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "grab_one_line"] }
+                                ]
+                            },
+                            {
+                                "option": "stock gone",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "grab_lost"] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "grab_all_line",
+                        "UISpec": { "portraitRefKey": "doer", "selfTags": ["happy"] },
+                        "line": "crane_grab_all",
+                        "nextEntryLabel": "done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "grab_one_line",
+                        "UISpec": { "portraitRefKey": "doer", "selfTags": ["happy"] },
+                        "line": "crane_grab_one",
+                        "nextEntryLabel": "done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "grab_miss",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_grab_miss",
+                        "nextEntryLabel": "done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "grab_lost",
+                        "UISpec": { "portraitRefKey": "doer" },
+                        "line": "crane_grab_lost",
+                        "nextEntryLabel": "done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "done",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "crane_machine_empty": "$doer.firstname$往机台里一看——里面已经空空如也。",
+                "crane_intro": "$doer.firstname$弯腰凑近玻璃，打量着机台里的奖品：\n$crane_grid$",
+                "crane_grid_row": "【$row$】左：$c0$ ｜ 中：$c1$ ｜ 右：$c2$",
+                "crane_row_0": "前排",
+                "crane_row_1": "中排",
+                "crane_row_2": "后排",
+                "crane_col_0": "左侧",
+                "crane_col_1": "中间",
+                "crane_col_2": "右侧",
+                "crane_cell_name": "$row$$col$",
+                "crane_cell_empty": "（空）",
+                "crane_name_separator": "、",
+                "crane_q_x": "先左右移动夹爪——要对准哪一列？",
+                "crane_q_y": "再前后移动夹爪——要对准哪一排？",
+                "crane_opt_left": "左侧",
+                "crane_opt_center": "中间",
+                "crane_opt_right": "右侧",
+                "crane_opt_front": "前排",
+                "crane_opt_middle": "中排",
+                "crane_opt_back": "后排",
+                "crane_opt_random": "随手一按（随机）",
+                "crane_x_ok": "$crane_aim_text$\n$doer.firstname$稳稳地把夹爪横移到了瞄准的那一列。",
+                "crane_x_slip": "$crane_aim_text$\n摇杆一滑，夹爪横移的位置跑偏了。",
+                "crane_x_random": "$doer.firstname$随手拨了一下摇杆，夹爪晃晃悠悠地横移开去。",
+                "crane_y_ok": "$crane_aim_text$\n$doer.firstname$把夹爪前后对准了想要的那一排。",
+                "crane_y_slip": "$crane_aim_text$\n按钮按得太急，夹爪前后停得偏了。",
+                "crane_y_random": "$doer.firstname$看也不看就拍下按钮，夹爪摇摇晃晃地停了下来。",
+                "crane_cell_empty_line": "夹爪落在$crane_cell_name$，却只抓了一把空气——那里什么都没有。",
+                "crane_grab_one": "$crane_grab_text$\n夹爪落在$crane_cell_name$，稳稳夹起了$crane_prize$，送进了出口！",
+                "crane_grab_all": "$crane_grab_text$\n大成功！夹爪落在$crane_cell_name$，竟一口气把$crane_prize$全都捞了出来！",
+                "crane_grab_miss": "$crane_grab_text$\n夹爪落在$crane_cell_name$，碰到了奖品，却在升起时松了手。",
+                "crane_grab_lost": "夹爪落在$crane_cell_name$，可那里的奖品不知何时已经不见了。"
+            }
+        }
+    }
+}

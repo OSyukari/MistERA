@@ -20,7 +20,8 @@
                 "furniture_packed",
                 "rarity_common"
             ],
-            "exceptTags":["electronics"]
+            "_comment_exceptTags": "sports_equipment (treadmill, weight rack, training machine, yoga mat) is sold at the sports store (store_sportswear.json) only",
+            "exceptTags":["electronics", "sports_equipment"]
         }
     ],
                 "activeHoursStart":10,

@@ -2922,7 +2922,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <summary> Freshen Up: a trace on the head (face, mouth) a wash removes. Tolerance not checked (short trip) </summary>
     [JsonIgnore] public bool needsFaceClean { get { return canGoClean && Body.HasCleanableTraces(TraceCleanAction.Wash, Character_Body.HeadTags); } }
     /// <summary> restroom: a solid / liquid trace on the lower body or legs a wipe changes. Tolerance not checked (short trip) </summary>
-    [JsonIgnore] public bool needsRestroom { get { return canGoClean && Body.HasCleanableTraces(TraceCleanAction.Wipe, Character_Body.LowerBodyTags); } }
+    [JsonIgnore] public bool needsRestroom { get { return canGoClean && Body.HasCleanableTraces(TraceCleanAction.Wipe, Character_Body.LowerBodyTags, restroomTrip: true); } }
     /// <summary>
     /// shower: body dirtiness seen through stats_derived_cleanlinessSensitivity reaches stats_derived_cleaningThreshold -
     /// the same comparison a room gets before this character cleans it (TryFindPrivateRoomCleaning)

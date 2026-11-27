@@ -255,41 +255,55 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "selfTags": [
-                                    "justWokenUp"
-                                ]
-                            },
-                            "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 拒绝",
-                            "responses": [
-                                "com_player_putDown_Refuse_Woken_1",
-                                "com_player_putDown_Refuse_Woken_2",
-                                "com_player_putDown_Refuse_Woken_3"
-                            ]
-                        },
-                        {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_player_putDown_Refuse_1",
-                                "com_player_putDown_Refuse_2",
-                                "com_player_putDown_Refuse_3"
+                                "com_player_putDown_Refuse_4"
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ],
+                                        "requireEPSuccess": false
+                                    },
+                                    "_comment": "受方（被弄醒后） → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_player_putDown_Refuse_Woken_1",
+                                        "com_player_putDown_Refuse_Woken_2",
+                                        "com_player_putDown_Refuse_Woken_3"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_player_putDown_Refuse_1",
+                                "com_player_putDown_Refuse_2",
+                                "com_player_putDown_Refuse_3",
                                 "com_player_putDown_Refuse_Fallback_1"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_player_putDown_Refuse_5"
                             ]
                         }
                     ]
@@ -574,7 +588,9 @@
                 "com_player_putDown_Joined_Fallback_1": "$self$上前搭了把手，帮着稳住身形。",
                 "com_player_putDown_Refuse_Fallback_1": "$self$犹豫了一下：“还是先不放下来吧。”",
                 "com_player_putDown_Join_Refused_Fallback_1": "$self$点点头：“行，那你自己放好就行。”",
-                "com_player_putDown_Tryjoin_Fallback_1": "$self$走过来问：“要不要我帮着扶一把？”"
+                "com_player_putDown_Tryjoin_Fallback_1": "$self$走过来问：“要不要我帮着扶一把？”",
+                "com_player_putDown_Refuse_4": "(unimplemented)",
+                "com_player_putDown_Refuse_5": "(unimplemented)"
             }
         }
     }

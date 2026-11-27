@@ -23,7 +23,7 @@
     {
       "id": "role", "label": "说话者角色",
       "leaves": {
-        "doer": { "label": "施方（不限定哪一方拒绝）", "variant": { "requireSelfDoer": true } },
+        "doer": { "label": "施方（被受方拒绝；拒绝下令另有 declinedOrder）", "variant": { "requireSelfDoer": true } },
         "receiver": { "label": "受方", "variant": { "requireSelfReceiver": true } },
         "self": { "label": "独自（对象是自己）", "variant": { "requireSelfOnly": true } }
       }
@@ -38,7 +38,10 @@
     }
   ],
 
+  "_comment_required": "pair: the receiver declining, the doer declining a third party's order, and the doer reacting to the receiver's refusal (EvaluationPackage.LogMessage_Kojo: after a receiver refusal the doer still fetches `_Refuse`, no refusal context) - without their own branch both doer cases fall through to the generic fallback, whose lines are written as the receiver's refusal.",
   "required": [
-    { "path": ["receiver"], "when": ["pair"] }
+    { "path": ["receiver"], "when": ["pair"] },
+    { "path": ["declinedOrder"], "when": ["pair"] },
+    { "path": ["doer"], "when": ["pair"], "label": "施方被拒绝（受方拒绝后施方的反应）" }
   ]
 }

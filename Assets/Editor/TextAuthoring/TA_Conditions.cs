@@ -19,6 +19,14 @@ public class TA_KojoContext
     public bool playerInvolved = true;
     /// <summary>Kojo fetched without an action package (events): the EP checks (accepted/refused/result) don't run.</summary>
     public bool noEP;
+    /// <summary>
+    /// A command kojo key (set by the command doc builder): the doer and the master always act, so a speaker-unaware
+    /// gate is the receiver's (Plan_KojoTemplates.md T2); never recording (KojoCollector.isrecording is only set on the
+    /// recording playback "Interrupt" lookup, EvaluationPackage.isRecording is false).
+    /// </summary>
+    public bool commandKey;
+    /// <summary>Command key: the command's receiver side can be in a cases.json state that can't act (asleep, time-stopped …).</summary>
+    public bool receiverMayNotAct;
 
     // ---- case mode (Docs/TextAuthoring/Plan_CommandCases.md §5): null = not modelled, the check is skipped as before
 
@@ -217,16 +225,32 @@ public static class TA_Conditions
 
     /// <summary>
     /// The variant is valid every time it is checked in this context (Variant.isValid): applicable, no master/strong flags,
-    /// requirement untouched. A valid variant without keepLooking ends its level even when nothing below it prints, so
-    /// later siblings are unreachable - except ones with allowRecording, which the default requirement fails on.
+    /// requirement untouched apart from loosening fields (requireSelfAction / requireTargetAction false, allowRecording
+    /// true, requireEPSuccess false without requireEPFailure). A valid variant without keepLooking ends its level even
+    /// when nothing below it prints, so later siblings are unreachable - except ones with allowRecording outside command
+    /// keys, which the default requirement fails on while recording. Command keys: a default requireSelfAction /
+    /// requireTargetAction is a real condition on the receiver's side when the receiver can be unable to act.
     /// </summary>
     public static bool AlwaysValid(ResponseEntry.Variant v, TA_KojoContext ctx)
     {
         if (v == null || !Applies(v, ctx)) return false;
         if (v.requireCOMStrongVariant || v.requireMaster || v.requireSelfMaster || v.requireSelfNotMaster) return false;
+        var r = v.requirement;
+        if (r == null) r = new ResponseEntry.Variant.Requirement();
+        if (ctx.commandKey && ctx.receiverMayNotAct)
+        {
+            // case mode (selfCanAct / targetCanAct set) already checked these in Applies
+            if (r.requireSelfAction && ctx.speakerIsReceiver && !ctx.selfCanAct.HasValue) return false;
+            if (r.requireTargetAction && ctx.speakerIsDoer && !ctx.listenerIsSelf && !ctx.targetCanAct.HasValue) return false;
+        }
         if (v.requirement == null) return true;
         if (defaultRequirement == null) defaultRequirement = JObject.FromObject(new ResponseEntry.Variant.Requirement(), JsonSerializer.Create(settings));
-        return JToken.DeepEquals(JObject.FromObject(v.requirement, JsonSerializer.Create(settings)), defaultRequirement);
+        var req = JObject.FromObject(r, JsonSerializer.Create(settings));
+        req["requireSelfAction"] = true;
+        req["requireTargetAction"] = true;
+        req["allowRecording"] = false;
+        if (!r.requireEPFailure) req["requireEPSuccess"] = true;
+        return JToken.DeepEquals(req, defaultRequirement);
     }
 
     /// <summary>
@@ -240,6 +264,8 @@ public static class TA_Conditions
         if (!v.requireSelfOnly && ctx.listenerIsSelf) return false;
         if (v.requireSelfDoer && !ctx.speakerIsDoer) return false;
         if (v.requireSelfReceiver && !ctx.speakerIsReceiver) return false;
+        // command keys: the doer never is unaware (an unconscious doer is an escape state, silence is fine)
+        if (ctx.commandKey && ctx.speakerIsDoer && TA_KojoShadow.RequiresUnaware(v)) return false;
         // ResponseEntryVariant.isValid(kol): with an action package masterRef is always set (Master, else the doer), so
         // requireMaster only fails without one; requireSelfMaster / requireSelfNotMaster compare it with the speaker
         if (v.requireMaster && ctx.noEP) return false;

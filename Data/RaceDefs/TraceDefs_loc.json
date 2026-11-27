@@ -47,7 +47,10 @@
                 "trace_lube_tooltip": "Slippery lubricant.",
                 "trace_sand": "Sand",
                 "trace_sand_tooltip": "Fine sand clinging to the skin; easily brushed off.",
-                "trace_clean_removed": "$trace$ on the $location$",
+                "trace_sweat": "Sweat",
+                "trace_sweat_tooltip": "Sweat from exertion. Wiped off or left to dry, it leaves dried sweat behind.",
+                "trace_sweat_dried": "Dried Sweat",
+                "trace_sweat_dried_tooltip": "Sticky dried sweat. Only a shower washes it off.",                "trace_clean_removed": "$trace$ on the $location$",
                 "trace_clean_dried": "$trace$ on the $location$ (dried onto the skin after wiping)",
                 "trace_clean_separator": ", "
             }

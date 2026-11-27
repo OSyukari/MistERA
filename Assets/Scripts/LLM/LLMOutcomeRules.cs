@@ -67,7 +67,7 @@ public static class LLMOutcomeRules
                     ep.dc_modifier = 0;
                     if (ep.command_result == Memory_Response.None)
                         errors.Add($"actions[{i}] ({ep.CommandID}): commandResult is required in this mode - rule the outcome yourself (None is not allowed)");
-                    else if (ep.command_result == Memory_Response.Accept && ep.innerCOM != null && ep.innerCOM.baseD20Check > 0)
+                    else if (ep.command_result == Memory_Response.Accept && ep.innerCOM != null && ep.innerCOM.HasAutoDC)
                         errors.Add($"actions[{i}] ({ep.CommandID}): this command has a DifficultyCheck - rule CriticalFailure/Failure/Success/CriticalSuccess (or Refuse) instead of Accept");
                     if (string.IsNullOrWhiteSpace(ep.outcome_reason))
                         errors.Add($"actions[{i}] ({ep.CommandID}): reason is required in this mode - justify the ruling");

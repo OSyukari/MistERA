@@ -25,6 +25,12 @@ public class Requirement_Faction
     /// ActionPackage.ignoreMealHour).
     /// </summary>
     public bool requireMealHour = false;
+    /// <summary>
+    /// Crane machine (CraneMachineUtility): only valid while the faction has a prize - salesInventory stock, or a real
+    /// item with one of inventoryTags. Like requireMealHour it is not part of isValid: the command is shown invalid with
+    /// this tooltip. The crane event reads the same inventoryTags.
+    /// </summary>
+    public CraneMachineUtility.PrizeRequirement requireCranePrize = null;
     public bool Validate(I_IsJobGiver m, out string tooltip, bool ignoreMealHour = false)
     {
         tooltip = "";
@@ -32,6 +38,12 @@ public class Requirement_Faction
         if (requireMealHour && !ignoreMealHour && (m == null || !m.isMealHour))
         {
             tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_requireMealHour")
+                    .Replace("$faction$", m == null ? "-" : m.FactionDisplayName);
+            return false;
+        }
+        if (requireCranePrize != null && !CraneMachineUtility.HasPrize(m, requireCranePrize.inventoryTags))
+        {
+            tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_requireCranePrize")
                     .Replace("$faction$", m == null ? "-" : m.FactionDisplayName);
             return false;
         }

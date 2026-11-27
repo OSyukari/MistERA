@@ -1,0 +1,43 @@
+{
+    "_doc": {
+        "purpose": "English localization companion for items_fumo.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "item_fumo_reimu": "Reimu Fumo",
+                "item_fumo_reimu_tooltip": "A plush shrine maiden in red and white, wearing a round-faced, thoughtful expression.",
+                "item_fumo_marisa": "Marisa Fumo",
+                "item_fumo_marisa_tooltip": "A plush magician in a big pointed hat, its brim tipped to one side.",
+                "item_fumo_cirno": "Cirno Fumo",
+                "item_fumo_cirno_tooltip": "A plush ice fairy with crystal wings. It looks like the strongest.",
+                "item_fumo_sakuya": "Sakuya Fumo",
+                "item_fumo_sakuya_tooltip": "A plush maid with a perfectly neat headdress.",
+                "item_fumo_remilia": "Remilia Fumo",
+                "item_fumo_remilia_tooltip": "A small plush vampire with a pair of bat wings stitched on the back.",
+                "item_fumo_flandre": "Flandre Fumo",
+                "item_fumo_flandre_tooltip": "A plush vampire whose wings are hung with colorful crystals. Hug it gently.",
+                "item_fumo_patchouli": "Patchouli Fumo",
+                "item_fumo_patchouli_tooltip": "A plush magician in pajama-like robes, looking like it has not quite woken up.",
+                "item_fumo_youmu": "Youmu Fumo",
+                "item_fumo_youmu_tooltip": "A plush gardener with two little wooden swords and a half-phantom floating beside it.",
+                "item_fumo_yuyuko": "Yuyuko Fumo",
+                "item_fumo_yuyuko_tooltip": "A plush ghost princess in a triangular headpiece, extra soft to the touch.",
+                "item_fumo_chen": "Chen Fumo",
+                "item_fumo_chen_tooltip": "A plush two-tailed nekomata whose ears droop a little depending on how it sits.",
+                "item_fumo_sanae": "Sanae Fumo",
+                "item_fumo_sanae_tooltip": "A plush shrine maiden in blue and white, with snake and frog hair ornaments.",
+                "item_fumo_satori": "Satori Fumo",
+                "item_fumo_satori_tooltip": "A plush with a third eye on its chest. Being looked at by it feels like having your mind read.",
+                "item_fumo_koishi": "Koishi Fumo",
+                "item_fumo_koishi_tooltip": "A plush in a wide black hat. It never moves, yet people keep forgetting it is there.",
+                "item_fumo_reisen": "Reisen Fumo",
+                "item_fumo_reisen_tooltip": "A plush with tall rabbit ears and striking red eyes.",
+                "item_fumo_deka_reimu": "Deka Reimu Fumo",
+                "item_fumo_deka_reimu_tooltip": "A Reimu plush the size of a body pillow. Getting it out of a crane machine is a small miracle.",
+                "item_fumo_deka_yukari": "Deka Yukari Fumo",
+                "item_fumo_deka_yukari_tooltip": "A pillow-sized Yukari plush holding a tiny parasol, smiling as if it knows something."
+            }
+        }
+    }
+}

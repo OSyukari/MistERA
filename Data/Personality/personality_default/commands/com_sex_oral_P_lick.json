@@ -237,10 +237,22 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_oral_P_lick_Refuse_10"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -259,18 +271,21 @@
                             "responses": [
                                 "com_sex_oral_P_lick_Refuse_4",
                                 "com_sex_oral_P_lick_Refuse_5",
-                                "com_sex_oral_P_lick_Refuse_6"
+                                "com_sex_oral_P_lick_Refuse_6",
+                                "com_sex_oral_P_lick_Refuse_7",
+                                "com_sex_oral_P_lick_Refuse_8",
+                                "com_sex_oral_P_lick_Refuse_9"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false
                             },
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_sex_oral_P_lick_Refuse_7",
-                                "com_sex_oral_P_lick_Refuse_8",
-                                "com_sex_oral_P_lick_Refuse_9"
+                                "com_sex_oral_P_lick_Refuse_11"
                             ]
                         }
                     ],
@@ -287,6 +302,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "responses": [
                                 "com_sex_oral_P_lick_Climax_1",
                                 "com_sex_oral_P_lick_Climax_2",
@@ -294,14 +312,13 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方兜底（受方无法行动时也成立）",
                             "responses": [
-                                "com_sex_oral_P_lick_Climax_4",
-                                "com_sex_oral_P_lick_Climax_5",
-                                "com_sex_oral_P_lick_Climax_6"
+                                "com_sex_oral_P_lick_Climax_7"
                             ]
                         }
                     ],
@@ -556,7 +573,10 @@
                 "com_sex_oral_P_lick_31": "$self$微微喘息着，一边顺着动作继续互动，一边留意着$target$的反应。",
                 "com_sex_oral_P_lick_32": "空气渐渐升温，$self$放缓了节奏继续顺着动作继续互动：“……感觉怎么样？”",
                 "com_sex_oral_P_lick_33": "$self$轻吐出一口气，顺从着眼前的状态继续顺着动作继续互动。",
-                "com_sex_oral_P_lick_34": "(unimplemented)"
+                "com_sex_oral_P_lick_34": "(unimplemented)",
+                "com_sex_oral_P_lick_Climax_7": "(unimplemented)",
+                "com_sex_oral_P_lick_Refuse_10": "(unimplemented)",
+                "com_sex_oral_P_lick_Refuse_11": "(unimplemented)"
             }
         }
     }

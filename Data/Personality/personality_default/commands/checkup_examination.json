@@ -52,10 +52,23 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "checkup_examination_Refuse_9"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -75,20 +88,20 @@
                             "responses": [
                                 "checkup_examination_Refuse_4",
                                 "checkup_examination_Refuse_5",
-                                "checkup_examination_Refuse_6"
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
+                                "checkup_examination_Refuse_6",
                                 "checkup_examination_Refuse_7",
                                 "checkup_examination_Refuse_8"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "checkup_examination_Refuse_10"
                             ]
                         }
                     ]
@@ -662,7 +675,9 @@
                 "checkup_examination_Joined_5": "\"算我一个吧。\" $self$说着在旁边找了个位置。",
                 "checkup_examination_Ongoing_8": "(unimplemented)",
                 "checkup_examination_Begin_18": "(unimplemented)",
-                "checkup_examination_21": "(unimplemented)"
+                "checkup_examination_21": "(unimplemented)",
+                "checkup_examination_Refuse_9": "(unimplemented)",
+                "checkup_examination_Refuse_10": "(unimplemented)"
             }
         }
     }

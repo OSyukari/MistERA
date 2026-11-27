@@ -4,6 +4,8 @@
   "label": "参与者对加入者的反应（加入成功）",
   "inner": "interaction",
   "bindCommand": ["_Join"],
+  "_comment_speakers": "Only the EP's doer and receiver react (LogMessage_Join), the listener is the joiner: a doer + receiver split (alone: a doer branch) covers every speaker, so no generic fallback is needed after it.",
+  "listenerNeverSelf": true,
 
   "fallback": {
     "label": "兜底（加入成功）",

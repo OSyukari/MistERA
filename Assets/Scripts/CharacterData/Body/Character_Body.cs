@@ -8,6 +8,9 @@ using System.Linq;
 using UnityEngine;
 
 
+/// <summary> Character_Body.GetClothingFit: nothing worn / only fit-tagged garments / anything else </summary>
+public enum ClothingFitState { Bare, Fit, Unfit }
+
 public class Character_Body
 {
     public int Height = 162;
@@ -170,6 +173,10 @@ public class Character_Body
         return result;
     }
 
+    static readonly List<BodyPartEquipSlot> HandSlots = new List<BodyPartEquipSlot>() { BodyPartEquipSlot.Hand };
+    /// <summary>True when this body has at least one part or organ exposing the Hand equip slot (humanoids/androids yes; quadrupeds/animals no).</summary>
+    [JsonIgnore] public bool HasHand { get { return GetSlotHolders(null, HandSlots).Count > 0; } }
+
     /// <summary>
     /// CharaReq.requireSlots: the parts / organs carrying any of tags (empty = any) that have any of slots among their own
     /// equip slots (part AvailableSlots: Hand, Feet...; organ AvailableSlots: Mouth, Nipples...).
@@ -279,31 +286,73 @@ public class Character_Body
         return changed;
     }
 
-    /// <summary> any trace in the area (CleanTraces filter) that this action would remove or dry. Changes nothing </summary>
-    public bool HasCleanableTraces(TraceCleanAction action, List<string> bodyTags)
+    /// <summary>
+    /// any trace in the area (CleanTraces filter) that this action would remove or dry. Changes nothing.
+    /// restroomTrip: skip traces that never send anyone to the restroom (TraceDefinition.triggersRestroomTrip, e.g. sweat)
+    /// </summary>
+    public bool HasCleanableTraces(TraceCleanAction action, List<string> bodyTags, bool restroomTrip = false)
     {
         bool filter = bodyTags != null && bodyTags.Count > 0;
         foreach (var part in Body)
         {
             bool partInArea = !filter || InArea(part, bodyTags);
-            if (part.HasTraces && partInArea && AnyCleanable(part, action)) return true;
+            if (part.HasTraces && partInArea && AnyCleanable(part, action, restroomTrip)) return true;
             foreach (var organ in part.internals)
             {
-                if (organ.HasTraces && (partInArea || bodyTags.Exists(organ.hasTag)) && AnyCleanable(organ, action)) return true;
+                if (organ.HasTraces && (partInArea || bodyTags.Exists(organ.hasTag)) && AnyCleanable(organ, action, restroomTrip)) return true;
             }
         }
         return false;
     }
 
-    static bool AnyCleanable(I_TraceHolder holder, TraceCleanAction action)
+    static bool AnyCleanable(I_TraceHolder holder, TraceCleanAction action, bool restroomTrip)
     {
         var list = holder.Traces;
         for (int i = 0; i < list.Count; i++)
         {
             var def = list[i].Base;
-            if (def != null && def.OnClean(list[i], action) != TraceCleanResult.Keep) return true;
+            if (def == null || (restroomTrip && !def.triggersRestroomTrip)) continue;
+            if (def.OnClean(list[i], action) != TraceCleanResult.Keep) return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// What is worn on slots, in layers, for a command's clothing check (COM.clothingFit): Bare = nothing; Fit = every
+    /// garment carries one of fitTags; Unfit = anything else.
+    /// </summary>
+    public ClothingFitState GetClothingFit(List<BodyPartEquipSlot> slots, List<BodyEquipLayer> layers, List<string> fitTags)
+    {
+        bool any = false;
+        if (slots == null || layers == null) return ClothingFitState.Bare;
+        foreach (var part in Body)
+        {
+            if (part == null) continue;
+            var own = part.OwnSlots;
+            foreach (var slot in slots)
+            {
+                if (!own.Contains(slot)) continue;
+                foreach (var layer in layers)
+                {
+                    if (part.TryGetEquip(out var item, layer, slot))
+                    {
+                        any = true;
+                        if (!IsFitGarment(item, fitTags)) return ClothingFitState.Unfit;
+                    }
+                    if (part.TryGetCover(out var cover, layer, slot) && cover != item)
+                    {
+                        any = true;
+                        if (!IsFitGarment(cover, fitTags)) return ClothingFitState.Unfit;
+                    }
+                }
+            }
+        }
+        return any ? ClothingFitState.Fit : ClothingFitState.Bare;
+    }
+
+    static bool IsFitGarment(Item_Instance item, List<string> fitTags)
+    {
+        return fitTags != null && fitTags.Count > 0 && item.Tags != null && Utility.ListContainsLoose(item.Tags, fitTags);
     }
 
     /// <summary> summed TraceDefinition.GetDirtiness of every trace a wash would remove (Docs/Body/Plan_InternalFluidFlow.md §8.1) </summary>

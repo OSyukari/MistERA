@@ -103,6 +103,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         isMember = member;
         unitID = member ? com.ID : UnitID(com);
         kojoBaseKey = KojoBase();
+        kojoFallback = KojoFallback();
         BeginDoc(UnitName(unitID), unitID, "command");
         // Category parents own only the shared phases in the selected profile.
         if (com.categoryKojo)
@@ -110,10 +111,11 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
             WriteCategoryHeader();
             TA_KojoParticipants.DocShapes(com, out bool cPair, out bool cSolo);
             TemplateEntries(cPair, cSolo);
+            var catCases = TemplateCases();
             var catSnap = FinishDoc();
             if (catSnap != null)
             {
-                catSnap.shared["cases"] = BuildCases();
+                catSnap.shared["cases"] = catCases;
                 catSnap.shared["categoryGroup"] = CategoryMetadata();
             }
             return catSnap;
@@ -130,14 +132,80 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         TemplateEntries(pair, solo);
         KojoOverrides(!pair);
 
+        // what the command must cover, with per-case coverage (Docs/TextAuthoring/Plan_CommandCases.md); built before
+        // FinishDoc so its required keys decide the missingEntry findings
+        var cases = TemplateCases();
         var snap = FinishDoc();
-        // what the command must cover, with per-case coverage (Docs/TextAuthoring/Plan_CommandCases.md)
         if (snap != null)
         {
-            snap.shared["cases"] = BuildCases();
+            snap.shared["cases"] = cases;
             if (unitID != com.ID) snap.shared["generatorGroup"] = GroupMetadata();
+            // the viewer's "dedicated kojo" toggle (Store/custom.json: flag under a personality or "*")
+            if (kojoFallback != null) snap.shared["kojoFallback"] = new JObject { ["command"] = kojoFallback.ID, ["flag"] = DedicatedFlag };
         }
         return snap;
+    }
+
+    /// <summary>The command whose kojo this one falls back to (KojoFallback); null when it has none.</summary>
+    COM kojoFallback;
+
+    /// <summary>
+    /// A command whose kojo falls back to another command by default: a kojo source (generated item commands) or a folder
+    /// parent that is not a category unit (a category parent holds only the shared phases). Its own kojo is optional
+    /// unless flagged "dedicated kojo" (DedicatedFlag); the command it falls back to reports its own gaps. Group units
+    /// (`@item`) author the shared key themselves.
+    /// </summary>
+    COM KojoFallback()
+    {
+        if (unitID != com.ID) return null;
+        if (com.KojoSource != null) return com.KojoSource;
+        var parent = com.KojoFolderParent;
+        return parent != null && !parent.categoryKojo ? parent : null;
+    }
+
+    /// <summary>Store/custom.json id asking this command for its own kojo instead of its fallback (TA_CaseTemplate.RequiresCustom).</summary>
+    string DedicatedFlag { get { return "command:" + unitID; } }
+
+    protected override bool RequiresDedicated(string pid)
+    {
+        return kojoFallback != null && TA_CaseTemplate.RequiresCustom(pid, DedicatedFlag);
+    }
+
+    /// <summary>A fallback command keeps the template's required cases only when every personality is asked for its own kojo.</summary>
+    bool FallbackOptional { get { return kojoFallback != null && !TA_CaseTemplate.RequiresCustom("*", DedicatedFlag); } }
+
+    /// <summary>Kojo keys with a required template case (null: no case list, every missing key is reported).</summary>
+    HashSet<string> templateRequiredKeys;
+    /// <summary>Kojo keys with any template case (a personality flagged "dedicated kojo" needs them all).</summary>
+    HashSet<string> templateKojoKeys;
+
+    /// <summary>BuildCases, remembering which kojo keys the template requires (MissingEntryRequired).</summary>
+    JArray TemplateCases()
+    {
+        var cases = BuildCases();
+        templateRequiredKeys = null;
+        templateKojoKeys = null;
+        if (cases == null) return null;
+        templateRequiredKeys = new HashSet<string>();
+        templateKojoKeys = new HashSet<string>();
+        for (int i = 0; i < cases.Count; i++)
+        {
+            if ((string)cases[i]["layer"] != "kojo") continue;
+            templateKojoKeys.Add((string)cases[i]["key"]);
+            if ((bool?)cases[i]["required"] ?? false) templateRequiredKeys.Add((string)cases[i]["key"]);
+        }
+        return cases;
+    }
+
+    /// <summary>
+    /// A scene lookup with no entry is a finding only when the case template requires a case at that key: phase `when`,
+    /// profile `omit`, role `reachableIf` and `overrides` (drop / optional) decide, not the fixed scene list. A personality
+    /// flagged "dedicated kojo" on a fallback command needs every key the template has a case for.
+    /// </summary>
+    protected override bool MissingEntryRequired(string pid, string key)
+    {
+        if (templateRequiredKeys == null || templateRequiredKeys.Contains(key)) return true;
+        return RequiresDedicated(pid) && templateKojoKeys.Contains(key);
     }
 
     JObject GroupMetadata()    {
@@ -205,7 +273,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         sb.AppendLine($"# {title}（{unitID}）写手文档");
         sb.AppendLine();
         WriteCommonHeaderLines();
-        sb.AppendLine($"> 指令标签：{string.Join(" / ", com.comTags)} ｜ 耗时 {com.TimeScale} 分钟 ｜ {(com.baseD20Check > 0 ? $"接受后 D20 ≥ {com.baseD20Check} 判定结果" : "无结果判定")}");
+        sb.AppendLine($"> 指令标签：{string.Join(" / ", com.comTags)} ｜ 耗时 {com.TimeScale} 分钟 ｜ {(com.HasAutoDC ? $"接受后 D20 ≥ {com.baseD20Check} 判定结果" : com.baseD20Check > 0 ? $"无自动判定（D20 ≥ {com.baseD20Check} 由事件掷骰）" : "无结果判定")}");
         sb.AppendLine($"> 人数：施方 {Count(req.doerCount)}、受方 {Count(req.receiverCount)}{(req.TreatReceiverAsDoer ? "（每人各做各的，没有「对方」）" : "")}"
             + $" · 参与方式：{TA_KojoParticipants.Resolve(com)}{(com.kojoParticipants == KojoParticipants.Auto ? "（自动判断）" : "")}");
         if (com.variants.Count > 0)
@@ -369,7 +437,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Narration("begin");
         Kojo("_Begin", "受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true });
         Section("结果段" + Timing());
-        if (com.baseD20Check > 0) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
+        if (com.HasAutoDC) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
         Kojo("", "受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true });
         Climax(climax, ("受方 NPC", "玩家", new TA_KojoContext { speakerIsReceiver = true }));
         Section("结束段（仅接受时；在结果之后）");
@@ -421,6 +489,11 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
             TemplateKojo("ongoing", "_Ongoing", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, playerInvolved = false });
             TemplateKojo("ongoing", "_Ongoing", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true, playerInvolved = false });
         }
+        // the receiver refused: the doer still speaks its result kojo - <COM>_Refuse first, no refusal context
+        // (EvaluationPackage.LogMessage_Kojo: only a doer-caused refusal skips it)
+        Section("受方拒绝（施方对被拒绝的反应）");
+        System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
+        Kojo("", "施方 NPC", "受方 NPC", new TA_KojoContext { speakerIsDoer = true, speakerIsMaster = true, accepted = false, playerInvolved = false });
 
         // 5 ordered by a third party (Plan_CommandCases.md K4)
         Scenario("场景 5：玩家下令 NPC 对 NPC 使用（第三方下令）",
@@ -432,7 +505,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         TemplateKojo("orderedBegin", "_Begin", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true }, true);
         TemplateKojo("orderedBegin", "_Begin", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true }, true);
         Section("结果段" + Timing());
-        if (com.baseD20Check > 0) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
+        if (com.HasAutoDC) System($"[判定] 「{com.DisplayName(-1)} D20 = … ≥? {com.baseD20Check}」（引擎生成，不写）");
         TemplateKojo("orderedResult", "", "doer", "npc", "accept", new TA_KojoContext { speakerIsDoer = true }, true);
         TemplateKojo("orderedResult", "", "receiver", "npc", "accept", new TA_KojoContext { speakerIsReceiver = true }, true);
         Climax(climax,
@@ -443,6 +516,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Section("受方拒绝");
         System("[开始段] 引擎通用拒绝行：「" + ZH("ep_Description_refuse") + "」");
         TemplateKojo("orderedResult", "", "receiver", "npc", "refuse", new TA_KojoContext { speakerIsReceiver = true, accepted = false }, true);
+        TemplateKojo("orderedResult", "", "doer", "npc", "refuse", new TA_KojoContext { speakerIsDoer = true, accepted = false }, true);
         Section("施方拒绝下令（口上对象是下令的玩家；施方自己发起时拒绝不出口上）");
         TemplateKojo("orderedRefuse", "", "doer", "player", "refuseOrder", new TA_KojoContext { speakerIsDoer = true, accepted = false }, true);
         System("→ 之后开始事件 OnAPRefuse（玩家=请求者，拒绝的施方 NPC=拒绝者）");
@@ -464,14 +538,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
 
     void BuildSoloScenarios()
     {
-        bool group = false;
-        for (int i = 0; i < com.variants.Count; i++)
-        {
-            int dc = com.variants[i].requirements.requirement.doerCount;
-            if (dc < 0 || dc > 1) group = true;
-        }
-        int topDC = com.requirements.requirement.doerCount;
-        if (topDC < 0 || topDC > 1) group = true;
+        bool group = CoDoers();
         bool climax = HasClimaxEntry();
 
         Scenario("场景 1：玩家自己进行", "只有玩家。没有口上；结果段对参与者为空（完成旁白只给旁观者看）。", "玩家", null);
@@ -541,7 +608,11 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
     void TemplateKojo(string phaseId, string suffix, string speaker, string listener, string outcome, TA_KojoContext ctx, bool ordered = false)
     {
         var phase = KojoPhase(phaseId);
-        if (phase?["whenByListener"] != null && !KojoListenerAllowed(phase, listener, Facts().Flags())) return;
+        var flags = Facts().Flags();
+        // the scene asks only what the case template has: phase `when`, per-listener and per-case facts
+        if (phase != null && !When(phase, flags)) return;
+        if (phase?["whenByListener"] != null && !KojoListenerAllowed(phase, listener, flags)) return;
+        if (!CaseAllowed(phase, speaker, listener, outcome, flags)) return;
         if (listener == "player" || listener == "npc") ctx.listenerIsPlayer = listener == "player";
         var spec = new KojoCaseSpec { speaker = speaker, listener = listener, outcome = outcome, suffix = suffix, ordered = ordered };
         ctx.refusalContext = spec.RefusalContext;
@@ -549,9 +620,27 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
         Kojo(suffix, (string)who["self"], (string)who["target"], ctx, who);
     }
 
+    /// <summary>
+    /// Every lookup here is a command kojo key: doer / master always act, no recording; whether the receiver side can be
+    /// unable to act follows the command's receiver requirements (as TA_KojoIndex.AddFacts).
+    /// </summary>
+    protected override void KojoContextFacts(TA_KojoContext ctx)
+    {
+        ctx.commandKey = true;
+        var req = com?.requirements?.requirement;
+        if (req == null) return;
+        var k = TA_KojoParticipants.Resolve(com);
+        bool allDoers = req.TreatReceiverAsDoer || req.TreatDoerAsReceiver;
+        bool receivers = (TA_KojoParticipants.Distinct(k) || TA_KojoParticipants.Mutual(k)) && !allDoers;
+        ctx.receiverMayNotAct = receivers && TA_KojoIndex.CanBeUnaware(req.req_Receivers, "receiver");
+    }
+
+    protected override bool RolesEquivalent { get { return TA_KojoParticipants.Mutual(TA_KojoParticipants.Resolve(com)); } }
+
     void Kojo(string suffix, string speaker, string listener, TA_KojoContext ctx, JObject who = null)
     {
         // a refused result speaks from <COM>_Refuse first, then <COM> (RelationshipManager.GetKOJOMessage)
+        if (KojoDropped) return;
         bool refusal = suffix == "" && !ctx.accepted;
         string key = KojoBase() + (refusal ? "_Refuse" : suffix);
         KojoBlock(key, (Character_Personality p, out string provider, out string entryID) =>
@@ -590,7 +679,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
     /// </summary>
     void Climax(bool has, params (string speaker, string listener, TA_KojoContext ctx)[] uses)
     {
-        if (!has) return;
+        if (!has || KojoDropped) return;
         Section("高潮（条件：仅当说话者此刻正在高潮时；在结果之后、结束旁白之前。不是每次都会出现）");
         for (int i = 0; i < uses.Length; i++)
             KojoBlock(KojoBase() + "_Climax", (Character_Personality p, out string provider, out string entryID) =>
@@ -605,6 +694,7 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
     {
         castDoer = null;
         castReceiver = null;
+        if (KojoDropped) return;
         // Shared phases are authored on the category parent, not repeated on the child.
         var categoryParent = com.KojoFolderParent;
         if (categoryParent != null && categoryParent.categoryKojo)

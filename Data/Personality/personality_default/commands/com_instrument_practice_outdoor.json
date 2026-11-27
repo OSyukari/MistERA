@@ -24,19 +24,6 @@
                                 "com_instrument_practice_outdoor_Interrupt_5",
                                 "com_instrument_practice_outdoor_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_instrument_practice_outdoor_Interrupt_7",
-                                "com_instrument_practice_outdoor_Interrupt_8",
-                                "com_instrument_practice_outdoor_Interrupt_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -297,27 +284,41 @@
                             ]
                         },
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                            "responses": [
-                                "com_instrument_practice_outdoor_Refuse_4",
-                                "com_instrument_practice_outdoor_Refuse_5",
-                                "com_instrument_practice_outdoor_Refuse_6"
-                            ]
-                        },
-                        {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "responses": [
+                                "com_instrument_practice_outdoor_Refuse_4",
+                                "com_instrument_practice_outdoor_Refuse_5",
+                                "com_instrument_practice_outdoor_Refuse_6",
                                 "com_instrument_practice_outdoor_Refuse_9",
                                 "com_instrument_practice_outdoor_Refuse_10"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Refuse_11"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_instrument_practice_outdoor_Refuse_12"
                             ]
                         }
                     ]
@@ -346,19 +347,6 @@
                                 "com_instrument_practice_outdoor_Join_2",
                                 "com_instrument_practice_outdoor_Join_3"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_instrument_practice_outdoor_Join_7",
-                                "com_instrument_practice_outdoor_Join_8",
-                                "com_instrument_practice_outdoor_Join_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -461,20 +449,6 @@
                                 "com_instrument_practice_outdoor_JoinFailed_1",
                                 "com_instrument_practice_outdoor_JoinFailed_2",
                                 "com_instrument_practice_outdoor_JoinFailed_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_instrument_practice_outdoor_JoinFailed_4",
-                                "com_instrument_practice_outdoor_JoinFailed_5",
-                                "com_instrument_practice_outdoor_JoinFailed_6"
                             ]
                         }
                     ]
@@ -684,7 +658,9 @@
                 "com_instrument_practice_outdoor_Join_Refused_4": "\"好吧，那我就在旁边安静听一会儿。\" $self$收起乐器退开半步。",
                 "com_instrument_practice_outdoor_Join_Refused_5": "$self$点点头：\"没关系，你们先练，我待会儿再自己找时间。\"",
                 "com_instrument_practice_outdoor_Begin_9": "(unimplemented)",
-                "com_instrument_practice_outdoor_Ongoing_12": "(unimplemented)"
+                "com_instrument_practice_outdoor_Ongoing_12": "(unimplemented)",
+                "com_instrument_practice_outdoor_Refuse_11": "(unimplemented)",
+                "com_instrument_practice_outdoor_Refuse_12": "(unimplemented)"
             }
         }
     }

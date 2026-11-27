@@ -55,6 +55,10 @@
 "ui_actAcceptance_partner": "搭档",
 "ui_actAcceptance_arousal": "性兴奋",
 "ui_diceroll_lubrication": "润滑",
+"ui_diceroll_clothing_fit": "衣着合适",
+"ui_diceroll_clothing_unfit": "衣着不合适",
+"ui_diceroll_clothing_bare": "赤身",
+"ui_diceroll_clothing_barefoot": "赤脚",
 "ui_sexEntry_invalidRoom": "需要有效的当前房间。",
 "ui_sexEntry_roomOccupied": "此房间已有正在进行的性交，无法另开一场。",
 "ui_sexEntry_wrongScope": "参与者不在同一处（隔间内外）。",
@@ -1280,6 +1284,7 @@
 "ui_RequireFactionExisting_disallowInPlayerFaction":"该指令无法在玩家所属阵营[$faction$]中执行",
 "ui_RequireFactionExisting_inventoryItemBaseID":"当前阵营[$faction$]道具栏中缺乏指令所需的[$name$]道具",
 "ui_RequireFactionExisting_requireMealHour":"当前不是阵营[$faction$]的用餐时间",
+"ui_RequireFactionExisting_requireCranePrize":"阵营[$faction$]的抓娃娃机里没有奖品",
 "ui_ap_onHoverTooltip_noValidChild":"没有可执行的子指令",
 
 "Memory_Response_None":"",

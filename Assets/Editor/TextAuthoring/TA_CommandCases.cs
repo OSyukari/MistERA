@@ -22,11 +22,23 @@ public partial class TA_CommandDocBuilder
         /// do either (COM.kojoParticipants via TA_KojoParticipants.DocShapes, Plan_KojoTemplates.md §7.12).
         /// </summary>
         public bool pair, solo, ongoing, partnerEnding, sex, d20, joinable, strong, group, itemExec;
+        /// <summary>Several doers in one package (the player acting alongside an NPC): see CoDoers.</summary>
+        public bool coDoers;
+        /// <summary>
+        /// The command runs as a temporary package (ActionPackage.isTemporaryAP): PackageBegin, LogMessage_Begin,
+        /// LogMessage_Ongoing and LogMessage_After return early - no _Begin / _Ongoing kojo, only the result.
+        /// </summary>
+        public bool temporaryAP;
+        /// <summary>The player can give the act to an NPC (order it): only in sex mode, Job_Sex.isCOMValid (sex / allowedDuringSex).</summary>
+        public bool orderable;
         public HashSet<string> Flags()
         {
             var f = new HashSet<string>();
+            if (temporaryAP) f.Add("temporaryAP");
+            if (orderable) f.Add("orderable");
             if (pair) f.Add("pair");
             if (solo) f.Add("solo");
+            if (coDoers) f.Add("coDoers");
             if (ongoing) f.Add("ongoing");
             if (partnerEnding) f.Add("partnerEnding");
             if (sex) f.Add("sex");
@@ -48,11 +60,14 @@ public partial class TA_CommandDocBuilder
             solo = solo,
             ongoing = com.TimeScale > 1,
             // LogMessage_After requires Success (not merely Accept) and skips COM_Sex.
-            partnerEnding = pair && !(com is COM_Sex) && com.baseD20Check > 0,
+            partnerEnding = pair && !(com is COM_Sex) && com.HasAutoDC,
             sex = com.comTags.Contains("sex"),
-            d20 = com.baseD20Check > 0,
+            d20 = com.HasAutoDC,
             joinable = com.allowJoining,
-            itemExec = com is COM_EquipSingleUseItem
+            itemExec = com is COM_EquipSingleUseItem,
+            coDoers = CoDoers(),
+            temporaryAP = TemporaryAP(com.ActionPackageClass),
+            orderable = com.comTags.Contains("sex") || com.comTags.Contains("allowedDuringSex")
         };
         for (int i = 0; i < com.variants.Count; i++)
         {
@@ -62,6 +77,31 @@ public partial class TA_CommandDocBuilder
             if (vr.doerCount > 1 || vr.receiverCount > 1) f.group = true;
         }
         return f;
+    }
+
+    /// <summary>
+    /// Whether one package can hold several doers. COM.Validate checks the command's and the variant's requirement
+    /// (the variant's doerCount -1 is filled from the command at load: COMVariant.Read), so both must allow more than one.
+    /// </summary>
+    bool CoDoers()
+    {
+        if (!ManyDoers(com.requirements.requirement.doerCount)) return false;
+        if (com.variants.Count == 0) return true;
+        for (int i = 0; i < com.variants.Count; i++)
+            if (ManyDoers(com.variants[i].requirements.requirement.doerCount)) return true;
+        return false;
+    }
+
+    static bool ManyDoers(int doerCount) { return doerCount < 0 || doerCount > 1; }
+
+    /// <summary>ActionPackage.isTemporaryAP of the command's package class (a constant per class; read off an uninitialized instance).</summary>
+    static bool TemporaryAP(string className)
+    {
+        if (string.IsNullOrEmpty(className)) return false;
+        var type = typeof(ActionPackage).Assembly.GetType(className);
+        if (type == null || !typeof(ActionPackage).IsAssignableFrom(type) || type.IsAbstract) return false;
+        var ap = (ActionPackage)global::System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+        return ap.isTemporaryAP;
     }
 
     /// <summary>A side's CharaReq ("doer" / "receiver"; solo self = doer).</summary>
@@ -107,10 +147,34 @@ public partial class TA_CommandDocBuilder
 
     static bool When(JToken item, HashSet<string> flags) => HasFlags(item["when"] as JArray, flags);
 
+    /// <summary>
+    /// Phase whenByCase: [{ match: { speaker, listener, outcome }, when: [facts] }] - a case matching every given field
+    /// also needs those facts (the solo self → player refusal exists only where the player can order the act).
+    /// </summary>
+    static bool CaseAllowed(JToken phase, string speaker, string listener, string outcome, HashSet<string> flags)
+    {
+        if (!(phase?["whenByCase"] is JArray rules)) return true;
+        for (int i = 0; i < rules.Count; i++)
+        {
+            var m = rules[i]["match"] as JObject;
+            if (m == null) continue;
+            if (m["speaker"] != null && (string)m["speaker"] != speaker) continue;
+            if (m["listener"] != null && (string)m["listener"] != listener) continue;
+            if (m["outcome"] != null && (string)m["outcome"] != outcome) continue;
+            if (!HasFlags(rules[i]["when"] as JArray, flags)) return false;
+        }
+        return true;
+    }
+
     static bool HasFlags(JArray required, HashSet<string> flags)
     {
         if (required == null) return true;
-        for (int i = 0; i < required.Count; i++) if (!flags.Contains((string)required[i])) return false;
+        for (int i = 0; i < required.Count; i++)
+        {
+            // "!fact": the command must not have it
+            var f = (string)required[i];
+            if (f.StartsWith("!", StringComparison.Ordinal) ? flags.Contains(f.Substring(1)) : !flags.Contains(f)) return false;
+        }
         return true;
     }
 
@@ -123,6 +187,10 @@ public partial class TA_CommandDocBuilder
         if (!com.categoryKojo) NarrationCases(facts, flags, cases);
         KojoCases(facts, flags, cases);
         ApplyOverrides(cases);
+        // a command that falls back to another command's kojo: its own is optional (TA_CommandDocBuilder.KojoFallback)
+        if (FallbackOptional)
+            for (int i = 0; i < cases.Count; i++)
+                if ((string)cases[i]["layer"] == "kojo") cases[i]["required"] = false;
         return cases;
     }
 
@@ -427,6 +495,8 @@ public partial class TA_CommandDocBuilder
                 bool required = phaseRequired && ((bool?)roles[speaker]?["required"] ?? false);
                 var mySide = speaker == "receiver" ? "receiver" : "doer";
                 var otherSide = speaker == "receiver" ? "doer" : "receiver";
+                // a side only the player can take (allowNPC false) has no kojo speaker
+                if (speaker != "joiner" && !Reachable(Side(mySide), roles[speaker]?["reachableIf"] as JObject)) continue;
 
                 // the speaker's state: awake, its reachable states (states: true), or only the required one (woken)
                 var speakerStates = new List<string>();
@@ -463,6 +533,7 @@ public partial class TA_CommandDocBuilder
                             {
                                 var outcome = (string)outcomes[oi];
                                 if (outcome == "refuse" && !CanRefuse(receiverState, listener, requireState, speaker == "self")) continue;
+                                if (!CaseAllowed(t, speaker, listener, outcome, flags)) continue;
                                 // the doer refusing its master's order (EvaluationPackage.LogMessage_Kojo: kojo to the master)
                                 if (outcome == "refuseOrder" && (!ordered || speaker != "doer" || sState != "awake")) continue;
                                 var outcomesList = new List<(string result, bool? reqOverride)>();
@@ -591,12 +662,40 @@ public partial class TA_CommandDocBuilder
     // ---------------------------------------------------------------- overrides
 
     /// <summary>Template overrides for this command (by ID, then by each comTag): drop / optional / require by case id prefix.</summary>
+    /// <summary>The cases.json override keys of this command, in order: ID, unit ID, item folder template, comTags.</summary>
+    List<string> OverrideKeys()
+    {
+        var keys = new List<string> { com.ID };
+        if (unitID != com.ID) keys.Add(unitID);
+        // a per-item folder (com_useItem_<item>) is a copy of the folder template and takes its overrides (Index_COM.BuildItemFolders)
+        if (com is COM_ItemFolder) keys.Add(Index_COM.ItemFolderTemplateID);
+        keys.AddRange(com.comTags);
+        return keys;
+    }
+
+    /// <summary>
+    /// An override drops every kojo case (a drop prefix of "kojo."): the command has no kojo, so its scenes look up none
+    /// either (no lookups, no findings) - scene lookups are written by hand, not from the case list.
+    /// </summary>
+    bool KojoDropped
+    {
+        get
+        {
+            var all = TA_CaseTemplate.Overrides;
+            var keys = OverrideKeys();
+            for (int k = 0; k < keys.Count; k++)
+            {
+                if (!(all[keys[k]]?["drop"] is JArray drop)) continue;
+                for (int i = 0; i < drop.Count; i++) if ("kojo.".StartsWith((string)drop[i] ?? "\0", StringComparison.Ordinal)) return true;
+            }
+            return false;
+        }
+    }
+
     void ApplyOverrides(JArray cases)
     {
         var all = TA_CaseTemplate.Overrides;
-        var keys = new List<string> { com.ID };
-        if (unitID != com.ID) keys.Add(unitID);
-        keys.AddRange(com.comTags);
+        var keys = OverrideKeys();
         for (int k = 0; k < keys.Count; k++)
         {
             if (!(all[keys[k]] is JObject o)) continue;

@@ -631,9 +631,21 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_oral_B_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -641,18 +653,7 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "com_sex_oral_B_Refuse_Receiver_1",
-                                "com_sex_oral_B_Refuse_Receiver_2",
-                                "com_sex_oral_B_Refuse_Receiver_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -746,18 +747,24 @@
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.4 指令失败拒绝 被舔乳头 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "com_sex_oral_B_Refuse_Receiver_1",
+                                "com_sex_oral_B_Refuse_Receiver_2",
+                                "com_sex_oral_B_Refuse_Receiver_3",
                                 "com_sex_oral_B_16",
                                 "com_sex_oral_B_17",
                                 "com_sex_oral_B_18"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_oral_B_Refuse_2"
                             ]
                         }
                     ],
@@ -937,7 +944,9 @@
                 "com_sex_oral_B_Climax_unconscious_1": "失去意识的$self$无法做出任何回应，身体却本能地弓起、剧烈痉挛着迎来了高潮。",
                 "com_sex_oral_B_Climax_unconscious_2": "昏迷中的$self$双目紧闭，只有不受控制颤抖的躯体暴露出她刚刚攀上了顶峰。",
                 "com_sex_oral_B_70": "(unimplemented)",
-                "com_sex_oral_B_Begin_19": "(unimplemented)"
+                "com_sex_oral_B_Begin_19": "(unimplemented)",
+                "com_sex_oral_B_Refuse_1": "(unimplemented)",
+                "com_sex_oral_B_Refuse_2": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_oral_B_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

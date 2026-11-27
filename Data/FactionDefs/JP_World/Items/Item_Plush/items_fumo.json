@@ -1,0 +1,65 @@
+{
+    "_comment": "Fumo plush dolls - crane machine prizes (tag crane_prize: the arcade's salesInventory matches it, and the crane command's requireCranePrize.inventoryTags lets real ones in a faction's inventory count too; Assets/Scripts/Events/CraneMachineUtility.cs). Deka (big) fumo are rarity_rare.",
+    "Items":{
+"list":
+[
+    { "id":"item_fumo_reimu",      "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_marisa",     "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_cirno",      "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_sakuya",     "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_remilia",    "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_flandre",    "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_patchouli",  "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_youmu",      "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_yuyuko",     "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_chen",       "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_sanae",      "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_satori",     "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_koishi",     "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_reisen",     "Tags":["crane_prize","plush","fumo","rarity_common"], "value":3800, "itemComps_Template":[] },
+    { "id":"item_fumo_deka_reimu", "Tags":["crane_prize","plush","fumo","rarity_rare"],   "value":15000, "itemComps_Template":[] },
+    { "id":"item_fumo_deka_yukari","Tags":["crane_prize","plush","fumo","rarity_rare"],   "value":15000, "itemComps_Template":[] }
+]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "item_fumo_reimu":"灵梦fumo",
+                "item_fumo_reimu_tooltip":"红白巫女造型的布偶，圆滚滚的脸上挂着一副若有所思的表情。",
+                "item_fumo_marisa":"魔理沙fumo",
+                "item_fumo_marisa_tooltip":"戴着大尖帽的魔法使布偶，帽檐压得歪歪的。",
+                "item_fumo_cirno":"琪露诺fumo",
+                "item_fumo_cirno_tooltip":"背着冰晶翅膀的冰之妖精布偶，看上去最强。",
+                "item_fumo_sakuya":"咲夜fumo",
+                "item_fumo_sakuya_tooltip":"女仆装的布偶，头饰一丝不苟。",
+                "item_fumo_remilia":"蕾米莉亚fumo",
+                "item_fumo_remilia_tooltip":"小小的吸血鬼布偶，背后缀着一对蝙蝠翅膀。",
+                "item_fumo_flandre":"芙兰朵露fumo",
+                "item_fumo_flandre_tooltip":"翅膀上挂满彩色晶石的吸血鬼布偶，抱起来要轻一点。",
+                "item_fumo_patchouli":"帕秋莉fumo",
+                "item_fumo_patchouli_tooltip":"穿着睡衣般长袍的魔法使布偶，一脸没睡醒的样子。",
+                "item_fumo_youmu":"妖梦fumo",
+                "item_fumo_youmu_tooltip":"佩着两把小木刀的庭师布偶，身边还飘着一团半灵。",
+                "item_fumo_yuyuko":"幽幽子fumo",
+                "item_fumo_yuyuko_tooltip":"戴着三角头巾的亡灵布偶，看起来软乎乎的。",
+                "item_fumo_chen":"橙fumo",
+                "item_fumo_chen_tooltip":"长着两条尾巴的猫又布偶，耳朵会随着摆放微微耷拉。",
+                "item_fumo_sanae":"早苗fumo",
+                "item_fumo_sanae_tooltip":"蓝白巫女造型的布偶，发间别着蛇和青蛙的发饰。",
+                "item_fumo_satori":"觉fumo",
+                "item_fumo_satori_tooltip":"胸前挂着第三只眼的布偶，被它盯着时总觉得心事被看穿了。",
+                "item_fumo_koishi":"恋恋fumo",
+                "item_fumo_koishi_tooltip":"戴着黑色宽檐帽的布偶。明明一直摆在那里，却常常让人忘了它的存在。",
+                "item_fumo_reisen":"铃仙fumo",
+                "item_fumo_reisen_tooltip":"竖着一对长兔耳的布偶，红色的眼睛格外显眼。",
+                "item_fumo_deka_reimu":"大号灵梦fumo",
+                "item_fumo_deka_reimu_tooltip":"足有抱枕大小的灵梦布偶，能从抓娃娃机里抓出来简直是奇迹。",
+                "item_fumo_deka_yukari":"大号紫fumo",
+                "item_fumo_deka_yukari_tooltip":"抱枕大小的紫布偶，撑着一把小阳伞，笑得意味深长。"
+            }
+        }
+    }
+}

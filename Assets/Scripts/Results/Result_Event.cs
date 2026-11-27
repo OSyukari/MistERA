@@ -1,5 +1,45 @@
 using System.Collections.Generic;
 
+/// <summary> Result_Event.printOrder: where an AP-scoped event's output goes relative to its command's completion messages </summary>
+public enum EventPrintOrder
+{
+    /// <summary> the command's completion messages (completion text, stat EXP) first, then the event (default) </summary>
+    AfterCompletion,
+    /// <summary> the event first: the completed package's logs wait (CompletionLogHold) until the event ends </summary>
+    BeforeCompletion,
+}
+
+/// <summary>
+/// The logs of a completed package whose event prints first (EventPrintOrder.BeforeCompletion): Job.PostUpdateTime collects
+/// that round's job log as usual (completion text, the actors' stat EXP - written straight into Job.m - finalized), then
+/// hands it here instead of to the update handler. Released once both the logs are in and the event has ended -
+/// queued behind the event's own output (AddEventCallback), so they print right after it. An event that never starts
+/// still completes (EventInstance.OnCompleted), so the logs are never lost.
+/// </summary>
+public class CompletionLogHold
+{
+    public readonly MessageCollect Collector = new MessageCollect();
+    bool logsReady, eventDone, released;
+
+    public void LogsReady() { logsReady = true; TryRelease(); }
+    public void EventDone() { eventDone = true; TryRelease(); }
+
+    void TryRelease()
+    {
+        // LogsReady comes from Job.PostUpdateTime (run in parallel per job), EventDone from the main thread
+        lock (Collector)
+        {
+            if (!logsReady || !eventDone || released) return;
+            released = true;
+        }
+        scr_UpdateHandler.current.AddEventCallback(() =>
+        {
+            scr_UpdateHandler.current.NotifyJobDescriptions(Collector);
+            scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+        });
+    }
+}
+
 public class Result_Event
 {
     public string id_prepend = "";
@@ -12,6 +52,17 @@ public class Result_Event
     public bool requireFailure = false;
     /// <summary>AP-scoped successful sleep commands only: finish this event before the sleep transition.</summary>
     public bool deferSleepUntilEnd = false;
+    /// <summary>
+    /// The player becomes the event's self (who answers its questions) when they are one of the actors, instead of
+    /// the first doer - e.g. a shared meal the player joined (com_furniture_getmeal_event). Doer / receiver / actor
+    /// targets are unchanged.
+    /// </summary>
+    public bool playerAsSelf = false;
+    /// <summary>
+    /// AP-scoped events (results_AP) only: print the event before or after the command's completion messages
+    /// (BeforeCompletion holds the package's logs until the event ends - CompletionLogHold). Default AfterCompletion.
+    /// </summary>
+    public EventPrintOrder printOrder = EventPrintOrder.AfterCompletion;
 
     /// <summary>
     /// Agnostic to call path: pass the current EvaluationPackage for EP-scoped targets (this pairing only), or
@@ -56,6 +107,11 @@ public class Result_Event
         }
 
         var self = doerTargets[0];
+        if (playerAsSelf)
+        {
+            var player = scr_System_CampaignManager.current.Player;
+            if (player != null && actorTargets.Contains(player)) self = player;
+        }
 
         // immediateInit: false — construct without loading/validating yet, so doer/receiver/actor/standby/
         // participant are all populated into ev.Targets below BEFORE LoadNext runs Validate() (which is what
@@ -65,6 +121,13 @@ public class Result_Event
         // "doer"/"receiver"/etc. would never resolve. Mirrors the same construct-then-populate-then-LoadNext
         // sequencing already used by EventUtility.StartEvent(Job_Expedition, SerializableEventPackage).
         var ev = new EventInstance(self, "", "", 100, false);
+        // before the event can run (an NPC-only one finishes synchronously): the package's logs wait for its end
+        if (printOrder == EventPrintOrder.BeforeCompletion && evp == null)
+        {
+            var hold = new CompletionLogHold();
+            p.CompletionLogHold = hold;
+            ev.OnCompleted(hold.EventDone);
+        }
         var parent = p.SourceEvent;
         ev.LogMemoryResolver = parent?.LogMemoryResolver;
         if (parent != null && parent.silent)
@@ -75,6 +138,8 @@ public class Result_Event
         ev.Targets.Add("doer", doerTargets);
         ev.Targets.Add("receiver", receiverTargets);
         ev.Targets.Add("actor", actorTargets);
+        // the job the package ran on (e.g. the crane machine's owner, CraneMachineUtility.ResolveOwner)
+        if (p.job != null) ev.AppendStrings[CraneMachineUtility.SourceJobRefKey] = new List<string>() { p.job.RefID.ToString() };
         bool sleepTransition = prepareSleepEvent != null && deferSleepUntilEnd && evp == null && p.executeSuccessful
             && p.targetCOM.comTags.Contains("sleep");
 

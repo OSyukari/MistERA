@@ -449,6 +449,8 @@ public static class CharaReqUtility
         {
             if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_stamina", -q.cost_ST);
             c.Stats.Stamina.ModValue(-q.cost_ST);
+            // sweat: stamina spent fast enough for this round's length leaves traces (TraceDefinition.leaveOnStaminaCost)
+            if (com != null && q.cost_ST > 0) TraceUtility.LeaveStaminaTraces(c, q.cost_ST, com);
         }
 
         var tags = (isDoer ? m.ReceiverTargetTag : m.DoerTargetTag);

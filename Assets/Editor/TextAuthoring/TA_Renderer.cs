@@ -466,7 +466,8 @@ public class TA_Renderer
             var c = (JObject)cases[i];
             if ((string)c["layer"] != "kojo") continue;
             bool custom = In(c["cov"]?["custom"], pid);
-            if (!custom && (bool?)c["required"] != true) continue;
+            // requiredFor: pid asked for dedicated kojo on a fallback command, with no entry / branch yet (optional case)
+            if (!custom && (bool?)c["required"] != true && !In(c["requiredFor"], pid)) continue;
             if (!custom && c["authoring"]?[pid] is JArray handles)
             {
                 if (handles.Count > 0)
@@ -643,6 +644,7 @@ public class TA_Renderer
                 if ((string)roles[i] == "receiver") receiver = true;
             }
         bool locked = (bool?)s["roleRestricted"] ?? false;
+        if (doer && receiver && !locked && ((bool?)s["roleMutual"] ?? false)) return TA_Text.Get("doc.kojo.roleMutual");
         if (doer && receiver && !locked) return TA_Text.Get("doc.kojo.roleShared");
         if (!doer && !receiver) return null;
         var name = TA_Text.Get(doer && receiver ? "doc.role.both" : doer ? "doc.role.doer" : "doc.role.receiver");

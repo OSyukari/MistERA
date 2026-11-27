@@ -17,10 +17,11 @@
                     ""
                 ],
                 "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "Crane machine prize stock (CraneMachineUtility): every crane_prize item (Item_Plush/items_fumo.json), innerStock re-rolled daily.",
                 "salesInventory": [
                     {
                         "matchByTags": [
-                            "videogame"
+                            "crane_prize"
                         ]
                     }
                 ],

@@ -163,27 +163,41 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_condom_byTarget_mouth_Refuse_7"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "responses": [
                                 "com_condom_byTarget_mouth_Refuse_1",
                                 "com_condom_byTarget_mouth_Refuse_2",
-                                "com_condom_byTarget_mouth_Refuse_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底",
-                            "responses": [
+                                "com_condom_byTarget_mouth_Refuse_3",
                                 "com_condom_byTarget_mouth_Refuse_4",
                                 "com_condom_byTarget_mouth_Refuse_5",
                                 "com_condom_byTarget_mouth_Refuse_6"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_condom_byTarget_mouth_Refuse_1"
                             ]
                         }
                     ]
@@ -533,8 +547,16 @@
             "com_condom_byTarget_mouth_Join_Refused_4": "“行吧，那我不插手了。”$self$把刚拿起来的东西放回原处，退回两步。",
             "com_condom_byTarget_mouth_Join_Refused_5": "$self$听罢也不勉强，站在原地抱起胳膊：“那你们自己慢慢弄。”",
             "com_condom_byTarget_mouth_Join_Refused_6": "“不让帮忙就算了，我看着总行吧。”$self$耸耸肩，让出了位置。",
-            "com_condom_byTarget_mouth_22": "(unimplemented)"
+            "com_condom_byTarget_mouth_22": "(unimplemented)",
+            "com_condom_byTarget_mouth_Refuse_7": "(unimplemented)"
         },
         "en-us": {}
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_condom_byTarget_mouth_Refuse_1": "(unimplemented)"
+            }
+        }
     }
 }

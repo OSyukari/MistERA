@@ -94,10 +94,100 @@
                                 }
                             ]
                         }
+                    },
+                    {
+                        "_comment": "The pet hosts a Private session at a home shower and invites up to 3 home members with hands; the highest-ranked who accepts gives it a bath (keepAccepted 1). PetWash_Begin launches Job_WashPet, which runs com_furniture_takeShower (owner as doer, pet as receiver). Scheduled periodically with a weightMod boost when the pet needsShower.",
+                        "ID": "house_activity_wash_pet",
+                        "mainTypeTag": "pet_care",
+                        "secondaryTags": ["indoor", "home", "shower", "pet"],
+                        "typeID": "house_activity_wash_pet",
+                        "mergeWithSame": false,
+                        "allowWalkIn": false,
+                        "cooldownTag": "pet_wash",
+                        "cooldownOnProvider": true,
+                        "providerConditions": {
+                            "chara_conditions": [
+                                { "parameters": [ "hasHand", "false" ] }
+                            ]
+                        },
+                        "facility": { "comTag": "shower", "reserve": "None", "unitCapacity": 2, "dispatchInRoom": true },
+                        "launchEventID": "PetWash_Begin",
+                        "workModule": {
+                            "jobPostID": "house_activity_wash_pet",
+                            "workCommands": ["com_furniture_takeShower"],
+                            "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+                            "activeDays": []
+                        },
+                        "AcceptanceMods": [
+                            {
+                                "_comment": "A booked pet bath is accepted without failing com_furniture_takeShower's baseAcceptanceValue.",
+                                "Requirement_ActionPackage": { "targetComID": "com_furniture_takeShower", "isDoer": false },
+                                "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "pet_wash_booked_accept_reason" }
+                            }
+                        ],
+                        "eligibility": {
+                            "chara_conditions": [
+                                { "parameters": [ "isPrisonerAtHome", "false" ] }
+                            ]
+                        },
+                        "minHours": 1,
+                        "maxHours": 1,
+                        "minDaysBetween": 2,
+                        "daysInAdvance": 0,
+                        "weeklyTarget": 3,
+                        "baseWeight": 10,
+                        "weightMods": [
+                            {
+                                "modValue": 30,
+                                "condition": {
+                                    "chara_conditions": [
+                                        { "parameters": [ "needsShower" ] }
+                                    ]
+                                }
+                            }
+                        ],
+                        "invite": {
+                            "visibility": "Private",
+                            "inviteChance": 100,
+                            "minParticipants": 2,
+                            "SelfValidator": {
+                                "chara_conditions": [
+                                    { "parameters": [ "providesActivity", "house_activity_wash_pet" ] }
+                                ]
+                            },
+                            "TargetValidators": [
+                                {
+                                    "refKeys": [
+                                        "owner"
+                                    ],
+                                    "baseScope": "FactionMembers",
+                                    "extraScopeArguments": [
+                                        "@selfHomeFaction"
+                                    ],
+                                    "chara_conditions": [
+                                        { "parameters": [ "excludeSelf" ] },
+                                        { "parameters": [ "hasHand", "true" ] }
+                                    ],
+                                    "required": true,
+                                    "minTargetCount": 1,
+                                    "maxTargetCount": 3,
+                                    "stopAtMaxTargetCount": true,
+                                    "maxParticipants": -1,
+                                    "keepAccepted": 1
+                                }
+                            ]
+                        }
                     }
                 ],
                 "_comment_forbidActivityTags": "Pets book, join and are invited to no activity (\"*\"); an activity the pet itself provides (a dog's walk) is exempt.",
                 "forbidActivityTags": ["*"],
+                "AcceptanceMods": [
+                    {
+                        "_comment": "A household pet accepts being bathed (com_furniture_takeShower as receiver) even outside the scheduled house_activity_wash_pet activity (e.g. player-ordered bath).",
+                        "Requirement_ActionPackage": { "targetComID": "com_furniture_takeShower", "isDoer": false },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "pet_wash_accept_reason" }
+                    }
+                ],
                 "behaviorOverrides": {
                     "behavior_bedrest": {
                         "$type": "TryFindPetRestByIDNode, Assembly-CSharp",
@@ -167,11 +257,17 @@
         "Entries": {
             "zh-cn": {
                 "membertype_house_pet": "家庭宠物",
-                "house_activity_walk_dog": "遛狗"
+                "house_activity_walk_dog": "遛狗",
+                "house_activity_wash_pet": "给宠物洗澡",
+                "pet_wash_booked_accept_reason": "预约的宠物洗澡",
+                "pet_wash_accept_reason": "家庭宠物接受洗澡"
             },
             "en-us": {
                 "membertype_house_pet": "Household Pet",
-                "house_activity_walk_dog": "Walk the Dog"
+                "house_activity_walk_dog": "Walk the Dog",
+                "house_activity_wash_pet": "Wash Pet",
+                "pet_wash_booked_accept_reason": "Scheduled pet bath",
+                "pet_wash_accept_reason": "Household pet bath"
             }
         }
     }

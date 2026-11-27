@@ -330,10 +330,23 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_furniture_prison_ADD_Refuse_7"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -353,19 +366,20 @@
                             "responses": [
                                 "com_furniture_prison_ADD_Refuse_4",
                                 "com_furniture_prison_ADD_Refuse_5",
-                                "com_furniture_prison_ADD_Refuse_6"
+                                "com_furniture_prison_ADD_Refuse_6",
+                                "com_furniture_prison_ADD_Refuse_Fallback_1",
+                                "com_furniture_prison_ADD_Refuse_Fallback_2"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_furniture_prison_ADD_Refuse_Fallback_1",
-                                "com_furniture_prison_ADD_Refuse_Fallback_2"
+                                "com_furniture_prison_ADD_Refuse_8"
                             ]
                         }
                     ]
@@ -602,7 +616,9 @@
                 "com_furniture_prison_ADD_Join_Refused_Fallback_2": "$self$收回手，没再插手这边的事。",
                 "com_furniture_prison_ADD_Begin_13": "(unimplemented)",
                 "com_furniture_prison_ADD_16": "(unimplemented)",
-                "com_furniture_prison_ADD_Ongoing_4": "(unimplemented)"
+                "com_furniture_prison_ADD_Ongoing_4": "(unimplemented)",
+                "com_furniture_prison_ADD_Refuse_7": "(unimplemented)",
+                "com_furniture_prison_ADD_Refuse_8": "(unimplemented)"
             }
         }
     }

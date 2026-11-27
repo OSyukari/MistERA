@@ -172,25 +172,40 @@
                             ]
                         },
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "responses": [
                                 "com_furniture_restroom_Refuse_Receiver_1",
                                 "com_furniture_restroom_Refuse_Receiver_2",
-                                "com_furniture_restroom_Refuse_Receiver_3"
+                                "com_furniture_restroom_Refuse_Receiver_3",
+                                "com_furniture_restroom_Refuse_Fallback_1"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireEPSuccess": false,
-                                "allowRecording": true
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
                             },
-                            "_comment": "兜底",
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_furniture_restroom_Refuse_Fallback_1"
+                                "com_furniture_restroom_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_restroom_Refuse_2"
                             ]
                         }
                     ]
@@ -283,17 +298,6 @@
                                 "com_furniture_restroom_Interrupt_Receiver_1",
                                 "com_furniture_restroom_Interrupt_Receiver_2",
                                 "com_furniture_restroom_Interrupt_Receiver_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "allowRecording": true
-                            },
-                            "_comment": "自己 → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_furniture_restroom_Interrupt_Self_1",
-                                "com_furniture_restroom_Interrupt_Self_2",
-                                "com_furniture_restroom_Interrupt_Self_3"
                             ]
                         }
                     ]
@@ -412,17 +416,6 @@
                                 "com_furniture_restroom_Join_Receiver_2",
                                 "com_furniture_restroom_Join_Receiver_3"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_furniture_restroom_Join_Self_1",
-                                "com_furniture_restroom_Join_Self_2",
-                                "com_furniture_restroom_Join_Self_3"
-                            ]
                         }
                     ]
                 }
@@ -455,18 +448,6 @@
                                 "com_furniture_restroom_JoinFailed_Receiver_1",
                                 "com_furniture_restroom_JoinFailed_Receiver_2",
                                 "com_furniture_restroom_JoinFailed_Receiver_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_furniture_restroom_JoinFailed_Self_1",
-                                "com_furniture_restroom_JoinFailed_Self_2",
-                                "com_furniture_restroom_JoinFailed_Self_3"
                             ]
                         }
                     ]
@@ -556,7 +537,9 @@
                 "com_furniture_restroom_Begin_1": "(unimplemented)",
                 "com_furniture_restroom_Begin_2": "(unimplemented)",
                 "com_furniture_restroom_Ongoing_1": "(unimplemented)",
-                "com_furniture_restroom_Ongoing_2": "(unimplemented)"
+                "com_furniture_restroom_Ongoing_2": "(unimplemented)",
+                "com_furniture_restroom_Refuse_1": "(unimplemented)",
+                "com_furniture_restroom_Refuse_2": "(unimplemented)"
             }
         }
     }

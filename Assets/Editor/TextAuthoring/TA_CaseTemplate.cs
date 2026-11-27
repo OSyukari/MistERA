@@ -182,9 +182,15 @@ public static class TA_CaseTemplate
     /// <summary>
     /// Whether personality pid must have its own content for a case id / lookup key (store_viewer.html "Require custom",
     /// Store/custom.json { "&lt;pid&gt;": ["&lt;case id or lookup key&gt;", …] }): an inherited branch then doesn't cover it.
-    /// Re-read when the file changes; missing / unreadable = nothing flagged.
+    /// Re-read when the file changes; missing / unreadable = nothing flagged. Pid "*" flags every personality. Besides case
+    /// ids and lookup keys, "command:&lt;unit&gt;" asks a fallback command for its own kojo (TA_CommandDocBuilder.KojoChild).
     /// </summary>
     public static bool RequiresCustom(string pid, string id)
+    {
+        return Flagged(pid, id) || Flagged("*", id);
+    }
+
+    static bool Flagged(string pid, string id)
     {
         var path = CustomPath;
         if (!File.Exists(path)) { custom = null; return false; }

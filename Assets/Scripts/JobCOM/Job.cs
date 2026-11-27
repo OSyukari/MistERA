@@ -1345,6 +1345,13 @@ public class Job : IDisposable, I_Disposable
         // send log to campaignManager
     }
 
+    static void TakeCompletionLogHold(ActionPackage p, ref List<CompletionLogHold> holds)
+    {
+        if (p == null || p.CompletionLogHold == null) return;
+        (holds ??= new List<CompletionLogHold>()).Add(p.CompletionLogHold);
+        p.CompletionLogHold = null;
+    }
+
     /// <summary>
     /// Called on PostUpdateTime3
     /// </summary>
@@ -1354,9 +1361,13 @@ public class Job : IDisposable, I_Disposable
         bool visible = isJobVisibleToPlayer;
         // a package running in a room of its own (ActionPackage.SetRoom) shows its logs where it runs, whatever the job's room
         bool anyLogged = visible;
+        // a package completed this round whose event prints first (Result_Event.printOrder BeforeCompletion): this round's
+        // job log (its completion text, its actors' stat EXP - written into this.m) goes to the hold, released after the event
+        List<CompletionLogHold> holds = null;
         for (int i = packages_completed.Count - 1; i >= 0; i--)
         {
             var p = packages_completed[i];
+            TakeCompletionLogHold(p, ref holds);
             if (p.Duration != 0) continue;
             if (visible || p.isOwnRoomVisibleToPlayer) { CollectLogs(p); anyLogged = true; }
         }
@@ -1369,6 +1380,7 @@ public class Job : IDisposable, I_Disposable
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {
             var p = packages_previous[i];
+            TakeCompletionLogHold(p, ref holds);
             if (visible || p.isOwnRoomVisibleToPlayer) { CollectLogs(p); anyLogged = true; }
             // Duration 0 meaning they just run, meaning
             if (p.Duration <= 0)
@@ -1417,8 +1429,11 @@ public class Job : IDisposable, I_Disposable
             this.m.exp.AddRelevantChara(this.actorRemove);
             this.m.exp.AddRelevantChara(this.actorJobComplete);
             this.m.exp.AddRelevantChara(this.actorRefID);
-            scr_UpdateHandler.current.NotifyJobDescriptions(m);
+            if (holds != null) holds[0].Collector.Merge(m, false);
+            else scr_UpdateHandler.current.NotifyJobDescriptions(m);
         }
+        // every hold is ready now (the first carries the log, any other one has nothing of its own)
+        if (holds != null) foreach (var hold in holds) hold.LogsReady();
 
         m.Clear();
 

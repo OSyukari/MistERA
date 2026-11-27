@@ -301,6 +301,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "responses": [
                                 "com_sex_oral_V_force_Climax_1",
                                 "com_sex_oral_V_force_Climax_2",
@@ -308,14 +311,13 @@
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
-                                "requireSelfAction": false,
                                 "requireTargetAction": false
                             },
+                            "_comment": "施方兜底（受方无法行动时也成立）",
                             "responses": [
-                                "com_sex_oral_V_force_Climax_4",
-                                "com_sex_oral_V_force_Climax_5",
-                                "com_sex_oral_V_force_Climax_6"
+                                "com_sex_oral_V_force_Climax_7"
                             ]
                         }
                     ],
@@ -331,10 +333,22 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
                             },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_oral_V_force_Refuse_10"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -353,18 +367,21 @@
                             "responses": [
                                 "com_sex_oral_V_force_Refuse_4",
                                 "com_sex_oral_V_force_Refuse_5",
-                                "com_sex_oral_V_force_Refuse_6"
+                                "com_sex_oral_V_force_Refuse_6",
+                                "com_sex_oral_V_force_Refuse_7",
+                                "com_sex_oral_V_force_Refuse_8",
+                                "com_sex_oral_V_force_Refuse_9"
                             ]
                         },
                         {
+                            "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false
                             },
+                            "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_sex_oral_V_force_Refuse_7",
-                                "com_sex_oral_V_force_Refuse_8",
-                                "com_sex_oral_V_force_Refuse_9"
+                                "com_sex_oral_V_force_Refuse_11"
                             ]
                         }
                     ],
@@ -495,7 +512,10 @@
                 "com_sex_oral_V_force_Ongoing_7": "$self$没有停下动作，继续强硬地分开花唇将舌头深埋进小穴里翻搅。",
                 "com_sex_oral_V_force_Ongoing_8": "湿热的气息在两人之间弥漫，$self$维持着节奏强硬地分开花唇将舌头深埋进小穴里翻搅。",
                 "com_sex_oral_V_force_Ongoing_9": "$self$微微喘息着，动作不停地强硬地分开花唇将舌头深埋进小穴里翻搅。",
-                "com_sex_oral_V_force_31": "(unimplemented)"
+                "com_sex_oral_V_force_31": "(unimplemented)",
+                "com_sex_oral_V_force_Climax_7": "(unimplemented)",
+                "com_sex_oral_V_force_Refuse_10": "(unimplemented)",
+                "com_sex_oral_V_force_Refuse_11": "(unimplemented)"
             }
         }
     }

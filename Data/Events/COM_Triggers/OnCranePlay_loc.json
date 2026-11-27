@@ -1,0 +1,43 @@
+{
+    "_doc": {
+        "purpose": "English localization companion for OnCranePlay.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "crane_machine_empty": "$doer.firstname$ peers into the machine - it has been cleaned out.",
+                "crane_intro": "$doer.firstname$ leans in close to the glass and sizes up the prizes:\n$crane_grid$",
+                "crane_grid_row": "[$row$] Left: $c0$ | Center: $c1$ | Right: $c2$",
+                "crane_row_0": "Front",
+                "crane_row_1": "Middle",
+                "crane_row_2": "Back",
+                "crane_col_0": "left",
+                "crane_col_1": "center",
+                "crane_col_2": "right",
+                "crane_cell_name": "the $row$ $col$",
+                "crane_cell_empty": "(empty)",
+                "crane_name_separator": ", ",
+                "crane_q_x": "First move the claw sideways - which column?",
+                "crane_q_y": "Now move it forward or back - which row?",
+                "crane_opt_left": "Left",
+                "crane_opt_center": "Center",
+                "crane_opt_right": "Right",
+                "crane_opt_front": "Front",
+                "crane_opt_middle": "Middle",
+                "crane_opt_back": "Back",
+                "crane_opt_random": "Just hit the button (random)",
+                "crane_x_ok": "$crane_aim_text$\n$doer.firstname$ slides the claw neatly over the chosen column.",
+                "crane_x_slip": "$crane_aim_text$\nThe stick slips, and the claw drifts off its line.",
+                "crane_x_random": "$doer.firstname$ flicks the stick without much thought, and the claw wobbles sideways.",
+                "crane_y_ok": "$crane_aim_text$\n$doer.firstname$ lines the claw up with the row they wanted.",
+                "crane_y_slip": "$crane_aim_text$\nThe button gets pressed too early, and the claw stops off the mark.",
+                "crane_y_random": "$doer.firstname$ slaps the button without looking, and the claw sways to a stop.",
+                "crane_cell_empty_line": "The claw drops onto $crane_cell_name$ and closes on thin air - nothing there.",
+                "crane_grab_one": "$crane_grab_text$\nThe claw drops onto $crane_cell_name$, clamps $crane_prize$ and carries it to the chute!",
+                "crane_grab_all": "$crane_grab_text$\nCritical success! The claw drops onto $crane_cell_name$ and scoops up everything: $crane_prize$!",
+                "crane_grab_miss": "$crane_grab_text$\nThe claw drops onto $crane_cell_name$ and catches a prize, but lets go on the way up.",
+                "crane_grab_lost": "The claw drops onto $crane_cell_name$, but the prizes there are already gone."
+            }
+        }
+    }
+}

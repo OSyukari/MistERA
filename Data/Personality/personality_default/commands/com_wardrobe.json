@@ -332,34 +332,6 @@
                     "ID": "com_undress_outer_Refuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "useActiveTags": false,
-                                    "responses": [
-                                        "com_undress_outer_Refuse_new_4",
-                                        "com_undress_outer_Refuse_new_5",
-                                        "com_undress_outer_Refuse_new_6"
-                                    ]
-                                }
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_undress_outer_Refuse_new_4",
-                                "com_undress_outer_Refuse_new_5",
-                                "com_undress_outer_Refuse_new_6"
-                            ]
-                        },
-                        {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
@@ -388,7 +360,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -396,18 +370,22 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "com_undress_outer_Refuse_Receiver_1",
-                                "com_undress_outer_Refuse_Receiver_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_outer_Refuse_new_4",
+                                        "com_undress_outer_Refuse_new_5",
+                                        "com_undress_outer_Refuse_new_6"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true,
@@ -445,17 +423,37 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "glare"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "拒绝 被脱外衣 无允许 敌意",
                             "responses": [
+                                "com_undress_outer_Refuse_Receiver_1",
+                                "com_undress_outer_Refuse_Receiver_2",
+                                "com_undress_outer_Refuse_new_4",
+                                "com_undress_outer_Refuse_new_5",
+                                "com_undress_outer_Refuse_new_6",
                                 "com_undress_outer_H_1",
                                 "com_undress_outer_H_2",
                                 "com_undress_outer_H_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_outer_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_outer_Refuse_2"
                             ]
                         }
                     ],
@@ -799,34 +797,6 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "useActiveTags": false,
-                                    "responses": [
-                                        "com_undress_inner_Refuse_new_4",
-                                        "com_undress_inner_Refuse_new_5",
-                                        "com_undress_inner_Refuse_new_6"
-                                    ]
-                                }
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_undress_inner_Refuse_new_4",
-                                "com_undress_inner_Refuse_new_5",
-                                "com_undress_inner_Refuse_new_6"
-                            ]
-                        },
-                        {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
@@ -855,7 +825,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -863,18 +835,22 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "com_undress_inner_Refuse_Receiver_1",
-                                "com_undress_inner_Refuse_Receiver_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_inner_Refuse_new_4",
+                                        "com_undress_inner_Refuse_new_5",
+                                        "com_undress_inner_Refuse_new_6"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true,
@@ -912,17 +888,37 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "拒绝 被脱衣物 无允许 敌意",
                             "responses": [
+                                "com_undress_inner_Refuse_Receiver_1",
+                                "com_undress_inner_Refuse_Receiver_2",
+                                "com_undress_inner_Refuse_new_4",
+                                "com_undress_inner_Refuse_new_5",
+                                "com_undress_inner_Refuse_new_6",
                                 "com_undress_inner_H_1",
                                 "com_undress_inner_H_2",
                                 "com_undress_inner_H_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_inner_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_inner_Refuse_2"
                             ]
                         }
                     ],
@@ -1266,34 +1262,6 @@
                     ],
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "useActiveTags": false,
-                                    "responses": [
-                                        "com_undress_skin_Refuse_new_4",
-                                        "com_undress_skin_Refuse_new_5",
-                                        "com_undress_skin_Refuse_new_6"
-                                    ]
-                                }
-                            ],
-                            "useActiveTags": false,
-                            "responses": [
-                                "com_undress_skin_Refuse_new_4",
-                                "com_undress_skin_Refuse_new_5",
-                                "com_undress_skin_Refuse_new_6"
-                            ]
-                        },
-                        {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
@@ -1322,7 +1290,9 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -1330,18 +1300,22 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "com_undress_skin_Refuse_Receiver_1",
-                                "com_undress_skin_Refuse_Receiver_2"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "useActiveTags": false,
+                                    "responses": [
+                                        "com_undress_skin_Refuse_new_4",
+                                        "com_undress_skin_Refuse_new_5",
+                                        "com_undress_skin_Refuse_new_6"
+                                    ]
+                                },
                                 {
                                     "requirement": {
                                         "requirePermission": true,
@@ -1379,17 +1353,37 @@
                                     ]
                                 }
                             ],
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "glare"
-                            ],
-                            "useActiveTags": false,
-                            "_comment": "拒绝 被脱贴身衣物 无允许 敌意",
                             "responses": [
+                                "com_undress_skin_Refuse_Receiver_1",
+                                "com_undress_skin_Refuse_Receiver_2",
+                                "com_undress_skin_Refuse_new_4",
+                                "com_undress_skin_Refuse_new_5",
+                                "com_undress_skin_Refuse_new_6",
                                 "com_undress_skin_H_1",
                                 "com_undress_skin_H_2",
                                 "com_undress_skin_H_3"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_skin_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_skin_Refuse_2"
                             ]
                         }
                     ],
@@ -3078,34 +3072,6 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                                    "responses": [
-                                        "com_redress_inner_Refuse_4",
-                                        "com_redress_inner_Refuse_5",
-                                        "com_redress_inner_Refuse_6"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_redress_inner_Refuse_1",
-                                "com_redress_inner_Refuse_2",
-                                "com_redress_inner_Refuse_3"
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
-                        },
-                        {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
@@ -3130,15 +3096,57 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_redress_inner_Refuse_4",
+                                        "com_redress_inner_Refuse_5",
+                                        "com_redress_inner_Refuse_6"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_redress_inner_Refuse_1",
+                                "com_redress_inner_Refuse_2",
+                                "com_redress_inner_Refuse_3",
                                 "com_redress_inner_Refuse_12",
                                 "com_redress_inner_Refuse_13"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_redress_inner_Refuse_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_redress_inner_Refuse_15"
                             ]
                         }
                     ]
@@ -3382,10 +3390,13 @@
                             ]
                         },
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -3405,20 +3416,31 @@
                             "responses": [
                                 "com_undress_all_Refuse_7",
                                 "com_undress_all_Refuse_8",
-                                "com_undress_all_Refuse_9"
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
+                                "com_undress_all_Refuse_9",
                                 "com_undress_all_Refuse_12",
                                 "com_undress_all_Refuse_13"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_undress_all_Refuse_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_undress_all_Refuse_15"
                             ]
                         }
                     ]
@@ -3430,34 +3452,6 @@
                     "ID": "com_redress_skin_Refuse",
                     "template": "commandRefuse",
                     "variants": [
-                        {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                                    "responses": [
-                                        "com_redress_skin_Refuse_1",
-                                        "com_redress_skin_Refuse_2",
-                                        "com_redress_skin_Refuse_3"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_redress_skin_Refuse_4",
-                                "com_redress_skin_Refuse_5",
-                                "com_redress_skin_Refuse_6"
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
-                        },
                         {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
@@ -3483,15 +3477,57 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_redress_skin_Refuse_1",
+                                        "com_redress_skin_Refuse_2",
+                                        "com_redress_skin_Refuse_3"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_redress_skin_Refuse_4",
+                                "com_redress_skin_Refuse_5",
+                                "com_redress_skin_Refuse_6",
                                 "com_redress_skin_Refuse_12",
                                 "com_redress_skin_Refuse_13"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_redress_skin_Refuse_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_redress_skin_Refuse_15"
                             ]
                         }
                     ]
@@ -4554,34 +4590,6 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "selfTags": [
-                                            "justWokenUp"
-                                        ]
-                                    },
-                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
-                                    "responses": [
-                                        "com_redress_all_Refuse_1",
-                                        "com_redress_all_Refuse_2",
-                                        "com_redress_all_Refuse_3"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_redress_all_Refuse_4",
-                                "com_redress_all_Refuse_5",
-                                "com_redress_all_Refuse_6"
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
-                        },
-                        {
                             "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
@@ -4606,15 +4614,57 @@
                             ]
                         },
                         {
+                            "requireSelfReceiver": true,
                             "requirement": {
                                 "requireTargetAction": false,
                                 "requireEPSuccess": false,
                                 "allowRecording": true
                             },
-                            "_comment": "兜底分支",
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "selfTags": [
+                                            "justWokenUp"
+                                        ]
+                                    },
+                                    "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
+                                    "responses": [
+                                        "com_redress_all_Refuse_1",
+                                        "com_redress_all_Refuse_2",
+                                        "com_redress_all_Refuse_3"
+                                    ]
+                                }
+                            ],
                             "responses": [
+                                "com_redress_all_Refuse_4",
+                                "com_redress_all_Refuse_5",
+                                "com_redress_all_Refuse_6",
                                 "com_redress_all_Refuse_12",
                                 "com_redress_all_Refuse_13"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_redress_all_Refuse_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_redress_all_Refuse_15"
                             ]
                         }
                     ]
@@ -4863,10 +4913,13 @@
                             ]
                         },
                         {
-                            "requireRefusalContext": "ReceiverDeclined",
+                            "requireSelfReceiver": true,
                             "requirement": {
-                                "requireEPSuccess": false
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -4886,20 +4939,31 @@
                             "responses": [
                                 "com_redress_outer_Refuse_1",
                                 "com_redress_outer_Refuse_2",
-                                "com_redress_outer_Refuse_3"
-                            ],
-                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝"
-                        },
-                        {
-                            "requirement": {
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
+                                "com_redress_outer_Refuse_3",
                                 "com_redress_outer_Refuse_12",
                                 "com_redress_outer_Refuse_13"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_redress_outer_Refuse_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "独自（对象是自己） ｜ 拒绝",
+                            "responses": [
+                                "com_redress_outer_Refuse_15"
                             ]
                         }
                     ]
@@ -6039,7 +6103,23 @@
                 "com_redress_skin_27": "(unimplemented)",
                 "com_redress_all_Begin_18": "(unimplemented)",
                 "com_redress_all_Begin_19": "(unimplemented)",
-                "com_redress_all_27": "(unimplemented)"
+                "com_redress_all_27": "(unimplemented)",
+                "com_redress_inner_Refuse_14": "(unimplemented)",
+                "com_redress_inner_Refuse_15": "(unimplemented)",
+                "com_undress_skin_Refuse_1": "(unimplemented)",
+                "com_undress_skin_Refuse_2": "(unimplemented)",
+                "com_redress_outer_Refuse_14": "(unimplemented)",
+                "com_redress_outer_Refuse_15": "(unimplemented)",
+                "com_undress_inner_Refuse_1": "(unimplemented)",
+                "com_undress_inner_Refuse_2": "(unimplemented)",
+                "com_undress_all_Refuse_14": "(unimplemented)",
+                "com_undress_all_Refuse_15": "(unimplemented)",
+                "com_undress_outer_Refuse_1": "(unimplemented)",
+                "com_undress_outer_Refuse_2": "(unimplemented)",
+                "com_redress_all_Refuse_14": "(unimplemented)",
+                "com_redress_all_Refuse_15": "(unimplemented)",
+                "com_redress_skin_Refuse_14": "(unimplemented)",
+                "com_redress_skin_Refuse_15": "(unimplemented)"
             },
             "en-us": {
                 "com_undress_outer_Begin_A_1": "$self$ lifts her arms to help $target$, a small smile on her lips.",

@@ -273,6 +273,9 @@
                         },
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_sex_finger_caress_C_Begin_19",
@@ -946,9 +949,21 @@
                     ],
                     "variants": [
                         {
-                            "requireSelfReceiver": true,
+                            "requireRefusalContext": "DeclinedOrder",
                             "requirement": {
                                 "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_sex_finger_caress_C_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false,
+                                "allowRecording": true
                             },
                             "extraSelfPortraitTags": [
                                 "angry",
@@ -956,44 +971,7 @@
                                 "serious"
                             ],
                             "useActiveTags": false,
-                            "responses": [
-                                "com_sex_finger_caress_C_Refuse_Receiver_1",
-                                "com_sex_finger_caress_C_Refuse_Receiver_2",
-                                "com_sex_finger_caress_C_Refuse_Receiver_3"
-                            ]
-                        },
-                        {
-                            "requireSelfOnly": true,
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "useActiveTags": false,
-                            "variants": [
-                                {
-                                    "requirement": {
-                                        "requireEPSuccess": false,
-                                        "requirePermission": true
-                                    },
-                                    "useActiveTags": false,
-                                    "_comment": "2.5.7 拒绝独自C自慰的指令 有允许 口上文",
-                                    "responses": [
-                                        "com_sex_finger_caress_C_Self_5",
-                                        "com_sex_finger_caress_C_Self_6"
-                                    ]
-                                }
-                            ],
-                            "responses": [
-                                "com_sex_finger_caress_C_Self_7",
-                                "com_sex_finger_caress_C_Self_8"
-                            ],
-                            "_comment": "2.5.8 拒绝独自C自慰的指令 无允许 口上文"
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
+                            "_comment": "受方 → 对方（玩家或 NPC） ｜ 拒绝",
                             "variants": [
                                 {
                                     "requirement": {
@@ -1087,19 +1065,52 @@
                                     ]
                                 }
                             ],
-                            "_comment": "2.2.4 指令失败拒绝 被C抚摸 无允许 敌意 口上文",
-                            "extraSelfPortraitTags": [
-                                "angry",
-                                "disgust",
-                                "surprised",
-                                "serious"
-                            ],
-                            "useActiveTags": false,
                             "responses": [
+                                "com_sex_finger_caress_C_Refuse_Receiver_1",
+                                "com_sex_finger_caress_C_Refuse_Receiver_2",
+                                "com_sex_finger_caress_C_Refuse_Receiver_3",
                                 "com_sex_finger_caress_C_10",
                                 "com_sex_finger_caress_C_25",
                                 "com_sex_finger_caress_C_26"
                             ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_sex_finger_caress_C_Refuse_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccess": false,
+                                "requireTargetAction": false
+                            },
+                            "useActiveTags": false,
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "requireEPSuccess": false,
+                                        "requirePermission": true
+                                    },
+                                    "useActiveTags": false,
+                                    "_comment": "2.5.7 拒绝独自C自慰的指令 有允许 口上文",
+                                    "responses": [
+                                        "com_sex_finger_caress_C_Self_5",
+                                        "com_sex_finger_caress_C_Self_6"
+                                    ]
+                                }
+                            ],
+                            "responses": [
+                                "com_sex_finger_caress_C_Self_7",
+                                "com_sex_finger_caress_C_Self_8"
+                            ],
+                            "_comment": "2.5.8 拒绝独自C自慰的指令 无允许 口上文"
                         }
                     ],
                     "template": "commandRefuse"
@@ -1116,6 +1127,9 @@
                     "variants": [
                         {
                             "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false
+                            },
                             "_comment": "施方 ｜ 接受",
                             "responses": [
                                 "com_sex_finger_caress_C_Ongoing_10",
@@ -1344,7 +1358,9 @@
                 "com_sex_finger_caress_C_75": "一阵细密的酸麻顺着腿根漫开，$self$轻轻吸了口气，静静等着这阵触碰过去。",
                 "com_sex_finger_caress_C_Climax_timestop_3": "阴蒂在指腹下剧烈抽动着泄出爱液，$self$却连眨眼都做不到，整个人仍停在时间冻结前的瞬间。",
                 "com_sex_finger_caress_C_76": "“看来力道刚刚好？”$self$顺着湿滑的触感加快了揉弄的频率，目光一直落在$target$脸上。",
-                "com_sex_finger_caress_C_77": "指尖沾满温热的爱液，$self$没有停手，而是用指腹把阴蒂轻轻夹住来回碾磨。"
+                "com_sex_finger_caress_C_77": "指尖沾满温热的爱液，$self$没有停手，而是用指腹把阴蒂轻轻夹住来回碾磨。",
+                "com_sex_finger_caress_C_Refuse_1": "(unimplemented)",
+                "com_sex_finger_caress_C_Refuse_2": "(unimplemented)"
             },
             "en-us": {
                 "com_sex_finger_caress_C_Climax_timestop_1": "Frozen in stopped time, $self$'s body shudders through a silent climax without any awareness, her gaze remaining blank and still.",

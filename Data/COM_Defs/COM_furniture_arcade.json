@@ -44,8 +44,10 @@
                 "timeScale": 15,
                 "allowJoining": false,
                 "comTags": ["furniture", "recreation", "crane_play", "operating"],
+                "_comment_crane": "Prize game in the event com_furniture_crane_play_event (Data/Events/COM_Triggers/OnCranePlay.json, flow graph OnCranePlay_flow.svg). Pool = the owner's salesInventory stock + its real items tagged by requireCranePrize.inventoryTags; empty pool = command invalid with a tooltip. The DC is noAutoRoll: the event rolls it (RollCommandDC) for each aiming stage and for the grab.",
                 "requirements": {
                     "requirement": { "treatReceiverAsDoer": true },
+                    "requireFaction": { "requireCranePrize": { "inventoryTags": ["crane_prize"] } },
                     "requireInventory": {
                         "inventoryItemBaseID": "item_arcade_token",
                         "requiredCount": 1,
@@ -60,7 +62,10 @@
                     { "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2 } } }, "displayName": "com_furniture_crane_play_displayName_1" }
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
-                "DifficultyCheck": { "baseD20Check": 10 },
+                "DifficultyCheck": { "baseD20Check": 10, "noAutoRoll": true },
+                "results_AP": {
+                    "result_event": { "id_overwrite": "com_furniture_crane_play_event", "requireSuccess": true }
+                },
                 "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_begin_1"] }] },
                 "description_ongoing": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_ongoing_1"] }] },
                 "description_remove": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_crane_play_remove_1"] }] },

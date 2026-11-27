@@ -10,21 +10,143 @@
                         "label": "start",
                         "options": [
                             {
-                                "option": "has passive receivers",
+                                "option": "partition passive with hand",
                                 "Results": [
                                     {
                                         "Type": "FilterTargets",
                                         "arguments": [
                                             "receiver",
                                             "passive_receivers",
-                                            "passive"
+                                            "passiveWithHand"
                                         ]
                                     },
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "partition_active_then_passive"
+                                            "partition_pets"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "no passive with hand",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "partition_pets"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "partition_pets",
+                        "options": [
+                            {
+                                "option": "partition handless pets",
+                                "Results": [
+                                    {
+                                        "Type": "FilterTargets",
+                                        "arguments": [
+                                            "receiver",
+                                            "pet_receivers",
+                                            "noHand"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "pet_receivers",
+                                            "washed_pets"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "partition_active"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "no pets",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "partition_active"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "partition_active",
+                        "options": [
+                            {
+                                "option": "partition active with hand",
+                                "Results": [
+                                    {
+                                        "Type": "FilterTargets",
+                                        "arguments": [
+                                            "receiver",
+                                            "active_receivers",
+                                            "canActWithHand"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "dispatch_passive"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "no active with hand",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "dispatch_passive"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "dispatch_passive",
+                        "options": [
+                            {
+                                "option": "has passive receivers",
+                                "target_chara_conditions": {
+                                    "passive_receivers": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "com_furniture_takeShower_passive",
+                                            "start"
                                         ]
                                     }
                                 ]
@@ -36,83 +158,7 @@
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "partition_active_only"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "partition_active_then_passive",
-                        "options": [
-                            {
-                                "option": "filter active",
-                                "Results": [
-                                    {
-                                        "Type": "FilterTargets",
-                                        "arguments": [
-                                            "receiver",
-                                            "active_receivers",
-                                            "canAct"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "com_furniture_takeShower_passive",
-                                            "start"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "no active",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "com_furniture_takeShower_passive",
-                                            "start"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "partition_active_only",
-                        "options": [
-                            {
-                                "option": "has active",
-                                "Results": [
-                                    {
-                                        "Type": "FilterTargets",
-                                        "arguments": [
-                                            "receiver",
-                                            "active_receivers",
-                                            "canAct"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "group_start"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "solo",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "solo_start"
+                                            "after_passive"
                                         ]
                                     }
                                 ]
@@ -122,6 +168,45 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "after_passive",
+                        "options": [
+                            {
+                                "option": "has pet receivers",
+                                "target_chara_conditions": {
+                                    "pet_receivers": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "com_furniture_takeShower_pet",
+                                            "start"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "no pet receivers",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "after_pet"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "after_pet",
                         "options": [
                             {
                                 "option": "has active receivers",
@@ -340,7 +425,7 @@
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "solo_expel_check"
+                                            "solo_pet_helper_check"
                                         ]
                                     }
                                 ]
@@ -354,7 +439,401 @@
                             "portraitRefKey": "bather"
                         },
                         "line": "$showerBeginSelf$",
-                        "nextEntryLabel": "solo_expel_check"
+                        "nextEntryLabel": "solo_pet_helper_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "solo_pet_helper_check",
+                        "options": [
+                            {
+                                "option": "has washed pets",
+                                "target_chara_conditions": {
+                                    "washed_pets": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "SetAppendString",
+                                        "arguments": [
+                                            "petHelperCount",
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "SetAppendString",
+                                        "arguments": [
+                                            "pet_helper_return",
+                                            "solo_pet_helper_gate"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_pet_helper_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "no washed pets",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_expel_check"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "solo_pet_helper_gate",
+                        "options": [
+                            {
+                                "option": "under 3",
+                                "Results": [
+                                    {
+                                        "Type": "CompareAppendNumber",
+                                        "arguments": [
+                                            "petHelperCount",
+                                            "lt",
+                                            "3"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_pet_helper_q"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "limit proceed to sex",
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        },
+                                        {
+                                            "parameters": [
+                                                "petCanShowerSex",
+                                                "doer"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "sex_select_act"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "limit",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_expel_check"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "solo_pet_helper_q",
+                        "question": "shower_pet_helper_question",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "shower_pet_opt_oral_B",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "canExecuteCOM",
+                                                "com_sex_oral_B",
+                                                "bather"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "apPreviews": [
+                                    {
+                                        "doer": "picked",
+                                        "receiver": "bather",
+                                        "com": "com_sex_oral_B",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModAppendNumber",
+                                        "arguments": [
+                                            "petHelperCount",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_oral_B"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_oral_V",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "canExecuteCOM",
+                                                "com_sex_oral_V",
+                                                "bather"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "apPreviews": [
+                                    {
+                                        "doer": "picked",
+                                        "receiver": "bather",
+                                        "com": "com_sex_oral_V",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModAppendNumber",
+                                        "arguments": [
+                                            "petHelperCount",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_oral_V"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_opt_request_sex_target",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "petCanShowerSex",
+                                                "doer"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "sex_select_act"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_helper_done",
+                                "isDefaultAccept": true,
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_expel_check"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_helper_oral_B",
+                        "UISpec": {
+                            "portraitRefKey": "picked",
+                            "selfTags": [
+                                "sex"
+                            ]
+                        },
+                        "line": "shower_pet_helper_oral_B",
+                        "nextEntryLabel": "pet_helper_oral_B_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_helper_oral_B_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "picked",
+                                            "bather",
+                                            "com_sex_oral_B",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_return_dispatch"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_return_dispatch"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_helper_oral_V",
+                        "UISpec": {
+                            "portraitRefKey": "picked",
+                            "selfTags": [
+                                "sex"
+                            ]
+                        },
+                        "line": "shower_pet_helper_oral_V",
+                        "nextEntryLabel": "pet_helper_oral_V_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_helper_oral_V_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "picked",
+                                            "bather",
+                                            "com_sex_oral_V",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_return_dispatch"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_return_dispatch"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_helper_return_dispatch",
+                        "options": [
+                            {
+                                "option": "chat_self_gate",
+                                "Results": [
+                                    {
+                                        "Type": "AppendStringEquals",
+                                        "arguments": [
+                                            "pet_helper_return",
+                                            "chat_self_gate"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "chat_self_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "solo_pet_helper_gate",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_pet_helper_gate"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -410,6 +889,28 @@
                                         "arguments": [
                                             "",
                                             "self_expel_mouth"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_opt_let_pet_help_expel",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "Results": [
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "picked",
+                                            "expel_helper"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_mouth"
                                         ]
                                     }
                                 ]
@@ -1139,6 +1640,129 @@
                                         "arguments": [
                                             "",
                                             "intimacy_recv_start"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_oral_B",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "canExecuteCOM",
+                                                "com_sex_oral_B",
+                                                "doer"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "apPreviews": [
+                                    {
+                                        "doer": "picked",
+                                        "receiver": "doer",
+                                        "com": "com_sex_oral_B",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "doer",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "SetAppendString",
+                                        "arguments": [
+                                            "pet_helper_return",
+                                            "chat_self_gate"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_oral_B"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_oral_V",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "canExecuteCOM",
+                                                "com_sex_oral_V",
+                                                "doer"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "apPreviews": [
+                                    {
+                                        "doer": "picked",
+                                        "receiver": "doer",
+                                        "com": "com_sex_oral_V",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "doer",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "SetAppendString",
+                                        "arguments": [
+                                            "pet_helper_return",
+                                            "chat_self_gate"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_helper_oral_V"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_opt_request_sex_target",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "target_chara_conditions": {
+                                    "picked": [
+                                        {
+                                            "parameters": [
+                                                "petCanShowerSex",
+                                                "doer"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "sex_select_act"
                                         ]
                                     }
                                 ]
@@ -5591,6 +6215,42 @@
                                         ]
                                     }
                                 ]
+                            },
+                            {
+                                "option": "shower_opt_let_pet_help_expel",
+                                "forEachTargetKey": "washed_pets",
+                                "bindTargetKey": "picked",
+                                "hideIfInvalid": true,
+                                "Results": [
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "doer",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "picked",
+                                            "expel_helper"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "SetAppendString",
+                                        "arguments": [
+                                            "expel_return",
+                                            "group_rinse_init"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_mouth"
+                                        ]
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -6617,6 +7277,470 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_mouth",
+                        "options": [
+                            {
+                                "option": "mouth full",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "mouth",
+                                            "true",
+                                            "true",
+                                            "deflateMsg1",
+                                            "",
+                                            "deflateMemory",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_mouth_line"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_womb"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_assisted_expel_mouth_line",
+                        "UISpec": {
+                            "portraitRefKey": "expel_helper"
+                        },
+                        "line": "shower_pet_assisted_expel_mouth",
+                        "nextEntryLabel": "pet_assisted_expel_womb"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_womb",
+                        "options": [
+                            {
+                                "option": "womb full",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "womb",
+                                            "true",
+                                            "true",
+                                            "deflateMsg2",
+                                            "",
+                                            "deflateMemory",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_womb_line"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_vagina"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_assisted_expel_womb_line",
+                        "UISpec": {
+                            "portraitRefKey": "expel_helper"
+                        },
+                        "line": "shower_pet_assisted_expel_womb",
+                        "nextEntryLabel": "pet_assisted_expel_womb_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_womb_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "BeginEntryResultsSilent"
+                                    },
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "expel_helper",
+                                            "bather",
+                                            "com_sex_oral_V",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "EndEntryResultsSilent"
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_vagina"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_vagina"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_vagina",
+                        "options": [
+                            {
+                                "option": "vagina full",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "vagina",
+                                            "true",
+                                            "true",
+                                            "deflateMsg3",
+                                            "",
+                                            "deflateMemory",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_vagina_line"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_anus"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_assisted_expel_vagina_line",
+                        "UISpec": {
+                            "portraitRefKey": "expel_helper",
+                            "selfTags": [
+                                "spread_pussy"
+                            ]
+                        },
+                        "line": "shower_pet_assisted_expel_vagina",
+                        "nextEntryLabel": "pet_assisted_expel_vagina_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_vagina_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "BeginEntryResultsSilent"
+                                    },
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "expel_helper",
+                                            "bather",
+                                            "com_sex_oral_V",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "EndEntryResultsSilent"
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_anus"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_anus"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_anus",
+                        "options": [
+                            {
+                                "option": "anus full",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "anus",
+                                            "true",
+                                            "true",
+                                            "deflateMsg4",
+                                            "",
+                                            "deflateMemory",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_anus_line"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_rest"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_assisted_expel_anus_line",
+                        "UISpec": {
+                            "portraitRefKey": "expel_helper"
+                        },
+                        "line": "shower_pet_assisted_expel_anus",
+                        "nextEntryLabel": "pet_assisted_expel_anus_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_anus_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "BeginEntryResultsSilent"
+                                    },
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "expel_helper",
+                                            "bather",
+                                            "com_sex_oral_A",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "EndEntryResultsSilent"
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_rest"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_rest"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_rest",
+                        "options": [
+                            {
+                                "option": "remaining full",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "",
+                                            "true",
+                                            "false",
+                                            "deflateMsg5",
+                                            "",
+                                            "deflateMemory",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_rest_line"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_mem_check"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_assisted_expel_rest_line",
+                        "UISpec": {
+                            "portraitRefKey": "expel_helper"
+                        },
+                        "line": "shower_pet_assisted_expel_rest",
+                        "nextEntryLabel": "pet_assisted_expel_mem_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_assisted_expel_mem_check",
+                        "options": [
+                            {
+                                "option": "expelled",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMemory"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_assisted_expel_mem_log"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "none",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "expel_return_dispatch"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_assisted_expel_mem_log",
+                        "line": "",
+                        "Results": [
+                            {
+                                "Type": "LogMemoryEntryWithAppend",
+                                "arguments": [
+                                    "bather",
+                                    "",
+                                    "deflateMemory",
+                                    "true"
+                                ]
+                            },
+                            {
+                                "Type": "FlushMessageExpAll"
+                            },
+                            {
+                                "Type": "RemoveAppendStrings",
+                                "arguments": [
+                                    "deflateMemory"
+                                ]
+                            }
+                        ],
+                        "nextEntryLabel": "assisted_expel_kojo"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "expel_return_dispatch",
                         "options": [
                             {
@@ -6698,6 +7822,34 @@
                                         "arguments": [
                                             "",
                                             "group_rinse_loop"
+                                        ]
+                                    }
+                                ],
+                                "target_chara_conditions": {
+                                    "active_receivers": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "option": "solo after pet sex",
+                                "Results": [
+                                    {
+                                        "Type": "CopyTargets",
+                                        "arguments": [
+                                            "doer",
+                                            "bather"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "solo_rinse"
                                         ]
                                     }
                                 ]
@@ -9873,6 +11025,669 @@
                         "nextEntryLabel": "start"
                     }
                 ]
+            },
+            {
+                "ID": "com_furniture_takeShower_pet",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
+                        "options": [
+                            {
+                                "option": "pop next pet",
+                                "Results": [
+                                    {
+                                        "Type": "PopFirstTarget",
+                                        "arguments": [
+                                            "pet_receivers",
+                                            "current_pet"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "SetAppendString",
+                                        "arguments": [
+                                            "petWashCount",
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_begin"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "queue empty",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "com_furniture_takeShower_event",
+                                            "after_pet"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_begin",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_begin",
+                        "nextEntryLabel": "pet_wash_gate"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_wash_gate",
+                        "options": [
+                            {
+                                "option": "under 3",
+                                "Results": [
+                                    {
+                                        "Type": "CompareAppendNumber",
+                                        "arguments": [
+                                            "petWashCount",
+                                            "lt",
+                                            "3"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_q"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "limit",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_expel_check"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "pet_wash_q",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "question": "shower_pet_wash_question",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "shower_pet_opt_wash_head",
+                                "apPreviews": [
+                                    {
+                                        "doer": "doer",
+                                        "receiver": "current_pet",
+                                        "com": "com_touch_hair",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModAppendNumber",
+                                        "arguments": [
+                                            "petWashCount",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_head"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_wash_back",
+                                "apPreviews": [
+                                    {
+                                        "doer": "doer",
+                                        "receiver": "current_pet",
+                                        "com": "com_touch_back",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModAppendNumber",
+                                        "arguments": [
+                                            "petWashCount",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_back"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_wash_belly",
+                                "apPreviews": [
+                                    {
+                                        "doer": "doer",
+                                        "receiver": "current_pet",
+                                        "com": "com_touch_abdomen",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModAppendNumber",
+                                        "arguments": [
+                                            "petWashCount",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_belly"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_wash_crotch",
+                                "apPreviews": [
+                                    {
+                                        "doer": "doer",
+                                        "receiver": "current_pet",
+                                        "com": "com_sex_finger_caress_C",
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    },
+                                    {
+                                        "doer": "doer",
+                                        "receiver": "current_pet",
+                                        "com": "com_sex_finger_P",
+                                        "orPrevious": true,
+                                        "forceAccept": true,
+                                        "permissions": "skip"
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModAppendNumber",
+                                        "arguments": [
+                                            "petWashCount",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_crotch"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_pet_opt_finish",
+                                "isDefaultAccept": true,
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_expel_check"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_wash_head",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_wash_head",
+                        "nextEntryLabel": "pet_wash_head_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_wash_head_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "doer",
+                                            "current_pet",
+                                            "com_touch_hair",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_wash_back",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_wash_back",
+                        "nextEntryLabel": "pet_wash_back_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_wash_back_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "doer",
+                                            "current_pet",
+                                            "com_touch_back",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_wash_belly",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_wash_belly",
+                        "nextEntryLabel": "pet_wash_belly_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_wash_belly_ap",
+                        "options": [
+                            {
+                                "option": "run ap",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "doer",
+                                            "current_pet",
+                                            "com_touch_abdomen",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip ap",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_wash_crotch",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet",
+                            "selfTags": [
+                                "sex"
+                            ]
+                        },
+                        "line": "shower_pet_wash_crotch",
+                        "nextEntryLabel": "pet_wash_crotch_ap"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_wash_crotch_ap",
+                        "options": [
+                            {
+                                "option": "clit",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "doer",
+                                            "current_pet",
+                                            "com_sex_finger_caress_C",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "penis",
+                                "Results": [
+                                    {
+                                        "Type": "ExecuteAPOnSingleChara",
+                                        "arguments": [
+                                            "doer",
+                                            "current_pet",
+                                            "com_sex_finger_P",
+                                            "1",
+                                            "true",
+                                            "true",
+                                            "skip"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_wash_gate"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_expel_check",
+                        "options": [
+                            {
+                                "option": "has expellable",
+                                "target_chara_conditions": {
+                                    "current_pet": [
+                                        {
+                                            "parameters": [
+                                                "wouldDeflateAny"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_expel_q"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "none",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_rinse"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "pet_expel_q",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "question": "shower_pet_expel_question",
+                        "npcDecides": true,
+                        "options": [
+                            {
+                                "option": "shower_expel_help_yes",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_expel_do"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "shower_expel_no",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_rinse"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_expel_do",
+                        "options": [
+                            {
+                                "option": "expelled",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "",
+                                            "true",
+                                            "false",
+                                            "deflateMsgPet",
+                                            "",
+                                            "deflateMemory",
+                                            "current_pet"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_expel_line"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "skip",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_rinse"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_expel_line",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_expel_line",
+                        "nextEntryLabel": "pet_rinse"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "pet_rinse",
+                        "options": [
+                            {
+                                "option": "washed",
+                                "Results": [
+                                    {
+                                        "Type": "WashTraces",
+                                        "arguments": [
+                                            "current_pet",
+                                            "showerWashReport"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_rinse_changed"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "clean",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "pet_rinse_plain"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_rinse_changed",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_rinse_changed",
+                        "nextEntryLabel": "pet_done_one"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_rinse_plain",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_rinse_plain",
+                        "nextEntryLabel": "pet_done_one"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "pet_done_one",
+                        "UISpec": {
+                            "portraitRefKey": "current_pet"
+                        },
+                        "line": "shower_pet_done_one",
+                        "nextEntryLabel": "start"
+                    }
+                ]
             }
         ]
     },
@@ -10040,7 +11855,35 @@
                 "shower_passive_sex_after_climax": "余韵渐渐平息，温热的水流冲散了肌肤上留下的痕迹。",
                 "shower_passive_sex_after": "$doer.firstname$停下动作，用花洒重新冲淋过彼此的身体。",
                 "shower_passive_expel_question": "$current_passive.firstname$体内还积存着浊液。要顺手替对方扒开排出来吗？",
-                "shower_passive_done_one": "$doer.firstname$将$current_passive.firstname$浑身冲洗干净，妥善安置在一旁。"
+                "shower_passive_done_one": "$doer.firstname$将$current_passive.firstname$浑身冲洗干净，妥善安置在一旁。",
+                "shower_pet_begin": "$doer.firstname$安抚着把$current_pet.firstname$带到温热的水流下，先将毛发彻底打湿并揉出泡沫。",
+                "shower_pet_wash_question": "温水顺着$current_pet.firstname$的毛发流下。接下来要重点清洗哪里？",
+                "shower_pet_opt_wash_head": "轻揉头部与耳后",
+                "shower_pet_opt_wash_back": "搓洗背部与毛发",
+                "shower_pet_opt_wash_belly": "清洗腹部与四肢",
+                "shower_pet_opt_wash_crotch": "清洗股间",
+                "shower_pet_opt_finish": "冲净泡沫，完成清洗",
+                "shower_pet_wash_head": "$doer.firstname$避开眼睛与耳朵，轻柔地揉洗着$current_pet.firstname$的脑袋和颈部。",
+                "shower_pet_wash_back": "$doer.firstname$顺着毛流仔细搓揉$current_pet.firstname$的背部，把藏在毛里的污垢与泡沫一同理开。",
+                "shower_pet_wash_belly": "$doer.firstname$弯下身，耐心地把$current_pet.firstname$的肚皮与四肢逐一洗净。",
+                "shower_pet_wash_crotch": "$doer.firstname$拨开湿润的毛发，沾着温热泡沫仔细揉洗着$current_pet.firstname$的股间。",
+                "shower_pet_helper_question": "洗完的$washed_pets.firstname$凑在一旁蹭了过来。接下来要怎么做？",
+                "shower_pet_opt_oral_B": "让$firstname$舔舐胸部",
+                "shower_pet_opt_oral_V": "让$firstname$舔舐下身",
+                "shower_pet_opt_helper_done": "继续自己清洗",
+                "shower_pet_helper_oral_B": "$picked.firstname$凑到$bather.firstname$身前，伸出温热湿润的舌头舔舐着沾满水珠的胸部。",
+                "shower_pet_helper_oral_V": "$picked.firstname$低头凑到$bather.firstname$腿间，用温热灵巧的舌头细细舔舐着敏感的下身。",
+                "shower_opt_let_pet_help_expel": "让$firstname$用嘴帮忙舔净排出",
+                "shower_pet_assisted_expel_mouth": "$bather.firstname$迎着水流吐出口中积存的浊液，一旁的$expel_helper.firstname$凑上来舔净唇边溢出的残留。\n$deflateMsg1$。",
+                "shower_pet_assisted_expel_womb": "$bather.firstname$按压着发胀的小腹逼出子宫深处积存的浊液，$expel_helper.firstname$凑近腿间，用温热的舌头将涌出的液体一点点舔净。\n$deflateMsg2$。",
+                "shower_pet_assisted_expel_vagina": "$bather.firstname$蹲低身子敞开双腿，$expel_helper.firstname$将湿热的鼻吻埋入腿间，用舌头反复探入舔弄，将积在深处的浓稠浊液悉数舔出清理干净。\n$deflateMsg3$。",
+                "shower_pet_assisted_expel_anus": "$bather.firstname$分开臀瓣，$expel_helper.firstname$凑上前用温热的舌头细细舔舐后庭，配合着水流将溢出的黏稠浊液一点点清理干净。\n$deflateMsg4$。",
+                "shower_pet_assisted_expel_rest": "$bather.firstname$继续排出体内残余的浊液，$expel_helper.firstname$贴在身侧不停用嘴与舌头替对方舔拭干净。\n$deflateMsg5$。",
+                "shower_pet_expel_question": "$current_pet.firstname$体内似乎还残留着积存的液体。要顺手帮它清理出来吗？",
+                "shower_pet_expel_line": "$doer.firstname$稳住$current_pet.firstname$，借着温水帮它把体内积存的浊液清理干净。\n$deflateMsgPet$。",
+                "shower_pet_rinse_changed": "$doer.firstname$用花洒仔细冲净泡沫，将$current_pet.firstname$身上的残留（$showerWashReport$）全部冲刷干净。",
+                "shower_pet_rinse_plain": "$doer.firstname$用温水将$current_pet.firstname$浑身的泡沫彻底冲洗干净。",
+                "shower_pet_done_one": "$doer.firstname$关小水流，拿毛巾替甩干水珠的$current_pet.firstname$擦拭了一遍，将它安顿到一旁。"
             }
         }
     }

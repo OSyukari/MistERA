@@ -1,0 +1,38 @@
+{
+    "_doc": "Pet wash activity begin event (membertype_house_pet's house_activity_wash_pet - Data/MemberDefs/housePets.json). Fired by Job_Activity at launch; launches Job_WashPet binding owner=owner and pet=host.",
+    "Events": {
+        "list": [
+            {
+                "ID": "PetWash_Begin",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "a latecomer", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "start", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "start"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "start", "isLast": true, "line": "PetWash_Begin_start",
+                        "Results": [
+                            {
+                                "Type": "LaunchJob",
+                                "arguments": [ "owner=owner", "pet=host" ],
+                                "jobTemplate": { "$type": "Job_WashPet, Assembly-CSharp", "showerCommandID": "com_furniture_takeShower", "maxDurationMinutes": 60 }
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "PetWash_Begin_late" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "PetWash_Begin_start": "$owner.name$把$host.name$带进浴室，准备给它洗澡。",
+                "PetWash_Begin_late": "$joining.name$赶到了浴室。"
+            }
+        }
+    }
+}

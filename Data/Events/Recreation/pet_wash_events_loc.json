@@ -1,0 +1,10 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "PetWash_Begin_start": "$owner.name$ brings $host.name$ into the bathroom to give them a bath.",
+                "PetWash_Begin_late": "$joining.name$ arrived at the bathroom."
+            }
+        }
+    }
+}

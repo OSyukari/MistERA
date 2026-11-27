@@ -345,9 +345,75 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             return permission.ToLower().Replace("intimacy_", "");
         }
     }
+    /// <summary>
+    /// One COM.clothingFit entry: what is worn on slots (layers, null = Inner + Outer) is Bare (nothing), Fit (every
+    /// garment has one of fitTags) or Unfit (anything else - Character_Body.GetClothingFit); that state's value goes on
+    /// the DC roll, labeled by its label key (empty = ui_diceroll_clothing_fit / _unfit / _bare).
+    /// </summary>
+    public class ClothingFitCheck
+    {
+        public List<BodyPartEquipSlot> slots = new List<BodyPartEquipSlot>();
+        public List<BodyEquipLayer> layers = null;
+        public List<string> fitTags = new List<string>();
+        public int fit = 0;
+        public int unfit = 0;
+        public int bare = 0;
+        public string fitLabel = "";
+        public string unfitLabel = "";
+        public string bareLabel = "";
+
+        static readonly List<BodyEquipLayer> DefaultLayers = new List<BodyEquipLayer>() { BodyEquipLayer.Inner, BodyEquipLayer.Outer };
+
+        /// <summary> this check's DC value for c (0 = nothing to add), with its label key </summary>
+        public int GetMod(Character_Trainable c, out string labelKey)
+        {
+            labelKey = "";
+            if (c == null || c.Body == null) return 0;
+            switch (c.Body.GetClothingFit(slots, layers ?? DefaultLayers, fitTags))
+            {
+                case ClothingFitState.Fit:
+                    labelKey = fitLabel != "" ? fitLabel : "ui_diceroll_clothing_fit";
+                    return fit;
+                case ClothingFitState.Unfit:
+                    labelKey = unfitLabel != "" ? unfitLabel : "ui_diceroll_clothing_unfit";
+                    return unfit;
+                default:
+                    labelKey = bareLabel != "" ? bareLabel : "ui_diceroll_clothing_bare";
+                    return bare;
+            }
+        }
+    }
+
+    /// <summary>
+    /// What to wear for this command (e.g. exercise: sportswear, running shoes, swimwear): each entry checks its slots and
+    /// adds its fit / unfit / bare value to the DC roll (ActionPackage.CollectPairMods, Event RollCommandDC). Null = none.
+    /// </summary>
+    public List<ClothingFitCheck> clothingFit = null;
+
+    /// <summary> c's total clothingFit DC value, each nonzero entry labeled in mods </summary>
+    public int GetClothingFitMod(Character_Trainable c, EvaluationPackage.Modifiers mods)
+    {
+        if (clothingFit == null || c == null) return 0;
+        int total = 0;
+        foreach (var check in clothingFit)
+        {
+            if (check == null) continue;
+            int mod = check.GetMod(c, out var labelKey);
+            if (mod == 0) continue;
+            total += mod;
+            if (mods != null) mods.AddModifier(c.RefID, LocalizeDictionary.QueryThenParse(labelKey), mod);
+        }
+        return total;
+    }
+
     public class Difficulty
     {
         public int baseD20Check = 0;
+        /// <summary>
+        /// The package never rolls this DC itself (no-DC path: an accepted package succeeds); baseD20Check and the skill
+        /// bonuses stay the command's config for an event to roll with (Event RollCommandDC, e.g. the crane prize grab).
+        /// </summary>
+        public bool noAutoRoll = false;
         public bool useDefault = true;
 
         public List<string> SkillBonus_Doer = new List<string>();
@@ -573,7 +639,15 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     }
 
     public Difficulty DifficultyCheck = new Difficulty();
+    /// <summary>
+    /// Own sweat / stamina-trace setting (TraceUtility.LeaveStaminaTraces), keyed by trace id, e.g.
+    /// { "trace_sweat": { "minSTPerMinute": 0, "amountPerST": 0.3 } }. Null (or a trace not listed, or a null field) =
+    /// the trace definition's leaveOnStaminaCost.
+    /// </summary>
+    public Dictionary<string, StaminaTraceOverride> staminaTraces = null;
     [JsonIgnore] public int baseD20Check { get { return DifficultyCheck.baseD20Check; } }
+    /// <summary> the package rolls its own DC on execution: a DC is set and not flagged noAutoRoll </summary>
+    [JsonIgnore] public bool HasAutoDC { get { return DifficultyCheck.baseD20Check > 0 && !DifficultyCheck.noAutoRoll; } }
     [JsonIgnore] public int baseAcceptanceValue { get { return AcceptanceCheck.baseAcceptanceValue; } }
 
     //public int moodModValue = 0, stressModValue = 0, lustModValue = 0;

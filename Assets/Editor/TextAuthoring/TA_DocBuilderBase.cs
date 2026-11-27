@@ -109,7 +109,21 @@ public abstract partial class TA_DocBuilderBase
     /// 38: per-event kojo template configs (Templates/events/<id>.json), event template axes, self-target & partner fixes.
     /// 39: resolve %%key%% in read-only event text (E4), collapse pure-routing event branches onto text entries (E5).
     /// 40: group parallel OR-branches per gate and drop redundant suffix-covered prefix chains in FlowView.
-    public const int ExtractorVersion = 40;
+    /// 41: command kojo reachability: doer never under unaware gates, no allowRecording pass-through, loosening fields
+    ///     don't break always-valid, receiver-side action defaults count when the receiver can't act; mutual commands
+    ///     get no roleShared (roleMutual slot flag).
+    /// 42: command missingEntry only where the case template requires a case at the key; solo co-acting scene and the
+    ///     begin self case follow the engine's doer count (command and variant both); roles.reachableIf (allowNPC).
+    /// 43: a command falling back to another command's kojo (kojo source / non-category folder parent) has optional kojo
+    ///     cases; Store/custom.json "command:<unit>" (pid or "*") asks for dedicated kojo (case requiredFor, custom).
+    /// 44: command fact temporaryAP (ActionPackage.isTemporaryAP: no _Begin / _Ongoing / partner ending), "!fact" in when
+    ///     lists; cases.json overrides drop kojo of the PathTo commands (work, goto_schedule) and the com_useItem template.
+    /// 45: command fact orderable (sex mode: comTag sex / allowedDuringSex) gates every player-ordered case; phase
+    ///     whenByCase; template-driven scene lookups honor phase `when`; debugOnly commands have no kojo.
+    /// 46: pair docs look up the doer's `_Refuse` after the receiver refused (scene 4, ordered scene 5; no refusal context).
+    /// 47: per-item folders (COM_ItemFolder com_useItem_<item>) take the com_useItem template's cases.json overrides (no kojo).
+    /// 48: a command whose overrides drop all kojo ("kojo.") has no scene kojo lookups either (Kojo / Climax / template entries).
+    public const int ExtractorVersion = 48;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();
@@ -256,7 +270,7 @@ public abstract partial class TA_DocBuilderBase
         {
             var pid = personalities[i];
             var l = layers[pid];
-            foreach (var kv in l.missing) l.findings.Add(kv.Value);
+            foreach (var kv in l.missing) if (MissingEntryRequired(pid, kv.Key)) l.findings.Add(kv.Value);
             snap.layers[pid] = new JObject
             {
                 ["unit"] = snap.shared["unit"],
@@ -330,6 +344,12 @@ public abstract partial class TA_DocBuilderBase
 
     // ---------------------------------------------------------------- kojo
 
+    /// <summary>Unit facts every kojo lookup of this unit shares (command units: TA_KojoContext.commandKey …).</summary>
+    protected virtual void KojoContextFacts(TA_KojoContext ctx) { }
+
+    /// <summary>Doer and receiver are equivalent in this unit (mutual command): a slot both draw is shared by design.</summary>
+    protected virtual bool RolesEquivalent { get { return false; } }
+
     /// <summary>Resolves the entry a personality would use at this position; null when the chain has none.</summary>
     protected delegate ResponseEntry EntryResolver(Character_Personality p, out string provider, out string entryID);
 
@@ -341,6 +361,7 @@ public abstract partial class TA_DocBuilderBase
     /// </summary>
     protected void KojoBlock(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx, string consumer, string severity, JObject templateWho = null)
     {
+        KojoContextFacts(ctx);
         // who each kojo placeholder is here ($self$ = speaker, $target$ = listener: ResponseEntryVariant), and in a
         // command scenario who the action's doer / receiver are (castDoer / castReceiver, set per scenario)
         var who = new JObject { ["self"] = speaker, ["target"] = listener };
@@ -469,6 +490,7 @@ public abstract partial class TA_DocBuilderBase
     /// </summary>
     protected void CoverageLookup(string key, EntryResolver resolve, string speaker, string listener, TA_KojoContext ctx, string consumer, string severity)
     {
+        KojoContextFacts(ctx);
         var keepStream = sb;
         bool keepMode = countOnly;
         countOnly = true;
@@ -496,7 +518,8 @@ public abstract partial class TA_DocBuilderBase
 
     /// <summary>
     /// One level of variants in engine order. After an always-valid sibling without keepLooking the level ends, so later
-    /// siblings are skipped (and reported unless another context reaches them).
+    /// siblings are skipped (and reported unless another context reaches them). allowRecording siblings stay reachable
+    /// (while recording the blocker fails) - not on command keys, which are never fetched while recording.
     /// </summary>
     int KojoSiblings(List<ResponseEntry.Variant> list, List<ResponseEntry.Variant> chain, List<string> pathParts,
         string provider, string entryID, string pid, bool inherited, TA_KojoContext ctx)
@@ -509,7 +532,7 @@ public abstract partial class TA_DocBuilderBase
             var v = list[i];
             // disabled (no possible output, not silent): the engine skips it without checking conditions
             if (v == null || v.disabled) continue;
-            if (blocker != null && !(v.requirement != null && v.requirement.allowRecording))
+            if (blocker != null && (ctx.commandKey || !(v.requirement != null && v.requirement.allowRecording)))
             {
                 if (TA_Conditions.Applies(v, ctx)) RecordShadowedKojo(pid, provider, entryID, PathWith(pathParts, i), blocker);
                 continue;
@@ -613,10 +636,12 @@ public abstract partial class TA_DocBuilderBase
 
     /// <summary>
     /// Records each kojo slot's speaker roles now that every use in the unit is known; a slot drawn by both doer and
-    /// receiver without a role-restricting variant becomes a roleShared finding (rendered as ⚠ + 结构建议).
+    /// receiver without a role-restricting variant becomes a roleShared finding (rendered as ⚠ + 结构建议) - not in a
+    /// mutual command's unit, where both sides sharing a branch is by design (roleMutual).
     /// </summary>
     void ResolveRoles()
     {
+        bool mutual = RolesEquivalent;
         for (int i = 0; i < slotRoleOrder.Count; i++)
         {
             var h = slotRoleOrder[i];
@@ -627,7 +652,8 @@ public abstract partial class TA_DocBuilderBase
             var slot = (JObject)layers[r.pid].slots[h];
             slot["roles"] = roles;
             slot["roleRestricted"] = r.locked;
-            if (r.doer && r.receiver && !r.locked)
+            if (mutual) slot["roleMutual"] = true;
+            if (r.doer && r.receiver && !r.locked && !mutual)
                 AddFinding(new JObject
                 {
                     ["type"] = "roleShared", ["pid"] = r.pid, ["provider"] = r.provider, ["entry"] = r.entry, ["path"] = r.path,
@@ -816,6 +842,9 @@ public abstract partial class TA_DocBuilderBase
     {
         if (unreachableKeys.Add(key)) sharedUnreachable.Add(info);
     }
+
+    /// <summary>Whether a key nobody on the chain provides is a missingEntry finding (command units: the case template decides).</summary>
+    protected virtual bool MissingEntryRequired(string pid, string key) { return true; }
 
     /// <summary>One missingEntry finding per (personality, entry), listing every speaker → listener use.</summary>
     void AddMissing(string pid, string key, string usage)

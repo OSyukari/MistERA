@@ -1160,17 +1160,6 @@
                                 "com_furniture_takeShower_Interrupt_8",
                                 "com_furniture_takeShower_Interrupt_9"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_furniture_takeShower_Interrupt_1",
-                                "com_furniture_takeShower_Interrupt_2",
-                                "com_furniture_takeShower_Interrupt_3"
-                            ],
-                            "requirement": {
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
