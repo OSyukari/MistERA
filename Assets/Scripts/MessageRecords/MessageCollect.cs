@@ -17,6 +17,21 @@ public enum MessageCollect_Type
     results
 }
 
+[Flags]
+public enum MessageCollectSections
+{
+    None = 0,
+    Checks = 1 << 0,
+    Before = 1 << 1,
+    Kojo = 1 << 2,
+    Results = 1 << 3,
+    Exp = 1 << 4,
+    KojoAfter = 1 << 5,
+    After = 1 << 6,
+    Movement = 1 << 7,
+    All = Checks | Before | Kojo | Results | Exp | KojoAfter | After | Movement
+}
+
 
 public class MessageCollect
 {
@@ -83,6 +98,8 @@ public class MessageCollect
     public bool displayOverride = false;
     /// <summary>Event-loop mode: retain raw EXP and skip routine AP presentation until an explicit flush.</summary>
     [JsonIgnore] public bool accumulateExperience = false;
+    /// <summary>When paired with accumulateExperience, retains all non-EXP message sections instead of dropping them on merge/CollectLogs so the caller can selectively filter and flush once.</summary>
+    [JsonIgnore] public bool collectAllMessages = false;
     
     public void PurgeEntry(I_Records rec)
     {
@@ -892,9 +909,70 @@ public class MessageCollect
         return lines;
     }
 
+    /// <summary>Drops every section not included in keep, before flushing.</summary>
+    public void FilterSections(MessageCollectSections keep)
+    {
+        if ((keep & MessageCollectSections.Checks) == 0) messages_checks.Clear();
+        if ((keep & MessageCollectSections.Before) == 0) messages_before.Clear();
+        if ((keep & MessageCollectSections.Kojo) == 0) messages_kojo.Clear();
+        if ((keep & MessageCollectSections.Results) == 0) messages_results.Clear();
+        if ((keep & MessageCollectSections.Exp) == 0)
+        {
+            messages_exp.Clear();
+            exp.Clear();
+        }
+        if ((keep & MessageCollectSections.KojoAfter) == 0) messages_kojo_after.Clear();
+        if ((keep & MessageCollectSections.After) == 0) messages_after.Clear();
+        if ((keep & MessageCollectSections.Movement) == 0)
+        {
+            messages_enter.Clear();
+            messages_leave.Clear();
+            movementMergeCount = 0;
+        }
+    }
+
+    /// <summary>Copies only the selected sections from m into this collector (preserving raw EXP accumulation).</summary>
+    public void MergeSections(MessageCollect m, MessageCollectSections sections, bool clear = false)
+    {
+        if (m == null) return;
+        if (PresentationSuppressed)
+        {
+            if ((sections & MessageCollectSections.Exp) != 0)
+            {
+                exp.Accumulate(m.exp);
+                messages_exp.AddRange(m.messages_exp);
+            }
+            if (clear) m.Clear();
+            return;
+        }
+        if ((sections & MessageCollectSections.Checks) != 0 && m.messages_checks.Count > 0)
+            messages_checks.AddRange(m.messages_checks);
+        if ((sections & MessageCollectSections.Before) != 0 && m.messages_before.Count > 0)
+            messages_before.AddRange(m.messages_before);
+        if ((sections & MessageCollectSections.Kojo) != 0 && m.messages_kojo.Count > 0)
+            messages_kojo.AddRange(m.messages_kojo);
+        if ((sections & MessageCollectSections.Results) != 0 && m.messages_results.Count > 0)
+            messages_results.AddRange(m.messages_results);
+        if ((sections & MessageCollectSections.Exp) != 0)
+        {
+            exp.Accumulate(m.exp);
+            if (m.messages_exp.Count > 0) messages_exp.AddRange(m.messages_exp);
+        }
+        if ((sections & MessageCollectSections.KojoAfter) != 0 && m.messages_kojo_after.Count > 0)
+            messages_kojo_after.AddRange(m.messages_kojo_after);
+        if ((sections & MessageCollectSections.After) != 0 && m.messages_after.Count > 0)
+            messages_after.AddRange(m.messages_after);
+        if ((sections & MessageCollectSections.Movement) != 0)
+        {
+            if (m.messages_enter.Count > 0) messages_enter.AddRange(m.messages_enter);
+            if (m.messages_leave.Count > 0) messages_leave.AddRange(m.messages_leave);
+        }
+        if (clear) m.Clear();
+    }
+
     public void Merge(MessageCollect m, bool clear = true)
     {
-        if (accumulateExperience || PresentationSuppressed)
+        if ((accumulateExperience && !collectAllMessages) || PresentationSuppressed)
         {
             exp.Accumulate(m.exp);
             messages_exp.AddRange(m.messages_exp);
@@ -924,9 +1002,17 @@ public class MessageCollect
         this.messages_results.AddRange(m.messages_results);
         this.messages_kojo_after.AddRange(m.messages_kojo_after);
 
-        exp.Finalize(out var desc);
-        if (desc != null) this.messages_exp.Add(desc);
-        this.messages_exp.AddRange(m.messages_exp);
+        if (accumulateExperience)
+        {
+            exp.Accumulate(m.exp);
+            this.messages_exp.AddRange(m.messages_exp);
+        }
+        else
+        {
+            exp.Finalize(out var desc);
+            if (desc != null) this.messages_exp.Add(desc);
+            this.messages_exp.AddRange(m.messages_exp);
+        }
 
         this.displayOverride = this.displayOverride || m.displayOverride;
 

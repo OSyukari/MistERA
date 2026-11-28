@@ -304,7 +304,11 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     }
     public void UnregisterOutfit(scr_equip_wardrobe outfit)
     {
-        // TODO
+        if (outfit?.btn_Edit == null) return;
+        int id = outfit.btn_Edit.optionID;
+        if (!buttonsByID.TryGetValue(id, out var button) || button != outfit.btn_Edit) return;
+        buttonsByID.Remove(id);
+        validatorsByID.Remove(id);
     }
 
     private void InitializeEquipment()

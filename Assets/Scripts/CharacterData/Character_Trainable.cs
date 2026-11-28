@@ -1587,6 +1587,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     internal void InvalidateActorTags()
     {
         if (actorTagCache != null) actorTagCache.Minute = long.MinValue;
+        wardrobe?.InvalidateDressCode();
     }
 
     internal void AppendActorTags(List<string> destination)
@@ -4007,7 +4008,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             Body.UnequipItem(itemRefID);
             return;
         }
-        if (((int)comp.revealing >= RevealingFilter || comp.equipLayer == BodyEquipLayer.Outer) && (comp.revealing < Revealing.Armored || unequipArmor ) && (!comp.lockable || unequipLocked))
+        if (CanUnequip(comp, RevealingFilter, unequipArmor, unequipLocked))
         {
             // the organ it was worn on, read before it comes off (a filled condom's discard options)
             var wornOrgan = comp.singleUse ? Body.GetInternalByEquipRef(itemRefID) : null;
@@ -4022,6 +4023,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 if (comp.singleUse) SingleUseEquipUtility.ConsumeTakenOff(this, instance, comp, wornOrgan, takenOffBySelf);
             }
         }
+    }
+
+    internal static bool CanUnequip(ItemComponent_Equippable comp, int revealingFilter = -1,
+        bool unequipArmor = false, bool unequipLocked = false)
+    {
+        return comp != null && ((int)comp.revealing >= revealingFilter || comp.equipLayer == BodyEquipLayer.Outer)
+            && (comp.revealing < Revealing.Armored || unequipArmor) && (!comp.lockable || unequipLocked);
     }
 
 
@@ -4126,7 +4134,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 for (int i = 0; i < buffer.Count; i++)
                 {
                     var item = buffer[i];
-                    if (Body.CanEquipWithoutReplacing(item)) Reequip(item, layer);
+                    if (Body.CanEquipWithoutReplacing(item))
+                        Reequip(item, layer, preserveProtected: Wardrobe?.HasActiveVisitOutfit == true);
                 }
             }
             finally
@@ -4182,11 +4191,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public void ClearRedressCache()
     {
+        Wardrobe?.InvalidateWanted();
         if (_redressValid == null) return;
         for (int i = 0; i < _redressValid.Length; i++) _redressValid[i] = false;
     }
 
-    void BuildRedressCandidates(BodyEquipLayer layer, List<Item_Instance> result)
+    internal void BuildRedressCandidates(BodyEquipLayer layer, List<Item_Instance> result,
+        OutfitSet projectedOutfit = null, IReadOnlyList<Item_Instance> projectedTakenOff = null)
     {
         result.Clear();
         if (_redressWorn == null) _redressWorn = new HashSet<int>();
@@ -4195,8 +4206,22 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         var added = _redressAdded;
         worn.Clear();
         added.Clear();
-        var equipped = Body.EquippedItemRefs;
-        for (int i = 0; i < equipped.Count; i++) worn.Add(equipped[i]);
+        if (projectedOutfit == null)
+        {
+            var equipped = Body.EquippedItemRefs;
+            for (int i = 0; i < equipped.Count; i++) worn.Add(equipped[i]);
+        }
+
+        // A detached change hasn't called NoteTakenOff. Its removals are newer than the live history.
+        if (projectedTakenOff != null)
+        {
+            for (int i = projectedTakenOff.Count - 1; i >= 0; i--)
+            {
+                var item = projectedTakenOff[i];
+                if (IsRedressCandidate(item, layer, false, projectedOutfit) && Inventory.Contains(item) && added.Add(item.RefID))
+                    result.Add(item);
+            }
+        }
 
         // what was taken off comes back first, latest first: a spare item of the same slot never takes its place
         // (e.g. com_furniture_restroom undressing "lower", or the default clothes an outfit change took off)
@@ -4207,19 +4232,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 int id = takenOffRefs[i];
                 if (worn.Contains(id) || added.Contains(id)) continue;
                 Item_Instance item;
-                if (id <= -2) item = Wardrobe != null && Wardrobe.IsActivePiece(id) ? Wardrobe.GetVirtualItem(id) : null;
+                if (id <= -2) item = projectedOutfit == null && Wardrobe != null && Wardrobe.IsActivePiece(id) ? Wardrobe.GetVirtualItem(id) : null;
                 else
                 {
                     item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
                     if (item != null && !Inventory.Contains(item)) item = null;
                 }
-                if (!IsRedressCandidate(item, layer, id <= -2)) continue;
+                if (!IsRedressCandidate(item, layer, id <= -2, projectedOutfit)) continue;
                 result.Add(item);
                 added.Add(id);
             }
         }
 
-        if (Wardrobe != null)
+        if (Wardrobe != null && projectedOutfit == null)
         {
             if (_redressPieces == null) _redressPieces = new List<Item_Instance>();
             var pieces = _redressPieces;
@@ -4239,7 +4264,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             var item = contents[i];
             if (item == null || worn.Contains(item.RefID) || added.Contains(item.RefID)) continue;
-            if (!IsRedressCandidate(item, layer, false)) continue;
+            if (!IsRedressCandidate(item, layer, false, projectedOutfit)) continue;
             result.Add(item);
             added.Add(item.RefID);
         }
@@ -4248,10 +4273,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
     /// <summary> equippable, of the layer (None = any), and - for an inventory item - not on a layer the active outfit overrides </summary>
-    bool IsRedressCandidate(Item_Instance item, BodyEquipLayer layer, bool isOutfitPiece)
+    bool IsRedressCandidate(Item_Instance item, BodyEquipLayer layer, bool isOutfitPiece, OutfitSet projectedOutfit = null)
     {
         var comp = item?.Comp_Equippable;
         if (comp == null || (layer != BodyEquipLayer.None && comp.equipLayer != layer)) return false;
+        if (projectedOutfit != null) return !projectedOutfit.Overrides(comp.equipLayer);
         if (!isOutfitPiece && Wardrobe != null && Wardrobe.OverridesLayer(comp.equipLayer)) return false;
         // a resting party puts some layers away until the rest is over (OutfitSet.restKeepLayers)
         if (Wardrobe != null && Wardrobe.IsLayerStowed(comp.equipLayer)) return false;
@@ -4294,7 +4320,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// Put an owned item (inventory item or active outfit piece) on, replacing what is in its slots.
     /// The item stays in the inventory.
     /// </summary>
-    public void Reequip(Item_Instance item, BodyEquipLayer layerFilter = BodyEquipLayer.None)
+    public void Reequip(Item_Instance item, BodyEquipLayer layerFilter = BodyEquipLayer.None, bool preserveProtected = false)
     {
         if (item == null) return;
         bool owned = Inventory.Contains(item) || (Wardrobe != null && Wardrobe.IsActivePiece(item.RefID));
@@ -4303,7 +4329,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         ItemComponent_Equippable comp = item.Comp_Equippable;
         if (comp != null && (layerFilter == BodyEquipLayer.None || comp.equipLayer == layerFilter))
         {
-            if (Body.EquipItem(item.RefID, comp.equipCount, true))
+            if (Body.EquipItem(item.RefID, comp.equipCount, true, preserveProtected))
             {
                 NotePutOn(item.RefID);
                 Skills.RefreshAvailableSkillChecks();
@@ -4508,7 +4534,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     [JsonIgnore] public bool Debug_ForceDeepSleep = false;
 
 
-    public bool DeflateInternal(EventInstance collector, string deflateStringkey, string kojoStringKey, string memoryStringKey = "", bool fullDeflate = false, bool deleteObject = true, string tagFilter = "")
+    public bool DeflateInternal(EventInstance collector, string deflateStringkey, string kojoStringKey, string memoryStringKey = "",
+        bool fullDeflate = false, bool deleteObject = true, string tagFilter = "", string[] excludedTags = null)
     {
         // 1. fetch every applicable bodypart (matching tagFilter, and actually deflate-able for the requested mode)
         var internals = this.Body.Internals;
@@ -4517,6 +4544,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             var candidate = internals[i];
             if (tagFilter != "" && !candidate.hasTag(tagFilter)) continue;
+            if (excludedTags != null && excludedTags.Any(candidate.hasTag)) continue;
             if (fullDeflate ? !candidate.canFullyDeflate : !candidate.canDeflate) continue;
             if (candidates == null) candidates = new List<BodyInternal_Instance>();
             candidates.Add(candidate);

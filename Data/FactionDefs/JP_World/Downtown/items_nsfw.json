@@ -16,6 +16,7 @@
                     {
                         "compType": "ItemComponent_Equippable",
                         "comp_Equippable": {
+                            "requireActorTags_any": ["humanrace", "humanoid", "android"],
                             "equipSlot": [
                                 "Torso",
                                 "Lower"
@@ -44,6 +45,7 @@
                     {
                         "compType": "ItemComponent_Equippable",
                         "comp_Equippable": {
+                            "requireActorTags_any": ["humanrace", "humanoid", "android"],
                             "equipSlot": [
                                 "Torso"
                             ],

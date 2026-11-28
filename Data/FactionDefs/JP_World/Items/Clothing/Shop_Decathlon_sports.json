@@ -12,6 +12,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Skin",
                         "stat_modifiers":[
@@ -34,6 +36,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "coverSlot":["Arm","Arm"],
@@ -57,6 +60,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
                         "revealing":"ShapeReveal"
@@ -74,6 +78,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
                         "coverSlot":["Thigh","Thigh","Leg","Leg"],
@@ -98,6 +104,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
@@ -115,6 +122,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Male"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "coverSlot":["Shoulder","Shoulder","Arm","Arm"],
@@ -139,6 +148,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
                         "coverSlot":["Thigh","Thigh","Leg","Leg"]
@@ -166,6 +176,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Feet"],
                         "equipLayer":"Inner",
                         "coverSlot":["Feet"],
@@ -200,6 +211,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Hair"],
                         "equipLayer":"Outer",
                         "revealing":"SeeThrough"
@@ -217,6 +229,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Hand"],
                         "equipLayer":"Inner",
                         "coverSlot":["Hand"]
@@ -225,7 +238,7 @@
             ]
         },
         {
-            "_comment":"Swimwear (tag swimwear): worn at the Skin layer like underwear; com_furniture_swim's clothingFit checks Skin + Inner + Outer on Torso / Lower for it.",
+            "_comment":"Swimsuits and bikinis use Skin; trunks and rash guards use Inner so a complete swimming outfit is also available in safe mode, which removes Skin items. com_furniture_swim's clothingFit checks Skin + Inner + Outer on Torso / Lower.",
             "id":"clothing_jp_dkn_swimsuit_onepiece",
             "promptTags":["one-piece swimsuit","swimsuit"],
             "displayName":"DECATHL○N One-Piece Swimsuit",
@@ -235,6 +248,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Skin",
                         "coverSlot":["Lower"],
@@ -253,6 +268,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Skin",
                         "revealing":"ShapeReveal"
@@ -270,6 +287,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Lower"],
                         "equipLayer":"Skin",
                         "revealing":"ShapeReveal"
@@ -287,8 +306,10 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Male"] },
                         "equipSlot":["Lower"],
-                        "equipLayer":"Skin"
+                        "equipLayer":"Inner"
                     }
                 }
             ]
@@ -303,6 +324,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "coverSlot":["Shoulder","Shoulder","Arm","Arm"],

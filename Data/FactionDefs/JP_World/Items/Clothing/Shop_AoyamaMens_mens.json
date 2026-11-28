@@ -12,6 +12,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Male"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
@@ -29,6 +31,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
@@ -46,6 +49,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Male"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Outer",
                         "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
@@ -73,6 +78,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Male"] },
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
                         "coverSlot":["Thigh","Thigh","Leg","Leg"]
@@ -100,6 +107,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
                         "coverSlot":["Thigh","Thigh","Leg","Leg"]
@@ -127,6 +135,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Torso"],
                         "equipLayer":"Outer",
                         "coverSlot":["Neck","Shoulder","Shoulder","Arm","Arm"]
@@ -155,6 +164,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Male"] },
                         "equipSlot":["Lower"],
                         "equipLayer":"Skin"
                     }
@@ -171,6 +182,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Lower"],
                         "equipLayer":"Outer",
                         "revealing":"SeeThrough"
@@ -188,6 +200,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Neck"],
                         "equipLayer":"Inner",
                         "revealing":"SeeThrough"
@@ -205,6 +218,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Feet"],
                         "equipLayer":"Inner",
                         "coverSlot":["Feet"],

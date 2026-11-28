@@ -876,6 +876,7 @@ public class Character_Body
     public bool CanEquipWithoutReplacing(Item_Instance item)
     {
         if (item == null || item.Comp_Equippable == null) return false;
+        if (!item.Comp_Equippable.CanBeWornBy(Owner, out _, explain: false)) return false;
         foreach (BodyPart_Instance part in Body)
         {
             if (part.PreviewEquip(item, out bool replaces)) return !replaces;
@@ -887,29 +888,53 @@ public class Character_Body
     /// True if EquipItem would put the item on but only by displacing another item (its slot is taken).
     /// False when it fits an empty slot, and when the body has no slot for it at all.
     /// </summary>
-    public bool IsBlockedByOtherItem(Item_Instance item)
+    public bool IsBlockedByOtherItem(Item_Instance item, bool preserveProtected = false)
     {
         if (item == null || item.Comp_Equippable == null) return false;
+        if (!item.Comp_Equippable.CanBeWornBy(Owner, out _, explain: false)) return false;
         foreach (BodyPart_Instance part in Body)
         {
-            if (part.PreviewEquip(item, out bool replaces)) return replaces;
+            if (part.PreviewEquip(item, out bool replaces, preserveProtected)) return replaces;
         }
         return false;
     }
 
-    public bool EquipItem(int itemRefID, int count = 1, bool forceEquip = false)
+    internal bool CanReplaceOutfitEquipment(int id)
+    {
+        if (id <= -2) return false;
+        return CanReplaceOutfitEquipment(ResolveEquip(id));
+    }
+
+    internal static bool CanReplaceOutfitEquipment(Item_Instance item)
+        => item == null || (item.RefID >= 0 && Character_Trainable.CanUnequip(item.Comp_Equippable));
+
+    internal bool CanFitOutfitMainSlots(Item_Instance item, Dictionary<string, int> slots)
+    {
+        var comp = item.Comp_Equippable;
+        if (slots == null || comp.equipSlot.Count == 0) return false;
+        foreach (var slot in comp.equipSlot)
+        {
+            string key = comp.equipLayer.ToString() + "||" + slot.ToString();
+            if (!slots.TryGetValue(key, out int id) || (id != item.RefID && !CanReplaceOutfitEquipment(id))) return false;
+        }
+        return true;
+    }
+
+    public bool EquipItem(int itemRefID, int count = 1, bool forceEquip = false, bool preserveProtected = false)
     {
         Item_Instance item = ResolveEquip(itemRefID);
         if (item == null) return false;
 
         var comp = item.Comp_Equippable;
         if (comp == null) return false;
+        if (!comp.CanBeWornBy(Owner, out _, explain: false)) return false;
+        preserveProtected |= itemRefID <= -2 && Owner.Wardrobe?.HasActiveVisitOutfit == true;
         
         //Debug.Log($"Equipping {item.DisplayName} on {Owner.FirstName} with slots [{String.Join("|", comp.equipSlot)}]");
         bool equipped = false;
         foreach (BodyPart_Instance part in Body)
         {
-            if (part.EquipItem(item, forceEquip))
+            if (part.EquipItem(item, forceEquip, preserveProtected))
             {
                 equipped = true;
                 break;
@@ -923,7 +948,7 @@ public class Character_Body
             {
                 foreach (var part in Body)
                 {
-                    if (part.EquipItem(item, ref slots, forceEquip) && slots.Count < 1) break;
+                    if (part.EquipItem(item, ref slots, forceEquip, preserveProtected) && slots.Count < 1) break;
                 }
             }
             _cached_exposedPortraitKeys = null;

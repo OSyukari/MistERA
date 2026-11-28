@@ -74,11 +74,17 @@ public partial class EvaluationPackage
     /// The act ran (accepted pair, ActionPackage execution): the requester's own missing permissions are granted to
     /// the partner (PermissionGrantSource.Initiated), silently. Normal for a sexual partner, else Temporary (ResolveGrantType).
     /// </summary>
-    internal void GrantRequesterPermissions()
+    internal void GrantRequesterPermissions(MessageCollect logTarget = null)
     {
         if (requesterPermissions.Count == 0 || Response < Memory_Response.Accept) return;
         foreach (var granted in requesterPermissions)
-            PermissionService.TryGrant(granted.Granter, granted.Holder, granted.Definition.ID, PermissionGrantSource.Initiated, out _);
+        {
+            if (PermissionService.TryGrant(granted.Granter, granted.Holder, granted.Definition.ID, PermissionGrantSource.Initiated, out var changed)
+                && changed && Package.ResolveInEvent)
+                EventUtility.LogPermissionGrant(Package.SourceEvent, granted,
+                    PermissionService.ResolveGrantType(granted.Query, PermissionGrantSource.Initiated),
+                    logTarget ?? permissionKojoTarget, after: true);
+        }
     }
 
     /// <summary>
@@ -110,6 +116,7 @@ public partial class EvaluationPackage
             if (holder == null || holder == self) continue;
             // the permission does not concern this granter's body (charaReq, e.g. no vagina / no fertile womb)
             if (!PermissionService.IsApplicable(self, definition)) continue;
+            if (PermissionService.BypassesActPermission(self, definition)) continue;
 
             if (ownerTags == null) BuildPermissionContext(isDoer, self, out ownerTags, out comTags);
             PermissionRule matched = null;
@@ -137,6 +144,11 @@ public partial class EvaluationPackage
                     missingPermissions.Add(new MissingPermission { Definition = definition, Granter = self, Holder = holder, Query = query, Unaware = true });
                 continue;
             }
+
+            // Preview the same individual grants the action would receive, without storing them.
+            if (query.Error.Length == 0 && (Package?.PreviewPermissionGrants == PermissionGrantSource.Event
+                || (Package?.PreviewPermissionGrants == PermissionGrantSource.Request && PermissionService.AcceptsRequest(self, holder, query))))
+                continue;
 
             string label = definition.missingTooltip != ""
                 ? LocalizeDictionary.QueryThenParse(definition.missingTooltip)
@@ -253,7 +265,9 @@ public partial class EvaluationPackage
             var grantType = PermissionService.ResolveGrantType(missing.Query, PermissionGrantSource.Request);
             if (!PermissionService.TryGrant(missing.Granter, missing.Holder, missing.Definition.ID, PermissionGrantSource.Request,
                 out var changed) || !changed) continue;
-            LogPermissionKojo(missing.Granter, missing.Holder, PermissionGrantedKojoID(missing.Definition.ID), grantType);
+            if (!LogPermissionKojo(missing.Granter, missing.Holder, PermissionGrantedKojoID(missing.Definition.ID), grantType)
+                && Package.ResolveInEvent)
+                EventUtility.LogPermissionGrant(Package.SourceEvent, missing, grantType, permissionKojoTarget);
         }
     }
 

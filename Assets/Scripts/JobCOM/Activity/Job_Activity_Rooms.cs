@@ -200,6 +200,7 @@ public partial class Job_Activity
     {
         if (actor == null || !actor.canAct || actor.isSleeping
             || phase != ActivityPhase.Launched || !VisitIsLive || !TookPart(actor)) return false;
+        if (actor.RefID == 0 && !PlayerWardrobeAllows()) return false;
         if (!FindParticipant(actor.RefID).walkIn && !IsConfirmedAttendee(actor)) return false;
         var alternatives = Definition?.activityCommands;
         // While a child owns execution, only its own command (the session's - e.g. the booked movie's per-item TV command)

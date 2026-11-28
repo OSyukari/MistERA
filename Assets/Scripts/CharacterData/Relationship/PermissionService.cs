@@ -61,11 +61,24 @@ public static class PermissionService
 
     internal static bool HasPermission(Character_Relationship relationship, string permissionID)
     {
-        var definition = scr_System_Serializer.current?.MasterList?.PermissionDefinitions?.GetByID(permissionID);
         var granter = relationship?.Manager?.Owner;
-        if (definition == null || granter == null) return false;
+        if (granter == null) return false;
+        var definitions = scr_System_Serializer.current?.MasterList?.PermissionDefinitions;
+        var definition = definitions?.GetByID(permissionID);
+        if (definition == null) return false;
+        if (permissionID.StartsWith("permission_intimacy_", StringComparison.Ordinal))
+        {
+            // Legacy contact checks (e.g. willingness and failed-action consequences) use the animal's single grant.
+            var animalContact = definitions.GetByID("permission_animal_body_contact");
+            if (IsApplicable(granter, animalContact))
+            {
+                definition = animalContact;
+                permissionID = animalContact.ID;
+            }
+        }
         var holder = scr_System_CampaignManager.current?.FindInstanceByID(relationship.TargetID);
-        if (IsLivePair(granter, holder)) return Query(relationship, holder, definition).HasPermission;
+        if (IsLivePair(granter, holder))
+            return BypassesActPermission(granter, definition) || Query(relationship, holder, definition).HasPermission;
         if (relationship.TargetID >= 0 && !ReferenceEquals(granter, holder)) return false;
 
         // Generic and self relationships existed before explicit grants; retain their legacy sources only.
@@ -168,6 +181,9 @@ public static class PermissionService
         if (definition.charaReq == null) return true;
         return granter?.Body != null && granter.Body.IsPermissionApplicable(definition);
     }
+
+    internal static bool BypassesActPermission(Character_Trainable granter, PermissionDefinition definition) =>
+        definition.bypassAtLust is float threshold && granter?.Stats?.Lust?.Severity is float lust && lust >= threshold;
 
     public static bool CanRequest(Character_Trainable granter, Character_Trainable holder, PermissionQueryResult query)
     {

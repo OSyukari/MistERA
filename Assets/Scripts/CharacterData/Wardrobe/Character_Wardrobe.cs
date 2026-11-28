@@ -12,7 +12,7 @@ using UnityEngine;
 /// <br/>NPCs change at changing furniture (com_furniture_changeOutfit, TryFindOutfitChangeNode) whenever
 /// NeedsOutfitChange. The player is never auto-changed.
 /// </summary>
-public class Character_Wardrobe
+public partial class Character_Wardrobe
 {
 
     [JsonIgnore]
@@ -76,6 +76,10 @@ public class Character_Wardrobe
 
     /// <summary> key of the outfit currently put on ("" = default clothes) </summary>
     [JsonProperty] string activeKey = "";
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] bool? activePlayerEdited;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] OutfitSet activeVisitOutfit;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] int? activeVisitStart;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] string activeVisitFaction;
     /// <summary> the active outfit was edited after it was put on: change again to apply the edit </summary>
     [JsonProperty] bool activeOutdated = false;
     /// <summary> virtual slot id -> piece, copied when the outfit was put on (stable even if the outfit is edited) </summary>
@@ -97,6 +101,13 @@ public class Character_Wardrobe
         if (outfits == null) outfits = new List<OutfitSet>();
         if (activePieces == null) activePieces = new Dictionary<int, OutfitPiece>();
         if (seededKeys == null) seededKeys = new List<string>();
+        if (playerOutfits == null) playerOutfits = new List<OutfitSet>();
+        playerOutfits.RemoveAll(x => x == null || string.IsNullOrEmpty(x.key));
+        foreach (var edited in playerOutfits)
+        {
+            edited.playerEdited = true;
+            RegisterKey(edited.key);
+        }
         outfits.RemoveAll(x => x == null || string.IsNullOrEmpty(x.key));
 
         var seed = c?.Template?.outfits;
@@ -118,7 +129,7 @@ public class Character_Wardrobe
         RegisterKey(key);
         if (seededKeys.Contains(key)) return;
         seededKeys.Add(key);
-        if (GetOutfit(key) != null) return;
+        if (GetAutomaticOutfit(key) != null) return;
         var copy = source.Clone();
         copy.key = key;
         outfits.Add(copy);
@@ -184,7 +195,8 @@ public class Character_Wardrobe
 
     /// <summary>
     /// Every outfit slot to list (wardrobe UI), outfit or not: the reserved keys (always), then the known membertype /
-    /// activity keys still in effect (IsCurrentKey). Keys no longer in effect (a faction left, an old post) stay stored -
+    /// activity keys still in effect (IsCurrentKey), available preparation activities, and the unclassified pool.
+    /// Keys no longer in effect (a faction left, an old post) stay stored -
     /// rejoining lists them again with their outfit; generic membertype keys and party keys are not listed.
     /// </summary>
     public List<WardrobeEntry> GetEntries()
@@ -193,9 +205,14 @@ public class Character_Wardrobe
         foreach (var key in OutfitUtility.ReservedKeys) result.Add(new WardrobeEntry(key, GetOutfit(key)));
         foreach (var key in knownKeys)
         {
+            if (key.StartsWith(PoolPrefix))
+            {
+                result.Add(new WardrobeEntry(key, GetPlayerOutfit(key)));
+                continue;
+            }
             var kind = OutfitUtility.ParseKey(key, out _, out _);
             if (kind != OutfitKeyKind.MemberType && kind != OutfitKeyKind.Activity) continue;
-            if (!IsCurrentKey(key)) continue;
+            if (!IsCurrentKey(key) && !preparationActivities.ContainsKey(key)) continue;
             result.Add(new WardrobeEntry(key, GetOutfit(key)));
         }
         return result;
@@ -235,7 +252,7 @@ public class Character_Wardrobe
     public OutfitSet GetOutfit(string key)
     {
         if (string.IsNullOrEmpty(key)) return null;
-        return outfits.Find(x => x.key == key);
+        return GetPlayerOutfit(key) ?? outfits.Find(x => x.key == key);
     }
 
     /// <summary> add or replace the outfit of outfit.key (a copy is stored). Editing the worn outfit applies at the next change. </summary>
@@ -245,23 +262,23 @@ public class Character_Wardrobe
         outfits.RemoveAll(x => x.key == outfit.key);
         outfits.Add(outfit.Clone());
         RegisterKey(outfit.key);
-        if (outfit.key == activeKey) activeOutdated = true;
+        if (activeVisitOutfit == null && outfit.key == activeKey) activeOutdated = true;
         InvalidateWanted();
     }
 
     /// <summary> an outfit held elsewhere (a party's) was edited: if it is the worn one, change again to apply the edit </summary>
     public void NotifyOutfitEdited(string key)
     {
-        if (!string.IsNullOrEmpty(key) && key == activeKey) activeOutdated = true;
+        if (activeVisitOutfit == null && !string.IsNullOrEmpty(key) && key == activeKey) activeOutdated = true;
         // a party outfit's variants may have changed too
         InvalidateWanted();
     }
 
     public void RemoveOutfit(string key)
     {
-        if (outfits.RemoveAll(x => x.key == key) > 0)
+        if (playerOutfits.RemoveAll(x => x.key == key) + outfits.RemoveAll(x => x.key == key) > 0)
         {
-            if (key == activeKey) activeOutdated = true;
+            if (activeVisitOutfit == null && key == activeKey) activeOutdated = true;
             InvalidateWanted();
         }
     }
@@ -269,12 +286,22 @@ public class Character_Wardrobe
     // ---------------- active outfit ---------------- //
 
     [JsonIgnore] public string ActiveKey { get { return activeKey; } }
+    [JsonIgnore] internal bool HasActiveVisitOutfit => activeVisitOutfit != null;
 
     /// <summary> the outfit of key is put on, as it currently is (not edited since) </summary>
     public bool IsWearing(string key) { return !string.IsNullOrEmpty(key) && key == activeKey && !activeOutdated; }
 
     /// <summary> the outfit currently worn (null = default clothes, or the worn outfit was removed from the wardrobe) </summary>
-    [JsonIgnore] public OutfitSet ActiveOutfit { get { return ResolveOutfit(activeKey); } }
+    [JsonIgnore] public OutfitSet ActiveOutfit
+    {
+        get
+        {
+            if (activeVisitOutfit != null) return activeVisitOutfit;
+            if (string.IsNullOrEmpty(activeKey) || activeKey.StartsWith("@party:", System.StringComparison.Ordinal)
+                || activePlayerEdited == null) return ResolveOutfit(activeKey);
+            return activePlayerEdited.Value ? GetPlayerOutfit(activeKey) : GetAutomaticOutfit(activeKey);
+        }
+    }
 
     /// <summary> outfit of any key: a party key (Manageable_Party.OutfitKey) resolves through the character's current party, others through the wardrobe </summary>
     OutfitSet ResolveOutfit(string key)
@@ -402,15 +429,19 @@ public class Character_Wardrobe
 
     /// <summary>
     /// The outfit the current schedule asks for, with the job giver it belongs to, by priority:
-    /// <br/>1. the active recreation activity's outfit;
+    /// <br/>1. the active recreation activity's valid assignment, unclassified fallback, or permitted supplied outfit;
     /// <br/>2. the active membertype's (faction-specific key, then the generic key);
     /// <br/>3. at home (the active job giver is the priority home and the character is in its rooms): the own home outfit
     /// (#home, or #home_temp when the priority home is the temporary home - no fallback between them);
     /// <br/>else null = default clothes. Keys met here are registered and get their data outfit copied in (old saves).
     /// </summary>
     public OutfitSet GetScheduledOutfit(out I_IsJobGiver jobGiver)
+        => GetScheduledOutfit(out jobGiver, out _);
+
+    OutfitSet GetScheduledOutfit(out I_IsJobGiver jobGiver, out int? visitStart)
     {
         jobGiver = null;
+        visitStart = null;
         if (owner == null || owner.FactionManager == null) return null;
         var f = owner.FactionManager;
         // in a party only the party's wardrobe counts: its outfit for the character, else the default clothes
@@ -422,25 +453,31 @@ public class Character_Wardrobe
             return partyOutfit;
         }
 
-        var giver = f.CurrentActiveJobGiver;
-        if (giver == null) return null;
-
-        var activity = f.CurrentActiveActivity;
-        if (activity != null)
+        var currentBooking = f.GetEffectiveBooking();
+        var booking = VisitForWardrobe(currentBooking);
+        if (booking?.visitOutfit != null)
         {
-            var o = GetOutfit(RegisterActivity(giver.FactionID, activity));
-            if (o != null)
-            {
-                jobGiver = giver;
-                return o;
-            }
+            visitStart = booking.AbsStart;
+            jobGiver = booking.Faction;
+            return booking.visitOutfit;
+        }
+        var walkInOutfit = GetWalkInOutfit(out var walkInVenue, out int walkInStart);
+        if (walkInOutfit != null)
+        {
+            visitStart = walkInStart;
+            jobGiver = walkInVenue;
+            return walkInOutfit;
         }
 
-        var memberType = f.CurrentActiveMemberType;
+        var giver = f.CurrentActiveJobGiver;
+        if (giver == null) return null;
+        bool isVisit = currentBooking != null && (I_IsJobGiver)currentBooking.Faction == giver;
+        if (isVisit && !currentBooking.wardrobePrepared && currentBooking.GetActivity(f) != null) return null;
+
+        var memberType = (isVisit ? currentBooking.MemberType : null) ?? giver.GetMemberType(owner);
         if (memberType != null)
         {
-            var outfit = GetOutfit(RegisterMemberType(giver, memberType));
-            if (outfit == null) outfit = GetOutfit(OutfitUtility.GenericMemberTypeKey(memberType));
+            var outfit = SelectMemberOutfit(giver, memberType, isVisit && currentBooking.GetActivity(f) != null, Today);
             if (outfit != null)
             {
                 jobGiver = giver;
@@ -451,7 +488,7 @@ public class Character_Wardrobe
         var home = PriorityHome(out bool isTemp);
         if (home != null && giver == (I_IsJobGiver)home && OutfitUtility.IsInLocaleOf(owner, home))
         {
-            var homeOutfit = GetOutfit(isTemp ? OutfitUtility.Key_HomeTemp : OutfitUtility.Key_Home);
+            var homeOutfit = PersonalOutfit(isTemp ? OutfitUtility.Key_HomeTemp : OutfitUtility.Key_Home);
             if (homeOutfit != null)
             {
                 jobGiver = home;
@@ -478,25 +515,36 @@ public class Character_Wardrobe
     /// (change back before leaving, change into it on arrival). keepCurrent = the scheduled outfit is already worn
     /// (stepping out during the shift changes nothing). Null = the plain default clothes.
     /// </summary>
-    OutfitSet GetWantedOutfit(out bool keepCurrent) { return GetWantedOutfit(out keepCurrent, out _); }
+    bool MatchesActive(OutfitSet outfit, int? visitStart, string visitFaction)
+    {
+        return outfit != null && outfit.key == activeKey
+            && (activePlayerEdited == null || activePlayerEdited == outfit.playerEdited)
+            && activeVisitStart == visitStart && activeVisitFaction == visitFaction;
+    }
 
     /// <param name="canPutOnHere"> the wanted outfit may be put on where the character stands (limitToLocaleFaction) </param>
-    OutfitSet GetWantedOutfit(out bool keepCurrent, out bool canPutOnHere)
+    OutfitSet GetWantedOutfit(out bool keepCurrent, out bool canPutOnHere, out int? visitStart, out string visitFaction)
     {
         keepCurrent = false;
-        var scheduled = GetScheduledOutfit(out var giver);
+        var scheduled = GetScheduledOutfit(out var giver, out visitStart);
+        visitFaction = visitStart.HasValue ? giver?.FactionID : null;
         if (scheduled == null)
         {
-            scheduled = GetOutfit(OutfitUtility.Key_Default);
+            scheduled = PersonalOutfit(OutfitUtility.Key_Default);
             giver = null;   // the default clothes belong nowhere: worn anywhere
         }
         canPutOnHere = scheduled == null || !scheduled.limitToLocaleFaction || giver == null || OutfitUtility.IsInLocaleOf(owner, giver);
-        if (scheduled != null && scheduled.key == activeKey && !activeOutdated)
+        if (MatchesActive(scheduled, visitStart, visitFaction) && !activeOutdated)
         {
             keepCurrent = true;
             return scheduled;
         }
-        if (!canPutOnHere) return GetOutfit(OutfitUtility.Key_Default);
+        if (!canPutOnHere)
+        {
+            visitStart = null;
+            visitFaction = null;
+            return PersonalOutfit(OutfitUtility.Key_Default);
+        }
         return scheduled;
     }
 
@@ -519,7 +567,7 @@ public class Character_Wardrobe
             // calls for other variants: put it on again - where it may be put on
             if (wantedKeepCurrent) return wantedCanPutOnHere && (IsActiveOutfitDisturbed() || wantedSignature != (activeVariantSignature ?? ""));
             if (wantedEffectiveKey != activeKey) return true;
-            return activeOutdated;
+            return activeOutdated || (wantedEffectiveKey.Length != 0 && !MatchesActive(wantedOutfit, wantedVisitStart, wantedVisitFaction));
         }
     }
 
@@ -535,15 +583,20 @@ public class Character_Wardrobe
             owner.Redress();
             return;
         }
-        ApplyOutfit(wantedOutfit);
+        ApplyOutfit(wantedOutfit, wantedVisitStart, wantedVisitFaction);
     }
 
     // ---------------- wanted outfit cache ---------------- //
 
-    // GetWantedOutfit and its variant resolve, kept until the schedule context (NoteScheduleContext) or the wardrobe
-    // (outfits edited / removed / seeded, ApplyOutfit) changes. Not saved.
+    // The schedule and equipment mutation hooks invalidate the cache. A chosen visit outfit is fixed on the booking.
     [JsonIgnore] bool wantedValid = false;
+    [JsonIgnore] Manageable wantedHome = null;
+    [JsonIgnore] bool wantedHomeManaged = false;
+    [JsonIgnore] I_IsJobGiver wantedGiver = null;
+    [JsonIgnore] bool wantedGiverManaged = false;
     [JsonIgnore] OutfitSet wantedOutfit = null;
+    [JsonIgnore] int? wantedVisitStart;
+    [JsonIgnore] string wantedVisitFaction;
     [JsonIgnore] bool wantedKeepCurrent = false;
     [JsonIgnore] bool wantedCanPutOnHere = false;
     /// <summary> OutfitSet.Resolve signature of wantedOutfit for today's context tags </summary>
@@ -556,9 +609,15 @@ public class Character_Wardrobe
     [JsonIgnore] I_IsJobGiver lastLocaleFaction = null;
     [JsonIgnore] MemberType lastMemberType = null;
     [JsonIgnore] RecreationActivity lastActivity = null;
+    [JsonIgnore] RecreationBooking lastVisit;
+    [JsonIgnore] OutfitSet lastWalkInOutfit;
     [JsonIgnore] int lastDay = -1;
 
-    public void InvalidateWanted() { wantedValid = false; }
+    public void InvalidateWanted()
+    {
+        wantedValid = false;
+        refusedVisit = null;
+    }
 
     /// <summary>
     /// Character_Trainable.TryGetJob, every job search: drops the wanted outfit when what it is chosen from changed -
@@ -570,29 +629,44 @@ public class Character_Wardrobe
         if (f == null) return;
         // same as CurrentActiveMemberType / CurrentActiveActivity, from the job faction already resolved by the caller
         var party = jobFaction as Manageable_Party;
-        MemberType memberType = jobFaction == null ? null : party != null ? party.GetMemberType(owner) : f.GetScheduledMemberType(jobFaction);
-        RecreationActivity activity = jobFaction == null || party != null ? null : f.GetScheduledActivity(jobFaction);
+        var booking = party == null ? f.GetEffectiveBooking() : null;
+        bool activeBooking = booking != null && (I_IsJobGiver)booking.Faction == jobFaction;
+        var memberType = (activeBooking ? booking.MemberType : null) ?? jobFaction?.GetMemberType(owner);
+        var activity = activeBooking ? booking.GetActivity(f) : null;
+        var visit = party == null ? VisitForWardrobe(booking) : null;
+        var walkInOutfit = party == null ? GetWalkInOutfit(out _, out _) : null;
         int day = scr_System_Time.current != null ? scr_System_Time.current.getAbsoluteDay() : -1;
         if (jobFaction == lastJobFaction && localeFaction == lastLocaleFaction && memberType == lastMemberType
-            && activity == lastActivity && day == lastDay) return;
+            && activity == lastActivity && visit == lastVisit && walkInOutfit == lastWalkInOutfit && day == lastDay) return;
         lastJobFaction = jobFaction;
         lastLocaleFaction = localeFaction;
         lastMemberType = memberType;
         lastActivity = activity;
+        lastVisit = visit;
+        lastWalkInOutfit = walkInOutfit;
         lastDay = day;
-        wantedValid = false;
+        InvalidateWanted();
     }
 
     void RefreshWanted()
     {
-        if (wantedValid) return;
-        wantedOutfit = GetWantedOutfit(out wantedKeepCurrent, out wantedCanPutOnHere);
+        var home = ResponsibleHome;
+        var giver = owner?.FactionManager?.CurrentActiveJobGiver;
+        bool homeManaged = home?.isPlayerFaction == true;
+        bool giverManaged = giver?.isPlayerFaction == true;
+        if (wantedValid && wantedHome == home && wantedHomeManaged == homeManaged
+            && wantedGiver == giver && wantedGiverManaged == giverManaged) return;
+        wantedHome = home; wantedHomeManaged = homeManaged;
+        wantedGiver = giver; wantedGiverManaged = giverManaged;
+        wantedOutfit = GetWantedOutfit(out wantedKeepCurrent, out wantedCanPutOnHere, out wantedVisitStart, out wantedVisitFaction);
         wantedSignature = "";
         wantedEffectiveKey = "";
         if (wantedOutfit != null)
         {
             // one resolve for both the variant signature and EffectiveKey
-            var resolved = wantedOutfit.Resolve(ContextTags(), out wantedSignature);
+            var resolved = wantedOutfit;
+            if (!wantedVisitStart.HasValue && wantedOutfit.variants?.Count > 0)
+                resolved = wantedOutfit.Resolve(ContextTags(), out wantedSignature);
             wantedEffectiveKey = wantedOutfit.key == OutfitUtility.Key_Default && resolved.IsEmpty ? "" : wantedOutfit.key;
         }
         wantedValid = true;
@@ -614,10 +688,10 @@ public class Character_Wardrobe
         {
             if (body.IsEquipped(id)) continue;
             var piece = GetVirtualItem(id);
-            if (piece != null && body.IsBlockedByOtherItem(piece)) return true;
+            if (piece != null && body.IsBlockedByOtherItem(piece, preserveProtected: HasActiveVisitOutfit)) return true;
         }
 
-        foreach (var layer in new[] { BodyEquipLayer.Skin, BodyEquipLayer.Inner, BodyEquipLayer.Outer })
+        foreach (var layer in OutfitUtility.AllLayers)
         {
             if (!OverridesLayer(layer)) continue;
             // same slots ApplyOutfit's Character_Trainable.Undress(layer) goes through
@@ -661,7 +735,7 @@ public class Character_Wardrobe
         if (WardrobeParty == null)
         {
             PriorityHome(out bool isTemp);
-            var sleepOutfit = GetOutfit(isTemp ? OutfitUtility.Key_SleepTemp : OutfitUtility.Key_Sleep);
+            var sleepOutfit = PersonalOutfit(isTemp ? OutfitUtility.Key_SleepTemp : OutfitUtility.Key_Sleep);
             if (sleepOutfit != null)
             {
                 if (sleepOutfit.key != activeKey || activeOutdated || VariantsChanged(sleepOutfit)) ApplyOutfit(sleepOutfit);
@@ -679,7 +753,9 @@ public class Character_Wardrobe
     /// locked items stay), wear its pieces, then Redress fills the remaining empty slots from the inventory - for null
     /// that is the whole default outfit. A #default resolving to nothing counts as null.
     /// </summary>
-    public void ApplyOutfit(OutfitSet target)
+    public void ApplyOutfit(OutfitSet target) => ApplyOutfit(target, null, null);
+
+    void ApplyOutfit(OutfitSet target, int? visitStart, string visitFaction)
     {
         if (owner == null || owner.Body == null) return;
         var body = owner.Body;
@@ -691,6 +767,10 @@ public class Character_Wardrobe
         activePieces.Clear();
         virtualItems.Clear();
         activeKey = "";
+        activePlayerEdited = null;
+        activeVisitOutfit = null;
+        activeVisitStart = null;
+        activeVisitFaction = null;
         activeOutdated = false;
         activeVariantSignature = "";
         activeOverrideLayers = null;
@@ -701,7 +781,7 @@ public class Character_Wardrobe
         string signature = "";
         if (target != null)
         {
-            worn = target.Resolve(ContextTags(), out signature);
+            worn = visitStart.HasValue || !(target.variants?.Count > 0) ? target : target.Resolve(ContextTags(), out signature);
             if (target.key == OutfitUtility.Key_Default && worn.IsEmpty) worn = null;
         }
 
@@ -716,6 +796,10 @@ public class Character_Wardrobe
             }
 
             activeKey = target.key;
+            activePlayerEdited = target.playerEdited;
+            activeVisitOutfit = visitStart.HasValue ? worn : null;
+            activeVisitStart = visitStart;
+            activeVisitFaction = visitFaction;
             activeVariantSignature = signature;
             if (worn.pieces != null)
             {
@@ -734,12 +818,11 @@ public class Character_Wardrobe
                 }
             }
 
-            // a piece that didn't stay on - pushed off by a later piece of the same outfit (two pieces for one slot, a
-            // data mistake) or no slot for it on this body - is dropped: kept, it would count as kept off by another
-            // item (IsActiveOutfitDisturbed) and the outfit would be put on again and again
+            // Keep a visit's temporarily blocked pieces available to redress once their slots are clear.
+            // Legacy outfits still drop pieces that didn't stay on.
             foreach (var id in activePieces.Keys.ToList())
             {
-                if (body.IsEquipped(id)) continue;
+                if (visitStart.HasValue || body.IsEquipped(id)) continue;
                 Debug.LogWarning($"Character_Wardrobe {owner.FirstName}: outfit [{activeKey}] piece [{activePieces[id].baseID}] could not stay on, dropped (another piece of the outfit uses its slot?)");
                 activePieces.Remove(id);
                 virtualItems.Remove(id);

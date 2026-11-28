@@ -10,6 +10,7 @@
                 "meal_opt_silent": "Eat quietly (listen in)",
                 "meal_opt_quick": "Finish quickly (stay out of it)",
                 "meal_chat_player": "$me.firstname$ eats and chats with $picked.firstname$.",
+                "meal_chat_player_failed": "$me.firstname$ tries to strike up a conversation with $picked.firstname$, but it goes nowhere.",
                 "meal_silent": "$me.firstname$ keeps their head down and eats quietly, listening to the talk around the table.",
                 "meal_quick": "$me.firstname$ wolfs down the meal and stays out of the conversation.",
                 "meal_chat_approach": "$npc.firstname$ notices $me.firstname$ eating quietly and leans over to strike up a conversation.",

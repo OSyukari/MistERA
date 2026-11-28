@@ -284,6 +284,7 @@ public class scr_menu_inputField : scr_Menu
         public void OnClickButton()
         {
             if (parent.InnerQuestion != null && parent.InnerQuestion.answered) return;
+            if (option.RunsAP && !EventUtility.CanSelectOption(instance, option)) return;
             if (!selected)
             {
                 if (parent.InnerQuestion != null) parent.InnerQuestion.answered = true;

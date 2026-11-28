@@ -1951,7 +1951,7 @@ public class BodyInternal_Instance : I_TraceHolder
     /// <param name="itemRefID"></param>
     /// <param name="forceEquip"></param>
     /// <returns></returns>
-    public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false)
+    public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false, bool preserveProtected = false)
     {
         var comp = item.Comp_Equippable;
         bool equipped = false;
@@ -1974,6 +1974,7 @@ public class BodyInternal_Instance : I_TraceHolder
                 else if (contentsIndex[Tuple] != -1 && contentsIndex[Tuple] != item.RefID && forceEquip == true)
                 {
                     var returnVal = contentsIndex[Tuple];
+                    if (preserveProtected && !Owner.Body.CanReplaceOutfitEquipment(returnVal)) continue;
                     contentsIndex[Tuple] = item.RefID;
 
                     Owner.UnequipItem(returnVal);
@@ -2006,12 +2007,13 @@ public class BodyInternal_Instance : I_TraceHolder
     /// Mirrors EquipItem(item) without changing anything: true if this organ would take the item;
     /// replaces = that would displace another item.
     /// </summary>
-    public bool PreviewEquip(Item_Instance item, out bool replaces)
+    public bool PreviewEquip(Item_Instance item, out bool replaces, bool preserveProtected = false)
     {
         replaces = false;
         var comp = item.Comp_Equippable;
         if (comp == null || contentsIndex == null) return false;
         EnsureSlotKeys();
+        if (preserveProtected && !Owner.Body.CanFitOutfitMainSlots(item, contentsIndex)) return false;
         bool equipped = false, unequip = false, displaces = false;
         foreach (var slot in comp.equipSlot)
         {
@@ -2036,12 +2038,13 @@ public class BodyInternal_Instance : I_TraceHolder
         return equipped;
     }
 
-    public bool EquipItem(Item_Instance item, bool forceEquip = false)
+    public bool EquipItem(Item_Instance item, bool forceEquip = false, bool preserveProtected = false)
     {
         var comp = item.Comp_Equippable;
         bool equipped = false;
         bool unequip = false;
         EnsureSlotKeys();
+        if (preserveProtected && !Owner.Body.CanFitOutfitMainSlots(item, contentsIndex)) return false;
 
         foreach(var slot in comp.equipSlot)
         {

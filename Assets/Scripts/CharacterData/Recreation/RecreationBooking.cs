@@ -56,6 +56,12 @@ public class RecreationBooking : I_ActivityBooking
     /// <summary>Membership visits: the RecreationActivity (RecreationSpec.activities) this visit is - its rules when re-planning. "" for offers/events.</summary>
     public string activityID = "";
 
+    // A prepared visit can intentionally use ordinary clothes. The snapshot has already resolved its variants.
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    internal bool wardrobePrepared;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    internal OutfitSet visitOutfit;
+
     public RecreationBookingSource source = RecreationBookingSource.Membership;
     /// <summary>
     /// What produced it - also the cooldown/attendance key: a membership activity's "factionID:activityID", the offer's

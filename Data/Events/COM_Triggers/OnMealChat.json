@@ -42,8 +42,9 @@
                                 "option": "meal_opt_chat_with",
                                 "forEachTargetKey": "others",
                                 "bindTargetKey": "picked",
-                                "apPreviews": [ { "doer": "self", "receiver": "picked", "com": "com_interaction_talk" } ],
-                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "player_chat_line"] } ]
+                                "apPreviews": [ { "doer": "me", "receiver": "picked", "com": "com_interaction_talk", "ignoreStatCost": true } ],
+                                "apSuccessLabel": "player_chat_line",
+                                "apFailureLabel": "player_chat_failed"
                             },
                             {
                                 "option": "meal_opt_silent",
@@ -64,28 +65,24 @@
                     },
 
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "player_chat",
-                        "options": [
-                            {
-                                "option": "run talk",
-                                "Results": [
-                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["me", "picked", "com_interaction_talk", "1", "true", "false", "none", "withCheck"] },
-                                    { "Type": "JumpToLabel", "arguments": ["", "player_chat_kojo"] }
-                                ]
-                            },
-                            {
-                                "option": "talk failed",
-                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "player_chat_kojo"] } ]
-                            }
-                        ]
-                    },
-                    {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "player_chat_line",
                         "UISpec": { "portraitRefKey": "picked", "selfTags": ["relaxed", "happy"] },
                         "line": "meal_chat_player",
-                        "nextEntryLabel": "player_chat"
+                        "Results": [
+                            { "Type": "FlushMessageAll", "arguments": ["dc", "before", "kojo", "exp", "kojo_after", "after"] }
+                        ],
+                        "nextEntryLabel": "player_chat_kojo"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "player_chat_failed",
+                        "UISpec": { "portraitRefKey": "picked" },
+                        "line": "meal_chat_player_failed",
+                        "Results": [
+                            { "Type": "FlushMessageAll", "arguments": ["ac", "before", "kojo", "exp", "kojo_after", "after"] }
+                        ],
+                        "nextEntryLabel": "player_rest"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -304,6 +301,7 @@
                 "meal_opt_silent": "默默吃饭（听大家聊）",
                 "meal_opt_quick": "三两口吃完（不参与聊天）",
                 "meal_chat_player": "$me.firstname$一边吃，一边和$picked.firstname$聊了起来。",
+                "meal_chat_player_failed": "$me.firstname$试着向$picked.firstname$搭话，但对方并没有接茬。",
                 "meal_silent": "$me.firstname$低头默默吃着饭，听着桌上的闲谈。",
                 "meal_quick": "$me.firstname$三两口扒完了饭，没有加入桌上的谈话。",
                 "meal_chat_approach": "$npc.firstname$注意到一直安静吃饭的$me.firstname$，主动凑过来搭起了话。",

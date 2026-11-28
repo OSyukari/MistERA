@@ -8,8 +8,11 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
 {
     public List<Character_Personality> list = new List<Character_Personality>();
     public List<Character_Personality_LooseEntry> looselist = new List<Character_Personality_LooseEntry>();
+    public List<DressCode> dressCodes = new List<DressCode>();
+    public List<DressCodeRule> defaultDressCodes = new List<DressCodeRule>();
 
     Dictionary<string, Character_Personality> ID_Dictionary = new Dictionary<string, Character_Personality>();
+    Dictionary<string, DressCode> DressCode_Dictionary = new Dictionary<string, DressCode>();
     public void RegisterAllID(List<string> messages)
     {
         messages.Add("Character_Personality_Index : registering ID with list length [" + list.Count+ "]") ;
@@ -28,6 +31,30 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
                 ID_Dictionary[i.ID].AddEntry(i.Entry);
             }
         }
+
+        DressCode_Dictionary.Clear();
+        if (dressCodes != null)
+        {
+            foreach (var dc in dressCodes)
+            {
+                if (dc == null || string.IsNullOrEmpty(dc.ID)) continue;
+                DressCode_Dictionary[dc.ID] = dc;
+            }
+        }
+
+        // Deduplicate defaultDressCodes by ID (later entry overrides earlier entry so mods can override defaults).
+        if (defaultDressCodes != null && defaultDressCodes.Count > 1)
+        {
+            var seen = new Dictionary<string, int>();
+            for (int i = 0; i < defaultDressCodes.Count; i++)
+            {
+                var rule = defaultDressCodes[i];
+                if (rule == null || string.IsNullOrEmpty(rule.ID)) continue;
+                if (seen.TryGetValue(rule.ID, out int prev)) defaultDressCodes[prev] = null;
+                seen[rule.ID] = i;
+            }
+            defaultDressCodes.RemoveAll(r => r == null);
+        }
     }
     
     public void MergeWith(I_IndexMergeable list){
@@ -37,10 +64,35 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
         {
             if (l.list != null) this.list.AddRange(l.list);
             if (l.looselist != null) this.looselist.AddRange(l.looselist);
+            if (l.dressCodes != null) this.dressCodes.AddRange(l.dressCodes);
+            if (l.defaultDressCodes != null) this.defaultDressCodes.AddRange(l.defaultDressCodes);
         }
     }
 
     public Character_Personality GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+
+    public DressCode GetDressCodeByID(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        return DressCode_Dictionary.TryGetValue(id, out var dc) ? dc : null;
+    }
+
+    public DressCode ResolveDefaultDressCode(List<string> actorTags)
+    {
+        var best = DressCodeRule.SelectBest(defaultDressCodes, actorTags);
+        if (best == null) return DressCode.Empty;
+        var dc = best.ResolveDressCode();
+        if (dc != null) return dc;
+        if (best.requirements != null)
+        {
+            return new DressCode
+            {
+                ID = best.ID,
+                allOf = new List<OutfitRequirements> { best.requirements }
+            };
+        }
+        return DressCode.Empty;
+    }
 
     public void LateInitialize()
     {
@@ -149,6 +201,31 @@ public class Character_Personality
         if (fallbackRef == null && fallbackID != "" && fallbackID != this.id) fallbackRef = scr_System_Serializer.current.MasterList.Character_Personalities.GetByID(fallbackID);
         return fallbackRef; } }
     [JsonIgnore] public Character_Personality FallbackPersonality { get { return Fallback; } }
+
+    /// <summary>Optional dress code ID in Character_Personalities.dressCodes. Empty inherits from Fallback, then falls back to defaultDressCodes.</summary>
+    public string dressCodeID = "";
+
+    [JsonIgnore] public string EffectiveDressCodeID
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(dressCodeID)) return dressCodeID;
+            var visited = new HashSet<Character_Personality>();
+            for (var p = this; p != null && visited.Add(p); p = p.Fallback)
+                if (!string.IsNullOrEmpty(p.dressCodeID)) return p.dressCodeID;
+            return "";
+        }
+    }
+
+    [JsonIgnore] public DressCode ExplicitDressCode
+    {
+        get
+        {
+            var id = EffectiveDressCodeID;
+            if (string.IsNullOrEmpty(id)) return null;
+            return scr_System_Serializer.current?.MasterList?.Character_Personalities?.GetDressCodeByID(id);
+        }
+    }
 
     [JsonProperty] string behaviorID = "";
 

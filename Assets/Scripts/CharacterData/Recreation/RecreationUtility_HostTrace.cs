@@ -44,6 +44,7 @@ public static partial class RecreationUtility
         if (ForbiddenByMemberType(f.Owner, activity)) return "forbidActivityTags";
         if (!IsEligible(f.Owner, activity)) return "eligibility";
         if (!FacilityAvailable(venue, activity)) return "FacilityAvailable";
+        if (f.Owner.RefID == 0 && !WardrobeAllows(f.Owner, venue, activity, day, incoming.MemberType)) return "wardrobe (no valid assigned or unclassified outfit)";
         if (!provider && HasPendingReservation(f, key, except, incoming)) return "HasPendingReservation(" + key + ")";
         if (!DailyMainTypeAllows(f, day, activity, except, incoming: incoming)) return "DailyMainType(" + activity.mainTypeTag + ")";
         if (except != null)
@@ -119,6 +120,7 @@ public static partial class RecreationUtility
         if (HasUnpaidActivityFee(f, venue)) return "unpaid activity fee at venue";
         if (!IsEligible(f.Owner, def.AsActivity)) return "activity eligibility";
         if (!FacilityAvailable(venue, def.AsActivity)) return "facility unavailable";
+        if (f.Owner.RefID == 0 && !WardrobeAllows(f.Owner, venue, def.AsActivity, day, incoming.MemberType)) return "wardrobe (no valid assigned or unclassified outfit)";
         if (!def.IsEligible(f.Owner)) return "offer eligibility";
         if (except != null) { string r = ReservationRefusal(f, PreviewBooking(except)); if (r != "") return "ReservationRefusal: " + r; }
         return "";

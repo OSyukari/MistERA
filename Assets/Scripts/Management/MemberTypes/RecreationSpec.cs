@@ -265,6 +265,8 @@ public class RecreationActivity
     /// visitor's wardrobe under OutfitUtility.ActivityKey (once per key; kept if the wardrobe already has one). Its key is ignored.
     /// </summary>
     public OutfitSet outfit = null;
+    /// <summary>Dress code for this activity, checked against assigned outfits and the unclassified pool.</summary>
+    public OutfitRequirements wardrobeRequirements = null;
 
     /// <summary>This activity's override for FindJobNode.behaviorOverrideID, or null.</summary>
     public FindJobNode GetBehaviorOverride(string behaviorOverrideID)
@@ -325,6 +327,8 @@ public class RecreationActivity
         result.AcceptanceMods = execution.AcceptanceMods ?? AcceptanceMods;
         result.provideAcceptanceBonus = execution.provideAcceptanceBonus;
         result.activityMoodlet = execution.activityMoodlet;
+        result.outfit = execution.outfit ?? outfit;
+        result.wardrobeRequirements = OutfitRequirements.Combine(wardrobeRequirements, execution.wardrobeRequirements);
         result.launchEventID = execution.launchEventID;
         result.gatherFailedEventID = execution.gatherFailedEventID;
         result.endEventID = execution.endEventID;

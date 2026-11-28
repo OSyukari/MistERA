@@ -938,6 +938,8 @@ public class Character_Factions
     {
         if (booking == null || booking.hours < 1) return false;
         if (booking.Faction == null) return false;
+        if (Owner?.RefID == 0 && !RecreationUtility.WardrobeAllows(Owner, booking.Faction,
+            RecreationUtility.ResolveActivity(this, booking), booking.day, booking.MemberType)) return false;
         if (!RecreationUtility.DailyMainTypeBookingAllows(this, booking)) return false;
         if (RecreationUtility.ReservationRefusal(this, booking) != "") return false;
         foreach (var b in Bookings) if (b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)) return false;

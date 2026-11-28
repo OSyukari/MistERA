@@ -1125,17 +1125,6 @@ public static class EventUtility
                 var rel = c.Relationships?.PeekRelationshipWith(relTargets[0]);
                 return rel != null && (rel.HasRelationshipType(SexualRelationshipTypeIDs) || rel.HasPermission_Intimacy_High());
             }
-            case "petCanShowerSex":
-            {
-                if ((c.Stats?.Lust?.Severity ?? 0f) >= 1f) return true;
-                if (r.parameters.Count >= 2 && TryResolveExecTargets(ev, r.parameters[1], out var ownerTargets)
-                    && ownerTargets != null && ownerTargets.Count == 1 && ownerTargets[0] != null && ownerTargets[0] != c)
-                {
-                    var rel = c.Relationships?.PeekRelationshipWith(ownerTargets[0]);
-                    if (rel != null && (rel.HasRelationshipType(SexualRelationshipTypeIDs) || rel.HasPermission_Intimacy_High())) return true;
-                }
-                return false;
-            }
             case "canExecuteCOM":
             {
                 // canExecuteCOM [comID, receiverKey ("" or "none" for solo)]
@@ -1879,10 +1868,11 @@ public static class EventUtility
             previousShownValid = false;
             var ap = BuildPreviewPackage(owner, op, preview);
             if (ap == null) continue;
-            bool grant = preview.permissions == PermissionModeGrant;
-            bool request = preview.permissions == PermissionModeRequest;
+            string permissions = OptionAPPermissions(op, preview);
+            bool grant = permissions == PermissionModeGrant;
+            bool request = permissions == PermissionModeRequest;
             // as the run does: set before Validate so the shown rates carry no permission penalties
-            ap.SkipPermissions = preview.permissions == PermissionModeSkip;
+            ap.SkipPermissions = permissions == PermissionModeSkip;
 
             bool valid = ap.Validate();
             // an invalid act with an alternative after it: the branch just tries the next one
@@ -1899,7 +1889,9 @@ public static class EventUtility
                 continue;
             }
             previousShownValid = true;
-            AddValidAPPreviewLines(ap, grant, request, preview.forceAccept, lines);
+            var rated = op.RunsAP ? RateOptionAP(owner, op, preview, ap) : ap;
+            AddValidAPPreviewLines(ap, grant, request, preview.forceAccept, lines, rated);
+            if (op.RunsAP) break;
         }
         return string.Join("\n", lines);
     }
@@ -1909,11 +1901,13 @@ public static class EventUtility
     /// forced-acceptance note and the missing-permission consequence - or, when grant / request, what will be granted or
     /// asked (BuildAPPreviewTooltip, BuildJoinPreviewTooltip).
     /// </summary>
-    static void AddValidAPPreviewLines(ActionPackage ap, bool grant, bool request, bool forceAccept, List<string> lines)
+    static void AddValidAPPreviewLines(ActionPackage ap, bool grant, bool request, bool forceAccept, List<string> lines,
+        ActionPackage rated = null)
     {
-        lines.Add(ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip")).Trim('\n'));
+        var shown = rated ?? ap;
+        lines.Add(shown.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip")).Trim('\n'));
         // the evaluation's own notes (personality / membertype acceptance mods), as the forced-retry option lists them
-        foreach (var note in ap.tooltip) if (!string.IsNullOrEmpty(note)) lines.Add(note);
+        foreach (var note in shown.tooltip) if (!string.IsNullOrEmpty(note)) lines.Add(note);
         if (forceAccept) lines.Add(LocalizeDictionary.QueryThenParse("ui_event_apPreview_forceAccept"));
         if (ap.SkipPermissions)
         {
@@ -2079,6 +2073,8 @@ public static class EventUtility
         var doer = ResolvePreviewActor(owner, op, preview.doer);
         var receiver = ResolvePreviewActor(owner, op, preview.receiver);
         if (doer == null) return null;
+        if (op.RunsAP && !string.IsNullOrEmpty(preview.receiver) && preview.receiver != "none"
+            && (receiver == null || receiver == doer)) return null;
         if (receiver != null)
             foreach (var cond in preview.receiver_conditions)
                 if (!isValid(cond, owner, receiver)) return null;
@@ -2086,10 +2082,19 @@ public static class EventUtility
         var com = scr_System_Serializer.current?.MasterList?.COMs?.GetByID(preview.com);
         var job = receiver == null ? doer.InteractionJob : receiver.InteractionJob;
         if (com == null || job == null || job.ParentRoom == null) return null;
-        var ap = com.MakePackage(job, new List<int>() { doer.RefID }, receiver == null ? new List<int>() : new List<int>() { receiver.RefID }, -1);
-        if (ap != null) ap.IgnoreStatCost = true;
+        int requesterRef = op.RunsAP ? owner.Self?.RefID ?? -1 : -1;
+        var ap = com.MakePackage(job, new List<int>() { doer.RefID }, receiver == null ? new List<int>() : new List<int>() { receiver.RefID }, requesterRef);
+        if (ap != null)
+        {
+            ap.IgnoreStatCost = !op.RunsAP || preview.ignoreStatCost;
+            ap.SkipPermissions = OptionAPPermissions(op, preview) == PermissionModeSkip;
+        }
         return ap;
     }
+
+    static string OptionAPPermissions(Event.EventEntry.Options op, EventAPPreview preview) =>
+        op.RunsAP && (string.IsNullOrEmpty(preview.permissions) || preview.permissions == "none")
+            ? PermissionModeRequest : preview.permissions;
 
     /// <summary>A low-consciousness granter (Unaware) is never granted for - same rule as RequestMissingPermissions.</summary>
     static bool CanGrantMissingPermission(MissingPermission missing)
@@ -2108,7 +2113,9 @@ public static class EventUtility
     /// </summary>
     static string PreviewBlockReason(EventInstance owner, Event.EventEntry.Options op)
     {
-        if (op?.apPreviews == null || op.apPreviews.Count == 0) return "";
+        if (op == null) return "";
+        if (op.apPreviews == null || op.apPreviews.Count == 0)
+            return op.RunsAP ? LocalizeDictionary.QueryThenParse("ui_event_apPreview_invalidBlocked") : "";
         var campaign = scr_System_CampaignManager.current;
         bool deterministic = campaign != null && campaign.DeterministicRolls;
         int built = 0, runnable = 0;
@@ -2125,7 +2132,6 @@ public static class EventUtility
             var ap = BuildPreviewPackage(owner, op, preview);
             if (ap == null) continue;
             built++;
-            ap.SkipPermissions = preview.permissions == PermissionModeSkip;
             if (!ap.Validate())
             {
                 if (firstInvalidReasons == null)
@@ -2137,7 +2143,11 @@ public static class EventUtility
             }
             previousShownValid = true;
             runnable++;
-            if (!deterministic || preview.forceAccept) continue;
+            if (!deterministic || preview.forceAccept)
+            {
+                if (op.RunsAP) break;
+                continue;
+            }
 
             int rate = PreviewCheckRate(owner, op, preview, ap);
             if (rate < 100 && rate < campaign.DeterministicThreshold)
@@ -2145,9 +2155,10 @@ public static class EventUtility
                 refused = true;
                 lowestRate = Math.Min(lowestRate, rate);
             }
+            if (op.RunsAP) break;
         }
 
-        if (built > 0 && runnable == 0)
+        if ((built > 0 || op.RunsAP) && runnable == 0)
         {
             var reason = LocalizeDictionary.QueryThenParse("ui_event_apPreview_invalidBlocked");
             return firstInvalidReasons == null ? reason : reason + "\n" + string.Join("\n", firstInvalidReasons);
@@ -2166,8 +2177,9 @@ public static class EventUtility
     /// </summary>
     static int PreviewCheckRate(EventInstance owner, Event.EventEntry.Options op, EventAPPreview preview, ActionPackage ap)
     {
-        var rated = ap;
-        if (preview.permissions == PermissionModeRequest)
+        var rated = op.RunsAP ? RateOptionAP(owner, op, preview, ap) : ap;
+        string permissions = OptionAPPermissions(op, preview);
+        if (!op.RunsAP && permissions == PermissionModeRequest)
         {
             bool anyMissing = false, allAccepted = true;
             foreach (var ep in ap.EvaluatePackagesWithoutRoll())
@@ -2200,6 +2212,16 @@ public static class EventUtility
         return rate;
     }
 
+    static ActionPackage RateOptionAP(EventInstance owner, Event.EventEntry.Options op, EventAPPreview preview, ActionPackage ap)
+    {
+        string permissions = OptionAPPermissions(op, preview);
+        if (permissions != PermissionModeRequest && permissions != PermissionModeGrant) return ap;
+        var rated = BuildPreviewPackage(owner, op, preview);
+        if (rated == null) return ap;
+        rated.PreviewPermissionGrants = permissions == PermissionModeGrant ? PermissionGrantSource.Event : PermissionGrantSource.Request;
+        return rated.Validate() ? rated : ap;
+    }
+
     /// <summary>
     /// ExecuteAPOnSingleChara permission mode "grant": grants every permission the validated package is missing
     /// (PermissionGrantSource.Event) before it runs. PermissionService.ResolveGrantType keeps the relationship's say:
@@ -2207,7 +2229,7 @@ public static class EventUtility
     /// Each new grant prints ui_event_permissionGranted - logged directly, so it shows even inside an
     /// EntryResultsSilent batch that hides the AP's own output.
     /// </summary>
-    static void GrantMissingPermissions(EventInstance owner, ActionPackage ap)
+    static void GrantMissingPermissions(EventInstance owner, ActionPackage ap, MessageCollect target = null)
     {
         // Validate() leaves ListEP unbuilt: evaluate the real EPs (no roll) to read their missing permissions
         foreach (var ep in ap.EvaluatePackagesWithoutRoll())
@@ -2219,19 +2241,43 @@ public static class EventUtility
                 var type = PermissionService.ResolveGrantType(missing.Query, PermissionGrantSource.Event);
                 if (!PermissionService.TryGrant(missing.Granter, missing.Holder, missing.Definition.ID, PermissionGrantSource.Event, out var changed)
                     || !changed) continue;
-                LogEventSystemLine(owner, LocalizeDictionary.QueryThenParse("ui_event_permissionGranted")
-                    .Replace("$granter$", missing.Granter.FirstName)
-                    .Replace("$holder$", missing.Holder.FirstName)
-                    .Replace("$permission$", LocalizeDictionary.QueryThenParse(missing.Definition.displayName))
-                    .Replace("$type$", PermissionService.GrantTypeLabel(type)));
+                LogPermissionGrant(owner, missing, type, target);
             }
         }
     }
 
-    /// <summary>A room-visible system line queued in event order (RevealFaction's path); silent runs: the log entry's tooltip.</summary>
-    static void LogEventSystemLine(EventInstance owner, string message)
+    internal static void LogPermissionGrant(EventInstance owner, MissingPermission permission, PermissionGrantType type,
+        MessageCollect target = null, bool after = false)
+    {
+        var message = LocalizeDictionary.QueryThenParse("ui_event_permissionGranted")
+            .Replace("$granter$", permission.Granter.FirstName)
+            .Replace("$holder$", permission.Holder.FirstName)
+            .Replace("$permission$", LocalizeDictionary.QueryThenParse(permission.Definition.displayName))
+            .Replace("$type$", PermissionService.GrantTypeLabel(type));
+        LogEventSystemLine(owner, message, target, after);
+    }
+
+    internal static void LogMissingPermission(EventInstance owner, MissingPermission permission, MessageCollect target = null)
+    {
+        var message = LocalizeDictionary.QueryThenParse("ui_event_apPreview_missingPermission")
+            .Replace("$granter$", permission.Granter.FirstName)
+            .Replace("$holder$", permission.Holder.FirstName)
+            .Replace("$permission$", LocalizeDictionary.QueryThenParse(permission.Definition.displayName));
+        LogEventSystemLine(owner, message, target, after: false);
+    }
+
+    /// <summary>A room-visible system line queued in event order (RevealFaction's path); silent runs: the log entry's tooltip.
+    /// When target is supplied, adds to that MessageCollect so it flushes in chronological order with the AP's checks and kojo.</summary>
+    static void LogEventSystemLine(EventInstance owner, string message, MessageCollect target = null, bool after = false)
     {
         if (owner == null || string.IsNullOrEmpty(message)) return;
+        if (target != null)
+        {
+            var descTarget = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
+            if (after) target.AddMessage_After(descTarget, owner.Self?.CurrentRoom);
+            else target.AddMessage_Before(descTarget, owner.isVisible || owner.silent, owner.Self?.CurrentRoom);
+            return;
+        }
         if (owner.silent) { owner.SilentSink?.AddTooltip(message); return; }
         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
         if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
@@ -2276,8 +2322,12 @@ public static class EventUtility
         }
     }
 
+    public static bool CanSelectOption(EventInstance owner, Event.EventEntry.Options op) =>
+        isValid(op, owner) && (!op.RunsAP || PreviewBlockReason(owner, op).Length == 0);
+
     static bool ExecuteOption(EventInstance owner, Event.EventEntry.Options ops, bool sendNotify)
     {
+        if (ops.RunsAP && sendNotify && !CanSelectOption(owner, ops)) return false;
         if (ops.boundTarget != null && !string.IsNullOrEmpty(ops.bindTargetKey))
             owner.Targets[ops.bindTargetKey] = new List<Character_Trainable>() { ops.boundTarget };
 
@@ -2307,6 +2357,14 @@ public static class EventUtility
             if (op.isValid()) continue_notify = Execute(owner, op) && continue_notify;
             else continue_notify = false;
         }
+        // The AP outcome schedules the next entry. A question or branch can be active with no next entry queued.
+        if (ops.RunsAP && continue_notify && owner.Active)
+        {
+            bool performed = ExecuteOptionAP(owner, ops);
+            var label = performed ? ops.apSuccessLabel : ops.apFailureLabel;
+            if (string.IsNullOrEmpty(label)) continue_notify = false;
+            else owner.LoadNext(label: label);
+        }
 
         if (snap != null) parsed = EventLineSnapshot.Take(owner, ops.line, ops.tooltip, snap.PortraitRefKey);
 
@@ -2322,6 +2380,29 @@ public static class EventUtility
             return false;
         }
         //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
+    }
+
+    static bool ExecuteOptionAP(EventInstance owner, Event.EventEntry.Options option)
+    {
+        if (option.apPreviews == null) return false;
+        foreach (var config in option.apPreviews)
+        {
+            var ap = BuildPreviewPackage(owner, option, config);
+            if (ap == null || !ap.Validate()) continue;
+            bool untilClimax = !string.IsNullOrEmpty(config.requiredClimax);
+            var exec = new Event.EventEntry.Executor
+            {
+                Type = untilClimax ? Event.EventEntry.ExecutionType.ExecuteSexAPOnSingleCharaTillClimax
+                    : Event.EventEntry.ExecutionType.ExecuteAPOnSingleChara,
+                arguments = new List<string> { config.doer, config.receiver, config.com, config.repeat.ToString() }
+            };
+            if (untilClimax) exec.arguments.Add(config.requiredClimax);
+            exec.arguments.Add(config.ignoreStatCost.ToString());
+            exec.arguments.Add(config.forceAccept.ToString());
+            exec.arguments.Add(OptionAPPermissions(option, config));
+            return ExecuteAPOnSingleChara(owner, exec, resolveInEvent: true);
+        }
+        return false;
     }
 
     /// <summary>
@@ -2473,6 +2554,33 @@ public static class EventUtility
     /// <summary> ExecuteAPOnSingleChara output: kojo + EXP (default) / kojo only (EXP still granted, not shown) / kojo + EXP + the DC result line </summary>
     public const string OutputModeFull = "full", OutputModeKojoOnly = "kojoOnly", OutputModeWithCheck = "withCheck";
 
+    static MessageCollectSections ParseMessageCollectSections(List<string> args)
+    {
+        var mask = MessageCollectSections.None;
+        foreach (var raw in args)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) continue;
+            switch (raw.Trim().ToLowerInvariant())
+            {
+                case "all": mask |= MessageCollectSections.All; break;
+                case "ac":
+                case "checks": mask |= MessageCollectSections.Checks; break;
+                case "dc":
+                case "results":
+                case "complete": mask |= MessageCollectSections.Results; break;
+                case "before":
+                case "begin": mask |= MessageCollectSections.Before; break;
+                case "kojo": mask |= MessageCollectSections.Kojo; break;
+                case "exp": mask |= MessageCollectSections.Exp; break;
+                case "kojo_after":
+                case "kojoafter": mask |= MessageCollectSections.KojoAfter; break;
+                case "after": mask |= MessageCollectSections.After; break;
+                case "movement": mask |= MessageCollectSections.Movement; break;
+            }
+        }
+        return mask;
+    }
+
     /// <summary>
     /// ExecutionType.RollCommandDC: an event's own roll of a command's DC (Difficulty.noAutoRoll), with the bonus of a solo
     /// package's roll (ActionPackage.CollectPairMods, no receiver) and its natural 1 / 20 rule (ActionPackage.Execution).
@@ -2518,7 +2626,7 @@ public static class EventUtility
         return true;
     }
 
-    static bool ExecuteAPOnSingleChara(EventInstance owner, Event.EventEntry.Executor exec)
+    static bool ExecuteAPOnSingleChara(EventInstance owner, Event.EventEntry.Executor exec, bool resolveInEvent = false)
     {
         bool untilClimax = exec.Type == Event.EventEntry.ExecutionType.ExecuteSexAPOnSingleCharaTillClimax;
         List<Character_Trainable> doers = null, receivers = null;
@@ -2651,25 +2759,31 @@ public static class EventUtility
         if (showExp || owner.EntryResultsSilentActive) owner.TrackExperience(collector.exp);
         var participantRefs = participants.Select(c => c.RefID).ToList();
         var doerRefs = doers.Select(c => c.RefID).ToList();
+        int requesterRef = resolveInEvent ? owner.Self?.RefID ?? -1 : -1;
         var previousJobs = doers.ToDictionary(c => c, c => c.CurrentJob);
         checkpoints = required.ToDictionary(c => c, c => c.Stats.SexStimulation?.UnclampedSeverity ?? 0f);
         var previousFamily = owner.SilentFamily;
 
         // the result kojo of the last package run (repeats / until-climax iterations replace it): added to the collector
-        // before the final flush, which prints kojo ahead of the EXP
+        // before the single selective flush in finally, which prints checks -> before -> kojo -> exp -> kojo_after -> after
         List<KojoCollector> lastKojo = null;
         DescriptionCollector lastCheck = null;
+        bool succeeded = false;
 
-        void Flush()
+        void Flush(MessageCollectSections keep)
         {
             if (owner.EntryResultsSilentActive) return;
-            collector.FinalizeEXP(participantRefs, out var desc);
-            if (!showExp) collector.messages_exp.Clear();
-            else if (desc != null)
+            collector.FilterSections(keep);
+            if ((keep & MessageCollectSections.Exp) != 0)
             {
-                collector.messages_exp.Add(desc);
-                job.ParentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
+                collector.FinalizeEXP(participantRefs, out var desc);
+                if (desc != null)
+                {
+                    collector.messages_exp.Add(desc);
+                    job.ParentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
+                }
             }
+            if (!collector.exp.HasNonNumericMessages && collector.MessageCount == 0) return;
             // silent: everything collected (EXP, climax kojo, first-experience line + kojo) goes into the log entry's tooltip
             if (owner.silent) owner.SilentSink?.Capture(collector);
             else owner.FlushCollectLogsWithExperience(collector, owner.Self, owner.CurrentUISpec.Clone());
@@ -2688,22 +2802,27 @@ public static class EventUtility
             for (int iteration = 0; iteration < maxIteration; iteration++)
             {
                 attempted = iteration + 1;
-                var ap = com.MakePackage(job, doerRefs, isSolo ? new List<int>() : new List<int>() { receiver.RefID }, -1);
+                bool firstEventRound = resolveInEvent && iteration == 0;
+                var ap = com.MakePackage(job, doerRefs, isSolo ? new List<int>() : new List<int>() { receiver.RefID }, requesterRef);
                 if (ap == null) return Fail("package null", untilClimax);
                 if (untilClimax && !(ap is ActionPackage_Sex)) return Fail($"package wrong type: {ap.GetType().Name}; expected ActionPackage_Sex", true);
                 ap.IgnoreStatCost = ignoreStatCost;
-                ap.ForceAccept = forceAccept;
+                ap.ForceAccept = forceAccept || (resolveInEvent && iteration > 0);
                 // set before Validate: every evaluation of this package (validation, ForceExecute1, execution) skips the rules
                 ap.SkipPermissions = permissionMode == PermissionModeSkip;
                 // asked in ForceExecute1 (inside InjectPackageAndExecute), its kojo into this collector
-                ap.RequestPermissions = permissionMode == PermissionModeRequest;
+                ap.RequestPermissions = permissionMode == PermissionModeRequest && (!resolveInEvent || iteration == 0);
+                ap.ResolveInEvent = firstEventRound;
                 ap.AuthoredSexSceneEntry = sceneEntry;
                 if (!ap.Validate()) return Fail("validation failed: " + (ap.tooltip == null ? "<null tooltip>" : string.Join(" | ", ap.tooltip)), true);
                 // before injection: ForceExecute1 rebuilds the EPs, so this round already runs with the permissions held
-                if (permissionMode == PermissionModeGrant) GrantMissingPermissions(owner, ap);
+                if (permissionMode == PermissionModeGrant) GrantMissingPermissions(owner, ap, owner.EntryResultsSilentActive ? null : collector);
 
                 var occurrences = participants.ToDictionary(c => c, c => c.Body.ClimaxOccurrenceCount);
                 var actScopes = new List<IDisposable>();
+                var roundCollector = owner.EntryResultsSilentActive ? owner.message
+                    : new MessageCollect(true) { accumulateExperience = true, collectAllMessages = true };
+                if (!owner.EntryResultsSilentActive) roundCollector.exp.numericSink = collector.exp.numericSink;
                 ap.SourceEvent = owner;
                 try
                 {
@@ -2713,18 +2832,25 @@ public static class EventUtility
                         actScopes.Add(actor.Body.BeginEventAct(collector));
                     }
                     injected++;
-                    job.InjectPackageAndExecute(ap, collector);
-                    // the collector takes only EXP from the package's own log, so its result kojo are carried over separately
+                    bool injectedOk = job.InjectPackageAndExecute(ap, roundCollector);
+                    if (!owner.EntryResultsSilentActive)
+                    {
+                        // Keep round 0's AC/permissions/refusal lines and accumulate EXP + climax/first-exp across every round.
+                        var mergeMask = MessageCollectSections.Exp | MessageCollectSections.KojoAfter | MessageCollectSections.After;
+                        if (iteration == 0) mergeMask |= MessageCollectSections.Checks | MessageCollectSections.Before | MessageCollectSections.Kojo;
+                        collector.MergeSections(roundCollector, mergeMask, clear: true);
+                    }
+                    if (!injectedOk) return false;
+                    // the result kojo and optional DC check of the latest accepted round are attached before the single selective flush
                     lastKojo = new List<KojoCollector>(ap.ResultKojo);
-                    // withCheck: the package's DC result line (with its bonus tooltip) - kept like the kojo and added for the
-                    // final flush, so the check, kojo and EXP print together in that order (adding it now would flush the EXP early)
-                    if (showCheck && !string.IsNullOrEmpty(ap.CheckResultText))
+                    if ((showCheck || resolveInEvent) && !string.IsNullOrEmpty(ap.CheckResultText))
                     {
                         lastCheck = new DescriptionCollector(ap.CheckResultText, participantRefs);
                         lastCheck.message_excludeRelated = ap.CheckResultText;
                         lastCheck.tooltip = ap.CheckResultTooltip;
                     }
-                    if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
+                    if (firstEventRound && (!ap.requestAccepted || !ap.executeSuccessful))
+                        return false;
 
                     // An internal check may already have granted the climax. Compare occurrences, not the
                     // return value of a second check (which also reports lingering blockage as true).
@@ -2737,6 +2863,7 @@ public static class EventUtility
                     ap.ForceAccept = false;
                     ap.SkipPermissions = false;
                     ap.RequestPermissions = false;
+                    ap.ResolveInEvent = false;
                     try
                     {
                         foreach (var actor in participants)
@@ -2752,12 +2879,11 @@ public static class EventUtility
                         for (int i = actScopes.Count - 1; i >= 0; i--) actScopes[i].Dispose();
                     }
                 }
-                if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
 
                 if (sceneEntry && !ap.executeSuccessful) return Fail("authored sex scene entry execution failed");
                 completedIterations++;
-                if (sceneEntry) return true;
-                if (untilClimax && required.All(completed.Contains)) return true;
+                if (sceneEntry) { succeeded = true; return true; }
+                if (untilClimax && required.All(completed.Contains)) { succeeded = true; return true; }
                 if (untilClimax && (iteration + 1) % 5 == 0)
                 {
                     var pending = required.Where(c => !completed.Contains(c)).ToList();
@@ -2765,24 +2891,49 @@ public static class EventUtility
                     foreach (var actor in pending) checkpoints[actor] = actor.Stats.SexStimulation?.UnclampedSeverity ?? 0f;
                 }
             }
-            return !untilClimax || Fail("iteration limit reached before required climax", true);
+            if (!untilClimax) { succeeded = true; return true; }
+            return Fail("iteration limit reached before required climax", true);
         }
         finally
         {
             owner.AppendStrings[exec.arguments[0] + "_climaxed"] = new List<string>() { doers.Any(completed.Contains) ? "true" : "false" };
             if (!isSolo) owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { receivers.Any(completed.Contains) ? "true" : "false" };
-            if (lastCheck != null) collector.AddMessage_Checks(lastCheck);
-            if (lastKojo != null) foreach (var kol in lastKojo) collector.AddKojo(kol);
-            try { Flush(); }
-            finally
+            if (resolveInEvent)
             {
-                try
+                // Option APs register all collected sections onto owner.message without auto-flushing;
+                // the following event entry decides which sections to flush (e.g. DC on success, AC on failure).
+                if (succeeded)
                 {
-                    // Entry APs commit scene membership themselves; no interaction-job staging was done.
-                    if (!sceneEntry) foreach (var doer in doers) doer.ChangeCurrentJob(previousJobs[doer]);
+                    if (lastCheck != null) collector.AddMessage_Results(lastCheck);
+                    if (lastKojo != null) foreach (var kol in lastKojo) collector.AddKojo(kol);
                 }
-                finally { owner.SilentFamily = previousFamily; }
+                if (!owner.EntryResultsSilentActive)
+                    owner.message.MergeSections(collector, MessageCollectSections.All, clear: true);
             }
+            else
+            {
+                if (succeeded)
+                {
+                    if (lastCheck != null) collector.AddMessage_Checks(lastCheck);
+                    if (lastKojo != null) foreach (var kol in lastKojo) collector.AddKojo(kol);
+                }
+                var keep = MessageCollectSections.Checks | MessageCollectSections.Before | MessageCollectSections.Kojo
+                    | MessageCollectSections.KojoAfter | MessageCollectSections.After
+                    | (showExp ? MessageCollectSections.Exp : MessageCollectSections.None);
+                try { Flush(keep); }
+                catch
+                {
+                    if (!sceneEntry) foreach (var doer in doers) doer.ChangeCurrentJob(previousJobs[doer]);
+                    owner.SilentFamily = previousFamily;
+                    throw;
+                }
+            }
+            try
+            {
+                // Entry APs commit scene membership themselves; no interaction-job staging was done.
+                if (!sceneEntry) foreach (var doer in doers) doer.ChangeCurrentJob(previousJobs[doer]);
+            }
+            finally { owner.SilentFamily = previousFamily; }
         }
     }
 
@@ -3342,7 +3493,8 @@ public static class EventUtility
                 owner.CurrentUISpec.BGImagePath = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 return true;
             case Event.EventEntry.ExecutionType.DeflateInternal:
-                // [tagFilter, deleteObject, fullDeflate, deflateStringKey, kojoStringKey, optional memoryStringKey, optional scopeKey]
+                // [tagFilter, deleteObject, fullDeflate, deflateStringKey, kojoStringKey, optional memoryStringKey,
+                // optional scopeKey, optional excludedTags (pipe-separated)]
                 if (exec.arguments.Count >= 5)
                 {
                     if (bool.TryParse(exec.arguments[1], out var deleteObject) && bool.TryParse(exec.arguments[2], out var fullDeflate))
@@ -3351,7 +3503,11 @@ public static class EventUtility
                         var scopeKey = exec.arguments.Count >= 7 ? exec.arguments[6] : "self";
                         if (!TryResolveExecTargets(owner, scopeKey, out var bathers) || bathers == null
                             || bathers.Count != 1 || bathers[0] == null) return false;
-                        return bathers[0].DeflateInternal(owner, exec.arguments[3], exec.arguments[4], memoryStringKey, fullDeflate, deleteObject, exec.arguments[0]);
+                        var excludedTags = exec.arguments.Count >= 8
+                            ? exec.arguments[7]?.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries)
+                            : null;
+                        return bathers[0].DeflateInternal(owner, exec.arguments[3], exec.arguments[4], memoryStringKey,
+                            fullDeflate, deleteObject, exec.arguments[0], excludedTags);
                     }
                 }
                 return false;
@@ -4474,8 +4630,23 @@ public static class EventUtility
                 return true;
             case Event.EventEntry.ExecutionType.FlushMessageAll:
                 if (owner.EntryResultsSilentActive) return true;
+                if (exec.arguments != null && exec.arguments.Count > 0)
+                {
+                    var keep = ParseMessageCollectSections(exec.arguments);
+                    owner.message.FilterSections(keep);
+                    if ((keep & MessageCollectSections.Exp) != 0)
+                    {
+                        owner.FlushAPExperienceBatch();
+                        owner.message.FinalizeEXP(owner.RelevantActors, out var expDesc);
+                        if (expDesc != null)
+                        {
+                            if (owner.Self?.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(expDesc, MessageCollect_Type.exp);
+                            owner.message.messages_exp.Add(expDesc);
+                        }
+                    }
+                }
                 if (owner.silent) owner.SilentSink?.Capture(owner.message);
-                else owner.FlushCollectLogsWithExperience(owner.message);
+                else owner.FlushCollectLogsWithExperience(owner.message, owner.Self, owner.CurrentUISpec.Clone());
                 return true;
             case Event.EventEntry.ExecutionType.ExecuteSexAPOnSingleCharaTillClimax:
             case Event.EventEntry.ExecutionType.ExecuteAPOnSingleChara:

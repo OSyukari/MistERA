@@ -1286,7 +1286,7 @@ public class Job : IDisposable, I_Disposable
                 if (ap.capturedLog == null) ap.capturedLog = new MessageCollect();
                 ap.capturedLog.Merge(ap.mcol, false);
             }
-            if (m.accumulateExperience)
+            if (m.accumulateExperience && !m.collectAllMessages)
             {
                 m.exp.Accumulate(ap.mcol.exp);
                 m.messages_exp.AddRange(ap.mcol.messages_exp);
@@ -1487,9 +1487,9 @@ public class Job : IDisposable, I_Disposable
         }
     }
 
-    public void InjectPackageAndExecute(ActionPackage ap, MessageCollect m, bool addActor = false)
+    public bool InjectPackageAndExecute(ActionPackage ap, MessageCollect m, bool addActor = false)
     {
-        AddPackage_Previous(ap);
+        if (!ap.ResolveInEvent) AddPackage_Previous(ap);
         var currentTime = scr_System_Time.current.getCurrentTime();
         ap.SetActive(currentTime);
         if (addActor) foreach (int actorref in ap.actorRefs) AddActor(actorref);
@@ -1499,13 +1499,15 @@ public class Job : IDisposable, I_Disposable
         List<int> allActorsInRoom = scr_System_CampaignManager.current.CharaRefsInRoom(ap.RoomKey);
         // collect logs
         // Combination of AP.RemakePackages EP.Evaluate EP.Request
-        ap.ForceExecute1(currentTime, m);
+        if (!ap.ForceExecute1(currentTime, m)) return false;
+        if (ap.ResolveInEvent) AddPackage_Previous(ap);
         // P tick
         // p collectLogs
         CollectLogs(ap, m);
         ap.ForceExecute2(m);
         scr_System_CampaignManager.current.RegisterExecutedAP(ap);
         CollectLogs(ap, m);
+        return true;
     }
 
     //inject without conflict detection

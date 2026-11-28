@@ -214,6 +214,7 @@ public static partial class RecreationUtility
             || !IsEligible(c, activity) || !IsEligible(c, VenueOpportunity(g.factionID, g.venueOfferID)?.activity)
             || HasUnpaidActivityFee(c.FactionManager, Organization(g.factionID))) return false;
         var preview = PreviewBooking(g);
+        if (c.RefID == 0 && !WardrobeAllows(c, Organization(g.factionID), activity, g.day, preview.MemberType)) return false;
         preview.roleID = g.isOrganizationAudience ? GuestRoleID : OrganizationMemberRole;
         return DailyMainTypeAllows(c.FactionManager, g.day, activity, g, incoming: preview)
             && CooldownAllows(c.FactionManager, g.day, CooldownKeyOf(g.sourceKey), activity.minDaysBetween, preview)

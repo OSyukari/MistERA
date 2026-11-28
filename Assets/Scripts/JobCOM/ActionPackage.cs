@@ -58,6 +58,9 @@ public abstract class ActionPackage
     // request phase (EvaluationPackage.RequestMissingPermissions) that event-run packages otherwise skip - granters are
     // asked, grants and [id]_Granted / _Refused kojo as for a player command. Never inherited by child/copied APs or persisted.
     [JsonIgnore] internal bool RequestPermissions = false;
+    [JsonIgnore] internal bool ResolveInEvent = false;
+    [JsonIgnore] internal PermissionGrantSource? PreviewPermissionGrants;
+    [JsonIgnore] MessageCollect eventRequestMessages;
 
     public AP_Status internalState = AP_Status.none;
     public bool timestopTick = false;
@@ -2085,9 +2088,30 @@ public abstract class ActionPackage
 
     /// <param name="m">the injecting caller's collector: in "request" mode the permission kojo goes there, in order with the
     /// event's own lines, instead of into the job's messages</param>
-    public void ForceExecute1(DateTime currentTime, MessageCollect m = null)
+    public bool ForceExecute1(DateTime currentTime, MessageCollect m = null)
     {
         this.StartTime = currentTime;
+        if (ResolveInEvent)
+        {
+            eventRequestMessages = m;
+            try
+            {
+                Request(forceAccept: ForceAccept ? Memory_Response.Accept : Memory_Response.None);
+                internalState = requestAccepted ? AP_Status.accepted : AP_Status.refused;
+                if (m != null) LogAcceptanceCheck(m);
+                if (!requestAccepted)
+                {
+                    if (m != null) LogMessage_Begin_Refuse(m);
+                    return requested;
+                }
+                var demand = FindPermissionDemand(out _);
+                if (demand == null) return requested;
+                // The enclosing event handles the demand before any effects or nested prompt.
+                EventUtility.LogMissingPermission(SourceEvent, demand, m);
+                return false;
+            }
+            finally { eventRequestMessages = null; }
+        }
         RemakePackages();
         foreach (var ep in packages)
         {
@@ -2099,6 +2123,7 @@ public abstract class ActionPackage
         repeated = false;
         LoggedBegin = false;
         requestAccepted = true;
+        return true;
     }
     public void ForceExecute2(MessageCollect m)
     {
@@ -2144,7 +2169,7 @@ public abstract class ActionPackage
             // real round: a filled condom comes off before a penetration act (EVP_ActOrgans), then ask for missing
             // requestable permissions before the acceptance evaluation sees them
             ep.TakeOffFilledBeforePenetration(job?.m);
-            ep.RequestMissingPermissions(forceAccept);
+            ep.RequestMissingPermissions(forceAccept, eventRequestMessages);
             ep.Evaluate(true);
             ep.ApplyPersonalityMods();
             if (!returnVal) break;
@@ -2732,7 +2757,7 @@ public abstract class ActionPackage
             //Debug.LogError("executing meal AP");
         }
 
-        if (this.targetCOM != null)
+        if (this.targetCOM != null && (!ResolveInEvent || requestAccepted))
         {
             // no DC, or one only an event rolls (Difficulty.noAutoRoll): the accepted package just succeeds
             if (!targetCOM.HasAutoDC)
@@ -2810,7 +2835,7 @@ public abstract class ActionPackage
             ep.Execute(m, injectResult, pairDC);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
-            if (executed) ep.GrantRequesterPermissions();
+            if (executed) ep.GrantRequesterPermissions(ResolveInEvent ? m : null);
             if (ep.Actors.Count > 1)
             {
                 // get EP relationship
@@ -2922,7 +2947,7 @@ public abstract class ActionPackage
 
             if (!isForced)
             {
-                SendRefuseEvent(eventCollector);
+                if (!ResolveInEvent) SendRefuseEvent(eventCollector);
             }
             else
             {   // force AP failed
@@ -4188,11 +4213,10 @@ public abstract class ActionPackage
     /// already resumed from a demand are never stopped; nor is any act for a climaxing or low-consciousness granter
     /// (cannot refuse - its request kojo already played).
     /// </summary>
-    bool TryStopForDemand()
+    MissingPermission FindPermissionDemand(out EvaluationPackage demandEP)
     {
-        if (demandAnswered || isForced || SourceEvent != null || job == null || ListEP == null) return false;
-        MissingPermission demand = null;
-        EvaluationPackage demandEP = null;
+        demandEP = null;
+        if (demandAnswered || isForced || job == null || ListEP == null) return null;
         foreach (var ep in ListEP)
         {
             if (ep == null || ep.Response < Memory_Response.Accept) continue;
@@ -4201,12 +4225,17 @@ public abstract class ActionPackage
                 if (missing.Unaware || missing.Granter.Climaxing) continue;
                 if (missing.Definition.mode != PermissionMode.SoftEvent || string.IsNullOrEmpty(missing.Definition.demandEventID)) continue;
                 if (job is Job_Sex_Group scene && scene.HasPermissionPush(missing.Granter.RefID, missing.Holder.RefID, missing.Definition.ID)) continue;
-                demand = missing;
                 demandEP = ep;
-                break;
+                return missing;
             }
-            if (demand != null) break;
         }
+        return null;
+    }
+
+    bool TryStopForDemand()
+    {
+        if (SourceEvent != null) return false;
+        var demand = FindPermissionDemand(out var demandEP);
         if (demand == null) return false;
 
         // every other demand-carrying permission the same pair misses in this act (e.g. sex_unprotected alongside

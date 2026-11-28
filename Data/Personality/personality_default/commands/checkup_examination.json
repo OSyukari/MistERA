@@ -428,6 +428,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "checkup_examination_Interrupt_1",
@@ -443,18 +446,6 @@
                                 "checkup_examination_Interrupt_5",
                                 "checkup_examination_Interrupt_6"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "checkup_examination_Interrupt_7",
-                                "checkup_examination_Interrupt_8"
-                            ]
                         }
                     ]
                 }
@@ -467,6 +458,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "checkup_examination_Join_1",
@@ -482,18 +476,6 @@
                                 "checkup_examination_Join_5",
                                 "checkup_examination_Join_6"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "checkup_examination_Join_7",
-                                "checkup_examination_Join_8"
-                            ]
                         }
                     ]
                 }
@@ -507,6 +489,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -526,19 +509,6 @@
                                 "checkup_examination_JoinFailed_4",
                                 "checkup_examination_JoinFailed_5",
                                 "checkup_examination_JoinFailed_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "requireEPSuccess": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "checkup_examination_JoinFailed_7",
-                                "checkup_examination_JoinFailed_8"
                             ]
                         }
                     ]
@@ -665,12 +635,6 @@
                 "checkup_examination_20": "\"已经结束了吗？\" $self$站起身活动了一下肩膀，神情轻松。",
                 "checkup_examination_Join_Refused_4": "\"行，那我等会儿再来。\" $self$说完便退出了检查室。",
                 "checkup_examination_Join_Refused_5": "$self$点点头：\"知道了，你们先忙，我不打扰了。\"",
-                "checkup_examination_Interrupt_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
-                "checkup_examination_Interrupt_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
-                "checkup_examination_Join_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
-                "checkup_examination_Join_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
-                "checkup_examination_JoinFailed_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
-                "checkup_examination_JoinFailed_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
                 "checkup_examination_Joined_4": "$self$走进检查区站好：\"我也过来一起做个检查。\"",
                 "checkup_examination_Joined_5": "\"算我一个吧。\" $self$说着在旁边找了个位置。",
                 "checkup_examination_Ongoing_8": "(unimplemented)",

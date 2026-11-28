@@ -16,6 +16,7 @@ public class ExperienceClass
     public List<string> RequiredOwnerTags = new List<string>();
     public List<string> ExcludeOwnerTags = new List<string>();
     public List<string> RequiredCOMTags = new List<string>();
+    public List<string> RequiredAnyCOMTags = new List<string>();
     public List<string> ExcludeCOMTags = new List<string>();
 }
 

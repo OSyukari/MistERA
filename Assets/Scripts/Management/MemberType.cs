@@ -247,6 +247,8 @@ public class MemberType
     /// has an outfit for the key). Its key is ignored - OutfitUtility.MemberTypeKey sets it. Inherited like any field.
     /// </summary>
     public OutfitSet outfit = null;
+    /// <summary>Requirements for player-selected uniforms. Inherited independently of the shared outfit key.</summary>
+    public OutfitRequirements wardrobeRequirements = null;
 
     [JsonIgnore] bool _ownsOutfit = false;
 

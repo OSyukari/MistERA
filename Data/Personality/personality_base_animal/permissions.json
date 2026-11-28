@@ -1,0 +1,14 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_base_animal",
+                "Entry": {
+                    "ID": "permission_animal_body_contact_Granted",
+                    "variants": [ { "responses": [ "%%permission_animal_body_contact_consent%%" ] } ],
+                    "template": "response"
+                }
+            }
+        ]
+    }
+}

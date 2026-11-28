@@ -134,6 +134,7 @@ public static partial class RecreationUtility
         if (!definition.AllowsAdvance(ahead)) return "AllowsAdvance(" + ahead + ")";
         if (!CooldownAllows(f, day, key, definition.minDaysBetween, incoming)) return "Cooldown(" + key + ")";
         if (!IsEligible(f.Owner, definition)) return "eligibility";
+        if (f.Owner.RefID == 0 && !WardrobeAllows(f.Owner, venue, definition, day)) return "wardrobe";
         if (!FacilityAvailable(venue, definition)) return "FacilityAvailable";
         if (HasPendingReservation(f, key, null, incoming)) return "HasPendingReservation(" + key + ")";
         if (!DailyMainTypeAllows(f, day, definition, incoming: incoming)) return "DailyMainType(" + definition.mainTypeTag + ")";

@@ -55,6 +55,9 @@ public class OutfitPiece
 public class OutfitSet
 {
     public string key = "";
+    public string name = "";
+    /// <summary>Player edits are checked for fit and personality coverage; untouched data outfits are trusted.</summary>
+    public bool playerEdited = false;
 
     string _cache_displayname = null;
     [JsonIgnore]
@@ -62,7 +65,7 @@ public class OutfitSet
     {
         get
         {
-            if (_cache_displayname == null) _cache_displayname = OutfitUtility.KeyDisplayName(key);
+            if (_cache_displayname == null) _cache_displayname = string.IsNullOrEmpty(name) ? OutfitUtility.KeyDisplayName(key) : name;
             return _cache_displayname;
         }
     }
@@ -150,8 +153,7 @@ public class OutfitSet
     /// </summary>
     public OutfitSet Resolve(List<string> tags, out string signature)
     {
-        var result = Clone();
-        result.variants.Clear();
+        var result = Clone(includeVariants: false);
         var matched = new List<int>();
         var usedGroups = new HashSet<string>();
         if (variants != null)
@@ -181,10 +183,14 @@ public class OutfitSet
         get { return (pieces == null || pieces.Count == 0) && !overrideSkin && !overrideInner && !overrideOuter; }
     }
 
-    public OutfitSet Clone()
+    public OutfitSet Clone() => Clone(includeVariants: true);
+
+    OutfitSet Clone(bool includeVariants)
     {
         var copy = new OutfitSet();
         copy.key = key;
+        copy.name = name;
+        copy.playerEdited = playerEdited;
         if (pieces != null) foreach (var p in pieces) if (p != null) copy.pieces.Add(p.Clone());
         copy.overrideSkin = overrideSkin;
         copy.overrideInner = overrideInner;
@@ -194,7 +200,7 @@ public class OutfitSet
         if (restKeepLayers != null) copy.restKeepLayers.AddRange(restKeepLayers);
         copy.hairstyleOverride = hairstyleOverride?.Clone();
         if (bodyTraitOverrides != null) copy.bodyTraitOverrides.AddRange(bodyTraitOverrides);
-        if (variants != null) foreach (var v in variants) if (v != null) copy.variants.Add(v.Clone());
+        if (includeVariants && variants != null) foreach (var v in variants) if (v != null) copy.variants.Add(v.Clone());
         return copy;
     }
 }
@@ -314,6 +320,7 @@ public static class OutfitUtility
         factionID = "";
         id = key ?? "";
         if (string.IsNullOrEmpty(key)) return OutfitKeyKind.None;
+        if (key.StartsWith(Character_Wardrobe.PoolPrefix, StringComparison.Ordinal)) return OutfitKeyKind.Generic;
         if (key.StartsWith("@party:"))
         {
             id = key.Substring("@party:".Length);
@@ -340,6 +347,7 @@ public static class OutfitUtility
     /// <summary> display name of a wardrobe key: "faction - type / activity" for faction keys, else the localized key </summary>
     public static string KeyDisplayName(string key)
     {
+        if (key != null && key.StartsWith(Character_Wardrobe.PoolPrefix, StringComparison.Ordinal)) return "Unclassified outfit";
         var kind = ParseKey(key, out var factionID, out var id);
         if (kind == OutfitKeyKind.MemberType || kind == OutfitKeyKind.Activity)
             return $"{LocalizeDictionary.QueryThenParse(factionID)} - {LocalizeDictionary.QueryThenParse(id)}";
@@ -349,18 +357,19 @@ public static class OutfitUtility
     /// <summary>
     /// Context tags outfit variants match against: today's holiday and season tags of the character's world - the world
     /// of the faction owning the current room (a party's room: its owner faction), else of the priority home, else the
-    /// first loaded world. The only place that knows where outfit tags come from.
+    /// first loaded world. Prospective selection may specify the destination venue and absolute day instead.
+    /// The only place that knows where outfit tags come from.
     /// </summary>
-    public static void GetContextTags(Character_Trainable c, List<string> result)
+    public static void GetContextTags(Character_Trainable c, List<string> result, Manageable venue = null, int day = -1)
     {
         if (result == null) return;
         var campaign = scr_System_CampaignManager.current;
         if (c == null || campaign == null) return;
 
-        string worldID = "";
+        string worldID = venue != null ? Manageable.ResolveWorldID(venue) : "";
         var locale = c.FactionManager?.CurrentLocaleFaction;
         Manageable faction = locale is Manageable_Party party ? party.OwnerFaction : locale?.getLocaleFaction as Manageable;
-        if (faction != null) worldID = Manageable.ResolveWorldID(faction);
+        if (string.IsNullOrEmpty(worldID) && faction != null) worldID = Manageable.ResolveWorldID(faction);
         if (string.IsNullOrEmpty(worldID))
         {
             var homes = c.FactionManager?.HomeFactions;
@@ -369,10 +378,52 @@ public static class OutfitUtility
         if (string.IsNullOrEmpty(worldID) && campaign.currentWorldPlanIDs != null && campaign.currentWorldPlanIDs.Count > 0)
             worldID = campaign.currentWorldPlanIDs[0];
 
-        var snap = HolidaySeasonSystem.GetTracker(worldID);
+        var time = scr_System_Time.current;
+        int offset = day >= 0 && time != null ? day - time.getAbsoluteDay() : 0;
+        var snap = offset == 0 ? HolidaySeasonSystem.GetTracker(worldID)
+            : HolidaySeasonSystem.GetSnapshot(worldID, time.getCurrentTime().Date.AddDays(offset));
         if (snap == null) return;
         result.AddRange(snap.holidayTags);
         result.AddRange(snap.seasonTags);
+    }
+
+    public const string AppearanceTagPrefix = "appearance_";
+    public const string GenderTagPrefix = "gender_";
+
+    /// <summary>
+    /// Static tags used for dress-code / defaultDressCode matching: ActorKeywords (template/race/race-template tags),
+    /// prefixed appearance tag ("appearance_female", "appearance_male", "appearance_ambiguous", "appearance_inhuman"),
+    /// and prefixed gender tags from CentralControl ("gender_male", "gender_female", "gender_ambi", "gender_human", "gender_animal", ...).
+    /// Excludes transient runtime states (sleeping, timestop, etc.) so dress-code resolution can be cached cleanly.
+    /// </summary>
+    public static void GetDressCodeTags(Character_Trainable c, List<string> result)
+    {
+        if (result == null || c == null) return;
+        var keywords = c.ActorKeywords;
+        if (keywords != null)
+        {
+            for (int i = 0; i < keywords.Count; i++)
+            {
+                var kw = keywords[i];
+                if (!string.IsNullOrEmpty(kw) && !result.Contains(kw)) result.Add(kw);
+            }
+        }
+        string appearanceTag = AppearanceTagPrefix + c.Appearance.ToString().ToLowerInvariant();
+        if (!result.Contains(appearanceTag)) result.Add(appearanceTag);
+
+        var control = scr_System_CentralControl.current;
+        if (control != null)
+        {
+            var genders = control.GetGender(c);
+            if (genders != null)
+            {
+                for (int i = 0; i < genders.Count; i++)
+                {
+                    string genderTag = GenderTagPrefix + genders[i].ToString().ToLowerInvariant();
+                    if (!result.Contains(genderTag)) result.Add(genderTag);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -406,31 +457,33 @@ public static class OutfitUtility
     /// A piece needs a known base item with an equippable component and no per-instance state
     /// (Item_Instance.HasInstanceState), so baseID + nameOverwrite fully describe it.
     /// </summary>
-    public static bool CanBePiece(OutfitPiece piece, out string reason)
+    public static bool CanBePiece(OutfitPiece piece, out string reason) => CreatePiece(piece, out reason) != null;
+
+    internal static Item_Instance CreatePiece(OutfitPiece piece, out string reason)
     {
         reason = "";
         if (piece == null || string.IsNullOrEmpty(piece.baseID))
         {
             reason = "no base id";
-            return false;
+            return null;
         }
         if (scr_System_Serializer.current.GetByNameOrID_Item_Base(piece.baseID) == null)
         {
             reason = $"base item [{piece.baseID}] not found";
-            return false;
+            return null;
         }
         var probe = new Item_Instance(piece.baseID, piece.nameOverwrite);
         if (probe.Comp_Equippable == null)
         {
             reason = $"[{piece.baseID}] is not equippable";
-            return false;
+            return null;
         }
         if (probe.HasInstanceState)
         {
             reason = $"[{piece.baseID}] keeps per-instance state";
-            return false;
+            return null;
         }
-        return true;
+        return probe;
     }
 
     public static readonly BodyEquipLayer[] AllLayers = { BodyEquipLayer.Skin, BodyEquipLayer.Inner, BodyEquipLayer.Outer };
@@ -474,12 +527,12 @@ public static class OutfitUtility
     /// <summary> unregistered item for a piece, carrying the virtual slot id as its RefID; null if the piece is invalid </summary>
     public static Item_Instance BuildVirtualItem(OutfitPiece piece, int virtualID)
     {
-        if (!CanBePiece(piece, out var reason))
+        var item = CreatePiece(piece, out var reason);
+        if (item == null)
         {
             Debug.LogWarning($"OutfitUtility: outfit piece skipped, {reason}");
             return null;
         }
-        var item = new Item_Instance(piece.baseID, piece.nameOverwrite);
         item.RegisterItem(virtualID);
         return item;
     }

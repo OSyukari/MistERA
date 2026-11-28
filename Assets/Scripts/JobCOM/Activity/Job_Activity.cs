@@ -23,6 +23,8 @@ public class ActivityParticipant
     public ActivityParticipantState state = ActivityParticipantState.Expected;
     /// <summary>Not of the instance's attending set (the player walking in and starting their wait command) - never dropped by SyncParticipants.</summary>
     public bool walkIn = false;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    internal OutfitSet walkInOutfit;
     /// <summary>This participant's entranceFee was charged (RecreationBooking.entranceFeeCharged is the booked ones' own guard).</summary>
     public bool feeCharged = false;
     /// <summary>Was in the gather room at the launch / failure (the outcome event's "waited" target).</summary>
@@ -445,6 +447,19 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
     {
         if (!CanJoin(c, room, true, out _)) return false;
         if (HoldWalkInFee(c, via)) return false;
+        bool confirmed = IsConfirmedAttendee(c);
+        OutfitSet outfit = null;
+        if (c.RefID != 0 && !confirmed)
+        {
+            var venue = Venue;
+            var activity = VisitActivity;
+            int day = scr_System_Time.current.getAbsoluteDay();
+            bool ready = c.Wardrobe != null
+                ? c.Wardrobe.TryActivityOutfit(venue, activity, venue?.GetMemberType(c), day, out outfit, out _,
+                    visitStart: WardrobeVisitStart)
+                : RecreationUtility.WardrobeAllows(c, venue, activity, day);
+            if (!ready) return false;
+        }
         var p = new PendingArrival() { kind = ArrivalKind.Join, chara = c, roomRef = room.RefID, via = via };
         p.created = FindParticipant(c.RefID) == null;
         var rec = p.rec = RecordFor(c);
@@ -453,7 +468,8 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
         p.oldWalkIn = rec.walkIn; p.oldLate = rec.arrivedLate; p.oldMandatory = rec.mandatory;
         p.oldRole = rec.roleID;
 
-        bool confirmed = p.confirmed = IsConfirmedAttendee(c);
+        p.confirmed = confirmed;
+        p.walkInOutfit = outfit;
         rec.walkIn = !confirmed;
         if (!confirmed) { rec.mandatory = false; rec.roleID = ""; rec.walkInGroups = WalkInGroupsOf(via, c.RefID); }
         // Set before the join event: events may execute immediately and re-enter through callbacks.
@@ -471,6 +487,11 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
     {
         var c = p.chara;
         var rec = p.rec;
+        if (p.walkInOutfit != null)
+        {
+            rec.walkInOutfit = p.walkInOutfit;
+            c.Wardrobe?.NoteWalkInOutfit(RefID);
+        }
         var booking = BookingOf(c);
         RecreationUtility.OnActivityArrived(c, booking);
         RecreationUtility.OnActivityAttended(c, booking);
@@ -665,6 +686,19 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
         }
         return null;
     }
+
+    internal OutfitSet GetWalkInOutfit(Character_Trainable c, out Manageable venue, out int start)
+    {
+        venue = null;
+        start = 0;
+        var outfit = FindParticipant(c.RefID)?.walkInOutfit;
+        if (outfit == null || !IsCurrentParticipant(c)) return null;
+        venue = Venue;
+        start = WardrobeVisitStart;
+        return outfit;
+    }
+
+    int WardrobeVisitStart => key.isSession ? RecreationBooking.AbsoluteHour(key.day, key.startHour) : key.absStart;
 
     // ---------------- invite groups (Docs/Activities/Plan_GroupInvitations.md) ---------------- //
 
@@ -1132,26 +1166,30 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
         var room = ParentRoom;
         if (room == null) return;
         var playerRec = FindParticipant(0);
-        if (playerRec != null && playerRec.state == ActivityParticipantState.Present && !PlayerArrivedAt(room))
-            playerRec.state = ActivityParticipantState.Expected;
+        if (playerRec?.state == ActivityParticipantState.Present)
+        {
+            if (!PlayerArrivedAt(room) || !PlayerWardrobeAllows()) playerRec.state = ActivityParticipantState.Expected;
+        }
+        else if (playerRec?.state == ActivityParticipantState.Expected && !playerRec.walkIn
+            && MinutesSinceStart >= 0 && PlayerArrivedAt(room) && PlayerWardrobeAllows())
+        {
+            playerRec.state = ActivityParticipantState.Present;
+            var player = scr_System_CampaignManager.current.Player;
+            RecreationUtility.OnActivityArrived(player, BookingOf(player));
+        }
         foreach (var rec in participants)
         {
-            if (rec == null || rec.state != ActivityParticipantState.Expected) continue;
-            if (rec.charaRef == 0)
-            {
-                if (rec.walkIn || MinutesSinceStart < 0 || !PlayerArrivedAt(room)) continue;
-                rec.state = ActivityParticipantState.Present;
-                RecreationUtility.OnActivityArrived(scr_System_CampaignManager.current.Player, BookingOf(scr_System_CampaignManager.current.Player));
-                continue;
-            }
+            if (rec == null || rec.state != ActivityParticipantState.Expected || rec.charaRef == 0) continue;
             var chara = scr_System_CampaignManager.current.FindInstanceByID(rec.charaRef);
             if (chara == null || !chara.canAct || chara.isSleeping) continue;
             var charaRoom = scr_System_CampaignManager.current.GetCharaRoomInstance(rec.charaRef);
             if (charaRoom != null && charaRoom.RefID == room.RefID)
             {
+                var booking = BookingOf(chara);
+                if (booking?.wardrobePrepared != true) continue;
                 rec.state = ActivityParticipantState.Present;
                 // arrived: the session's no-show check reads it
-                RecreationUtility.OnActivityArrived(chara, BookingOf(chara));
+                RecreationUtility.OnActivityArrived(chara, booking);
             }
         }
     }
@@ -1410,6 +1448,8 @@ public partial class Job_Activity : Job, I_RequireSpecialTracker, I_PlayerJoinab
             for (int i = 0; i < participants.Count; i++)
                 if (participants[i].state == ActivityParticipantState.Present) present.Add(participants[i]);
             if (!CanLaunchReserved(present)) { Fail("reserved room admission failed"); return; }
+            if (present.Exists(p => p.charaRef == 0) && !PlayerWardrobeAllows())
+            { Fail("activity wardrobe requirements failed"); return; }
             for (int i = 0; i < present.Count; i++)
                 if (!CheckInOvernight(present[i])) { Fail("overnight check-in failed"); return; }
         }

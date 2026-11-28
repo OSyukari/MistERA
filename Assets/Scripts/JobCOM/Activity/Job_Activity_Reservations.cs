@@ -104,9 +104,19 @@ public partial class Job_Activity
         return false;
     }
 
+    bool PlayerWardrobeAllows()
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        return RecreationUtility.WardrobeAllows(player, Venue, VisitActivity, scr_System_Time.current.getAbsoluteDay(),
+            BookingOf(player)?.MemberType);
+    }
+
     string AdmissionRefusal(Character_Trainable c)
     {
         var activity = VisitActivity;
+        var booking = BookingOf(c);
+        if (c?.RefID == 0 ? !PlayerWardrobeAllows() : booking != null && !booking.wardrobePrepared)
+            return RecreationUtility.WardrobeRefusalKey;
         if (string.IsNullOrEmpty(activity?.reserveFurnitureTag)) return "";
         if (!ReservationRoomQualifies(ParentRoom, activity) || !VisitIsLive || phase == ActivityPhase.Failed) return RecreationUtility.FullyBookedKey;
         int count = 0;

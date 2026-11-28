@@ -187,6 +187,16 @@
                     "activities": [
                         {
                             "ID": "gym",
+                            "outfit": {
+                                "overrideSkin": true, "overrideInner": true, "overrideOuter": true,
+                                "pieces": [
+                                    { "baseID": "clothing_jp_dkn_racerback_tank" },
+                                    { "baseID": "clothing_jp_dkn_running_shorts" }
+                                ]
+                            },
+                            "wardrobeRequirements": {
+                                "slotTags": { "Torso": ["sportswear"], "Lower": ["sportswear"] }
+                            },
                             "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                             "mainTypeTag": "exercise", "secondaryTags": ["indoor", "strength", "cardio"],
                             "typeID": "gym_training", "allowMultipleInstances": true, "mergeWithSame": true,
@@ -224,6 +234,33 @@
                         },
                         {
                             "ID": "swimming",
+                            "outfit": {
+                                "overrideSkin": true, "overrideInner": true, "overrideOuter": true,
+                                "pieces": [
+                                    { "baseID": "clothing_jp_dkn_swim_trunks" },
+                                    { "baseID": "clothing_jp_dkn_rash_guard" }
+                                ]
+                            },
+                            "wardrobeRequirements": {
+                                "conditionalRules": [
+                                    {
+                                        "ID": "swimming_female",
+                                        "priority": 20,
+                                        "requireTags_any": ["appearance_female", "appearance_ambiguous"],
+                                        "excludeTags_any": ["animal", "appearance_inhuman"],
+                                        "dressCodeID": "dresscode_swimwear_female",
+                                        "replaceBaseDressCode": true
+                                    },
+                                    {
+                                        "ID": "swimming_male",
+                                        "priority": 10,
+                                        "requireTags_all": ["appearance_male"],
+                                        "excludeTags_any": ["animal", "appearance_inhuman"],
+                                        "dressCodeID": "dresscode_swimwear_male",
+                                        "replaceBaseDressCode": true
+                                    }
+                                ]
+                            },
                             "trustRewardEligible": true, "provideAcceptanceBonus": 5, "activityMoodlet": { "stress": 1 },
                             "mainTypeTag": "exercise", "secondaryTags": ["indoor", "swimming", "cardio"],
                             "typeID": "swimming_training", "allowMultipleInstances": true, "mergeWithSame": true,

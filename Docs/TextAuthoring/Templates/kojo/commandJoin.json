@@ -22,6 +22,11 @@
     }
   ],
 
+  "_comment_required": "fallback: the role branch must be a fallback for that role with these fields. No awareness gate before the lookup (LogMessage_Join → JoinReaction): a receiver that can't act (asleep, unconscious …) fails a default receiver branch (requireSelfAction true) and would fall through to the generic fallback, written for an awake speaker. Its unaware lines go in speaker-status children of the receiver branch.",
+  "required": [
+    { "path": ["receiver"], "when": ["pair", "receiverUnaware"], "fallback": { "requireSelfAction": false }, "label": "受方兜底（受方无法行动时也成立）" }
+  ],
+
   "misplaced": [
     { "requirement": { "requireEPFailure": true }, "label": "加入被拒绝的分支", "moveTo": "_JoinFailed" }
   ]

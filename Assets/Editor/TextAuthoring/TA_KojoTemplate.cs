@@ -1046,7 +1046,9 @@ public static class TA_KojoTemplate
                     // per role: the speaker is that side, the listener the other one (solo: the doer side both ways)
                     bool selfUnaware = kv.Key == "receiver" ? cmd.receiverUnaware : cmd.doerUnaware;
                     bool partner = cmd.pair || (cmd.mutual && !cmd.allDoers);
-                    bool listenerUnaware = kv.Key == "doer" && partner ? cmd.receiverUnaware : kv.Key == "receiver" ? cmd.doerUnaware : cmd.doerUnaware;
+                    // listenerNeverSelf: the listener is the joiner / newcomer, who is acting - not the other side
+                    bool listenerUnaware = tpl.listenerNeverSelf ? false
+                        : kv.Key == "doer" && partner ? cmd.receiverUnaware : kv.Key == "receiver" ? cmd.doerUnaware : cmd.doerUnaware;
                     var forRole = (JObject)tpl.fallbackRequirement.DeepClone();
                     if (!selfUnaware) forRole.Remove("requireSelfAction");
                     if (!listenerUnaware) forRole.Remove("requireTargetAction");

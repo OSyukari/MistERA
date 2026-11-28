@@ -10,6 +10,10 @@
                 "Permission_Request_reply": "$kojo_reply$",
                 "Permission_Request_refused": "$person.name$ did not agree to your request.",
 
+                "permission_animal_body_contact": "Ask for: %%permission_animal_body_contact_displayName%%",
+                "permission_animal_body_contact_question": "Ask $person.name$ for permission: %%permission_animal_body_contact_displayName%%?",
+                "permission_animal_body_contact_granted": "$person.name$ gave you permission: %%permission_animal_body_contact_displayName%%$permission_grant_type$.",
+
                 "permission_intimacy_low": "Ask for: %%permission_intimacy_low_displayName%%",
                 "permission_intimacy_low_question_plain": "Ask $person.name$ for permission: \"%%permission_intimacy_low_displayName%%\"?",
                 "permission_intimacy_low_question": "$kojo_ask$\n\n%%permission_intimacy_low_question_plain%%",

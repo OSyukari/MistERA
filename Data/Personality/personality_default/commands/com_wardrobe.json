@@ -3027,6 +3027,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -3046,20 +3047,6 @@
                                 "com_undress_inner_JoinFailed_7",
                                 "com_undress_inner_JoinFailed_8",
                                 "com_undress_inner_JoinFailed_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_undress_inner_JoinFailed_4",
-                                "com_undress_inner_JoinFailed_5",
-                                "com_undress_inner_JoinFailed_6"
                             ]
                         }
                     ]
@@ -3160,6 +3147,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_redress_skin_Interrupt_4",
@@ -3175,19 +3165,6 @@
                                 "com_redress_skin_Interrupt_2",
                                 "com_redress_skin_Interrupt_3"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_redress_skin_Interrupt_7",
-                                "com_redress_skin_Interrupt_8",
-                                "com_redress_skin_Interrupt_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3200,6 +3177,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_redress_outer_Interrupt_7",
@@ -3215,19 +3195,6 @@
                                 "com_redress_outer_Interrupt_5",
                                 "com_redress_outer_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_redress_outer_Interrupt_1",
-                                "com_redress_outer_Interrupt_2",
-                                "com_redress_outer_Interrupt_3"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3241,6 +3208,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -3261,20 +3229,6 @@
                                 "com_redress_all_JoinFailed_2",
                                 "com_redress_all_JoinFailed_3"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_redress_all_JoinFailed_7",
-                                "com_redress_all_JoinFailed_8",
-                                "com_redress_all_JoinFailed_9"
-                            ]
                         }
                     ]
                 }
@@ -3287,6 +3241,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_undress_all_Interrupt_4",
@@ -3302,19 +3259,6 @@
                                 "com_undress_all_Interrupt_8",
                                 "com_undress_all_Interrupt_9"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_undress_all_Interrupt_1",
-                                "com_undress_all_Interrupt_2",
-                                "com_undress_all_Interrupt_3"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3327,6 +3271,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_redress_all_Interrupt_1",
@@ -3342,19 +3289,6 @@
                                 "com_redress_all_Interrupt_5",
                                 "com_redress_all_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_redress_all_Interrupt_7",
-                                "com_redress_all_Interrupt_8",
-                                "com_redress_all_Interrupt_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3541,6 +3475,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_redress_inner_Join_7",
@@ -3556,19 +3493,6 @@
                                 "com_redress_inner_Join_2",
                                 "com_redress_inner_Join_3"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_redress_inner_Join_4",
-                                "com_redress_inner_Join_5",
-                                "com_redress_inner_Join_6"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3582,6 +3506,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -3602,20 +3527,6 @@
                                 "com_redress_inner_JoinFailed_8",
                                 "com_redress_inner_JoinFailed_9"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_redress_inner_JoinFailed_1",
-                                "com_redress_inner_JoinFailed_2",
-                                "com_redress_inner_JoinFailed_3"
-                            ]
                         }
                     ]
                 }
@@ -3628,6 +3539,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_redress_all_Join_4",
@@ -3643,19 +3557,6 @@
                                 "com_redress_all_Join_2",
                                 "com_redress_all_Join_3"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_redress_all_Join_7",
-                                "com_redress_all_Join_8",
-                                "com_redress_all_Join_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3668,6 +3569,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_undress_skin_Interrupt_7",
@@ -3683,19 +3587,6 @@
                                 "com_undress_skin_Interrupt_5",
                                 "com_undress_skin_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_undress_skin_Interrupt_1",
-                                "com_undress_skin_Interrupt_2",
-                                "com_undress_skin_Interrupt_3"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3708,6 +3599,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_undress_outer_Join_7",
@@ -3723,19 +3617,6 @@
                                 "com_undress_outer_Join_2",
                                 "com_undress_outer_Join_3"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_undress_outer_Join_4",
-                                "com_undress_outer_Join_5",
-                                "com_undress_outer_Join_6"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -3782,6 +3663,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -3801,20 +3683,6 @@
                                 "com_undress_skin_JoinFailed_7",
                                 "com_undress_skin_JoinFailed_8",
                                 "com_undress_skin_JoinFailed_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_undress_skin_JoinFailed_1",
-                                "com_undress_skin_JoinFailed_2",
-                                "com_undress_skin_JoinFailed_3"
                             ]
                         }
                     ]
@@ -4126,6 +3994,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -4145,20 +4014,6 @@
                                 "com_redress_skin_JoinFailed_4",
                                 "com_redress_skin_JoinFailed_5",
                                 "com_redress_skin_JoinFailed_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_redress_skin_JoinFailed_1",
-                                "com_redress_skin_JoinFailed_2",
-                                "com_redress_skin_JoinFailed_3"
                             ]
                         }
                     ]
@@ -4271,6 +4126,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_redress_outer_Join_1",
@@ -4286,19 +4144,6 @@
                                 "com_redress_outer_Join_8",
                                 "com_redress_outer_Join_9"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_redress_outer_Join_4",
-                                "com_redress_outer_Join_5",
-                                "com_redress_outer_Join_6"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -4311,6 +4156,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_redress_skin_Join_7",
@@ -4326,19 +4174,6 @@
                                 "com_redress_skin_Join_5",
                                 "com_redress_skin_Join_6"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_redress_skin_Join_1",
-                                "com_redress_skin_Join_2",
-                                "com_redress_skin_Join_3"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -4351,6 +4186,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_undress_outer_Interrupt_1",
@@ -4366,19 +4204,6 @@
                                 "com_undress_outer_Interrupt_5",
                                 "com_undress_outer_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_undress_outer_Interrupt_7",
-                                "com_undress_outer_Interrupt_8",
-                                "com_undress_outer_Interrupt_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -4392,6 +4217,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -4412,20 +4238,6 @@
                                 "com_redress_outer_JoinFailed_2",
                                 "com_redress_outer_JoinFailed_3"
                             ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_redress_outer_JoinFailed_4",
-                                "com_redress_outer_JoinFailed_5",
-                                "com_redress_outer_JoinFailed_6"
-                            ]
                         }
                     ]
                 }
@@ -4439,6 +4251,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -4458,20 +4271,6 @@
                                 "com_undress_all_JoinFailed_7",
                                 "com_undress_all_JoinFailed_8",
                                 "com_undress_all_JoinFailed_9"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_undress_all_JoinFailed_4",
-                                "com_undress_all_JoinFailed_5",
-                                "com_undress_all_JoinFailed_6"
                             ]
                         }
                     ]
@@ -4551,6 +4350,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_redress_inner_Interrupt_7",
@@ -4566,19 +4368,6 @@
                                 "com_redress_inner_Interrupt_5",
                                 "com_redress_inner_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_redress_inner_Interrupt_1",
-                                "com_redress_inner_Interrupt_2",
-                                "com_redress_inner_Interrupt_3"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -4678,6 +4467,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_undress_all_Join_7",
@@ -4693,19 +4485,6 @@
                                 "com_undress_all_Join_2",
                                 "com_undress_all_Join_3"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_undress_all_Join_4",
-                                "com_undress_all_Join_5",
-                                "com_undress_all_Join_6"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -4784,6 +4563,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_undress_inner_Join_1",
@@ -4799,19 +4581,6 @@
                                 "com_undress_inner_Join_8",
                                 "com_undress_inner_Join_9"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_undress_inner_Join_4",
-                                "com_undress_inner_Join_5",
-                                "com_undress_inner_Join_6"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -5044,6 +4813,7 @@
                         {
                             "requireSelfReceiver": true,
                             "requirement": {
+                                "requireSelfAction": false,
                                 "requireEPSuccess": false
                             },
                             "_comment": "受方 → 未能加入的人 ｜ 未能加入",
@@ -5063,20 +4833,6 @@
                                 "com_undress_outer_JoinFailed_4",
                                 "com_undress_outer_JoinFailed_5",
                                 "com_undress_outer_JoinFailed_6"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireEPSuccess": false,
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "原参与者 NPC → 未能加入的人 ｜ 未能加入",
-                            "responses": [
-                                "com_undress_outer_JoinFailed_1",
-                                "com_undress_outer_JoinFailed_2",
-                                "com_undress_outer_JoinFailed_3"
                             ]
                         }
                     ]
@@ -5123,6 +4879,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 加入者 ｜ 接受",
                             "responses": [
                                 "com_undress_skin_Join_7",
@@ -5138,19 +4897,6 @@
                                 "com_undress_skin_Join_2",
                                 "com_undress_skin_Join_3"
                             ]
-                        },
-                        {
-                            "_comment": "原参与者 NPC → 加入者 ｜ 接受",
-                            "responses": [
-                                "com_undress_skin_Join_4",
-                                "com_undress_skin_Join_5",
-                                "com_undress_skin_Join_6"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -5196,6 +4942,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_undress_inner_Interrupt_1",
@@ -5211,19 +4960,6 @@
                                 "com_undress_inner_Interrupt_5",
                                 "com_undress_inner_Interrupt_6"
                             ]
-                        },
-                        {
-                            "_comment": "当前动作中的 NPC → 新来的人 ｜ 接受",
-                            "responses": [
-                                "com_undress_inner_Interrupt_7",
-                                "com_undress_inner_Interrupt_8",
-                                "com_undress_inner_Interrupt_9"
-                            ],
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            }
                         }
                     ]
                 }
@@ -5440,18 +5176,12 @@
                 "com_redress_skin_Interrupt_1": "$self$停下手转身挡在前面，对门口的$target$说道：\"这会儿不方便，先在外面等。\"",
                 "com_redress_skin_Interrupt_2": "见$target$进来，$self$皱眉摆了摆手：\"怎么不敲门？先把门关上。\"",
                 "com_redress_skin_Interrupt_3": "$self$顺手示意$target$退后：\"等我们穿好衣服再说。\"",
-                "com_redress_outer_Interrupt_1": "$self$正把手臂穿进外衣袖口，见$target$进来便问了一句：\"找我有事？\"",
-                "com_redress_outer_Interrupt_2": "看见门口的$target$，$self$随手理平衣襟：\"刚穿外衣呢，稍等我一下。\"",
-                "com_redress_outer_Interrupt_3": "$self$朝$target$点点头：\"进来说吧，我这边马上穿好。\"",
                 "com_redress_all_JoinFailed_1": "$self$朝$target$摆摆手：\"这边人够多了，先别挤进来。\"",
                 "com_redress_all_JoinFailed_2": "\"等我们穿好再说，你先去忙别的吧。\" $self$简短地回了一句。",
                 "com_redress_all_JoinFailed_3": "$self$回头对$target$示意：\"很快穿好，不用再添人了。\"",
                 "com_redress_all_1": "$self$迷糊地睁开眼，低头发现自己全身上下已经穿戴整齐，愣了一下才看向$target$：\"……你帮我穿上的？\"",
                 "com_redress_all_2": "睡意刚散，$self$扯了扯身上整洁的衣角：\"谢谢，这样不会着凉了。\"",
                 "com_redress_all_3": "$self$揉了揉眼睛坐起身，后知后觉地说道：\"唔……我什么时候睡这么熟了。\"",
-                "com_undress_all_Interrupt_1": "$self$正脱到一半被撞见，慌忙抓起衣服挡住身前：\"呀！别进来！先出去！\"",
-                "com_undress_all_Interrupt_2": "看见门口的$target$，$self$从脸一直红到脖子根：\"……快把门关上！\"",
-                "com_undress_all_Interrupt_3": "$self$蹲下身躲在衣物后面，声音又急又羞：\"我在换衣服呢，别站在门口看！\"",
                 "com_undress_skin_Begin_4": "$self$被束缚着动弹不得，看着$target$伸向自己贴身衣物的手惊怒交加：\"别碰那里……！\"",
                 "com_undress_skin_Begin_5": "手腕被绑着挣不开，$self$拼命往后缩着身子，呼吸乱作一团：\"滚开！\"",
                 "com_undress_skin_Begin_6": "\"别脱……求你了……\" $self$挣不脱身上的束缚，眼眶发红地偏开视线。",
@@ -5494,18 +5224,12 @@
                 "com_redress_inner_Join_1": "$self$朝$target$抬了抬下巴：\"来吧，你也把衣服穿上。\"",
                 "com_redress_inner_Join_2": "\"行啊，一起穿好。\" $self$说着往旁边让了半步。",
                 "com_redress_inner_Join_3": "$self$点头示意：\"衣服在那边，自己拿了穿吧。\"",
-                "com_redress_inner_JoinFailed_1": "$self$朝$target$摇摇头：\"我这儿很快就好，不用一起了。\"",
-                "com_redress_inner_JoinFailed_2": "\"这里地方不大，你先在外面等会儿吧。\" $self$对$target$说道。",
-                "com_redress_inner_JoinFailed_3": "$self$理好衣领对$target$说：\"这会儿就不添人了，有事待会儿聊。\"",
                 "com_undress_all_Refuse_4": "$self$猛地惊醒，一把拍开$target$的手抓紧衣服：\"滚开！趁我睡着想干什么！\"",
                 "com_undress_all_Refuse_5": "\"别碰我！\" $self$脸色骤冷，护住身体往后缩去。",
                 "com_undress_all_Refuse_6": "睡意瞬间消散，$self$拉紧衣襟瞪着$target$：\"你还要不要脸！\"",
                 "com_redress_all_Join_1": "$self$朝$target$抬了抬下巴：\"来吧，你也把衣服穿上。\"",
                 "com_redress_all_Join_2": "\"行啊，一起穿好。\" $self$说着往旁边让了半步。",
                 "com_redress_all_Join_3": "$self$点头示意：\"衣服在那边，自己拿了穿吧。\"",
-                "com_undress_skin_Interrupt_1": "$self$正脱到一半被撞见，慌忙抓起贴身衣物挡住身前：\"呀！别进来！先出去！\"",
-                "com_undress_skin_Interrupt_2": "看见门口的$target$，$self$从脸一直红到脖子根：\"……快把门关上！\"",
-                "com_undress_skin_Interrupt_3": "$self$蹲下身躲在衣物后面，声音又急又羞：\"我在换衣服呢，别站在门口看！\"",
                 "com_redress_outer_4": "外衣穿戴整齐后，$self$依然凝固在原地，脸上仍是静止前的神情。",
                 "com_redress_outer_5": "停滞的时间里，$self$连一根睫毛都没有动，对穿好衣服全无知觉。",
                 "com_redress_outer_6": "$self$如同一尊静止的塑像，衣摆垂落却毫无反应。",
@@ -5533,9 +5257,6 @@
                 "com_undress_inner_Join_Refused_1": "\"啊……好吧，那我不打扰你了。\" $self$松开衣角，有些尴尬地退开。",
                 "com_undress_inner_Join_Refused_2": "$self$点点头：\"知道了，那我还是穿着吧。\"",
                 "com_undress_inner_Join_Refused_3": "\"行，那我先出去等你。\" $self$说完便转身离开。",
-                "com_undress_skin_JoinFailed_1": "$self$抓紧贴身衣物挡住身前，对$target$说：\"别进来，等我这边弄完再说。\"",
-                "com_undress_skin_JoinFailed_2": "\"抱歉，这会儿不太方便一起。\" $self$红着脸朝$target$摇摇头。",
-                "com_undress_skin_JoinFailed_3": "$self$有些局促地挥挥手：\"先在外面等会儿吧。\"",
                 "com_undress_skin_Join_Refused_1": "\"唔……好吧，那我不脱了。\" $self$松开手，有些失落地往后退了半步。",
                 "com_undress_skin_Join_Refused_2": "$self$点点头：\"知道了，那我还是留着这件吧。\"",
                 "com_undress_skin_Join_Refused_3": "\"行，那我先不凑过来了。\" $self$说着转身走开。",
@@ -5593,9 +5314,6 @@
                 "com_redress_inner_Joined_1": "\"好，那我也把衣服穿上。\" $self$点点头，拿过衣服套上身。",
                 "com_redress_inner_Joined_2": "$self$应了一声：\"一起穿戴整齐再说吧。\"",
                 "com_redress_inner_Joined_3": "\"行，那我动作快点。\" $self$说着便动起手来。",
-                "com_redress_skin_JoinFailed_1": "$self$朝$target$摇摇头：\"我这儿很快就好，不用一起了。\"",
-                "com_redress_skin_JoinFailed_2": "\"这里地方不大，你先在外面等会儿吧。\" $self$红着脸对$target$说道。",
-                "com_redress_skin_JoinFailed_3": "$self$理好贴身衣物对$target$说：\"这会儿就不添人了，有事待会儿聊。\"",
                 "com_redress_inner_Tryjoin_1": "$self$拿起自己的衣服走到$target$旁边：\"我也一起穿好衣服吧？\"",
                 "com_redress_inner_Tryjoin_2": "\"差不多该把衣服穿回去了，算我一个？\" $self$朝$target$示意了一下。",
                 "com_redress_inner_Tryjoin_3": "$self$看向正在穿衣的$target$：\"我也一块儿穿上？\"",
@@ -5617,18 +5335,12 @@
                 "com_redress_all_4": "全部衣物穿好后，$self$低头理平衣摆，对$target$松了口气：\"总算穿戴整齐了。\"",
                 "com_redress_all_5": "\"谢谢，这样暖和多了。\" $self$扣好最后一颗扣子，神情舒展下来。",
                 "com_redress_all_6": "$self$扯了扯袖口和领子确认合身，朝$target$点点头。",
-                "com_redress_skin_Join_1": "$self$脸颊微红地朝$target$点点头：\"你也一起穿？来吧。\"",
-                "com_redress_skin_Join_2": "\"一起穿戴好再聊吧。\" $self$对$target$笑笑。",
-                "com_redress_skin_Join_3": "$self$往旁边挪了挪：\"来，这边地方够。\"",
                 "com_undress_outer_Interrupt_1": "见$target$进来，$self$下意识拢住半敞的外衣，神色有些局促：\"那个……先等一下再进来行吗？\"",
                 "com_undress_outer_Interrupt_2": "$self$耳根一热，连忙把滑到肩下的外衣往回拉：\"别、别误会，只是有点热……\"",
                 "com_undress_outer_Interrupt_3": "$self$尴尬地朝门口的$target$摆了摆手：\"咳，找我有事吗？稍等我穿好。\"",
                 "com_redress_outer_JoinFailed_1": "$self$朝$target$摆摆手：\"这边人够多了，先别挤进来。\"",
                 "com_redress_outer_JoinFailed_2": "\"等我们穿好再说，你先去忙别的吧。\" $self$简短地回了一句。",
                 "com_redress_outer_JoinFailed_3": "$self$回头对$target$示意：\"外衣很快穿好，不用再添人了。\"",
-                "com_redress_skin_Interrupt_7": "$self$正套着贴身衣物听见动静，慌忙抓起衣服挡住身前：\"呀！先别进来！\"",
-                "com_redress_skin_Interrupt_8": "看见门口的$target$，$self$耳根红透地转过身：\"请、请先在外头等一下！\"",
-                "com_redress_skin_Interrupt_9": "$self$匆忙拉好贴身衣物，声音发紧地对$target$喊：\"把门带上啦！\"",
                 "com_undress_outer_Begin_7": "$self$沉沉睡着，外衣被人解开时只是无意识地蹙了下眉，并没有醒来。",
                 "com_undress_outer_Begin_8": "睡梦中的$self$呼吸平稳，肩头被轻轻抬起时也只是含糊地哼了半声。",
                 "com_undress_outer_Begin_9": "$self$合着眼一动不动，任由$target$动手褪去外衣。",
@@ -5650,9 +5362,6 @@
                 "com_redress_skin_Tryjoin_1": "$self$拿起自己的贴身衣物走到$target$旁边：\"我也……一起穿上？\"",
                 "com_redress_skin_Tryjoin_2": "\"差不多该穿好衣服了，算我一个？\" $self$朝$target$示意了一下。",
                 "com_redress_skin_Tryjoin_3": "$self$红着耳根看向$target$：\"我也一块儿换上贴身衣物吧？\"",
-                "com_redress_inner_Interrupt_1": "$self$正穿到一半见$target$进来，连忙把衣服拢好：\"呀……等我先穿完再说话！\"",
-                "com_redress_inner_Interrupt_2": "看见门口的$target$，$self$脸微红地停下动作：\"请、请先在外头等一下，马上穿好。\"",
-                "com_redress_inner_Interrupt_3": "$self$顺手整理好领口，朝$target$点点头：\"找我有事？\"",
                 "com_redress_skin_4": "贴身衣物穿戴整齐后，$self$依然凝固在原地，脸上仍是静止前的神情。",
                 "com_redress_skin_5": "停滞的时间里，$self$连一根睫毛都没有动，对重新穿上衣物全无知觉。",
                 "com_redress_skin_6": "$self$如同一尊静止的塑像，贴身布料服帖地裹在身上却毫无反应。",
@@ -5686,9 +5395,6 @@
                 "com_redress_skin_Refuse_7": "$self$摇了摇头：\"我现在还不想穿这个。\"",
                 "com_redress_skin_Refuse_8": "\"怎么刚脱完又让我穿，先不穿了。\" $self$摆了摆手。",
                 "com_redress_skin_Refuse_9": "$self$干脆地回绝了$target$：\"我自己决定什么时候穿。\"",
-                "com_redress_outer_Join_4": "$self$朝$target$点点头：\"你也一起穿外衣？来吧。\"",
-                "com_redress_outer_Join_5": "\"一起收拾好外衣再出门吧。\" $self$对$target$笑笑。",
-                "com_redress_outer_Join_6": "$self$往旁边挪了挪：\"来，这边地方够。\"",
                 "com_redress_skin_7": "$self$迷糊地睁开眼，发现贴身衣物已经穿好了，耳根一热看向$target$：\"……你帮我穿上的？\"",
                 "com_redress_skin_8": "睡意散去后，$self$下意识按了按身上的贴身衣物：\"谢谢，这样好多了。\"",
                 "com_redress_skin_9": "$self$揉了揉眼睛坐起身，后知后觉地低声嘀咕：\"唔……居然睡得一点感觉都没有。\"",
@@ -5707,21 +5413,12 @@
                 "com_undress_all_Begin_7": "$self$沉沉睡着，身上的衣物被一件件解开时只是含糊地哼了一声，并未醒来。",
                 "com_undress_all_Begin_8": "睡梦中的$self$毫无防备，任由$target$动手褪去全身衣物。",
                 "com_undress_all_Begin_9": "$self$合着眼翻了个身，对正在脱自己衣服的$target$全无察觉。",
-                "com_redress_all_Interrupt_7": "$self$正穿到一半见$target$进来，连忙把衣服拢好：\"呀……等我先穿完再说话！\"",
-                "com_redress_all_Interrupt_8": "看见门口的$target$，$self$脸微红地停下动作：\"请、请先在外头等一下，马上穿好。\"",
-                "com_redress_all_Interrupt_9": "$self$顺手整理好领口，朝$target$点点头：\"找我有事？\"",
-                "com_undress_all_Join_4": "$self$脸颊发烫地往旁边让了让：\"你也一起？那……随便找地方放衣服吧。\"",
-                "com_undress_all_Join_5": "\"来吧，反正我这也快脱完了。\" $self$朝$target$笑了笑。",
-                "com_undress_all_Join_6": "$self$点点头：\"既然一起，那就都脱干净吧。\"",
                 "com_redress_inner_JoinFailed_4": "$self$理好衣襟，对$target$说：\"这边地方小，你等会儿再进来穿吧。\"",
                 "com_redress_inner_JoinFailed_5": "\"现在不太方便挤一块儿，抱歉啊。\" $self$朝$target$摆摆手。",
                 "com_redress_inner_JoinFailed_6": "$self$回头看了$target$一眼：\"马上就好，你先在外面等一下。\"",
                 "com_redress_inner_Refuse_4": "$self$猛地惊醒过来，一把推开$target$的手：\"干什么呢！趁我睡着动手动脚的！\"",
                 "com_redress_inner_Refuse_5": "\"别碰我！\" $self$瞬间清醒，抓过衣服护在胸前往后退开。",
                 "com_redress_inner_Refuse_6": "$self$皱着眉坐起身瞪着$target$：\"要穿衣服不能先叫醒我吗？\"",
-                "com_undress_outer_Join_4": "$self$把刚脱下的外衣往旁边挪了挪：\"你也嫌热？一起脱了吧。\"",
-                "com_undress_outer_Join_5": "\"来吧，外衣放这边椅子上就行。\" $self$朝$target$示意了一下。",
-                "com_undress_outer_Join_6": "$self$点点头：\"正好搭个伴，一起换轻便点。\"",
                 "com_undress_skin_Tryjoin_1": "$self$走近几步，红着脸看向$target$：\"我也……一起全部脱掉吗？\"",
                 "com_undress_skin_Tryjoin_2": "\"既然你都脱到这一步了，我也陪你？\" $self$手指勾住衣缘，眼神有些发烫。",
                 "com_undress_skin_Tryjoin_3": "$self$呼吸微促地凑近$target$，小声问：\"需要我也一起脱光吗？\"",
@@ -5788,18 +5485,12 @@
                 "com_undress_outer_Interrupt_4": "$self$停下手里的动作，回头看了眼门口的$target$：\"来得有点巧啊，找我们有事？\"",
                 "com_undress_outer_Interrupt_5": "见$target$撞见， $self$坦然地收回手，朝他点点头：\"稍等会儿，正帮忙脱外衣呢。\"",
                 "com_undress_outer_Interrupt_6": "$self$顺手接过半褪的外衣搭在臂弯，看向$target$：\"要紧事吗？不急的话外头等一下。\"",
-                "com_redress_outer_JoinFailed_4": "$self$朝$target$摇摇头：\"我这儿很快就好，不用一起了。\"",
-                "com_redress_outer_JoinFailed_5": "\"这里地方不大，你先在外面等会儿吧。\" $self$对$target$说道。",
-                "com_redress_outer_JoinFailed_6": "$self$理好衣领对$target$说：\"这会儿就不添人了，有事待会儿聊。\"",
                 "com_redress_skin_13": "贴身衣物穿好了，可手腕还被绑着，$self$冷声道：\"现在能把绳子解开了吧？\"",
                 "com_redress_skin_14": "身体总算不再光着，$self$眼里的戒备却半点没减，仍冷冷盯着$target$。",
                 "com_redress_skin_15": "被束缚着穿上贴身衣物只让$self$觉得憋闷，她扭开脸一言不发。",
                 "com_redress_inner_Interrupt_7": "见$target$推门进来，$self$连忙拉平衣摆，略微局促地招呼：\"那个……我在穿衣服，稍等一下。\"",
                 "com_redress_inner_Interrupt_8": "$self$耳根微热，抓紧衣服往身上一套，朝门口的$target$摆摆手：\"别站门口看呀，马上好。\"",
                 "com_redress_inner_Interrupt_9": "看见$target$站在门口，$self$干咳一声：\"找我有事吗？等我先把扣子扣好。\"",
-                "com_undress_inner_JoinFailed_4": "$self$抓紧衣服遮在身前，对$target$说：\"先别进来，等我这边弄完再说。\"",
-                "com_undress_inner_JoinFailed_5": "\"抱歉，这会儿不太方便一起。\" $self$朝$target$摇了摇头。",
-                "com_undress_inner_JoinFailed_6": "$self$有些局促地挥挥手：\"先在外面等会儿吧，马上就好。\"",
                 "com_redress_outer_Refuse_4": "$self$看了一眼外衣摇摇头：\"现在不冷，我不想穿外衣。\"",
                 "com_redress_outer_Refuse_5": "\"穿着外衣反而碍手碍脚的，先不穿了。\" $self$摆了摆手。",
                 "com_redress_outer_Refuse_6": "$self$干脆地回绝了$target$：\"不用，我自己知道冷暖。\"",
@@ -5833,18 +5524,9 @@
                 "com_redress_all_Begin_13": "$self$被绑着动弹不得，冷眼看着$target$拿来衣服：\"……折腾够了才想起给人穿衣服？\"",
                 "com_redress_all_Begin_14": "手腕上的束缚勒得发疼，$self$别过脸没有说话，只任由衣物套回身上。",
                 "com_redress_all_Begin_15": "\"别碰多余的地方。\" $self$咬着牙盯住$target$，语气又硬又冷。",
-                "com_undress_all_JoinFailed_4": "$self$抓紧衣服挡住身前，对$target$说：\"别进来，等我这边弄完再说。\"",
-                "com_undress_all_JoinFailed_5": "\"抱歉，这会儿不太方便一起。\" $self$红着脸朝$target$摇摇头。",
-                "com_undress_all_JoinFailed_6": "$self$有些局促地挥挥手：\"先在外面等会儿吧。\"",
-                "com_undress_outer_JoinFailed_1": "$self$朝$target$摇摇头：\"我这儿很快就好，不用一起了。\"",
-                "com_undress_outer_JoinFailed_2": "\"这里地方不大，你先在外面等会儿吧。\" $self$对$target$说道。",
-                "com_undress_outer_JoinFailed_3": "$self$把外衣叠到一边，抬头对$target$说：\"这会儿就不添人了，有事待会儿聊。\"",
                 "com_redress_skin_16": "$self$理好贴身衣物后耳根微红，瞥了眼旁边的$target$：\"我、我穿好了……\"",
                 "com_redress_skin_17": "\"总算不用一直光着了。\" $self$小声嘀咕了一句，眼神有些躲闪。",
                 "com_redress_skin_18": "$self$把贴身衣物整理妥当，对$target$示意：\"你也快穿好吧。\"",
-                "com_redress_inner_Join_4": "$self$朝$target$点点头：\"你也一起穿衣服？来吧。\"",
-                "com_redress_inner_Join_5": "\"一起穿戴好再聊吧。\" $self$对$target$笑笑。",
-                "com_redress_inner_Join_6": "$self$往旁边挪了挪：\"来，这边地方够。\"",
                 "com_undress_all_JoinFailed_7": "$self$朝$target$摆摆手：\"这边不用加人了，先出去等吧。\"",
                 "com_undress_all_JoinFailed_8": "\"现在不方便，别进来了。\" $self$简短地回了一句。",
                 "com_undress_all_JoinFailed_9": "$self$回头看了$target$一眼：\"人够多了，有事待会儿再说。\"",
@@ -5878,9 +5560,6 @@
                 "com_undress_all_Begin_13": "$self$毫无知觉地昏迷着，手臂软绵绵地随着$target$脱衣的动作垂落。",
                 "com_undress_all_Begin_14": "昏迷中的$self$对外界全无反应，衣物被一件件剥开时眼皮也没动一下。",
                 "com_undress_all_Begin_15": "$self$呼吸微弱，任凭$target$脱去自己身上的全部衣物。",
-                "com_redress_all_JoinFailed_7": "$self$朝$target$摇摇头：\"我这儿很快就好，不用一起了。\"",
-                "com_redress_all_JoinFailed_8": "\"这里地方不大，你先在外面等会儿吧。\" $self$对$target$说道。",
-                "com_redress_all_JoinFailed_9": "$self$理好衣领对$target$说：\"这会儿就不添人了，有事待会儿聊。\"",
                 "com_undress_all_Join_Refused_1": "\"唔……好吧，那我不脱了。\" $self$松开手，有些失落地往后退了半步。",
                 "com_undress_all_Join_Refused_2": "$self$点点头：\"知道了，那我还是穿着吧。\"",
                 "com_undress_all_Join_Refused_3": "\"行，那我先不凑过来了。\" $self$说着转身走开。",
@@ -5890,18 +5569,12 @@
                 "com_undress_skin_JoinFailed_4": "$self$缩起身子遮住身前，朝$target$摇摇头：\"现在已经够丢人了，别再多一个人看……\"",
                 "com_undress_skin_JoinFailed_5": "\"抱歉，这会儿不太方便。\" $self$红着脸避开$target$的目光。",
                 "com_undress_skin_JoinFailed_6": "$self$小声对$target$说：\"你先出去等一会儿吧，真的不方便。\"",
-                "com_redress_all_Join_7": "$self$朝$target$点点头：\"你也一起穿衣服？来吧。\"",
-                "com_redress_all_Join_8": "\"一起穿戴好再聊吧。\" $self$对$target$笑笑。",
-                "com_redress_all_Join_9": "$self$往旁边挪了挪：\"来，这边地方够。\"",
                 "com_undress_skin_Join_1": "$self$朝$target$抬了抬下巴：\"来得正好，你也一起脱了吧。\"",
                 "com_undress_skin_Join_2": "\"行啊，一块儿脱光省事。\" $self$说着让出点位置。",
                 "com_undress_skin_Join_3": "$self$笑着对$target$示意：\"别光看着了，自己也赶紧脱吧。\"",
                 "com_undress_all_Join_7": "$self$红着脸把视线移开，小声对$target$说：\"你也一起脱光吗……那好吧。\"",
                 "com_undress_all_Join_8": "\"既然大家都不穿了，好像也没那么难为情……\" $self$耳根发烫地嘀咕道。",
                 "com_undress_all_Join_9": "见$target$也脱起衣服，$self$往旁边挪了挪：\"……别靠太近。\"",
-                "com_undress_skin_Join_4": "$self$脸颊发烫地往旁边让了让：\"你也一起？那……随便找地方放衣服吧。\"",
-                "com_undress_skin_Join_5": "\"来吧，反正我这也快脱完了。\" $self$朝$target$笑了笑。",
-                "com_undress_skin_Join_6": "$self$点点头：\"既然一起，那就都脱干净吧。\"",
                 "com_undress_outer_JoinFailed_7": "$self$拉了拉剩下的衣服，朝$target$摇头：\"这边不太方便加人，你先等等吧。\"",
                 "com_undress_outer_JoinFailed_8": "\"这会儿不合适一起，先不了。\" $self$对$target$说了一句，别开视线。",
                 "com_undress_outer_JoinFailed_9": "$self$朝门口的$target$摆了摆手：\"抱歉，这边暂时不用多加人。\"",
@@ -5914,9 +5587,6 @@
                 "com_redress_all_13": "衣服全都穿好了，可手腕还被绑着，$self$冷声道：\"现在能把绳子解开了吧？\"",
                 "com_redress_all_14": "身体总算遮严实了，$self$眼里的戒备却半点没减，仍冷冷盯着$target$。",
                 "com_redress_all_15": "被束缚着穿上衣服只让$self$觉得憋闷，她扭开脸一言不发。",
-                "com_undress_outer_Interrupt_7": "$self$正脱到一半听见动静，连忙把外衣往身上一拢：\"怎么突然进来了……吓我一跳。\"",
-                "com_undress_outer_Interrupt_8": "看见门口的$target$，$self$略显不自然地停下动作：\"咳，等我先脱完这件再说。\"",
-                "com_undress_outer_Interrupt_9": "$self$把褪到胳膊上的外衣顺手拿下来，问$target$：\"找我有事？\"",
                 "com_redress_outer_Joined_1": "\"好，那我也把外衣穿上。\" $self$点点头，抖开自己的外衣套上身。",
                 "com_redress_outer_Joined_2": "$self$应了一声：\"一起穿好外衣再动身吧。\"",
                 "com_redress_outer_Joined_3": "\"行，那我动作快点。\" $self$说着把外衣往肩上一披。",
@@ -5959,12 +5629,6 @@
                 "com_redress_all_22": "全部衣物穿戴整齐后，$self$依然凝固在原地，脸上仍是静止前的神情。",
                 "com_redress_all_23": "停滞的时间里，$self$连一根睫毛都没有动，对穿好衣服全无知觉。",
                 "com_redress_all_24": "$self$如同一尊静止的塑像，全身衣物整整齐齐却毫无反应。",
-                "com_undress_inner_Join_4": "$self$脸颊微微发烫，朝$target$让出一点地方：\"你也一起吗？那……随便找地方放衣服吧。\"",
-                "com_undress_inner_Join_5": "\"来吧，刚好我也才脱到一半。\" $self$朝$target$笑了笑。",
-                "com_undress_inner_Join_6": "$self$点点头：\"既然一起，那就别客气了。\"",
-                "com_undress_inner_Interrupt_7": "$self$脱到一半听见声响，连忙抓起衣服挡住身前：\"哇！别进来，我在换衣服呢！\"",
-                "com_undress_inner_Interrupt_8": "看见门口的$target$，$self$耳根一下子红透了：\"请、请先出去一下！\"",
-                "com_undress_inner_Interrupt_9": "$self$慌忙转过身去，语气窘迫：\"怎么突然推门啊……等我穿好再说！\"",
                 "com_redress_outer_19": "$self$迷糊地睁开眼，发现肩上多了一件外衣，朝$target$眨了眨眼：\"……是你帮我披上的？\"",
                 "com_redress_outer_20": "睡意刚散，$self$拢了拢身上的外衣，语气柔和：\"谢谢，醒来还挺暖和的。\"",
                 "com_redress_outer_21": "$self$揉了揉眼睛坐起身，低头看了眼穿在身上的外衣：\"唔……我睡得这么死吗。\"",

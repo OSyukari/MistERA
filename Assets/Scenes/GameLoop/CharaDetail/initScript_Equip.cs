@@ -11,6 +11,7 @@ public class initScript_Equip: MonoBehaviour
     public scr_HoverableText currentOutfit;
     public RectTransform rect_wardrobes, rect_wardrobes_outfits;
     public scr_equip_wardrobe prefab_outfit;
+    public scr_WardrobeEditor canvas_WardrobeEdit;
 
     public scr_equip_wardrobe Outfit_Default, Outfit_Home, Outfit_Home_Temp, Outfit_Sleep, Outfit_Sleep_Temp;
 
@@ -28,9 +29,14 @@ public class initScript_Equip: MonoBehaviour
             skinButton.gameObject.SetActive(false);
         }
 
-        currentOutfit.SetText($"Current Outfit: {c.Wardrobe.ActiveOutfit?.DisplayName}");
+        var outfitName = c.Wardrobe.ActiveOutfit?.DisplayName ?? "";
+        currentOutfit.SetText(LocalizeDictionary.QueryThenParse("ui_wardrobe_currentOutfit").Replace("$outfit$", outfitName));
 
+        foreach (var row in rect_wardrobes_outfits.GetComponentsInChildren<scr_equip_wardrobe>(true)) parent.UnregisterOutfit(row);
+        foreach (var row in new[] { Outfit_Default, Outfit_Home, Outfit_Home_Temp, Outfit_Sleep, Outfit_Sleep_Temp })
+            if (row != null) parent.UnregisterOutfit(row);
         Utility.DestroyAllChildrenFrom(rect_wardrobes_outfits, 0);
+        RecreationUtility.RegisterWardrobeOpportunities(c);
         // every key in effect, outfit or not (the reserved ones always) - an empty one can get an outfit set
         foreach (var entry in c.Wardrobe.GetEntries())
         {
@@ -46,6 +52,16 @@ public class initScript_Equip: MonoBehaviour
             }
 
             box.InitializeData(c, entry);
+            parent.RegisterOutfit(box);
+        }
+        var newKey = c.Wardrobe.NewPoolKey();
+        if (c.Wardrobe.CanEdit(newKey))
+        {
+            var box = Instantiate(prefab_outfit);
+            box.selfRect.SetParent(rect_wardrobes_outfits, false);
+            box.InitializeData(c, new WardrobeEntry(newKey, null));
+            box.keywords.SetText("ui_wardrobe_createUnclassified");
+            box.overrides.SetText("Used when a direct assignment is missing or invalid.");
             parent.RegisterOutfit(box);
         }
     }
@@ -74,53 +90,27 @@ public class initScript_Equip: MonoBehaviour
             this.key = key ?? "";
         }
 
-        bool? result = null;
         public override bool IsButtonValid()
         {
-            if (result == null)
-            {
-                result = false;
-                tooltip = "not player related cannot edit";
-                if (parent.chara != null && parent.chara.FactionManager != null)
-                {
-                    var kind = OutfitUtility.ParseKey(key, out var factionID, out var id);
-
-                    var player = scr_System_CampaignManager.current.Player;
-                    var fm = parent.chara.FactionManager;
-
-                    if (kind != OutfitKeyKind.MemberType || (fm.Faction_Home != null && factionID == fm.Faction_Home.ID) || (id == "membertype_none"))
-                    {
-                        // not faction related outfit setting (could be activity outfit), allow edit if player is family member
-                        // TODO in the future add a "change outfit permission"
-                        result = fm.Faction_Home != null && fm.Faction_Home.isManagedChara(player.RefID);
-                        tooltip = "family member CAN request change outfit";
-                    }
-                    else
-                    {
-                        // we have a work faction here
-                        foreach(var w in fm.WorkFactions)
-                        {
-                            if (!w.isPlayerManagedFaction) continue;
-                            if (w.ID != factionID) continue;
-                            result = true;
-                            tooltip = "workplace manager can edit uniform";
-                        }
-
-                        if (result.Value == false)
-                        {
-                            tooltip = $"{LocalizeDictionary.QueryThenParse(factionID)} not player related cannot edit";
-                        }
-                    }
-                }
-            }
-            // blocked on purpose: workplace uniform editing is not implemented yet
-            result = false;
-            return result.Value;
+            bool allowed = parent.chara?.Wardrobe?.CanEdit(key) == true;
+            if (!allowed) { tooltip = "The responsible faction must be player managed."; return false; }
+            var prefab = parent.initScript_Equip.canvas_WardrobeEdit;
+            if (prefab == null) { tooltip = "Assign the wardrobe editor canvas prefab."; return false; }
+            if (!prefab.IsConfigured(out tooltip)) return false;
+            tooltip = "Edit using clothing in the responsible faction's inventory.";
+            return true;
         }
 
         public void OnClickButton()
         {
-
+            if (!IsButtonValid()) return;
+            var editor = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.initScript_Equip.canvas_WardrobeEdit)
+                .GetComponent<scr_WardrobeEditor>();
+            editor.InitializeWithArgument(parent.chara, key, () =>
+            {
+                parent.initScript_Equip.InitializeData(parent.chara, parent);
+                parent.ValidateAll();
+            });
         }
     }
 }

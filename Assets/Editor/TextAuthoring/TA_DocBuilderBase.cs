@@ -123,7 +123,10 @@ public abstract partial class TA_DocBuilderBase
     /// 46: pair docs look up the doer's `_Refuse` after the receiver refused (scene 4, ordered scene 5; no refusal context).
     /// 47: per-item folders (COM_ItemFolder com_useItem_<item>) take the com_useItem template's cases.json overrides (no kojo).
     /// 48: a command whose overrides drop all kojo ("kojo.") has no scene kojo lookups either (Kojo / Climax / template entries).
-    public const int ExtractorVersion = 48;
+    /// 49: template entry lookups with listener newcomer (_Interrupt / _Join / _JoinFailed) know the listener acts: the
+    ///     doer's default requireTargetAction is about the newcomer, not a receiver that may be unaware (template role-split
+    ///     coverage likewise). commandJoin / JoinFailed / Interrupt require a receiver fallback when the receiver can be unaware.
+    public const int ExtractorVersion = 49;
 
     /// <summary>Personalities whose kojo layers are extracted (any order; [0] first in docs).</summary>
     public List<string> personalities = new List<string>();

@@ -766,7 +766,9 @@ public partial class TA_CommandDocBuilder : TA_DocBuilderBase
                 {
                     speakerIsDoer = role == "doer" || role == "self", speakerIsReceiver = role == "receiver",
                     speakerIsMaster = (role == "doer" || role == "self") && !ordered,
-                    accepted = !refusedJoin, playerInvolved = true, noEP = noEP, listenerIsPlayer = noEP ? true : (bool?)null
+                    accepted = !refusedJoin, playerInvolved = true, noEP = noEP, listenerIsPlayer = noEP ? true : (bool?)null,
+                    // the newcomer / joiner is the kojo target (KojoCollector.LoadEP) and is acting, not the act's receiver
+                    targetCanAct = listener == "newcomer" ? true : (bool?)null
                 }, consumer, TA_KojoSeverity.Optional, who);
             }
         }

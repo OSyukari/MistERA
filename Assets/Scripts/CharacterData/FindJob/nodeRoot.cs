@@ -61,7 +61,12 @@ public class FindJobNodeRoot
             var node = n;
             var overrideNode = activity?.GetBehaviorOverride(n.behaviorOverrideID);
             if (overrideNode == null && memberType != null) overrideNode = memberType.GetBehaviorOverride(n.behaviorOverrideID);
-            if (overrideNode != null) node = overrideNode;
+            if (overrideNode != null)
+            {
+                if (n is TryFindScheduledJobNode && !RecreationUtility.PrepareVisitOutfit(c,
+                    c.FactionManager.GetEffectiveBooking(currentHour), currentJobFaction)) continue;
+                node = overrideNode;
+            }
 
             if (node.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s))
             {

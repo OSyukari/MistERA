@@ -12,13 +12,6 @@
                 ],
                 "maxPrideValue": 100,
                 "behaviorID": "behavior_animal",
-                "AcceptanceMods": [
-                    {
-                        "_comment": "Animals always accept being bathed (com_furniture_takeShower as receiver).",
-                        "Requirement_ActionPackage": { "targetComID": "com_furniture_takeShower", "isDoer": false },
-                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "pet_wash_accept_reason" }
-                    }
-                ],
                 "pride_increase": {},
                 "pride_decrease": {
                     "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1, "tags":["nsfw"] }] }

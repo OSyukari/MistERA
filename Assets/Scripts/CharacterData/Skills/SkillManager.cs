@@ -126,6 +126,10 @@ public class SkillManager
                 // Debug.Log("Checking " + i.ExperienceID + ", failed containstrict RequiredCOMTags");
                 continue;
             }
+            if (i.RequiredAnyCOMTags != null && i.RequiredAnyCOMTags.Count > 0)
+            {
+                if (comTags == null || comTags.Count < 1 || !Utility.ListContainsLoose(i.RequiredAnyCOMTags, comTags)) continue;
+            }
 
             AddExperience(i, amount, m, forbiddenExperienceIDs);
         }
@@ -162,6 +166,7 @@ public class SkillManager
         {
             if ((ownerTags == null || ownerTags.Count < 1) && i.RequiredOwnerTags != null && i.RequiredOwnerTags.Count > 0) continue;
             if (i.RequiredCOMTags != null && i.RequiredCOMTags.Count > 0) continue;
+            if (i.RequiredAnyCOMTags != null && i.RequiredAnyCOMTags.Count > 0) continue;
 
             if (!Utility.ListContainsStrict(ownerTags, i.RequiredOwnerTags)) continue;
 

@@ -101,16 +101,6 @@
                     "template": "commandRefuse",
                     "variants": [
                         {
-                            "requireRefusalContext": "DeclinedOrder",
-                            "requirement": {
-                                "requireEPSuccess": false
-                            },
-                            "_comment": "说话者拒绝下令，并向下令者回应",
-                            "responses": [
-                                "com_furniture_ingestAnus_self_Refuse_1"
-                            ]
-                        },
-                        {
                             "requireSelfDoer": true,
                             "requirement": {
                                 "requireTargetAction": false,
@@ -146,7 +136,6 @@
                 "com_furniture_ingestAnus_self_Begin_2": "(unimplemented)",
                 "com_furniture_ingestAnus_self_Ongoing_1": "(unimplemented)",
                 "com_furniture_ingestAnus_self_Ongoing_2": "(unimplemented)",
-                "com_furniture_ingestAnus_self_Refuse_1": "(unimplemented)",
                 "com_furniture_ingestAnus_self_Refuse_2": "(unimplemented)",
                 "com_furniture_ingestAnus_self_Refuse_3": "(unimplemented)"
             }

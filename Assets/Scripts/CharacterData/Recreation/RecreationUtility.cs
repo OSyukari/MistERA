@@ -1797,6 +1797,7 @@ public static partial class RecreationUtility
         bool provider = !activity.cooldownOnProvider && ProvidesActivity(f.Owner, activity);
         return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && (provider || CooldownAllows(f, day, key, activity.minDaysBetween, incoming))
             && IsEligible(f.Owner, activity) && FacilityAvailable(venue, activity)
+            && (f.Owner.RefID != 0 || WardrobeAllows(f.Owner, venue, activity, day, incoming.MemberType))
             && (provider || !HasPendingReservation(f, key, except, incoming))
             && DailyMainTypeAllows(f, day, activity, except, incoming: incoming)
             && (except == null || ReservationRefusal(f, PreviewBooking(except)) == "");
@@ -1843,6 +1844,7 @@ public static partial class RecreationUtility
         var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
         if (venue == null || HasUnpaidActivityFee(f, venue)) return false;
         if (!IsEligible(f.Owner, def.AsActivity) || !FacilityAvailable(venue, def.AsActivity)) return false;
+        if (f.Owner.RefID == 0 && !WardrobeAllows(f.Owner, venue, def.AsActivity, day, incoming.MemberType)) return false;
         return def.IsEligible(f.Owner) && (except == null || ReservationRefusal(f, PreviewBooking(except)) == "");
     }
 
@@ -2493,12 +2495,8 @@ public static partial class RecreationUtility
         var bookings = f.RecreationBookings;
         for (int i = 0; i < bookings.Count; i++) if (bookings[i] != null && bookings[i].Overlaps(booking.AbsStart, booking.AbsEnd)) inTheWay.Add(bookings[i]);
         if (inTheWay.Exists(b => b.locked)) return false;
-        foreach (var b in inTheWay) f.RemoveBooking(b);
-        if (!f.AddBooking(booking, false))
-        {
-            foreach (var b in inTheWay) f.AddBooking(b, false);   // put back as it was
+        if (inTheWay.Count == 0 ? !f.AddBooking(booking, false) : !f.TryReplaceRecreationBookings(booking, inTheWay, null))
             return false;
-        }
         RememberActivityRoom(booking, plannedRoom);
         foreach (var b in inTheWay) TryReschedule(f, b, CancelReason.Displaced);
         if (wakeForIt) CutSleepFor(c, booking);

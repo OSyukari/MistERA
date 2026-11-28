@@ -103,7 +103,19 @@ public class TryFindOutfitChangeNode : TryFindJobByIDNode
     }
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
-        if (c.Wardrobe == null || !c.Wardrobe.NeedsOutfitChange) return false;
+        if (c.Wardrobe == null || c.isSleeping || c.shouldSleep) return false;
+        var factions = c.FactionManager;
+        var booking = factions.GetEffectiveBooking(currentHour);
+        if (!RecreationUtility.PrepareVisitOutfit(c, booking, currentJobFaction)) return false;
+        int nextHour = (currentHour + 1) % 24;
+        int daysAhead = (currentHour + 1) / 24;
+        if (booking == null && factions.GetBookingAt(nextHour, daysAhead) != null
+            && FactionUtility.ShouldTravelForNextHourSchedule(c, currentLocaleFaction, currentHour, out var destination, out _))
+        {
+            var nextBooking = factions.GetEffectiveBooking(nextHour, daysAhead);
+            if (!RecreationUtility.PrepareVisitOutfit(c, nextBooking, destination)) return false;
+        }
+        if (!c.Wardrobe.NeedsOutfitChange) return false;
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
     }
 }
@@ -206,6 +218,8 @@ public class TryChangeLocaleNode : FindJobNode
             if (charaRoom.FactionOwner != null
                 && scr_System_CampaignManager.current.Map.isConnectedFaction(charaRoom.FactionOwner.FactionOwnerRoot, currentJobFaction.FactionOwnerRoot))
             {
+                if (!RecreationUtility.PrepareVisitOutfit(c, c.FactionManager.GetEffectiveBooking(currentHour), currentJobFaction))
+                    return false;
                 c.ChangeCurrentJob(currentJobFaction.FactionRallyJob);
                 if (s != null) s.Add($"|trying to move toward currentjobfaction {currentJobFaction.FactionDisplayName} |");
                 return true;
@@ -224,6 +238,8 @@ public class TryChangeLocaleNode : FindJobNode
             if (charaRoom.FactionOwner != null
                 && scr_System_CampaignManager.current.Map.isConnectedFaction(charaRoom.FactionOwner.FactionOwnerRoot, nextFaction.FactionOwnerRoot))
             {
+                var booking = c.FactionManager.GetEffectiveBooking((currentHour + 1) % 24, (currentHour + 1) / 24);
+                if (!RecreationUtility.PrepareVisitOutfit(c, booking, nextFaction)) return false;
                 c.ChangeCurrentJob(nextFaction.FactionRallyJob);
                 if (s != null) s.Add($"|heading early toward next-hour schedule at {nextFaction.FactionDisplayName}, ~{travelMinutes}min world travel|");
                 return true;
@@ -635,6 +651,8 @@ public class TryFindScheduledActivityNode : FindJobNode
 
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
+        var booking = c.FactionManager?.GetEffectiveBooking(currentHour);
+        if (!RecreationUtility.PrepareVisitOutfit(c, booking, currentJobFaction)) return false;
         return RunVisit(c, currentJobFaction, resetJob, currentHour, Heuristic, filter, s);
     }
 
@@ -684,6 +702,7 @@ public class TryFindScheduledJobNode : FindJobNode
         // (TryActivityJob - gathering, launch, dispatch); a visit whose commands are real job commands (or a booking
         // without any, running on the faction's own schedule) falls through to the shift search
         var booking = currentJobFaction == null ? null : c.FactionManager?.GetEffectiveBooking(currentHour);
+        if (!RecreationUtility.PrepareVisitOutfit(c, booking, currentJobFaction)) return false;
         if (booking != null && (I_IsJobGiver)booking.Faction == currentJobFaction
             && booking.workModule?.workCommands != null && booking.workModule.workCommands.Count > 0
             && TryActivityJob(c, currentJobFaction, resetJob, currentHour, booking, s))
@@ -767,6 +786,7 @@ public class TryFindScheduledJobNode : FindJobNode
         if (upcoming == null || (I_IsJobGiver)upcoming.Faction != currentLocaleFaction) return false;
         var job = FindEarlyActivityJob(f, upcoming);
         if (job == null || job.Phase != ActivityPhase.Gathering) return false;
+        if (!RecreationUtility.PrepareVisitOutfit(c, upcoming, currentLocaleFaction)) return false;
         if (c.CurrentJob != job)
         {
             if (s != null) s.Add($"early for activity {job.DisplayName} - gathering in [{job.ParentRoom?.DisplayName}]");

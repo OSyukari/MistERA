@@ -180,7 +180,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_undress_outer_Refuse_1"
+                                "personality_base_com_undress_outer_Refuse_1"
                             ]
                         },
                         {
@@ -243,7 +243,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_undress_outer_Refuse_2"
+                                "personality_base_com_undress_outer_Refuse_2"
                             ]
                         },
                         {
@@ -254,7 +254,7 @@
                             },
                             "_comment": "独自（对象是自己） ｜ 拒绝",
                             "responses": [
-                                "com_undress_outer_Refuse_3"
+                                "personality_base_com_undress_outer_Refuse_3"
                             ]
                         }
                     ],
@@ -446,7 +446,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_undress_inner_Refuse_1"
+                                "personality_base_com_undress_inner_Refuse_1"
                             ]
                         },
                         {
@@ -509,7 +509,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_undress_inner_Refuse_2"
+                                "personality_base_com_undress_inner_Refuse_2"
                             ]
                         },
                         {
@@ -520,7 +520,7 @@
                             },
                             "_comment": "独自（对象是自己） ｜ 拒绝",
                             "responses": [
-                                "com_undress_inner_Refuse_3"
+                                "personality_base_com_undress_inner_Refuse_3"
                             ]
                         }
                     ],
@@ -714,7 +714,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_undress_skin_Refuse_1"
+                                "personality_base_com_undress_skin_Refuse_1"
                             ]
                         },
                         {
@@ -777,7 +777,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_undress_skin_Refuse_2"
+                                "personality_base_com_undress_skin_Refuse_2"
                             ]
                         },
                         {
@@ -788,7 +788,7 @@
                             },
                             "_comment": "独自（对象是自己） ｜ 拒绝",
                             "responses": [
-                                "com_undress_skin_Refuse_3"
+                                "personality_base_com_undress_skin_Refuse_3"
                             ]
                         }
                     ],
@@ -1061,15 +1061,15 @@
                 "pb_com_undress_skin_Begin_2": "(unimplemented)",
                 "pb_com_undress_skin_1": "(unimplemented)",
                 "pb_com_undress_skin_2": "(unimplemented)",
-                "com_undress_inner_Refuse_1": "(unimplemented)",
-                "com_undress_outer_Refuse_1": "(unimplemented)",
-                "com_undress_skin_Refuse_1": "(unimplemented)",
-                "com_undress_inner_Refuse_2": "(unimplemented)",
-                "com_undress_inner_Refuse_3": "(unimplemented)",
-                "com_undress_skin_Refuse_2": "(unimplemented)",
-                "com_undress_skin_Refuse_3": "(unimplemented)",
-                "com_undress_outer_Refuse_2": "(unimplemented)",
-                "com_undress_outer_Refuse_3": "(unimplemented)"
+                "personality_base_com_undress_inner_Refuse_1": "(unimplemented)",
+                "personality_base_com_undress_outer_Refuse_1": "(unimplemented)",
+                "personality_base_com_undress_skin_Refuse_1": "(unimplemented)",
+                "personality_base_com_undress_inner_Refuse_2": "(unimplemented)",
+                "personality_base_com_undress_inner_Refuse_3": "(unimplemented)",
+                "personality_base_com_undress_skin_Refuse_2": "(unimplemented)",
+                "personality_base_com_undress_skin_Refuse_3": "(unimplemented)",
+                "personality_base_com_undress_outer_Refuse_2": "(unimplemented)",
+                "personality_base_com_undress_outer_Refuse_3": "(unimplemented)"
             },
             "en-us": {
                 "pb_com_undress_outer_Begin_A_1": "$self$ spreads his arms easily. \"Sure, it's a bit warm anyway.\"",

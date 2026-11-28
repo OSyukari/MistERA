@@ -118,13 +118,6 @@
                             "activeHours": [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
                             "activeDays": []
                         },
-                        "AcceptanceMods": [
-                            {
-                                "_comment": "A booked pet bath is accepted without failing com_furniture_takeShower's baseAcceptanceValue.",
-                                "Requirement_ActionPackage": { "targetComID": "com_furniture_takeShower", "isDoer": false },
-                                "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "pet_wash_booked_accept_reason" }
-                            }
-                        ],
                         "eligibility": {
                             "chara_conditions": [
                                 { "parameters": [ "isPrisonerAtHome", "false" ] }
@@ -181,13 +174,6 @@
                 ],
                 "_comment_forbidActivityTags": "Pets book, join and are invited to no activity (\"*\"); an activity the pet itself provides (a dog's walk) is exempt.",
                 "forbidActivityTags": ["*"],
-                "AcceptanceMods": [
-                    {
-                        "_comment": "A household pet accepts being bathed (com_furniture_takeShower as receiver) even outside the scheduled house_activity_wash_pet activity (e.g. player-ordered bath).",
-                        "Requirement_ActionPackage": { "targetComID": "com_furniture_takeShower", "isDoer": false },
-                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "pet_wash_accept_reason" }
-                    }
-                ],
                 "behaviorOverrides": {
                     "behavior_bedrest": {
                         "$type": "TryFindPetRestByIDNode, Assembly-CSharp",
@@ -258,16 +244,12 @@
             "zh-cn": {
                 "membertype_house_pet": "家庭宠物",
                 "house_activity_walk_dog": "遛狗",
-                "house_activity_wash_pet": "给宠物洗澡",
-                "pet_wash_booked_accept_reason": "预约的宠物洗澡",
-                "pet_wash_accept_reason": "家庭宠物接受洗澡"
+                "house_activity_wash_pet": "给宠物洗澡"
             },
             "en-us": {
                 "membertype_house_pet": "Household Pet",
                 "house_activity_walk_dog": "Walk the Dog",
-                "house_activity_wash_pet": "Wash Pet",
-                "pet_wash_booked_accept_reason": "Scheduled pet bath",
-                "pet_wash_accept_reason": "Household pet bath"
+                "house_activity_wash_pet": "Wash Pet"
             }
         }
     }

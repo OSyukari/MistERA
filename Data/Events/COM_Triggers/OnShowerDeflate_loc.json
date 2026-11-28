@@ -5,6 +5,7 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
+                "shower_ap_failed": "The attempt goes no further.",
                 "shower_self_undress": "$bather.firstname$ removes their clothes and sets them aside out of the spray.",
                 "shower_self_begin": "$bather.firstname$ turns on the shower, adjusts the temperature, and begins washing under the warm water.",
                 "shower_self_expel_question": "Warm water streams down their body. Should $bather.firstname$ spread open and flush out what is trapped inside?",

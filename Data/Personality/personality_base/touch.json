@@ -191,7 +191,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_head_Refuse_1"
+                                "personality_base_com_touch_head_Refuse_1"
                             ]
                         },
                         {
@@ -256,7 +256,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_head_Refuse_2"
+                                "personality_base_com_touch_head_Refuse_2"
                             ]
                         }
                     ],
@@ -453,7 +453,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_hair_Refuse_1"
+                                "personality_base_com_touch_hair_Refuse_1"
                             ]
                         },
                         {
@@ -518,7 +518,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_hair_Refuse_2"
+                                "personality_base_com_touch_hair_Refuse_2"
                             ]
                         }
                     ],
@@ -715,7 +715,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_cheek_Refuse_1"
+                                "personality_base_com_touch_cheek_Refuse_1"
                             ]
                         },
                         {
@@ -780,7 +780,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_cheek_Refuse_2"
+                                "personality_base_com_touch_cheek_Refuse_2"
                             ]
                         }
                     ],
@@ -977,7 +977,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_ears_Refuse_1"
+                                "personality_base_com_touch_ears_Refuse_1"
                             ]
                         },
                         {
@@ -1042,7 +1042,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_ears_Refuse_2"
+                                "personality_base_com_touch_ears_Refuse_2"
                             ]
                         }
                     ],
@@ -1239,7 +1239,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_fingers_Refuse_1"
+                                "personality_base_com_touch_fingers_Refuse_1"
                             ]
                         },
                         {
@@ -1304,7 +1304,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_fingers_Refuse_2"
+                                "personality_base_com_touch_fingers_Refuse_2"
                             ]
                         }
                     ],
@@ -1501,7 +1501,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_foot_toes_Refuse_1"
+                                "personality_base_com_touch_foot_toes_Refuse_1"
                             ]
                         },
                         {
@@ -1566,7 +1566,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_foot_toes_Refuse_2"
+                                "personality_base_com_touch_foot_toes_Refuse_2"
                             ]
                         }
                     ],
@@ -1763,7 +1763,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_abdomen_Refuse_1"
+                                "personality_base_com_touch_abdomen_Refuse_1"
                             ]
                         },
                         {
@@ -1828,7 +1828,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_abdomen_Refuse_2"
+                                "personality_base_com_touch_abdomen_Refuse_2"
                             ]
                         }
                     ],
@@ -2025,7 +2025,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_butt_Refuse_1"
+                                "personality_base_com_touch_butt_Refuse_1"
                             ]
                         },
                         {
@@ -2090,7 +2090,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_butt_Refuse_2"
+                                "personality_base_com_touch_butt_Refuse_2"
                             ]
                         }
                     ],
@@ -2287,7 +2287,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_thigh_Refuse_1"
+                                "personality_base_com_touch_thigh_Refuse_1"
                             ]
                         },
                         {
@@ -2352,7 +2352,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_thigh_Refuse_2"
+                                "personality_base_com_touch_thigh_Refuse_2"
                             ]
                         }
                     ],
@@ -2549,7 +2549,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_shoulders_Refuse_1"
+                                "personality_base_com_touch_shoulders_Refuse_1"
                             ]
                         },
                         {
@@ -2614,7 +2614,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_shoulders_Refuse_2"
+                                "personality_base_com_touch_shoulders_Refuse_2"
                             ]
                         }
                     ],
@@ -2811,7 +2811,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_hug_Refuse_1"
+                                "personality_base_com_touch_hug_Refuse_1"
                             ]
                         },
                         {
@@ -2876,7 +2876,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_hug_Refuse_2"
+                                "personality_base_com_touch_hug_Refuse_2"
                             ]
                         }
                     ],
@@ -3073,7 +3073,7 @@
                             },
                             "_comment": "说话者拒绝下令，并向下令者回应",
                             "responses": [
-                                "com_touch_back_Refuse_1"
+                                "personality_base_com_touch_back_Refuse_1"
                             ]
                         },
                         {
@@ -3138,7 +3138,7 @@
                             },
                             "_comment": "施方（被受方拒绝后）",
                             "responses": [
-                                "com_touch_back_Refuse_2"
+                                "personality_base_com_touch_back_Refuse_2"
                             ]
                         }
                     ],
@@ -3270,30 +3270,30 @@
                 "pb_com_touch_back_2": "(unimplemented)",
                 "pb_com_touch_back_3": "(unimplemented)",
                 "pb_com_touch_back_4": "(unimplemented)",
-                "com_touch_fingers_Refuse_1": "(unimplemented)",
-                "com_touch_foot_toes_Refuse_1": "(unimplemented)",
-                "com_touch_hair_Refuse_1": "(unimplemented)",
-                "com_touch_cheek_Refuse_1": "(unimplemented)",
-                "com_touch_head_Refuse_1": "(unimplemented)",
-                "com_touch_back_Refuse_1": "(unimplemented)",
-                "com_touch_shoulders_Refuse_1": "(unimplemented)",
-                "com_touch_ears_Refuse_1": "(unimplemented)",
-                "com_touch_hug_Refuse_1": "(unimplemented)",
-                "com_touch_butt_Refuse_1": "(unimplemented)",
-                "com_touch_abdomen_Refuse_1": "(unimplemented)",
-                "com_touch_thigh_Refuse_1": "(unimplemented)",
-                "com_touch_back_Refuse_2": "(unimplemented)",
-                "com_touch_abdomen_Refuse_2": "(unimplemented)",
-                "com_touch_head_Refuse_2": "(unimplemented)",
-                "com_touch_fingers_Refuse_2": "(unimplemented)",
-                "com_touch_foot_toes_Refuse_2": "(unimplemented)",
-                "com_touch_shoulders_Refuse_2": "(unimplemented)",
-                "com_touch_hug_Refuse_2": "(unimplemented)",
-                "com_touch_hair_Refuse_2": "(unimplemented)",
-                "com_touch_ears_Refuse_2": "(unimplemented)",
-                "com_touch_butt_Refuse_2": "(unimplemented)",
-                "com_touch_thigh_Refuse_2": "(unimplemented)",
-                "com_touch_cheek_Refuse_2": "(unimplemented)"
+                "personality_base_com_touch_fingers_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_foot_toes_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_hair_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_cheek_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_head_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_back_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_shoulders_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_ears_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_hug_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_butt_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_abdomen_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_thigh_Refuse_1": "(unimplemented)",
+                "personality_base_com_touch_back_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_abdomen_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_head_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_fingers_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_foot_toes_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_shoulders_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_hug_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_hair_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_ears_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_butt_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_thigh_Refuse_2": "(unimplemented)",
+                "personality_base_com_touch_cheek_Refuse_2": "(unimplemented)"
             },
             "en-us": {}
         }

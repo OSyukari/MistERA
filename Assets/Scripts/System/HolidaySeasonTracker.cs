@@ -71,6 +71,13 @@ public static class HolidaySeasonSystem
         }
     }
 
+    /// <summary>Read-only dated query for prospective wardrobe variants; does not alter today's tracker or announce changes.</summary>
+    public static HolidaySeasonSnapshot GetSnapshot(string worldID, DateTime date)
+    {
+        var world = scr_System_Serializer.current?.GetByNameOrID_WorldPlan(worldID);
+        return world == null ? null : BuildSnapshot(world, date);
+    }
+
     static HolidaySeasonSnapshot BuildSnapshot(WorldPlan world, DateTime date)
     {
         var snap = new HolidaySeasonSnapshot { worldID = world.worldID };

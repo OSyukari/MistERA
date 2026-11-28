@@ -81,6 +81,7 @@ public class RecreationOfferDef
     public RecreationActivityMoodlet activityMoodlet = null;
     /// <summary>See RecreationActivity.outfit (e.g. a yukata for a fireworks festival).</summary>
     public OutfitSet outfit = null;
+    public OutfitRequirements wardrobeRequirements = null;
 
     /// <summary>Base character preference: flexible selection weight, or deterministic session ranking score.</summary>
     public float weight = 1f;
@@ -184,6 +185,7 @@ public class RecreationOfferDef
                     provideAcceptanceBonus = provideAcceptanceBonus,
                     activityMoodlet = activityMoodlet,
                     outfit = outfit,
+                    wardrobeRequirements = wardrobeRequirements,
                 };
             return _activity;
         }

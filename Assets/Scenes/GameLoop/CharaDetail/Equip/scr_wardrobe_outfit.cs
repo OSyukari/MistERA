@@ -31,11 +31,13 @@ public class scr_equip_wardrobe : MonoBehaviour
 
     public void InitializeData(Character_Trainable c, WardrobeEntry entry)
     {
+        Utility.DestroyAllChildrenFrom(equipRect, 0);
+        Utility.DestroyAllChildrenFrom(variantRect, 0);
         key = entry.key;
         outfit = entry.outfit;
         var wd = entry.outfit;
 
-        keywords.SetText($"Keys: {entry.DisplayName}");
+        keywords.SetText(entry.outfit?.DisplayName ?? entry.DisplayName);
 
         bgimage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
@@ -72,6 +74,12 @@ public class scr_equip_wardrobe : MonoBehaviour
 
 
         overrides.SetText(String.Join(" ", types));
+        if (wd.playerEdited)
+        {
+            bool valid = c.Wardrobe.ValidateDraft(wd, out var reason);
+            overrides.SetText((valid ? "Valid outfit" : "Incomplete outfit: " + reason) + "\n" + String.Join(" ", types));
+        }
+        else overrides.SetText("Supplied outfit (available when automatic clothing is allowed).\n" + String.Join(" ", types));
 
         foreach(var variant in wd.variants)
         {

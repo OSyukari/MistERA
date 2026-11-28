@@ -366,7 +366,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
     /// <param name="itemRefID"></param>
     /// <param name="forceEquip"></param>
     /// <returns></returns>
-    public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false)
+    public bool EquipItem(Item_Instance item, ref List<BodyPartEquipSlot> slots, bool forceEquip = false, bool preserveProtected = false)
     {
         var comp = item.Comp_Equippable;
         bool equipped = false;
@@ -393,6 +393,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
                 else if (coversIndex[Tuple] != -1 && coversIndex[Tuple] != item.RefID && forceEquip == true)
                 {
                     var returnVal = coversIndex[Tuple];
+                    if (preserveProtected && !Owner.Body.CanReplaceOutfitEquipment(returnVal)) continue;
                     coversIndex[Tuple] = item.RefID;
 
                     Owner.UnequipItem(returnVal);
@@ -406,7 +407,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
 
         foreach (BodyInternal_Instance i in this.internals)
         {
-            equipped = i.EquipItem(item, ref slots, forceEquip) || equipped;
+            equipped = i.EquipItem(item, ref slots, forceEquip, preserveProtected) || equipped;
         }
         if (equipped) ClearEquipCache();
         return equipped;
@@ -418,7 +419,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
     /// <param name="item"></param>
     /// <param name="forceEquip"></param>
     /// <returns></returns>
-    public bool EquipItem(Item_Instance item, bool forceEquip = false)
+    public bool EquipItem(Item_Instance item, bool forceEquip = false, bool preserveProtected = false)
     {
         var comp = item.Comp_Equippable;
         bool equipped = false;
@@ -426,7 +427,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
         // Debug.Log($"Equipping {String.Join(" ", slots)} + {comp.equipLayer} on {this.DisplayName}, allIndex [{String.Join(",", contentsIndex.Keys)}]");
 
         // prevalidate
-        foreach(var slot in comp.equipSlot)
+        if (!preserveProtected || Owner.Body.CanFitOutfitMainSlots(item, contentsIndex)) foreach (var slot in comp.equipSlot)
         {
             string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
 
@@ -472,7 +473,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
         {
             foreach (BodyInternal_Instance i in this.internals)
             {
-                equipped = i.EquipItem(item, forceEquip);
+                equipped = i.EquipItem(item, forceEquip, preserveProtected);
                 if (equipped) break;
             }
         }
@@ -486,13 +487,13 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
     /// Mirrors EquipItem(item) without changing anything: true if this part (or one of its organs) would take the item;
     /// replaces = that would displace another item.
     /// </summary>
-    public bool PreviewEquip(Item_Instance item, out bool replaces)
+    public bool PreviewEquip(Item_Instance item, out bool replaces, bool preserveProtected = false)
     {
         replaces = false;
         var comp = item.Comp_Equippable;
         if (comp == null) return false;
         bool equipped = false, unequip = false, displaces = false;
-        foreach (var slot in comp.equipSlot)
+        if (!preserveProtected || Owner.Body.CanFitOutfitMainSlots(item, contentsIndex)) foreach (var slot in comp.equipSlot)
         {
             string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
             if (contentsIndex.TryGetValue(Tuple, out var current))
@@ -518,7 +519,7 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
         }
         foreach (BodyInternal_Instance i in this.internals)
         {
-            if (i.PreviewEquip(item, out replaces)) return true;
+            if (i.PreviewEquip(item, out replaces, preserveProtected)) return true;
         }
         replaces = false;
         return false;
@@ -705,20 +706,14 @@ public class BodyPart_Instance : I_CombatItem, I_TraceHolder
 
     private int SlotRevealingBy(BodyPartEquipSlot slot, BodyEquipLayer layer)
     {
-        int score = 0;
         string Tuple = layer.ToString() + "||" + slot.ToString();
-        if (contentsIndex.TryGetValue(Tuple, out var content) && content != -1)
-        {
-            var comp = ResolveEquip(content)?.Comp_Equippable;
-            if (comp != null) score += (int)comp.revealing;
-        }
-        if (coversIndex.TryGetValue(Tuple, out var cover) && cover != -1)
-        {
-            var comp = ResolveEquip(cover)?.Comp_Equippable;
-            if (comp != null) score += (int)comp.revealing;
-        }
-        return score;
+        var item = contentsIndex.TryGetValue(Tuple, out var content) ? ResolveEquip(content) : null;
+        var cover = coversIndex.TryGetValue(Tuple, out var covering) ? ResolveEquip(covering) : null;
+        return SlotRevealingScore(item, cover);
     }
+
+    internal static int SlotRevealingScore(Item_Instance item, Item_Instance cover)
+        => (int)(item?.Comp_Equippable?.revealing ?? 0) + (int)(cover?.Comp_Equippable?.revealing ?? 0);
 
     /// <summary>
     /// Coverage of whatever on this part carries the tag: the part's own tag uses the slots from Base.tagCoverSlots

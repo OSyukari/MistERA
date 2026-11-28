@@ -256,8 +256,7 @@ public class EventScope_Target
 /// -> see 
 /// </summary>
 /// <summary>
-/// One action package an option will run, previewed on the option's tooltip (Options.apPreviews,
-/// EventUtility.BuildAPPreviewTooltip): built and validated like a command button when the question is shown.
+/// One action package for an option's tooltip. Options with apSuccessLabel also use this configuration to run the AP.
 /// doer / receiver are target keys ("self" = event self); the option's bindTargetKey resolves to its bound character.
 /// receiver_conditions: the preview is left out when the receiver fails one (e.g. wouldDeflate - the act won't run).
 /// </summary>
@@ -269,13 +268,14 @@ public class EventAPPreview
     public List<Event_CharaCondition> receiver_conditions = new List<Event_CharaCondition>();
     /// <summary>The run passes forceAccept (ExecuteAPOnSingleChara): say so instead of letting the rate read as a refusal chance.</summary>
     public bool forceAccept = false;
-    /// <summary>The run's permission mode (ExecuteAPOnSingleChara): "grant" lists what it will grant and for how long;
-    /// "request" lists each permission it will ask for with the request decision;
-    /// "skip" previews with permissions skipped (rates without permission penalties, a no-permission-check note) instead
-    /// of the missing-permission trust warning. Tooltip only - the executor argument does the actual work.</summary>
+    /// <summary>Executable options use ordinary AP costs unless this override is set.</summary>
+    public bool ignoreStatCost = false;
+    public int repeat = 1;
+    public string requiredClimax = "";
+    /// <summary>"grant" grants missing permissions, "skip" elides the checks and "request" asks normally.
+    /// Executable options default to normal requests. For preview-only options this describes the scripted executor.</summary>
     public string permissions = "none";
-    /// <summary>An alternative to the preview before it (a branch that tries its APs in order, e.g. caress_C else finger_P):
-    /// shown only when the previous one is not shown valid; an invalid preview followed by an alternative is not listed.</summary>
+    /// <summary>An alternative to the previous preview. Executable options always use the first valid configuration.</summary>
     public bool orPrevious = false;
 }
 
@@ -671,6 +671,10 @@ public class Event : I_SerializationCallbackReceiver
             public string disabledReasonAppendKey = "";
             /// <summary>Action packages this option runs, previewed on its tooltip (acceptance, DC, permission consequence).</summary>
             public List<EventAPPreview> apPreviews = new List<EventAPPreview>();
+            /// <summary>When set, the previews configure the AP itself. Results run once before the attempt.</summary>
+            public string apSuccessLabel = "";
+            public string apFailureLabel = "";
+            [JsonIgnore] public bool RunsAP => !string.IsNullOrEmpty(apSuccessLabel);
             /// <summary>Permission requests this option makes, previewed on its tooltip (held, or the request decision).</summary>
             public List<EventPermissionPreview> permissionPreviews = new List<EventPermissionPreview>();
 

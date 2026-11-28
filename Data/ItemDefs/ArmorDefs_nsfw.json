@@ -8,6 +8,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Feet"],
                         "equipLayer":"Inner",
                         "coverSlot":["Feet"],
@@ -24,6 +26,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Torso"],
                         "equipLayer":"Skin"
                     }
@@ -37,6 +41,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Lower"],
                         "equipLayer":"Skin"
                     }
@@ -51,6 +56,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Lower"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
@@ -66,6 +73,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Feet","Leg"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
@@ -81,6 +90,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Feet","Leg","Thigh","Thigh"],
                         "equipLayer":"Skin",
                         "coverSlot":["Feet","Leg"]
@@ -97,6 +108,7 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
                         "equipSlot":["Nipples"],
                         "equipLayer":"Skin",
                         "revealing":"Erotic"
@@ -111,6 +123,8 @@
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
+                        "requireActorTags_any": ["humanrace", "humanoid", "android"],
+                        "intendedFor": { "appearance": ["Female"] },
                         "equipSlot":["Clitoris"],
                         "equipLayer":"Skin",
                         "revealing":"Erotic"

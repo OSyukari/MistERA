@@ -3,6 +3,9 @@
         "Entries": {
             "zh-cn": {
                 "permission_follow_displayName": "跟随",
+                "permission_animal_body_contact_displayName": "身体接触",
+                "permission_animal_body_contact_tooltip": "涵盖友好接触、抚摸、照料及亲密行为。动物当前欲望达到 2 时，互动会跳过这项许可检查，仍须通过接受判定。",
+                "permission_animal_body_contact_consent": "【从$self$那获得了「%%permission_animal_body_contact_displayName%%」的合意$permission_grant_type$】",
                 "permission_intimacy_low_displayName": "友好接触",
                 "permission_intimacy_medium_displayName": "抚摸身体",
                 "permission_intimacy_high_displayName": "亲密行为",
@@ -82,6 +85,9 @@
                 "relationshipTag_sexual_partner": "性伴侣（恋人／配偶／炮友）"
             },
             "en-us": {
+                "permission_animal_body_contact_displayName": "Physical Contact",
+                "permission_animal_body_contact_tooltip": "Covers friendly touch, handling, care, and intimate actions. An animal with current Lust of 2 or more skips this permission check and still rolls for acceptance.",
+                "permission_animal_body_contact_consent": "[Obtained $self$'s consent: %%permission_animal_body_contact_displayName%%$permission_grant_type$]",
                 "permission_follow_displayName": "Follow",
                 "permission_intimacy_low_displayName": "Low Intimacy",
                 "permission_intimacy_medium_displayName": "Medium Intimacy",

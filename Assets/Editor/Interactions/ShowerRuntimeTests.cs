@@ -142,6 +142,36 @@ public static class ShowerRuntimeTests
             var expanded = EventUtility.ExpandOptions(owner, new List<Event.EventEntry.Options> { hiddenOpt, visibleOpt });
             Require(expanded.Count == 1 && expanded[0] == visibleOpt, "hideIfInvalid did not filter invalid option");
 
+            // Questions and branches have no next entry until the AP option selects its outcome.
+            foreach (var entry in new Event.EventEntry[]
+            {
+                new Event.EventEntry.EventEntry_Question { label = "wash_question" },
+                new Event.EventEntry.EventEntry_Branch { label = "wash_branch" }
+            })
+            {
+                var accepted = new Event.EventEntry.EventEntry_Line { label = "accepted" };
+                var refused = new Event.EventEntry.EventEntry_Line { label = "refused" };
+                var definition = new Event { events = new List<Event.EventEntry> { entry, accepted, refused } };
+                definition.OnAfterDeserialize();
+                var running = new EventInstance(doer, "", "", immediateInit: false) { silent = true };
+                Set(running, "currentEvent", definition);
+                Set(running, "currentEntry", entry);
+                var apOption = new Event.EventEntry.Options
+                {
+                    apSuccessLabel = accepted.label,
+                    apFailureLabel = refused.label,
+                    Results = new List<Event.EventEntry.Executor>
+                    {
+                        Exec(Event.EventEntry.ExecutionType.ModAppendNumber, "washAttempts", "1")
+                    }
+                };
+                Require(running.Active && !running.canRun, "Fixture must start with no continuation queued");
+                Require(EventUtility.Execute(running, apOption), "AP option did not queue its outcome for " + entry.label);
+                Require(running.canRun && Get<Event.EventEntry>(running, "nextEntry") == refused
+                    && running.AppendStrings["washAttempts"][0] == "1",
+                    "Unavailable AP should queue its failure line and count one attempt for " + entry.label);
+            }
+
             // Hand-based pet vs humanoid shower partitioning
             var handPart = new BodyPart_Instance();
             var handBase = new BodyPart_Base();

@@ -142,6 +142,8 @@ public class PermissionDefinition
     /// <summary>Optional: the granter's own skill at this level counts as the permission (no grant stored, no request);
     /// null = none.</summary>
     public PermissionSkillBypass skillBypass = null;
+    /// <summary>Optional live Lust severity at which acts skip this permission without recording a grant.</summary>
+    public float? bypassAtLust = null;
     /// <summary>Acceptance modifier while a matched soft permission is missing; null = unconfigured (no modifier).</summary>
     public int? missingPermissionPenalty = null;
     public PermissionMode mode = PermissionMode.Soft;

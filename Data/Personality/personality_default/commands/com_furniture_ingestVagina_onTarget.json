@@ -93,6 +93,47 @@
                         }
                     ]
                 }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_furniture_ingestVagina_onTarget_Refuse",
+                    "template": "commandRefuse",
+                    "variants": [
+                        {
+                            "requireRefusalContext": "DeclinedOrder",
+                            "requirement": {
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "说话者拒绝下令，并向下令者回应",
+                            "responses": [
+                                "com_furniture_ingestVagina_onTarget_Refuse_1"
+                            ]
+                        },
+                        {
+                            "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "受方 ｜ 拒绝",
+                            "responses": [
+                                "com_furniture_ingestVagina_onTarget_Refuse_2"
+                            ]
+                        },
+                        {
+                            "requireSelfDoer": true,
+                            "requirement": {
+                                "requireTargetAction": false,
+                                "requireEPSuccess": false
+                            },
+                            "_comment": "施方（被受方拒绝后）",
+                            "responses": [
+                                "com_furniture_ingestVagina_onTarget_Refuse_3"
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -104,7 +145,10 @@
                 "com_furniture_ingestVagina_onTarget_Begin_1": "(unimplemented)",
                 "com_furniture_ingestVagina_onTarget_Begin_2": "(unimplemented)",
                 "com_furniture_ingestVagina_onTarget_Ongoing_1": "(unimplemented)",
-                "com_furniture_ingestVagina_onTarget_Ongoing_2": "(unimplemented)"
+                "com_furniture_ingestVagina_onTarget_Ongoing_2": "(unimplemented)",
+                "com_furniture_ingestVagina_onTarget_Refuse_1": "(unimplemented)",
+                "com_furniture_ingestVagina_onTarget_Refuse_2": "(unimplemented)",
+                "com_furniture_ingestVagina_onTarget_Refuse_3": "(unimplemented)"
             }
         }
     }

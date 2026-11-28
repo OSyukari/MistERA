@@ -20,6 +20,7 @@ public partial class Job_Activity
         public int roomRef = -1;
         // join only
         public ActivityParticipant rec;
+        public OutfitSet walkInOutfit;
         public ActionPackage via;
         public bool confirmed, created;
         public ActivityParticipantState oldState;

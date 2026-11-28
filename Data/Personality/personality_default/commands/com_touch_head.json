@@ -572,6 +572,9 @@
                     "variants": [
                         {
                             "requireSelfReceiver": true,
+                            "requirement": {
+                                "requireSelfAction": false
+                            },
                             "_comment": "受方 → 新来的人 ｜ 接受",
                             "responses": [
                                 "com_touch_head_Interrupt_4",
@@ -586,18 +589,6 @@
                                 "com_touch_head_Interrupt_1",
                                 "com_touch_head_Interrupt_2",
                                 "com_touch_head_Interrupt_3"
-                            ]
-                        },
-                        {
-                            "requirement": {
-                                "requireSelfAction": false,
-                                "requireTargetAction": false,
-                                "allowRecording": true
-                            },
-                            "_comment": "兜底分支",
-                            "responses": [
-                                "com_touch_head_Interrupt_7",
-                                "com_touch_head_Interrupt_8"
                             ]
                         }
                     ]
@@ -762,8 +753,6 @@
                 "com_touch_head_Begin_6": "\"把手拿开。\" $self$挣不开身上的束缚，只能盯着$target$冷冷出声。",
                 "com_touch_head_Begin_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
                 "com_touch_head_Begin_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
-                "com_touch_head_Interrupt_7": "衣物收拾妥当后，$self$低头整理了一下衣角，神情平静。",
-                "com_touch_head_Interrupt_8": "$self$顺了顺衣摆，朝$target$微微点头示意。",
                 "com_touch_head_Ongoing_7": "$self$感受着头顶传来的动作，神色平静地待在原地。",
                 "com_touch_head_Ongoing_8": "见$target$还在继续，$self$只是微微偏了偏头，没有多说什么。",
                 "com_touch_head_Ongoing_9": "(unimplemented)",

@@ -1,0 +1,72 @@
+{
+    "_doc": "Shared dress codes and automatic default dress code rules (Character_Personalities.dressCodes / defaultDressCodes). Rules match against static actor keywords + appearance_* (default) + gender_* tags. Higher priority wins; duplicate IDs override earlier entries.",
+    "Character_Personalities": {
+        "dressCodes": [
+            {
+                "ID": "dresscode_none"
+            },
+            {
+                "ID": "dresscode_human_female",
+                "coverage": {
+                    "Torso": "ShapeReveal",
+                    "Lower": "ShapeReveal"
+                }
+            },
+            {
+                "ID": "dresscode_human_male",
+                "coverage": {
+                    "Lower": "ShapeReveal"
+                }
+            },
+            {
+                "ID": "dresscode_swimwear_female",
+                "slotTags": {
+                    "Torso": ["swimwear"],
+                    "Lower": ["swimwear"]
+                },
+                "coverage": {
+                    "Torso": "ShapeReveal",
+                    "Lower": "ShapeReveal"
+                }
+            },
+            {
+                "ID": "dresscode_swimwear_male",
+                "slotTags": {
+                    "Lower": ["swimwear"]
+                },
+                "coverage": {
+                    "Lower": "ShapeReveal"
+                }
+            }
+        ],
+        "defaultDressCodes": [
+            {
+                "ID": "default_animal",
+                "priority": 100,
+                "requireTags_any": ["animal", "appearance_inhuman"],
+                "dressCodeID": "dresscode_none"
+            },
+            {
+                "ID": "default_human_female",
+                "priority": 20,
+                "requireTags_all": ["appearance_female"],
+                "excludeTags_any": ["animal", "appearance_inhuman"],
+                "dressCodeID": "dresscode_human_female"
+            },
+            {
+                "ID": "default_human_ambiguous",
+                "priority": 15,
+                "requireTags_all": ["appearance_ambiguous"],
+                "excludeTags_any": ["animal", "appearance_inhuman"],
+                "dressCodeID": "dresscode_human_female"
+            },
+            {
+                "ID": "default_human_male",
+                "priority": 10,
+                "requireTags_all": ["appearance_male"],
+                "excludeTags_any": ["animal", "appearance_inhuman"],
+                "dressCodeID": "dresscode_human_male"
+            }
+        ]
+    }
+}
